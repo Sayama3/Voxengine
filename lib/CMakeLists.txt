@@ -6,3 +6,6 @@ target_link_libraries(VoxymoreCore PUBLIC glad)
 
 add_subdirectory(glfw)
 target_link_libraries(VoxymoreCore PRIVATE glfw)
+
+add_subdirectory(glm)
+target_link_libraries(VoxymoreCore PUBLIC glm)
