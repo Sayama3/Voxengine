@@ -20,4 +20,6 @@ target_compile_features(VoxymoreCore PUBLIC cxx_std_20)
 
 # add the .hpp to the projects
 target_include_directories(VoxymoreCore PUBLIC include)
+
 add_subdirectory(src)
+add_subdirectory(lib)
