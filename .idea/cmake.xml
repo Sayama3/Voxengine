@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug-MinGW" ENABLED="true" GENERATION_DIR="build/mgw/debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW" />
+      <configuration PROFILE_NAME="Release-MinGW" ENABLED="true" GENERATION_DIR="build/mgw/release" CONFIG_NAME="Release" TOOLCHAIN_NAME="MinGW" />
+      <configuration PROFILE_NAME="Debug-Visual Studio" ENABLED="true" GENERATION_DIR="build/vs/debug" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Visual Studio" />
+      <configuration PROFILE_NAME="Release-Visual Studio" ENABLED="true" GENERATION_DIR="build/vs/release" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio" />
+    </configurations>
+  </component>
+</project>
