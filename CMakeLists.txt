@@ -10,7 +10,10 @@ endif()
 
 project(VoxymoreCore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Game Engine.")
 include(GNUInstallDirs)
-add_library(VoxymoreCore)
+add_library(VoxymoreCore
+        src/library.cpp
+        src/Application.cpp
+        )
 
 set_target_properties(VoxymoreCore PROPERTIES
         VERSION ${PROJECT_VERSION}
@@ -20,11 +23,13 @@ set_target_properties(VoxymoreCore PROPERTIES
 set(CMAKE_CXX_STANDARD 20)
 target_compile_features(VoxymoreCore PUBLIC cxx_std_20)
 
+configure_file(VoxymoreCore.pc.in VoxymoreCore.pc @ONLY)
+
 # add the .hpp to the projects
 target_include_directories(VoxymoreCore PUBLIC include)
 target_include_directories(VoxymoreCore PRIVATE src)
 
-add_subdirectory(src)
+#add_subdirectory(src)
 add_subdirectory(lib)
 
 install(TARGETS VoxymoreCore
@@ -32,3 +37,5 @@ install(TARGETS VoxymoreCore
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(FILES ${CMAKE_BINARY_DIR}/VoxymoreCore.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
