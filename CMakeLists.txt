@@ -9,33 +9,49 @@ endif()
 
 
 project(VoxymoreCore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Game Engine.")
+
+if(NOT PROJECT_NAME)
+    set(PROJECT_NAME VoxymoreCore)
+endif()
+
+set(DEFAULT_BUILD_TYPE "Release")
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
+    set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
 include(GNUInstallDirs)
-add_library(VoxymoreCore
+add_library(${PROJECT_NAME}
         src/library.cpp
         src/Application.cpp
         )
 
-set_target_properties(VoxymoreCore PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 0
         )
 
 set(CMAKE_CXX_STANDARD 20)
-target_compile_features(VoxymoreCore PUBLIC cxx_std_20)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
-configure_file(VoxymoreCore.pc.in VoxymoreCore.pc @ONLY)
+configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
 
 # add the .hpp to the projects
-target_include_directories(VoxymoreCore PUBLIC include)
-target_include_directories(VoxymoreCore PRIVATE src)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 #add_subdirectory(src)
 add_subdirectory(lib)
 
-install(TARGETS VoxymoreCore
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES ${CMAKE_BINARY_DIR}/VoxymoreCore.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+#install(EXPORT ${PROJECT_NAME}Config DESTINATION share/${PROJECT_NAME}/cmake)
+install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+#export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
