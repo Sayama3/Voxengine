@@ -39,8 +39,15 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
 
 # add the .hpp to the projects
-target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_include_directories(${PROJECT_NAME} PRIVATE src)
+target_include_directories(${PROJECT_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
+        )
+target_include_directories(${PROJECT_NAME} PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:src>  # <prefix>/include/mylib
+        )
+#target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 #add_subdirectory(src)
 add_subdirectory(lib)
@@ -51,6 +58,6 @@ install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
 #TODO: Set the project to compile as a SHARED lib.
-#install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
-#export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
+export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
