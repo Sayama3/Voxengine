@@ -1,33 +1,28 @@
 cmake_minimum_required(VERSION 3.25)
 
-# set enable the debugger (when the debug mode is enable?)
-set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
-
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    add_definitions(-DDEBUG)
-endif()
+## set enable the debugger (when the debug mode is enable?)
+#set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
+#
+#if (CMAKE_BUILD_TYPE MATCHES Debug)
+#    add_definitions(-DDEBUG)
+#endif()
 
 add_subdirectory(lib)
 
 project(VoxymoreCore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Game Engine.")
 
-if(NOT PROJECT_NAME)
-    set(PROJECT_NAME VoxymoreCore)
-endif()
-
-set(DEFAULT_BUILD_TYPE "Release")
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
-    set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-    # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
-include(GNUInstallDirs)
-add_library(${PROJECT_NAME}
-        src/library.cpp
-        src/Application.cpp
-        )
+option(VoxymoreCore_SHARED_BUILD "The the ${VoxymoreCore} lib in shared mode" ON)
+if(VoxymoreCore_SHARED_BUILD)
+    add_library(${PROJECT_NAME} SHARED
+            src/library.cpp
+            src/Application.cpp
+            )
+else()
+    add_library(${PROJECT_NAME}
+            src/library.cpp
+            src/Application.cpp
+            )
+endif ()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
@@ -40,24 +35,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
 
 # add the .hpp to the projects
-target_include_directories(${PROJECT_NAME} PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
-        )
-target_include_directories(${PROJECT_NAME} PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:src>  # <prefix>/include/mylib
-        )
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 target_link_libraries(VoxymoreCore PRIVATE glm spdlog::spdlog_header_only glfw glad)
-
-
-#install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
-#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-##TODO: Set the project to compile as a SHARED lib.
-#install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
-#export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
