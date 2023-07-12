@@ -40,10 +40,3 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 target_link_libraries(VoxymoreCore PRIVATE glm spdlog::spdlog_header_only glfw glad)
-
-include (GenerateExportHeader)
-GENERATE_EXPORT_HEADER(VoxymoreCore           # generates the export header VoxymoreCore_EXPORTS.h automatically
-        BASE_NAME VoxymoreCore
-        EXPORT_MACRO_NAME VoxymoreCore_EXPORTS
-        EXPORT_FILE_NAME VoxymoreCore_EXPORTS.h
-        STATIC_DEFINE VOXYMORECORE_EXPORTS_BUILT_AS_STATIC)
