@@ -27,6 +27,7 @@ endif ()
 set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 0
+        PREFIX ""
         )
 
 set(CMAKE_CXX_STANDARD 20)
