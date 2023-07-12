@@ -61,7 +61,7 @@ if(VoxymoreCore_SHARED_BUILD)
             include/library.hpp
             include/Application.hpp
             include/voxymorecore_export.hpp
-            )
+            include/EntryPoint.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/library.cpp
@@ -71,7 +71,7 @@ else()
             include/library.hpp
             include/Application.hpp
             include/voxymorecore_export.hpp
-            )
+            include/EntryPoint.hpp)
 endif ()
 
 # Within this project, you can link to this library by just specifing the name
@@ -88,7 +88,7 @@ add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME}
 # Properties are: 1) Library version number 2) list of corresponding public headers
 set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
         VERSION       ${${PROJECT_NAME}_VERSION}
-        PUBLIC_HEADER "include/VoxymoreCore.hpp include/library.hpp include/Application.hpp include/voxymorecore_export.h"
+        PUBLIC_HEADER "include/VoxymoreCore.hpp"
         PUBLIC cxx_std_20)
 
 # Specify include directories for both compilation and installation process.
