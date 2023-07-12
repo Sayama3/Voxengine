@@ -9,6 +9,10 @@
 #define _USE_MATH_DEFINES
 #endif
 
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
 #include "Application.hpp"
 #include "library.hpp"
 #include "voxymorecore_export.hpp"
