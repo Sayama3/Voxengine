@@ -3,8 +3,7 @@
 //
 
 #include "Application.hpp"
-
-namespace Sayama::VoxymoreCore {
+namespace Voxymore::Core {
     Application::Application() {
 
     }
@@ -16,4 +15,4 @@ namespace Sayama::VoxymoreCore {
     void Application::Run() {
 
     }
-} // VoxymoreCore
+} // Core

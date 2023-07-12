@@ -1,7 +1,7 @@
 #ifndef VOXYMORECORE_LIBRARY_HPP
 #define VOXYMORECORE_LIBRARY_HPP
 
-namespace Sayama::VoxymoreCore {
+namespace Voxymore::Core {
 
     void hello();
 }

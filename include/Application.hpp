@@ -6,7 +6,7 @@
 
 
 
-namespace Sayama::VoxymoreCore {
+namespace Voxymore::Core {
 
     class Application {
     public:
@@ -16,4 +16,4 @@ namespace Sayama::VoxymoreCore {
     private:
     };
 
-} // VoxymoreCore
+} // Core

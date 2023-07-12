@@ -1,7 +1,7 @@
 #include "library.hpp"
 
 #include <iostream>
-namespace Sayama::VoxymoreCore {
+namespace Voxymore::Core {
 
     void hello() {
         std::cout << "Hello, World!" << std::endl;
