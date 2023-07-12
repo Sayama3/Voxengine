@@ -13,6 +13,6 @@ namespace Voxymore::Core {
     }
 
     void Application::Run() {
-
+        while (true);
     }
 } // Core

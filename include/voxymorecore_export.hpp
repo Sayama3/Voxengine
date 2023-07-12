@@ -1,3 +1,5 @@
+#pragma once
+
 
 #ifndef VXM_API_H
 #define VXM_API_H
@@ -7,7 +9,7 @@
 #  define VXM_NO_EXPORT
 #else
 #  ifndef VXM_API
-#    ifdef VXM_APIS
+#    ifdef VXM_BUILD_API
         /* We are building this library */
 #      define VXM_API __declspec(dllexport)
 #    else

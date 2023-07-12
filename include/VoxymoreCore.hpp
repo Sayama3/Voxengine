@@ -11,3 +11,4 @@
 
 #include "Application.hpp"
 #include "library.hpp"
+#include "voxymorecore_export.hpp"

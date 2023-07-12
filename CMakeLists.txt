@@ -27,6 +27,7 @@ set(LIBRARY_TARGET_NAME Core)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+add_compile_definitions(VXM_BUILD_API)
 
 # You can add an external dependency using the find_package() function call
 # See: https://cmake.org/cmake/help/latest/command/find_package.html
@@ -47,6 +48,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #  - target: FooPackage::FooPackage
 
 option(VoxymoreCore_SHARED_BUILD "The the ${VoxymoreCore} lib in shared mode" ON)
+
 # Adds a library target called ${LIBRARY_TARGET_NAME} to be built from the
 # source and header files listed in the command invocation.
 if(VoxymoreCore_SHARED_BUILD)
@@ -58,7 +60,7 @@ if(VoxymoreCore_SHARED_BUILD)
             include/VoxymoreCore.hpp
             include/library.hpp
             include/Application.hpp
-            include/voxymorecore_export.h
+            include/voxymorecore_export.hpp
             )
 else()
     add_library(${LIBRARY_TARGET_NAME}
@@ -68,7 +70,7 @@ else()
             include/VoxymoreCore.hpp
             include/library.hpp
             include/Application.hpp
-            include/voxymorecore_export.h
+            include/voxymorecore_export.hpp
             )
 endif ()
 

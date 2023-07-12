@@ -4,11 +4,11 @@
 
 #pragma once
 
-
+#include <voxymorecore_export.hpp>
 
 namespace Voxymore::Core {
 
-    class Application {
+    class VXM_API Application {
     public:
         Application();
         virtual ~Application();
