@@ -7,6 +7,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DDEBUG)
 endif()
 
+add_subdirectory(lib)
 
 project(VoxymoreCore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Game Engine.")
 
@@ -47,17 +48,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:src>  # <prefix>/include/mylib
         )
-#target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-#add_subdirectory(src)
-add_subdirectory(lib)
+target_link_libraries(VoxymoreCore PRIVATE glm spdlog::spdlog_header_only glfw glad)
 
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-#TODO: Set the project to compile as a SHARED lib.
-install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
-export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
+
+#install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
+#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+##TODO: Set the project to compile as a SHARED lib.
+#install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+#export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
