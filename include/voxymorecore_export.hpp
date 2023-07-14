@@ -4,6 +4,8 @@
 #ifndef VXM_API_H
 #define VXM_API_H
 
+# if WIN32 || WIN64
+
 #ifdef VXM_STATIC_DEFINE
 #  define VXM_API
 #  define VXM_NO_EXPORT
@@ -41,4 +43,11 @@
 #  endif
 #endif
 
+#else
+#define VXM_API
+#define VXM_NO_EXPORT
+#define VXM_DEPRECATED
+#define VXM_DEPRECATED_EXPORT VXM_API VXM_DEPRECATED
+#define VXM_DEPRECATED_NO_EXPORT VXM_NO_EXPORT VXM_DEPRECATED
+#endif
 #endif /* VXM_API_H */
