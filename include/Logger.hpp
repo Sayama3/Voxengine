@@ -5,13 +5,11 @@
 #ifndef LEARNOPENGL_LOGGER_HPP
 #define LEARNOPENGL_LOGGER_HPP
 
-#include <string>
-#include "glm/gtx/string_cast.hpp"
-
 #define ERR_LOCATION (std::string(__FILE__).append(":").append(std::to_string(__LINE__)).append(" -> ").append(__FUNCTION__))
 
 #define LOG_FILE_NAME "log_file.log"
 #define OLD_LOG_FILE_NAME "log_file.log.old"
+
 namespace Voxymore::Core {
 
     enum LogType {

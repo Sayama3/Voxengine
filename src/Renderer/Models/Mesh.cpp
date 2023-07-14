@@ -3,7 +3,6 @@
 //
 
 #include "Renderer/Mesh.hpp"
-#include <string>
 #include "MathHelper.hpp"
 #include "Logger.hpp"
 #include "Renderer/Shader.hpp"

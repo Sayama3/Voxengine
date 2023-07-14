@@ -4,8 +4,6 @@
 
 #include "Renderer/Shader.hpp"
 #include "SystemHelper.hpp"
-#include <iostream>
-#include <utility>
 
 namespace Voxymore::Core::Renderer {
     Shader::Shader(const std::string &shaderPath, ShaderType shaderType) : m_ShaderType(shaderType),

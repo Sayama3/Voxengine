@@ -5,8 +5,6 @@
 #ifndef LEARNOPENGL_BUFFERTYPE_HPP
 #define LEARNOPENGL_BUFFERTYPE_HPP
 
-#include "glad/glad.h"
-
 namespace Voxymore::Core::Renderer {
     enum BufferType {
         /**
