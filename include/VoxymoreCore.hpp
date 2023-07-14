@@ -13,6 +13,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 
+#ifndef BIT
+#define BIT(X) (1 << X)
+#endif
+
 #include "Application.hpp"
 #include "library.hpp"
 #include "voxymorecore_export.hpp"

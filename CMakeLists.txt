@@ -74,7 +74,6 @@ if(VoxymoreCore_SHARED_BUILD)
             include/VoxymoreCore.hpp
             include/library.hpp
             include/Application.hpp
-            include/voxymorecore_export.hpp
             include/EntryPoint.hpp
             include/Renderer/AssimpGLMHelpers.hpp
             include/Renderer/BufferType.hpp
@@ -100,7 +99,12 @@ if(VoxymoreCore_SHARED_BUILD)
             include/Renderer/VertexArrayObject.hpp
             include/Renderer/VertexBufferLayout.hpp
             include/Renderer/VertexBufferObject.hpp
-            include/Renderer/OpenGLHelper.hpp)
+            include/Renderer/OpenGLHelper.hpp
+            include/Events/Event.hpp
+            include/Events/KeyEvent.hpp
+            include/Events/MouseEvent.hpp
+            include/Events/ApplicationEvent.hpp
+            )
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/library.cpp
@@ -123,7 +127,6 @@ else()
             include/VoxymoreCore.hpp
             include/library.hpp
             include/Application.hpp
-            include/voxymorecore_export.hpp
             include/EntryPoint.hpp
             include/Renderer/AssimpGLMHelpers.hpp
             include/Renderer/BufferType.hpp
@@ -149,8 +152,22 @@ else()
             include/Renderer/VertexArrayObject.hpp
             include/Renderer/VertexBufferLayout.hpp
             include/Renderer/VertexBufferObject.hpp
-            include/Renderer/OpenGLHelper.hpp)
+            include/Renderer/OpenGLHelper.hpp
+            include/Events/Event.hpp
+            include/Events/KeyEvent.hpp
+            include/Events/MouseEvent.hpp
+            include/Events/ApplicationEvent.hpp
+            )
 endif ()
+
+include(GenerateExportHeader)
+generate_export_header(${LIBRARY_TARGET_NAME}
+        BASE_NAME "VoxymoreCore"
+        EXPORT_MACRO_NAME "VXM_API"
+        EXPORT_FILE_NAME "export/voxymorecore_export.hpp"
+        )
+target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_BINARY_DIR}/export)
+
 
 # Within this project, you can link to this library by just specifing the name
 # of the target, i.e. ${LIBRARY_TARGET_NAME} = LibTemplateCMake. It is useful,
@@ -187,14 +204,6 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only assimp)
-
-#target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
-#        <unordered_map>
-#        <vector>
-#        <string>
-#        <sstream>
-#        <iostream>
-#        )
 
 # Specify installation targets, typology and destination folders.
 install(TARGETS ${LIBRARY_TARGET_NAME}

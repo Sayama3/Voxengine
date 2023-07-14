@@ -6,6 +6,7 @@
 #define VOXYMORE_ENTRYPOINT_HPP
 
 #include "Application.hpp"
+
 namespace Voxymore::Core {
     extern Voxymore::Core::Application* CreateApplication();
 }
