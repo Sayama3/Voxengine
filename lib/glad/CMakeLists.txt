@@ -12,5 +12,6 @@ add_library(glad
 set_target_properties(glad PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(glad PROPERTIES SOVERSION 0)
 
-
 target_include_directories(glad PUBLIC include)
+
+set_property(TARGET glad PROPERTY POSITION_INDEPENDENT_CODE ON)
