@@ -6,18 +6,13 @@
 
 // Defining the "_USE_MATH_DEFINES" for visual studio in the main hpp
 #ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
+    #define _USE_MATH_DEFINES
 #endif
 
 #ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
+    #define STB_IMAGE_IMPLEMENTATION
 #endif
 
-#ifndef BIT
-#define BIT(X) (1 << X)
-#endif
-
-#include "Application.hpp"
-#include "library.hpp"
 #include "voxymorecore_export.hpp"
+#include "Application.hpp"
 #include "EntryPoint.hpp"

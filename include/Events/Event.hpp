@@ -4,9 +4,13 @@
 
 #pragma once
 
-#include "VoxymoreCore.hpp"
+#include "voxymorecore_export.hpp"
 #include <string>
 #include <functional>
+
+#ifndef BIT
+#define BIT(X) (1 << X)
+#endif
 
 namespace Voxymore::Core {
     namespace Events {
@@ -54,6 +58,8 @@ namespace Voxymore::Core {
         {
             template<typename T>
             using EventFn = std::function<bool>(T&);
+        private:
+            Event& m_Event;
         public:
             template<typename T>
             bool Dispatch(EventFn<T> func) {
@@ -64,8 +70,6 @@ namespace Voxymore::Core {
                 }
                 return false;
             }
-        private:
-            Event& m_Event;
         };
 
     }

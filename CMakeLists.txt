@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.24)
 add_subdirectory(lib)
 
@@ -27,7 +26,7 @@ set(LIBRARY_TARGET_NAME Core)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(VXM_BUILD_API)
+add_compile_definitions(Core_EXPORTS)
 
 # You can add an external dependency using the find_package() function call
 # See: https://cmake.org/cmake/help/latest/command/find_package.html
@@ -54,7 +53,6 @@ option(VoxymoreCore_SHARED_BUILD "The the ${VoxymoreCore} lib in shared mode" ON
 if(VoxymoreCore_SHARED_BUILD)
     add_library(${LIBRARY_TARGET_NAME} SHARED
             # List of CPP (source) library files.
-            src/library.cpp
             src/Application.cpp
             src/Renderer/ElementBufferObject.cpp
             src/Renderer/VertexBufferObject.cpp
@@ -72,7 +70,6 @@ if(VoxymoreCore_SHARED_BUILD)
             src/Renderer/Models/Mesh.cpp
             # List of HPP (header) library files.
             include/VoxymoreCore.hpp
-            include/library.hpp
             include/Application.hpp
             include/EntryPoint.hpp
             include/Renderer/AssimpGLMHelpers.hpp
@@ -104,10 +101,9 @@ if(VoxymoreCore_SHARED_BUILD)
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            )
+            include/Window.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
-            src/library.cpp
             src/Application.cpp
             src/Renderer/ElementBufferObject.cpp
             src/Renderer/VertexBufferObject.cpp
@@ -125,7 +121,6 @@ else()
             src/Renderer/Models/Mesh.cpp
             # List of HPP (header) library files.
             include/VoxymoreCore.hpp
-            include/library.hpp
             include/Application.hpp
             include/EntryPoint.hpp
             include/Renderer/AssimpGLMHelpers.hpp
@@ -157,7 +152,7 @@ else()
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            )
+            include/Window.hpp)
 endif ()
 
 include(GenerateExportHeader)
@@ -168,7 +163,6 @@ generate_export_header(${LIBRARY_TARGET_NAME}
         )
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_BINARY_DIR}/export)
 
-
 # Within this project, you can link to this library by just specifing the name
 # of the target, i.e. ${LIBRARY_TARGET_NAME} = LibTemplateCMake. It is useful,
 # however, to define an alias of this library with the scope of the exported
@@ -177,6 +171,8 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_BINARY_DIR}/exp
 # always treated as the name of either an alias or imported target. Any attempt
 # to use such a name for a different target type will result in an error.
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
+
+add_subdirectory(platform)
 
 # Set two minimum target properties for the library.
 # See https://cmake.org/cmake/help/latest/command/set_target_properties.html
