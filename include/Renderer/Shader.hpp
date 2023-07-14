@@ -5,6 +5,7 @@
 #ifndef LEARNOPENGL_SHADER_HPP
 #define LEARNOPENGL_SHADER_HPP
 
+#include <string>
 #include "ShaderType.hpp"
 
 #define ViewMatrixName "view"

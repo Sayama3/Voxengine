@@ -5,6 +5,7 @@
 #ifndef LEARNOPENGL_VERTEX_HPP
 #define LEARNOPENGL_VERTEX_HPP
 
+#include "glm/glm.hpp"
 #include "VertexBufferLayout.hpp"
 
 namespace Voxymore::Core::Renderer {

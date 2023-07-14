@@ -5,8 +5,16 @@
 #ifndef LEARNOPENGL_SHADERPROGRAM_HPP
 #define LEARNOPENGL_SHADERPROGRAM_HPP
 
+#include <stdexcept>
+#include <unordered_map>
+#include <vector>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "Shader.hpp"
 #include "Logger.hpp"
+
+
 
 namespace Voxymore::Core::Renderer {
 // TODO: Change the class to use Template instead of copy pasting the Shader Path & Type

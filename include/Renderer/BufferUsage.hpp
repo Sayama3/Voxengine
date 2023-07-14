@@ -5,6 +5,7 @@
 #ifndef LEARNOPENGL_BUFFERUSAGE_HPP
 #define LEARNOPENGL_BUFFERUSAGE_HPP
 
+#include "glad/glad.h"
 namespace Voxymore::Core::Renderer {
     enum BufferUsage {
         STREAM_DRAW = GL_STREAM_DRAW,

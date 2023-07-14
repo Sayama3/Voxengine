@@ -5,6 +5,8 @@
 #ifndef LEARNOPENGL_OPENGLTYPE_HPP
 #define LEARNOPENGL_OPENGLTYPE_HPP
 
+#include "glad/glad.h"
+
 namespace Voxymore::Core::Renderer {
     enum GLType {
         /**

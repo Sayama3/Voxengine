@@ -5,6 +5,9 @@
 #ifndef LEARNOPENGL_GLFWTYPE_HPP
 #define LEARNOPENGL_GLFWTYPE_HPP
 
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
 namespace Voxymore::Core::Renderer {
     enum GLFWKey {
 /* The unknown key */

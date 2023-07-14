@@ -5,8 +5,12 @@
 #ifndef LEARNOPENGL_TEXTURE2D_HPP
 #define LEARNOPENGL_TEXTURE2D_HPP
 
+#include <string>
+#include <unordered_map>
+#include "glad/glad.h"
 #include "TextureEnums.hpp"
 #include "OpenGLType.hpp"
+#include "glm/glm.hpp"
 
 namespace Voxymore::Core::Renderer {
     class Texture2D {

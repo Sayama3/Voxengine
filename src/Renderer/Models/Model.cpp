@@ -2,6 +2,7 @@
 // Created by ianpo on 16/06/2023.
 //
 
+#include <filesystem>
 #include "Renderer/Model.hpp"
 #include "Logger.hpp"
 #include "Renderer/AssimpGLMHelpers.hpp"

@@ -3,6 +3,7 @@
 //
 
 #include "Renderer/VertexArrayObject.hpp"
+#include "glad/glad.h"
 #include "Renderer/OpenGLHelper.hpp"
 
 namespace Voxymore::Core::Renderer {

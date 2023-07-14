@@ -1,5 +1,6 @@
 #include "library.hpp"
 
+#include <iostream>
 namespace Voxymore::Core {
 
     void hello() {

@@ -5,6 +5,10 @@
 #ifndef LEARNOPENGL_LIGHTSOURCE_HPP
 #define LEARNOPENGL_LIGHTSOURCE_HPP
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include <array>
 #include "ElementBufferObject.hpp"
 #include "VertexBufferObject.hpp"
 #include "VertexArrayObject.hpp"

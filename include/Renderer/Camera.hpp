@@ -5,6 +5,12 @@
 #ifndef LEARNOPENGL_CAMERA_HPP
 #define LEARNOPENGL_CAMERA_HPP
 
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 namespace Voxymore::Core::Renderer {
 // Default camera values
     const float YAW = -90.0f;

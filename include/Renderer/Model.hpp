@@ -5,10 +5,16 @@
 #ifndef LEARNOPENGL_MODEL_HPP
 #define LEARNOPENGL_MODEL_HPP
 
+#include <string>
+#include <vector>
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 #include "Mesh.hpp"
 #include "Texture2D.hpp"
 #include "ShaderProgram.hpp"
 #include "MathHelper.hpp"
+#include <memory>
 
 namespace Voxymore::Core::Renderer {
 // TODO: Have a hierarchy and a node system so that we can easily navigate and draw it.

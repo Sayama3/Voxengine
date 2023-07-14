@@ -5,6 +5,8 @@
 #ifndef VOXYMORE_OPENGLHELPER_HPP
 #define VOXYMORE_OPENGLHELPER_HPP
 
+#include <cstdint>
+
 #define INT2VOIDP(i) (void*)(uintptr_t)(i)
 #define INT2CVOIDP(i) (const void*)(uintptr_t)(i)
 

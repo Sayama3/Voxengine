@@ -5,6 +5,9 @@
 #ifndef LEARNOPENGL_TEXTUREENUMS_HPP
 #define LEARNOPENGL_TEXTUREENUMS_HPP
 
+#include "glad/glad.h"
+#include <string>
+
 namespace Voxymore::Core::Renderer {
     enum TextureType {
         TEXTURE_1D = GL_TEXTURE_1D,

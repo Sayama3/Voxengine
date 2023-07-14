@@ -3,6 +3,9 @@
 //
 
 #include "Logger.hpp"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
 
 namespace Voxymore::Core {
     void Logger::Log(const std::string &log, const std::string &location) {
