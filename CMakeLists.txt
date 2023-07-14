@@ -100,7 +100,7 @@ if(VoxymoreCore_SHARED_BUILD)
             include/Renderer/VertexArrayObject.hpp
             include/Renderer/VertexBufferLayout.hpp
             include/Renderer/VertexBufferObject.hpp
-            )
+            include/Renderer/OpenGLHelper.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/library.cpp
@@ -149,7 +149,7 @@ else()
             include/Renderer/VertexArrayObject.hpp
             include/Renderer/VertexBufferLayout.hpp
             include/Renderer/VertexBufferObject.hpp
-            )
+            include/Renderer/OpenGLHelper.hpp)
 endif ()
 
 # Within this project, you can link to this library by just specifing the name
@@ -185,9 +185,16 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 # - with imported target:
 #   target_link_libraries(${LIBRARY_TARGET_NAME} FooPackage_LIBRARIES::FooPackage_LIBRARIES)
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw glm spdlog::spdlog_header_only assimp)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only assimp)
 
-
+#target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
+#        <unordered_map>
+#        <vector>
+#        <string>
+#        <sstream>
+#        <iostream>
+#        )
 
 # Specify installation targets, typology and destination folders.
 install(TARGETS ${LIBRARY_TARGET_NAME}

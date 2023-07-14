@@ -4,6 +4,7 @@
 
 #include "Renderer/VertexArrayObject.hpp"
 #include "glad/glad.h"
+#include "Renderer/OpenGLHelper.hpp"
 
 namespace Voxymore::Core::Renderer {
     VertexArrayObject::VertexArrayObject(bool shouldBind) : m_VertexArrayId() {
@@ -37,7 +38,7 @@ namespace Voxymore::Core::Renderer {
         for (int i = 0; i < elements.size(); ++i) {
             auto &element = elements[i];
             glVertexAttribPointer(i, element.count, element.type, element.normalized,
-                                  static_cast<GLsizei>(layout.GetStride()), (const void *) offset);
+                                  static_cast<GLsizei>(layout.GetStride()), INT2CVOIDP(offset));
             glEnableVertexAttribArray(i);
             offset += element.count * element.GetSizeOfType();
         }
