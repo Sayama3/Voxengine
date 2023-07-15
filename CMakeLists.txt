@@ -201,6 +201,35 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only assimp)
 
+target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
+        <array>
+        <vector>
+        <memory>
+        <string>
+        <cstdint>
+        <stdexcept>
+        <unordered_map>
+        <string>
+        <sstream>
+        <fstream>
+        <filesystem>
+        <iostream>
+        <utility>
+        <glad/glad.h>
+        <GLFW/glfw3.h>
+        <assimp/Importer.hpp>
+        <assimp/scene.h>
+        <assimp/postprocess.h>
+        <assimp/quaternion.h>
+        <assimp/vector3.h>
+        <assimp/matrix4x4.h>
+        <glm/glm.hpp>
+        <glm/gtc/quaternion.hpp>
+        <glm/gtc/matrix_transform.hpp>
+        <glm/gtc/type_ptr.hpp>
+        <glm/gtx/string_cast.hpp>
+        )
+
 # Specify installation targets, typology and destination folders.
 install(TARGETS ${LIBRARY_TARGET_NAME}
         EXPORT  ${PROJECT_NAME}
