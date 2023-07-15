@@ -62,7 +62,7 @@ namespace Voxymore::Core::Renderer {
 
         template<typename T>
         inline void SetUniform(const std::string &name, const T &value) {
-            LOG_ERROR("Type not implemented.");
+            VXM_CORE_ERROR("Type not implemented.");
         }
     };
 

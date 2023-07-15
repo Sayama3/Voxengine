@@ -6,6 +6,7 @@
 #define VOXYMORE_ENTRYPOINT_HPP
 
 #include "Application.hpp"
+#include "Logger.hpp"
 
 namespace Voxymore::Core {
     extern Voxymore::Core::Application* CreateApplication();
@@ -13,6 +14,8 @@ namespace Voxymore::Core {
 
 int main(int argc, char** argv)
 {
+    Voxymore::Core::Log::Init();
+
     Voxymore::Core::Application* application = Voxymore::Core::CreateApplication();
     application->Run();
     delete application;

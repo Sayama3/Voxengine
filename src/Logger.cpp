@@ -6,45 +6,22 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Voxymore::Core {
-    void Logger::Log(const std::string &log, const std::string &location) {
-        Log(log, LogType::Log, location);
-    }
+    std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
+    std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
-    void Logger::LogWarning(const std::string &log, const std::string &location) {
-        Log(log, LogType::Warning, location);
-    }
+    void Log::Init()
+    {
+        // Setting Pattern
+        spdlog::set_pattern("%^[%T] [%l] %n (%g:%#->%!): %v%$");
 
-    void Logger::LogError(const std::string &log, const std::string &location) {
-        Log(log, LogType::Error, location);
-    }
-
-    void Logger::Log(const std::string &log, LogType logType, const std::string &location) {
-#ifdef DEBUG
-        std::cout << "LOG::" << LogTypeToString(logType) << " " << location << " : " << log << std::endl;
-#endif
-        if (!init) {
-            init = true;
-            if (std::filesystem::exists(LOG_FILE_NAME)) {
-                std::filesystem::rename(LOG_FILE_NAME, OLD_LOG_FILE_NAME);
-            }
-        }
-        std::fstream logFile;
-        logFile.open(LOG_FILE_NAME);
-        logFile << "LOG::" << LogTypeToString(logType) << " " << location << " : " << log << std::endl;
-        logFile.close();
-    }
-
-    std::string LogTypeToString(LogType logType) {
-        switch (logType) {
-            case LogType::Log:
-                return "LOG";
-            case LogType::Warning:
-                return "WARNING";
-            case LogType::Error:
-                return "ERROR";
-        }
-        return "UNKNOWN";
+        // Creating core logger
+        s_CoreLogger = spdlog::stdout_color_mt("VOXYMORE");
+        s_CoreLogger->set_level(spdlog::level::trace);
+        // Creating Client logger
+        s_ClientLogger = spdlog::stdout_color_mt("APP");
+        s_ClientLogger->set_level(spdlog::level::trace);
     }
 }

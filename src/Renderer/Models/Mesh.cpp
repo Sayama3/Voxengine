@@ -20,7 +20,7 @@ namespace Voxymore::Core::Renderer {
             m_VBO(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex), usage),
             m_EBO(m_Indices.data(), m_Indices.size(), usage) {
         this->SetupMesh();
-        LOG("Create Mesh");
+        VXM_CORE_INFO("Create Mesh");
     }
 
     void Mesh::SetupMesh() {
@@ -59,6 +59,6 @@ namespace Voxymore::Core::Renderer {
     }
 
     Mesh::~Mesh() {
-        LOG("Destroy Mesh");
+        VXM_CORE_INFO("Destroy Mesh");
     }
 }

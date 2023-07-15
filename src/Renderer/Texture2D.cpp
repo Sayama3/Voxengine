@@ -16,7 +16,7 @@ namespace Voxymore::Core::Renderer {
                                                       format(textureFormat), m_Width(-1), m_Height(-1),
                                                       m_NbrChannels(-1), m_PixelType(pixelDataType), m_Params(),
                                                       m_TextureUsage(textureUsage) {
-        LOG("Creating \"" + m_Path + "\"");
+        VXM_CORE_INFO("Creating \"" + m_Path + "\"");
         glGenTextures(1, &m_TextureId);
         glBindTexture(TextureType::TEXTURE_2D,
                       m_TextureId);    // set the texture wrapping/filtering options (on currently bound texture)
@@ -57,7 +57,7 @@ namespace Voxymore::Core::Renderer {
             glTexImage2D(TextureType::TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, m_PixelType, data);
             glGenerateMipmap(TextureType::TEXTURE_2D);
         } else {
-            LOG("Failed to load texture \"" + path + "\".\n" + stbi_failure_reason());
+            VXM_CORE_INFO("Failed to load texture \"" + path + "\".\n" + stbi_failure_reason());
         }
 
         stbi_image_free(data);
@@ -93,14 +93,14 @@ namespace Voxymore::Core::Renderer {
     }
 
     void Texture2D::Destroy() {
-        LOG("Destroying \"" + m_Path + "\"");
+        VXM_CORE_INFO("Destroying \"" + m_Path + "\"");
         glDeleteTextures(1, &m_TextureId);
     }
 
     void Texture2D::Bind(unsigned int slot) {
         if (slot >= TextureSlot::COUNT) {
-            LOG("The maximum texture slot is " + std::to_string(TextureSlot::COUNT - 1) + ". You want the " +
-                std::to_string(slot) + " slot, the result will be unexpected.");
+            VXM_CORE_INFO("The maximum texture slot is " + std::to_string(TextureSlot::COUNT - 1) + ". You want the " +
+                          std::to_string(slot) + " slot, the result will be unexpected.");
         }
         m_CurrentSlot = static_cast<int>(slot);
         glActiveTexture(TextureSlot::TEXTURE0 + m_CurrentSlot);

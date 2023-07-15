@@ -10,7 +10,7 @@
 namespace Voxymore::Core::Renderer {
     Model::Model(const std::string &path, glm::mat4 model, bool flipUVs)
             : m_Meshes(), m_Directory(path.substr(0, path.find_last_of('/'))), m_Model(model) {
-        LOG("Creating Model " + path);
+        VXM_CORE_INFO("Creating Model " + path);
         this->loadModel(path, flipUVs);
     }
 
@@ -21,7 +21,7 @@ namespace Voxymore::Core::Renderer {
     }
 
     void Model::loadModel(const std::string &path, bool flipUVs) {
-        LOG("Importing model");
+        VXM_CORE_INFO("Importing model");
         // Create an instance of the Importer class
         Assimp::Importer importer;
 
@@ -43,14 +43,14 @@ namespace Voxymore::Core::Renderer {
 
         // If the import failed, report it
         if (nullptr == scene) {
-            LOG_ERROR(std::string("ERROR::ASSIMP::").append(importer.GetErrorString()));
+            VXM_CORE_ERROR(std::string("ERROR::ASSIMP::").append(importer.GetErrorString()));
             return;
         }
 
         m_Meshes.reserve(scene->mNumMeshes);
 
 
-        LOG("Processing Root Node.");
+        VXM_CORE_INFO("Processing Root Node.");
         processNode(scene->mRootNode, scene, this->m_Model);
     }
 
@@ -58,14 +58,14 @@ namespace Voxymore::Core::Renderer {
         glm::mat4 currentNodeMatrix = parentMatrix * AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
         for (int i = 0; i < node->mNumMeshes; ++i) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            LOG(std::string("Adding mesh ").append(mesh->mName.C_Str()));
+            VXM_CORE_INFO(std::string("Adding mesh ").append(mesh->mName.C_Str()));
             auto m = processMesh(mesh, scene);
             m->m_Model = currentNodeMatrix;
             m_Meshes.push_back(m);
         }
 
         for (int i = 0; i < node->mNumChildren; ++i) {
-            LOG(std::string("Processing node children ").append(node->mChildren[i]->mName.C_Str()));
+            VXM_CORE_INFO(std::string("Processing node children ").append(node->mChildren[i]->mName.C_Str()));
             processNode(node->mChildren[i], scene, currentNodeMatrix);
         }
     }
@@ -78,7 +78,7 @@ namespace Voxymore::Core::Renderer {
         std::vector<std::shared_ptr<Texture2D>> textures;
 
         // Process Vertex
-        LOG("Processing the " + std::to_string(mesh->mNumVertices) + "vertices.");
+        VXM_CORE_INFO("Processing the " + std::to_string(mesh->mNumVertices) + "vertices.");
         for (int i = 0; i < mesh->mNumVertices; ++i) {
             Vertex vertex{};
 
@@ -87,7 +87,7 @@ namespace Voxymore::Core::Renderer {
             vertex.Normal = AssimpGLMHelpers::GetGLMVec3(mesh->mNormals[i]);
 
             const auto numUVChannels = mesh->GetNumUVChannels();
-//        LOG(std::string("Mesh '").append( mesh->mName.C_Str()).append("' Has ").append(std::to_string(numUVChannels)).append( " UV channels."));
+//        VXM_CORE_INFO(std::string("Mesh '").append( mesh->mName.C_Str()).append("' Has ").append(std::to_string(numUVChannels)).append( " UV channels."));
             if (numUVChannels > 0) // does the mesh contain texture coordinates?
             {
                 vertex.TexCoords = {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y};
@@ -99,7 +99,7 @@ namespace Voxymore::Core::Renderer {
         }
 
         // Process Indices
-        LOG("Processing the " + std::to_string(mesh->mNumFaces) + "faces.");
+        VXM_CORE_INFO("Processing the " + std::to_string(mesh->mNumFaces) + "faces.");
         for (int i = 0; i < mesh->mNumFaces; ++i) {
             auto &face = mesh->mFaces[i];
             for (int j = 0; j < face.mNumIndices; ++j) {
@@ -109,7 +109,7 @@ namespace Voxymore::Core::Renderer {
 
         //process materials
         if (mesh->mMaterialIndex >= 0) {
-            LOG(std::string("Processing Material of ").append(mesh->mName.C_Str()));
+            VXM_CORE_INFO(std::string("Processing Material of ").append(mesh->mName.C_Str()));
             aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
 
@@ -121,38 +121,38 @@ namespace Voxymore::Core::Renderer {
             textures.reserve(DIFFUSE_COUNT + SPECULAR_COUNT + NORMALS_COUNT + HEIGHT_COUNT + AMBIENT_COUNT);
 
             // 1. diffuse maps
-            LOG("Adding " + std::to_string(DIFFUSE_COUNT) + " diffuse textures.");
+            VXM_CORE_INFO("Adding " + std::to_string(DIFFUSE_COUNT) + " diffuse textures.");
             std::vector<std::shared_ptr<Texture2D>> diffuseMaps = loadMaterialTextures(material,
                                                                                        aiTextureType::aiTextureType_DIFFUSE,
                                                                                        TextureUsage::Diffuse);
             textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
             // 2. specular maps
-            LOG("Adding " + std::to_string(SPECULAR_COUNT) + " specular textures.");
+            VXM_CORE_INFO("Adding " + std::to_string(SPECULAR_COUNT) + " specular textures.");
             std::vector<std::shared_ptr<Texture2D>> specularMaps = loadMaterialTextures(material,
                                                                                         aiTextureType::aiTextureType_SPECULAR,
                                                                                         TextureUsage::Specular);
             textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
             // 3. normal maps
-            LOG("Adding " + std::to_string(NORMALS_COUNT) + " normal textures.");
+            VXM_CORE_INFO("Adding " + std::to_string(NORMALS_COUNT) + " normal textures.");
             std::vector<std::shared_ptr<Texture2D>> normalMaps = loadMaterialTextures(material,
                                                                                       aiTextureType::aiTextureType_NORMALS,
                                                                                       TextureUsage::Normal);
             textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
             // 4. height maps
-            LOG("Adding " + std::to_string(HEIGHT_COUNT) + " height textures.");
+            VXM_CORE_INFO("Adding " + std::to_string(HEIGHT_COUNT) + " height textures.");
             std::vector<std::shared_ptr<Texture2D>> heightMaps = loadMaterialTextures(material,
                                                                                       aiTextureType::aiTextureType_HEIGHT,
                                                                                       TextureUsage::Height);
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
             // 4. ambient maps
-            LOG("Adding " + std::to_string(AMBIENT_COUNT) + " ambient textures.");
+            VXM_CORE_INFO("Adding " + std::to_string(AMBIENT_COUNT) + " ambient textures.");
             std::vector<std::shared_ptr<Texture2D>> ambientMaps = loadMaterialTextures(material,
                                                                                        aiTextureType::aiTextureType_AMBIENT,
                                                                                        TextureUsage::Ambient);
             textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
         }
 
-        LOG(std::string("Returning Meshes ").append(mesh->mName.C_Str()));
+        VXM_CORE_INFO(std::string("Returning Meshes ").append(mesh->mName.C_Str()));
         return std::make_shared<Mesh>(vertices, indices, textures, BufferUsage::STATIC_DRAW);
     }
 

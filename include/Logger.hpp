@@ -5,39 +5,40 @@
 #ifndef LEARNOPENGL_LOGGER_HPP
 #define LEARNOPENGL_LOGGER_HPP
 
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+
 #include <string>
+#include <memory>
 #include "glm/gtx/string_cast.hpp"
+#include "voxymorecore_export.hpp"
+#include "spdlog/spdlog.h"
 
-#define ERR_LOCATION (std::string(__FILE__).append(":").append(std::to_string(__LINE__)).append(" -> ").append(__FUNCTION__))
-
-#define LOG_FILE_NAME "log_file.log"
-#define OLD_LOG_FILE_NAME "log_file.log.old"
 namespace Voxymore::Core {
 
-    enum LogType {
-        Log,
-        Warning,
-        Error,
-    };
-
-    std::string LogTypeToString(LogType logType);
-
-    class Logger {
+    class VXM_API Log {
     public:
-        static void Log(const std::string &log, const std::string &location);
-
-        static void LogWarning(const std::string &log, const std::string &location);
-
-        static void LogError(const std::string &log, const std::string &location);
+        static void Init();
+        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+        inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
     private:
-        inline static bool init = false;
-
-        static void Log(const std::string &log, LogType logType, const std::string &location);
+        static std::shared_ptr<spdlog::logger> s_CoreLogger;
+        static std::shared_ptr<spdlog::logger> s_ClientLogger;
     };
+
 }
-#define LOG(x) Logger::Log((x), ERR_LOCATION)
-#define LOG_WARNING(x) Logger::LogWarning((x), ERR_LOCATION)
-#define LOG_ERROR(x) Logger::LogError((x), ERR_LOCATION)
+
+#define VXM_CORE_TRACE(...)       SPDLOG_LOGGER_TRACE(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+#define VXM_CORE_INFO(...)        SPDLOG_LOGGER_INFO(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+#define VXM_CORE_WARNING(...)     SPDLOG_LOGGER_WARNING(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+#define VXM_CORE_ERROR(...)       SPDLOG_LOGGER_ERROR(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+#define VXM_CORE_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+
+
+#define VXM_TRACE(...)       SPDLOG_LOGGER_TRACE(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
+#define VXM_INFO(...)        SPDLOG_LOGGER_INFO(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
+#define VXM_WARNING(...)     SPDLOG_LOGGER_WARNING(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
+#define VXM_ERROR(...)       SPDLOG_LOGGER_ERROR(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
+#define VXM_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
 
 #endif //LEARNOPENGL_LOGGER_HPP
