@@ -201,20 +201,22 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only assimp)
 
-target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
+target_precompile_headers(${LIBRARY_TARGET_NAME}
+        PRIVATE
         <array>
-        <vector>
-        <memory>
-        <string>
         <cstdint>
+        <filesystem>
+        <fstream>
+        <functional>
+        <iostream>
+        <memory>
         <stdexcept>
-        <unordered_map>
         <string>
         <sstream>
-        <fstream>
-        <filesystem>
-        <iostream>
+        <stdexcept>
+        <unordered_map>
         <utility>
+        <vector>
         <glad/glad.h>
         <GLFW/glfw3.h>
         <assimp/Importer.hpp>
@@ -227,7 +229,11 @@ target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
         <glm/gtc/quaternion.hpp>
         <glm/gtc/matrix_transform.hpp>
         <glm/gtc/type_ptr.hpp>
+        <glm/gtx/quaternion.hpp>
         <glm/gtx/string_cast.hpp>
+        <spdlog/spdlog.h>
+        <spdlog/sinks/stdout_color_sinks.h>
+        <voxymorecore_export.hpp>
         )
 
 # Specify installation targets, typology and destination folders.

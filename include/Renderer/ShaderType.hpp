@@ -5,9 +5,6 @@
 #ifndef LEARNOPENGL_SHADERTYPE_HPP
 #define LEARNOPENGL_SHADERTYPE_HPP
 
-#include "glad/glad.h"
-#include <string>
-
 namespace Voxymore::Core::Renderer {
     enum ShaderType {
         COMPUTE_SHADER = GL_COMPUTE_SHADER,

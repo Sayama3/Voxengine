@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <voxymorecore_export.hpp>
-#include <memory>
 #include "Window.hpp"
 
 namespace Voxymore::Core {

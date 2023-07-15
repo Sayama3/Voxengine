@@ -6,8 +6,6 @@
 #define VOXYMORE_APPLICATIONEVENT_HPP
 
 #include "Events/Event.hpp"
-#include <string>
-#include <sstream>
 
 namespace Voxymore::Core::Events {
 

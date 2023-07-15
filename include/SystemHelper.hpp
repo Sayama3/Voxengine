@@ -4,9 +4,6 @@
 
 #ifndef LEARNOPENGL_SYSTEMHELPER_HPP
 #define LEARNOPENGL_SYSTEMHELPER_HPP
-#include <string>
-#include <sstream>
-#include <fstream>
 
 #ifndef BIT
 #define BIT(X) (1 << X)

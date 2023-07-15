@@ -5,21 +5,15 @@
 #ifndef LEARNOPENGL_CAMERA_HPP
 #define LEARNOPENGL_CAMERA_HPP
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-
 namespace Voxymore::Core::Renderer {
 // Default camera values
-    const float YAW = -90.0f;
-    const float PITCH = 0.0f;
-    const float SPEED = 2.5f;
-    const float SENSITIVITY = 0.1f;
-    const float ZOOM = 60.0f;
-    const float NEAR = 0.1f;
-    const float FAR = 100.0f;
+    const float c_YAW = -90.0f;
+    const float c_PITCH = 0.0f;
+    const float c_SPEED = 2.5f;
+    const float c_SENSITIVITY = 0.1f;
+    const float c_ZOOM = 60.0f;
+    const float c_NEAR = 0.1f;
+    const float c_FAR = 100.0f;
 
     class Camera {
     private:
@@ -48,9 +42,8 @@ namespace Voxymore::Core::Renderer {
         float MovementSpeed;
         float MouseSensitivity;
 
-        explicit Camera(glm::vec2 screenSize, glm::vec3 position = {0.0f, 0.0f, 0.0f},
-                        glm::vec3 up = {0.0f, 1.0f, 0.0f}, float yaw = YAW, float pitch = PITCH, float near = NEAR,
-                        float far = FAR);
+        explicit Camera(glm::vec2 _screenSize, glm::vec3 _position = {0.0f, 0.0f, 0.0f},
+                        glm::vec3 _up = {0.0f, 1.0f, 0.0f}, float _yaw = c_YAW, float _pitch = c_PITCH, float _near = c_NEAR, float _far = c_FAR);
 
         void ProcessKeyboard(GLFWwindow *window, double deltaTime);
 

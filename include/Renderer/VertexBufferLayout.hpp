@@ -5,10 +5,6 @@
 #ifndef LEARNOPENGL_VERTEXBUFFERLAYOUT_HPP
 #define LEARNOPENGL_VERTEXBUFFERLAYOUT_HPP
 
-#include <vector>
-#include <stdexcept>
-#include "glad/glad.h"
-#include "glm/glm.hpp"
 #include "OpenGLType.hpp"
 
 

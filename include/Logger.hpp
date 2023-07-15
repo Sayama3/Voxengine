@@ -7,12 +7,6 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <string>
-#include <memory>
-#include "glm/gtx/string_cast.hpp"
-#include "voxymorecore_export.hpp"
-#include "spdlog/spdlog.h"
-
 namespace Voxymore::Core {
 
     class VXM_API Log {

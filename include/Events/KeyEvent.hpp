@@ -7,8 +7,6 @@
 
 #include "VoxymoreCore.hpp"
 #include "Event.hpp"
-#include <string>
-#include <sstream>
 
 namespace Voxymore::Core {
     namespace Events {

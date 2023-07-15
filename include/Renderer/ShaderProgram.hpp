@@ -5,9 +5,6 @@
 #ifndef LEARNOPENGL_SHADERPROGRAM_HPP
 #define LEARNOPENGL_SHADERPROGRAM_HPP
 
-#include <stdexcept>
-#include <unordered_map>
-#include <vector>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"

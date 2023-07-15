@@ -13,6 +13,5 @@
     #define STB_IMAGE_IMPLEMENTATION
 #endif
 
-#include "voxymorecore_export.hpp"
 #include "Application.hpp"
 #include "EntryPoint.hpp"

@@ -6,21 +6,20 @@
 #include "Renderer/GLFWType.hpp"
 
 namespace Voxymore::Core::Renderer {
-    Camera::Camera(glm::vec2 screenSize, glm::vec3 position, glm::vec3 up, float yaw, float pitch, float near,
-                   float far) :
-            Position(position),
+    Camera::Camera(glm::vec2 _screenSize, glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _near, float _far) :
+            Position(_position),
             Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-            Up(up),
+            Up(_up),
             Right(glm::normalize(glm::cross(Front, Up))),
             WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
-            Yaw(yaw),
-            Pitch(pitch),
-            Zoom(ZOOM),
-            Near(near),
-            Far(far),
-            ScreenSize(screenSize),
-            MovementSpeed(SPEED),
-            MouseSensitivity(SENSITIVITY) {
+            Yaw(_yaw),
+            Pitch(_pitch),
+            Zoom(c_ZOOM),
+            Near(_near),
+            Far(_far),
+            ScreenSize(_screenSize),
+            MovementSpeed(c_SPEED),
+            MouseSensitivity(c_SENSITIVITY) {
 
     }
 
@@ -87,8 +86,8 @@ namespace Voxymore::Core::Renderer {
         Zoom -= static_cast<float>(offset.y);
         if (Zoom < 1.0f)
             Zoom = 1.0f;
-        else if (Zoom > ZOOM)
-            Zoom = ZOOM;
+        else if (Zoom > c_ZOOM)
+            Zoom = c_ZOOM;
     }
 
 // calculates the front vector from the Camera's (updated) Euler Angles

@@ -5,7 +5,6 @@
 #ifndef LEARNOPENGL_MESH_HPP
 #define LEARNOPENGL_MESH_HPP
 
-#include <vector>
 #include "Vertex.hpp"
 #include "Texture2D.hpp"
 #include "VertexArrayObject.hpp"
@@ -13,7 +12,6 @@
 #include "ElementBufferObject.hpp"
 #include "VertexBufferLayout.hpp"
 #include "ShaderProgram.hpp"
-#include <memory>
 
 namespace Voxymore::Core::Renderer {
     class Mesh {

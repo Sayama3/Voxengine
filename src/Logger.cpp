@@ -3,10 +3,6 @@
 //
 
 #include "Logger.hpp"
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Voxymore::Core {
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
