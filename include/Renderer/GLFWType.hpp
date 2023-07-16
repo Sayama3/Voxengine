@@ -6,7 +6,7 @@
 #define LEARNOPENGL_GLFWTYPE_HPP
 
 namespace Voxymore::Core::Renderer {
-    enum GLFWKey {
+    enum GLFWKey : int {
 /* The unknown key */
         KEY_UNKNOWN = GLFW_KEY_UNKNOWN,
 
@@ -137,10 +137,10 @@ namespace Voxymore::Core::Renderer {
         KEY_LAST = GLFW_KEY_LAST,
     };
 
-    enum GLFWKeyState {
+    enum GLFWKeyState : int {
         PRESS = GLFW_PRESS,
         RELEASE = GLFW_RELEASE,
-//    REPEAT = GLFW_REPEAT,
+        REPEAT = GLFW_REPEAT,
     };
 }
 #endif //LEARNOPENGL_GLFWTYPE_HPP

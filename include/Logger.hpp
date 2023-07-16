@@ -22,17 +22,49 @@ namespace Voxymore::Core {
 
 }
 
-#define VXM_CORE_TRACE(...)       SPDLOG_LOGGER_TRACE(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
-#define VXM_CORE_INFO(...)        SPDLOG_LOGGER_INFO(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
-#define VXM_CORE_WARNING(...)     SPDLOG_LOGGER_WARNING(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
-#define VXM_CORE_ERROR(...)       SPDLOG_LOGGER_ERROR(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
-#define VXM_CORE_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Voxymore::Core::Log::GetCoreLogger(), __VA_ARGS__)
+#ifdef VXM_DEBUG
+//  spdlog::source_loc(__FILE__, __LINE__, __FUNCTION__ )
+#define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::trace, __VA_ARGS__)
+#define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, __VA_ARGS__)
+#define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::warn, __VA_ARGS__)
+#define VXM_CORE_ERROR(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::err, __VA_ARGS__)
+#define VXM_CORE_CRITICAL(...)    ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::critical, __VA_ARGS__)
 
 
-#define VXM_TRACE(...)       SPDLOG_LOGGER_TRACE(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
-#define VXM_INFO(...)        SPDLOG_LOGGER_INFO(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
-#define VXM_WARNING(...)     SPDLOG_LOGGER_WARNING(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
-#define VXM_ERROR(...)       SPDLOG_LOGGER_ERROR(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
-#define VXM_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Voxymore::Core::Log::GetClientLogger(), __VA_ARGS__)
+#define VXM_TRACE(...)       ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::trace, __VA_ARGS__)
+#define VXM_INFO(...)        ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, __VA_ARGS__)
+#define VXM_WARNING(...)     ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::warn, __VA_ARGS__)
+#define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::err, __VA_ARGS__)
+#define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::critical, __VA_ARGS__)
+
+//#define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->trace(__VA_ARGS__)
+//#define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->info(__VA_ARGS__)
+//#define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
+//#define VXM_CORE_ERROR(...)       ::Voxymore::Core::Log::GetCoreLogger()->error(__VA_ARGS__)
+//#define VXM_CORE_CRITICAL(...)    ::Voxymore::Core::Log::GetCoreLogger()->critical(__VA_ARGS__)
+//
+//
+//#define VXM_TRACE(...)       ::Voxymore::Core::Log::GetClientLogger()->trace(__VA_ARGS__)
+//#define VXM_INFO(...)        ::Voxymore::Core::Log::GetClientLogger()->info(__VA_ARGS__)
+//#define VXM_WARNING(...)     ::Voxymore::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
+//#define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->error(__VA_ARGS__)
+//#define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->critical(__VA_ARGS__)
+
+#else
+
+#define VXM_CORE_TRACE(...)
+#define VXM_CORE_INFO(...)
+#define VXM_CORE_WARNING(...)
+#define VXM_CORE_ERROR(...)
+#define VXM_CORE_CRITICAL(...)
+
+
+#define VXM_TRACE(...)
+#define VXM_INFO(...)
+#define VXM_WARNING(...)
+#define VXM_ERROR(...)
+#define VXM_CRITICAL(...)
+
+#endif
 
 #endif //LEARNOPENGL_LOGGER_HPP

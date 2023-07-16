@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvent.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -13,7 +15,9 @@ namespace Voxymore::Core {
         Application();
         virtual ~Application();
         void Run();
+        void OnEvent(Events::Event& e);
     private:
+        bool OnWindowClose(Events::WindowCloseEvent& e);
         std::unique_ptr<Window> m_Window;
         bool m_Running = true;
     };

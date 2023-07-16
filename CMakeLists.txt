@@ -101,7 +101,7 @@ if(VoxymoreCore_SHARED_BUILD)
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            include/Window.hpp)
+            include/Window.hpp include/Macros.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
@@ -152,8 +152,12 @@ else()
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            include/Window.hpp)
+            include/Window.hpp include/Macros.hpp)
 endif ()
+
+IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
+    add_compile_definitions(VXM_DEBUG)
+ENDIF()
 
 include(GenerateExportHeader)
 generate_export_header(${LIBRARY_TARGET_NAME}
