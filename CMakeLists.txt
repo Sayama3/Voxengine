@@ -161,7 +161,7 @@ generate_export_header(${LIBRARY_TARGET_NAME}
         EXPORT_MACRO_NAME "VXM_API"
         EXPORT_FILE_NAME "export/voxymorecore_export.hpp"
         )
-target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_BINARY_DIR}/export)
+target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/export)
 
 # Within this project, you can link to this library by just specifing the name
 # of the target, i.e. ${LIBRARY_TARGET_NAME} = LibTemplateCMake. It is useful,
