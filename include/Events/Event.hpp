@@ -59,16 +59,27 @@ namespace Voxymore::Core {
         private:
             Event& m_Event;
         public:
-            template<typename T>
-            bool Dispatch(EventFn<T> func) {
+            EventDispatcher(Event& event)
+                    : m_Event(event)
+            {
+            }
+
+            // F is deduced by the compiler
+            template<typename T, typename F>
+            bool Dispatch(const F& func) {
                 if(m_Event.GetEventType() == T::GetStaticType())
                 {
-                    m_Event.m_Handled = func(*(T*)&m_Event);
+                    m_Event.m_Handled = func(static_cast<T&>(m_Event));
                     return true;
                 }
                 return false;
             }
         };
+
+        inline std::ostream& operator<<(std::ostream& os, const Event& e)
+        {
+            return os << e.ToString();
+        }
 
     }
 

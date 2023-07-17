@@ -8,10 +8,11 @@
 #ifndef _USE_MATH_DEFINES
     #define _USE_MATH_DEFINES
 #endif
-
-#ifndef STB_IMAGE_IMPLEMENTATION
-    #define STB_IMAGE_IMPLEMENTATION
-#endif
-
+#include "Macros.hpp"
+#include "Logger.hpp"
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvent.hpp"
+#include "Events/KeyEvent.hpp"
+#include "Events/MouseEvent.hpp"
 #include "Application.hpp"
 #include "EntryPoint.hpp"

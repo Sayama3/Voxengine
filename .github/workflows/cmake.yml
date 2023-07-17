@@ -22,9 +22,10 @@ jobs:
         exclude:
           - os: macos-latest
             compiler: gcc
-# Due to compile error of assimp, I exclude the ubuntu gcc compiler. See if the bug is fixed later on or if I change the library or something else.
-          - os: ubuntu-latest
-            compiler: gcc
+# Removed assimp
+## Due to compile error of assimp, I exclude the ubuntu gcc compiler. See if the bug is fixed later on or if I change the library or something else.
+#          - os: ubuntu-latest
+#            compiler: gcc
         include:
           - os: windows-latest
             compiler: msvc

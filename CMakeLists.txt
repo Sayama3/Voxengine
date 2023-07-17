@@ -26,7 +26,7 @@ set(LIBRARY_TARGET_NAME Core)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-add_compile_definitions(Core_EXPORTS)
+add_compile_definitions(VXM_Core_EXPORTS)
 
 # You can add an external dependency using the find_package() function call
 # See: https://cmake.org/cmake/help/latest/command/find_package.html
@@ -54,106 +54,47 @@ if(VoxymoreCore_SHARED_BUILD)
     add_library(${LIBRARY_TARGET_NAME} SHARED
             # List of CPP (source) library files.
             src/Application.cpp
-            src/Renderer/ElementBufferObject.cpp
-            src/Renderer/VertexBufferObject.cpp
-            src/Renderer/VertexArrayObject.cpp
-            src/Renderer/VertexBufferLayout.cpp
-            src/Renderer/Shader.cpp
-            src/Renderer/ShaderProgram.cpp
-            src/Renderer/Texture2D.cpp
             src/MathHelper.cpp
-            src/Renderer/Cube.cpp
-            src/Renderer/Camera.cpp
-            src/Renderer/LightSource.cpp
             src/Logger.cpp
-            src/Renderer/Models/Model.cpp
-            src/Renderer/Models/Mesh.cpp
             # List of HPP (header) library files.
             include/VoxymoreCore.hpp
             include/Application.hpp
             include/EntryPoint.hpp
-            include/Renderer/AssimpGLMHelpers.hpp
-            include/Renderer/BufferType.hpp
-            include/Renderer/BufferUsage.hpp
-            include/Renderer/Camera.hpp
-            include/Renderer/Cube.hpp
-            include/Renderer/ElementBufferObject.hpp
-            include/Renderer/GLFWType.hpp
-            include/Renderer/LightSource.hpp
             include/Logger.hpp
             include/MathHelper.hpp
-            include/Renderer/Mesh.hpp
-            include/Renderer/Model.hpp
-            include/Renderer/OpenGLType.hpp
-            include/Renderer/Shader.hpp
-            include/Renderer/ShaderProgram.hpp
-            include/Renderer/ShaderType.hpp
             include/stb_image.h
             include/SystemHelper.hpp
-            include/Renderer/Texture2D.hpp
-            include/Renderer/TextureEnums.hpp
-            include/Renderer/Vertex.hpp
-            include/Renderer/VertexArrayObject.hpp
-            include/Renderer/VertexBufferLayout.hpp
-            include/Renderer/VertexBufferObject.hpp
-            include/Renderer/OpenGLHelper.hpp
             include/Events/Event.hpp
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            include/Window.hpp)
+            include/Window.hpp
+            include/Macros.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
-            src/Renderer/ElementBufferObject.cpp
-            src/Renderer/VertexBufferObject.cpp
-            src/Renderer/VertexArrayObject.cpp
-            src/Renderer/VertexBufferLayout.cpp
-            src/Renderer/Shader.cpp
-            src/Renderer/ShaderProgram.cpp
-            src/Renderer/Texture2D.cpp
             src/MathHelper.cpp
-            src/Renderer/Cube.cpp
-            src/Renderer/Camera.cpp
-            src/Renderer/LightSource.cpp
             src/Logger.cpp
-            src/Renderer/Models/Model.cpp
-            src/Renderer/Models/Mesh.cpp
             # List of HPP (header) library files.
             include/VoxymoreCore.hpp
             include/Application.hpp
             include/EntryPoint.hpp
-            include/Renderer/AssimpGLMHelpers.hpp
-            include/Renderer/BufferType.hpp
-            include/Renderer/BufferUsage.hpp
-            include/Renderer/Camera.hpp
-            include/Renderer/Cube.hpp
-            include/Renderer/ElementBufferObject.hpp
-            include/Renderer/GLFWType.hpp
-            include/Renderer/LightSource.hpp
             include/Logger.hpp
             include/MathHelper.hpp
-            include/Renderer/Mesh.hpp
-            include/Renderer/Model.hpp
-            include/Renderer/OpenGLType.hpp
-            include/Renderer/Shader.hpp
-            include/Renderer/ShaderProgram.hpp
-            include/Renderer/ShaderType.hpp
             include/stb_image.h
             include/SystemHelper.hpp
-            include/Renderer/Texture2D.hpp
-            include/Renderer/TextureEnums.hpp
-            include/Renderer/Vertex.hpp
-            include/Renderer/VertexArrayObject.hpp
-            include/Renderer/VertexBufferLayout.hpp
-            include/Renderer/VertexBufferObject.hpp
-            include/Renderer/OpenGLHelper.hpp
             include/Events/Event.hpp
             include/Events/KeyEvent.hpp
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
-            include/Window.hpp)
+            include/Window.hpp
+            include/Macros.hpp
+            )
 endif ()
+
+IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
+    add_compile_definitions(VXM_DEBUG)
+ENDIF()
 
 include(GenerateExportHeader)
 generate_export_header(${LIBRARY_TARGET_NAME}
@@ -198,11 +139,11 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 # - with imported target:
 #   target_link_libraries(${LIBRARY_TARGET_NAME} FooPackage_LIBRARIES::FooPackage_LIBRARIES)
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only assimp)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glfw)
 
 target_precompile_headers(${LIBRARY_TARGET_NAME}
-        PRIVATE
+        PUBLIC
         <array>
         <cstdint>
         <filesystem>
@@ -218,21 +159,12 @@ target_precompile_headers(${LIBRARY_TARGET_NAME}
         <utility>
         <vector>
         <glad/glad.h>
-        <GLFW/glfw3.h>
-        <assimp/Importer.hpp>
-        <assimp/scene.h>
-        <assimp/postprocess.h>
-        <assimp/quaternion.h>
-        <assimp/vector3.h>
-        <assimp/matrix4x4.h>
         <glm/glm.hpp>
         <glm/gtc/quaternion.hpp>
         <glm/gtc/matrix_transform.hpp>
         <glm/gtc/type_ptr.hpp>
         <glm/gtx/quaternion.hpp>
         <glm/gtx/string_cast.hpp>
-        <spdlog/spdlog.h>
-        <spdlog/sinks/stdout_color_sinks.h>
         <voxymorecore_export.hpp>
         )
 
