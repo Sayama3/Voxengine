@@ -20,7 +20,7 @@ namespace Voxymore::Core {
             int m_KeyCode;
         };
 
-        class VXM_API KeyPressedEvent : public KeyEvent {
+        class KeyPressedEvent : public KeyEvent {
         public:
             KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 

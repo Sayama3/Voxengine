@@ -129,9 +129,6 @@ namespace Voxymore::Core {
                     break;
                 }
             }
-
-            Events::WindowCloseEvent event;
-            data.EventCallback(event);
         });
 
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset){
