@@ -139,8 +139,8 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 # - with imported target:
 #   target_link_libraries(${LIBRARY_TARGET_NAME} FooPackage_LIBRARIES::FooPackage_LIBRARIES)
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw spdlog::spdlog_header_only)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glfw)
 
 target_precompile_headers(${LIBRARY_TARGET_NAME}
         PUBLIC
@@ -158,6 +158,7 @@ target_precompile_headers(${LIBRARY_TARGET_NAME}
         <unordered_map>
         <utility>
         <vector>
+        <glad/glad.h>
         <glm/glm.hpp>
         <glm/gtc/quaternion.hpp>
         <glm/gtc/matrix_transform.hpp>
@@ -165,8 +166,6 @@ target_precompile_headers(${LIBRARY_TARGET_NAME}
         <glm/gtx/quaternion.hpp>
         <glm/gtx/string_cast.hpp>
         <voxymorecore_export.hpp>
-        <glad/glad.h>
-        <GLFW/glfw3.h>
         )
 
 # Specify installation targets, typology and destination folders.
