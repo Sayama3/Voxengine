@@ -164,8 +164,6 @@ target_precompile_headers(${LIBRARY_TARGET_NAME}
         <glm/gtc/type_ptr.hpp>
         <glm/gtx/quaternion.hpp>
         <glm/gtx/string_cast.hpp>
-        <spdlog/spdlog.h>
-        <spdlog/sinks/stdout_color_sinks.h>
         <voxymorecore_export.hpp>
         <glad/glad.h>
         <GLFW/glfw3.h>
