@@ -7,10 +7,15 @@
 #include "Events/ApplicationEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Events/KeyEvent.hpp"
-#include "Renderer/GLFWType.hpp"
 
 
 namespace Voxymore::Core {
+    enum GLFWKeyState : int {
+        PRESS = GLFW_PRESS,
+        RELEASE = GLFW_RELEASE,
+        REPEAT = GLFW_REPEAT,
+    };
+
     static bool s_GLFWInitialized = false;
     static void GLFWErrorCallback(int error_code, const char* description){
         VXM_CORE_ERROR("GLFW Error ({0}): {1}", error_code, description);
@@ -83,20 +88,20 @@ namespace Voxymore::Core {
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
 
-            switch ((Renderer::GLFWKeyState)action) {
-                case Renderer::PRESS:
+            switch ((GLFWKeyState)action) {
+                case GLFWKeyState::PRESS:
                 {
                     Events::KeyPressedEvent event(key, 0);
                     data.EventCallback(event);
                     break;
                 }
-                case Renderer::RELEASE:
+                case GLFWKeyState::RELEASE:
                 {
                     Events::KeyReleasedEvent event(key);
                     data.EventCallback(event);
                     break;
                 }
-                case Renderer::REPEAT:
+                case GLFWKeyState::REPEAT:
                 {
                     // Can be extract if we want the number of repeat/
                     Events::KeyPressedEvent event(key, 1);
@@ -110,14 +115,14 @@ namespace Voxymore::Core {
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
 
-            switch ((Renderer::GLFWKeyState)action) {
-                case Renderer::PRESS:
+            switch ((GLFWKeyState)action) {
+                case GLFWKeyState::PRESS:
                 {
                     Events::MouseButtonPressedEvent event(button);
                     data.EventCallback(event);
                     break;
                 }
-                case Renderer::RELEASE:
+                case GLFWKeyState::RELEASE:
                 {
                     Events::MouseButtonReleasedEvent event(button);
                     data.EventCallback(event);
