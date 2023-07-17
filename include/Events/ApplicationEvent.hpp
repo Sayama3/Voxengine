@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core::Events {
 
-    class WindowResizeEvent : public Event
+    class VXM_API WindowResizeEvent : public Event
     {
     public:
         WindowResizeEvent(unsigned int width, unsigned int height)
@@ -31,7 +31,7 @@ namespace Voxymore::Core::Events {
         unsigned int m_Width, m_Height;
     };
 
-    class WindowCloseEvent : public Event
+    class VXM_API WindowCloseEvent : public Event
     {
     public:
         WindowCloseEvent() = default;
@@ -40,7 +40,7 @@ namespace Voxymore::Core::Events {
         EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
     };
 
-    class AppTickEvent : public Event
+    class VXM_API AppTickEvent : public Event
     {
     public:
         AppTickEvent() = default;
@@ -49,7 +49,7 @@ namespace Voxymore::Core::Events {
         EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
     };
 
-    class AppUpdateEvent : public Event
+    class VXM_API AppUpdateEvent : public Event
     {
     public:
         AppUpdateEvent() = default;
@@ -58,7 +58,7 @@ namespace Voxymore::Core::Events {
         EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
     };
 
-    class AppRenderEvent : public Event
+    class VXM_API AppRenderEvent : public Event
     {
     public:
         AppRenderEvent() = default;

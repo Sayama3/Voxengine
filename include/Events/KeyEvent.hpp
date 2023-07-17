@@ -10,22 +10,22 @@
 
 namespace Voxymore::Core {
     namespace Events {
-        class KeyEvent : public Event {
+        class VXM_API KeyEvent : public Event {
         public:
             inline int GetKeyCode() const { return m_KeyCode; }
             EVENT_CLASS_CATEGORY(EventCategory::EventCategoryInput | EventCategory::EventCategoryKeyboard)
         protected:
-            KeyEvent(int keycode) : m_KeyCode(keycode) {}
+            inline KeyEvent(int keycode) : m_KeyCode(keycode) {}
 
             int m_KeyCode;
         };
 
-        class KeyPressedEvent : public KeyEvent {
+        class VXM_API KeyPressedEvent : public KeyEvent {
         public:
             KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
             inline int GetRepeatCount() const { return m_RepeatCount; }
-            std::string ToString() const override
+            inline std::string ToString() const override
             {
                 std::stringstream ss;
                 ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
@@ -38,12 +38,12 @@ namespace Voxymore::Core {
             int m_RepeatCount;
         };
 
-        class KeyReleasedEvent : public KeyEvent
+        class VXM_API KeyReleasedEvent : public KeyEvent
         {
         public:
             KeyReleasedEvent(const int keycode) : KeyEvent(keycode) {}
 
-            std::string ToString() const override
+            inline std::string ToString() const override
             {
                 std::stringstream ss;
                 ss << "KeyReleasedEvent: " << m_KeyCode;

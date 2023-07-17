@@ -93,7 +93,8 @@ else()
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
-    add_compile_definitions(VXM_DEBUG)
+    add_compile_definitions(VXM_Debug)
+    add_compile_definitions(Debug)
 ENDIF()
 
 include(GenerateExportHeader)

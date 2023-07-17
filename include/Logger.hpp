@@ -5,7 +5,9 @@
 #ifndef LEARNOPENGL_LOGGER_HPP
 #define LEARNOPENGL_LOGGER_HPP
 
+#ifndef SPDLOG_ACTIVE_LEVEL
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#endif
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -25,7 +27,7 @@ namespace Voxymore::Core {
 
 }
 
-#ifdef VXM_DEBUG
+#if DEBUG || Debug || VXM_Debug
 //  spdlog::source_loc(__FILE__, __LINE__, __FUNCTION__ )
 #define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::trace, __VA_ARGS__)
 #define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, __VA_ARGS__)
