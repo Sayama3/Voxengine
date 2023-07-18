@@ -41,6 +41,10 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
+            //TODO: Remove this, need to be abstract.
+            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0,0,0,0);
+
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
             }
