@@ -7,7 +7,7 @@
 
 #include "Events/Event.hpp"
 
-namespace Voxymore::Core::Events {
+namespace Voxymore::Core {
 
     class VXM_API MouseMovedEvent : public Event
     {

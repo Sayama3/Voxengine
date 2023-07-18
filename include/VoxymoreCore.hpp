@@ -9,10 +9,12 @@
     #define _USE_MATH_DEFINES
 #endif
 #include "Macros.hpp"
-#include "Logger.hpp"
 #include "Application.hpp"
-#include "Events/Event.hpp"
-#include "Events/ApplicationEvent.hpp"
-#include "Events/KeyEvent.hpp"
-#include "Events/MouseEvent.hpp"
+#include "Logger.hpp"
+#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#endif
+#include "ImGUI/ImGUILayer.hpp"
+
+
 #include "EntryPoint.hpp"

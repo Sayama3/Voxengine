@@ -7,6 +7,7 @@
 #include "Events/ApplicationEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Events/KeyEvent.hpp"
+#include "Logger.hpp"
 
 
 namespace Voxymore::Core {
@@ -71,7 +72,7 @@ namespace Voxymore::Core {
             data.Width = width;
             data.Height = height;
 
-            Events::WindowResizeEvent event(width, height);
+            WindowResizeEvent event(width, height);
             data.EventCallback(event);
         });
 
@@ -79,7 +80,7 @@ namespace Voxymore::Core {
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
 
-            Events::WindowCloseEvent event;
+            WindowCloseEvent event;
             data.EventCallback(event);
         });
 //        Parameters
@@ -95,24 +96,31 @@ namespace Voxymore::Core {
             switch ((GLFWKeyState)action) {
                 case GLFWKeyState::PRESS:
                 {
-                    Events::KeyPressedEvent event(key, 0);
+                    KeyPressedEvent event(key, 0);
                     data.EventCallback(event);
                     break;
                 }
                 case GLFWKeyState::RELEASE:
                 {
-                    Events::KeyReleasedEvent event(key);
+                    KeyReleasedEvent event(key);
                     data.EventCallback(event);
                     break;
                 }
                 case GLFWKeyState::REPEAT:
                 {
                     // Can be extract if we want the number of repeat/
-                    Events::KeyPressedEvent event(key, 1);
+                    KeyPressedEvent event(key, 1);
                     data.EventCallback(event);
                     break;
                 }
             }
+        });
+
+        glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint){
+            DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
+
+            KeyTypedEvent event(codepoint);
+            data.EventCallback(event);
         });
 
         glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
@@ -122,13 +130,13 @@ namespace Voxymore::Core {
             switch ((GLFWKeyState)action) {
                 case GLFWKeyState::PRESS:
                 {
-                    Events::MouseButtonPressedEvent event(button);
+                    MouseButtonPressedEvent event(button);
                     data.EventCallback(event);
                     break;
                 }
                 case GLFWKeyState::RELEASE:
                 {
-                    Events::MouseButtonReleasedEvent event(button);
+                    MouseButtonReleasedEvent event(button);
                     data.EventCallback(event);
                     break;
                 }
@@ -138,14 +146,14 @@ namespace Voxymore::Core {
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset){
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
 
-            Events::MouseScrolledEvent event(static_cast<float>(xoffset), static_cast<float>(yoffset));
+            MouseScrolledEvent event(static_cast<float>(xoffset), static_cast<float>(yoffset));
             data.EventCallback(event);
         });
 
         glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos){
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
 
-            Events::MouseMovedEvent event(static_cast<float>(xpos), static_cast<float>(ypos));
+            MouseMovedEvent event(static_cast<float>(xpos), static_cast<float>(ypos));
             data.EventCallback(event);
         });
 

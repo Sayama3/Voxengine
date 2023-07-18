@@ -4,7 +4,7 @@
 
 #include "Layers/Layer.hpp"
 
-namespace Voxymore::Core::Layers {
+namespace Voxymore::Core {
     Layer::Layer(const std::string& name) : m_DebugName(name) {
 
     }

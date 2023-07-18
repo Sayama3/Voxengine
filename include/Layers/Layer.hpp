@@ -8,7 +8,7 @@
 
 // We shouldn't search layer by name!!
 
-namespace Voxymore::Core::Layers {
+namespace Voxymore::Core {
     class VXM_API Layer {
     public:
         Layer(const std::string& name = "Layer");
@@ -17,7 +17,7 @@ namespace Voxymore::Core::Layers {
         virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void OnUpdate() {}
-        virtual void OnEvent(Events::Event& event) {}
+        virtual void OnEvent(Event& event) {}
 
         inline const std::string& GetName() const { return m_DebugName; }
     protected:

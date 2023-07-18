@@ -11,13 +11,12 @@
 #endif
 
 namespace Voxymore::Core {
-    namespace Events {
 
         enum class EventType : int {
             None = 0,
             WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
             AppTick, AppUpdate, AppRender,
-            KeyPressed, KeyReleased,
+            KeyPressed, KeyReleased, KeyTyped,
             MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
         };
 
@@ -80,6 +79,6 @@ namespace Voxymore::Core {
             return os << e.ToString();
         }
 
-    }
+
 
 } // Events

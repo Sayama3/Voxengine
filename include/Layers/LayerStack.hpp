@@ -6,7 +6,7 @@
 
 #include "Layer.hpp"
 
-namespace Voxymore::Core::Layers {
+namespace Voxymore::Core {
 
     class VXM_API LayerStack {
     public:

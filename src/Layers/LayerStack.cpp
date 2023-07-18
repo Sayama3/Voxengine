@@ -4,7 +4,7 @@
 
 #include "Layers/LayerStack.hpp"
 
-namespace Voxymore::Core::Layers {
+namespace Voxymore::Core {
     LayerStack::LayerStack() {
         m_LayerInsert = m_Layers.begin();
     }

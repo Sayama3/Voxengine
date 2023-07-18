@@ -4,20 +4,28 @@
 
 #include "VoxymoreCore.hpp"
 #include "Application.hpp"
+#include "Logger.hpp"
 
 
 namespace Voxymore::Core {
+    Application* Application::s_Instance = nullptr;
     Application::Application() {
+        if(s_Instance != nullptr){
+            VXM_CORE_ERROR("There should only be one application.");
+        }
+
+        s_Instance = this;
+
         m_Window = std::unique_ptr<Window>(Window::Create());
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
     }
 
     Application::~Application() {
 
     }
-    void Application::OnEvent(Events::Event& e){
-        Events::EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<Events::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+    void Application::OnEvent(Event& e){
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose, std::placeholders::_1));
 
         VXM_CORE_INFO(e.ToString());
 
@@ -33,7 +41,7 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
-            for (Layers::Layer* layer : m_LayerStack) {
+            for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
             }
 
@@ -41,16 +49,18 @@ namespace Voxymore::Core {
         }
     }
 
-    bool Application::OnWindowClose(Events::WindowCloseEvent &e) {
+    bool Application::OnWindowClose(WindowCloseEvent &e) {
         m_Running = false;
         return true;
     }
 
-    void Application::PushLayer(Layers::Layer *layer) {
+    void Application::PushLayer(Layer *layer) {
         m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
-    void Application::PushOverlay(Layers::Layer *overlay) {
+    void Application::PushOverlay(Layer *overlay) {
         m_LayerStack.PushOverlay(overlay);
+        overlay->OnAttach();
     }
 } // Core
