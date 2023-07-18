@@ -141,7 +141,7 @@ namespace Voxymore::Core {
         io.KeyMap[ImGuiKey_F11] = GLFW_KEY_F11;
         io.KeyMap[ImGuiKey_F12] = GLFW_KEY_F12;
 
-        ImGui_ImplOpenGL3_Init("#version #410");
+        ImGui_ImplOpenGL3_Init("#version 410");
     }
 
     void ImGUILayer::OnDetach() {
