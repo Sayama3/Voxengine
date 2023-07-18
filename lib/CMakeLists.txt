@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(VoxymoreCore)
-
 add_subdirectory(glad)
 
 add_subdirectory(glfw)
