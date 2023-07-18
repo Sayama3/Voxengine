@@ -56,6 +56,10 @@ namespace Voxymore::Core {
                 nullptr
         );
         glfwMakeContextCurrent(m_Window);
+
+        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        VXM_CORE_INFO("glad loading status: {0}", status);
+
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
