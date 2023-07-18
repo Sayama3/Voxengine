@@ -6,6 +6,7 @@
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvent.hpp"
+#include "Layers/LayerStack.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -14,12 +15,18 @@ namespace Voxymore::Core {
     public:
         Application();
         virtual ~Application();
+
         void Run();
+
         void OnEvent(Events::Event& e);
+
+        void PushLayer(Layers::Layer* layer);
+        void PushOverlay(Layers::Layer* overlay);
     private:
         bool OnWindowClose(Events::WindowCloseEvent& e);
         std::unique_ptr<Window> m_Window;
         bool m_Running = true;
+        Layers::LayerStack m_LayerStack;
     };
 
 } // Core

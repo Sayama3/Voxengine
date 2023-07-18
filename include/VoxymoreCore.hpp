@@ -10,9 +10,9 @@
 #endif
 #include "Macros.hpp"
 #include "Logger.hpp"
+#include "Application.hpp"
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvent.hpp"
 #include "Events/KeyEvent.hpp"
 #include "Events/MouseEvent.hpp"
-#include "Application.hpp"
 #include "EntryPoint.hpp"

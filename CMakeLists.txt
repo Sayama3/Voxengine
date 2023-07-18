@@ -69,7 +69,11 @@ if(VoxymoreCore_SHARED_BUILD)
             include/Events/MouseEvent.hpp
             include/Events/ApplicationEvent.hpp
             include/Window.hpp
-            include/Macros.hpp)
+            include/Macros.hpp
+            src/Layers/Layer.cpp
+            include/Layers/Layer.hpp
+            src/Layers/LayerStack.cpp
+            include/Layers/LayerStack.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
@@ -89,7 +93,10 @@ else()
             include/Events/ApplicationEvent.hpp
             include/Window.hpp
             include/Macros.hpp
-            )
+            src/Layers/Layer.cpp
+            include/Layers/Layer.hpp
+            src/Layers/LayerStack.cpp
+            include/Layers/LayerStack.hpp)
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
@@ -97,12 +104,16 @@ IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
     add_compile_definitions(Debug)
 ENDIF()
 
+set_property(TARGET ${LIBRARY_TARGET_NAME} PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+
 include(GenerateExportHeader)
 generate_export_header(${LIBRARY_TARGET_NAME}
         BASE_NAME "VoxymoreCore"
         EXPORT_MACRO_NAME "VXM_API"
         EXPORT_FILE_NAME "export/voxymorecore_export.hpp"
         )
+
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/export)
 
 # Within this project, you can link to this library by just specifing the name
