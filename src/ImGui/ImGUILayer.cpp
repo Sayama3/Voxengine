@@ -215,7 +215,8 @@ namespace Voxymore::Core {
 
     bool ImGUILayer::OnKeyPressedEvent(KeyPressedEvent &e) {
         ImGuiIO& io = ImGui::GetIO();
-        io.KeyMap[e.GetKeyCode()] = true;
+        io.KeysDown[e.GetKeyCode()] = true;
+
         io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
         io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
         io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
@@ -226,7 +227,7 @@ namespace Voxymore::Core {
 
     bool ImGUILayer::OnKeyReleasedEvent(KeyReleasedEvent &e) {
         ImGuiIO& io = ImGui::GetIO();
-        io.KeyMap[e.GetKeyCode()] = false;
+        io.KeysDown[e.GetKeyCode()] = false;
 
         return false;
     }
