@@ -9,7 +9,6 @@
 #include "Event.hpp"
 
 namespace Voxymore::Core {
-    namespace Events {
         class VXM_API KeyEvent : public Event {
         public:
             inline int GetKeyCode() const { return m_KeyCode; }
@@ -52,7 +51,7 @@ namespace Voxymore::Core {
 
             EVENT_CLASS_TYPE(EventType::KeyReleased)
         };
-    }
+
 }
 
 #endif //VOXYMORE_KEYEVENT_HPP

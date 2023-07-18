@@ -27,7 +27,7 @@ namespace Voxymore::Core {
     class VXM_API Window
     {
     public:
-        using EventCallBackFn = std::function<void(Voxymore::Core::Events::Event&)>;
+        using EventCallBackFn = std::function<void(Voxymore::Core::Event&)>;
 
         virtual ~Window() {}
 

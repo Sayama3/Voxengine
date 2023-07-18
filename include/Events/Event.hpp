@@ -11,7 +11,6 @@
 #endif
 
 namespace Voxymore::Core {
-    namespace Events {
 
         enum class EventType : int {
             None = 0,
@@ -80,6 +79,6 @@ namespace Voxymore::Core {
             return os << e.ToString();
         }
 
-    }
+
 
 } // Events

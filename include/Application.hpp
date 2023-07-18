@@ -18,15 +18,19 @@ namespace Voxymore::Core {
 
         void Run();
 
-        void OnEvent(Events::Event& e);
+        void OnEvent(Event& e);
 
-        void PushLayer(Layers::Layer* layer);
-        void PushOverlay(Layers::Layer* overlay);
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
+
+        inline static Application& Get() {return *s_Instance; }
+        inline const Window& GetWindow() const { return *m_Window; }
     private:
-        bool OnWindowClose(Events::WindowCloseEvent& e);
+        bool OnWindowClose(WindowCloseEvent& e);
         std::unique_ptr<Window> m_Window;
         bool m_Running = true;
-        Layers::LayerStack m_LayerStack;
+        LayerStack m_LayerStack;
+        static Application* s_Instance;
     };
 
 } // Core

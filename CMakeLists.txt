@@ -73,7 +73,7 @@ if(VoxymoreCore_SHARED_BUILD)
             src/Layers/Layer.cpp
             include/Layers/Layer.hpp
             src/Layers/LayerStack.cpp
-            include/Layers/LayerStack.hpp)
+            include/Layers/LayerStack.hpp include/ImGUI/ImGUILayer.cpp include/ImGUI/ImGUILayer.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
@@ -96,7 +96,7 @@ else()
             src/Layers/Layer.cpp
             include/Layers/Layer.hpp
             src/Layers/LayerStack.cpp
-            include/Layers/LayerStack.hpp)
+            include/Layers/LayerStack.hpp include/ImGUI/ImGUILayer.cpp include/ImGUI/ImGUILayer.hpp)
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
@@ -151,7 +151,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 # - with imported target:
 #   target_link_libraries(${LIBRARY_TARGET_NAME} FooPackage_LIBRARIES::FooPackage_LIBRARIES)
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only imgui)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glfw)
 
 target_precompile_headers(${LIBRARY_TARGET_NAME}
