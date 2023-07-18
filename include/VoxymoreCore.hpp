@@ -8,12 +8,12 @@
 #ifndef _USE_MATH_DEFINES
     #define _USE_MATH_DEFINES
 #endif
+#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+    #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
+#endif
 #include "Macros.hpp"
 #include "Application.hpp"
 #include "Logger.hpp"
-#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#endif
 #include "ImGUI/ImGUILayer.hpp"
 
 

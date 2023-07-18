@@ -12,7 +12,7 @@ namespace Voxymore::Core {
     extern Voxymore::Core::Application* CreateApplication();
 }
 
-#ifndef VXM_Core_EXPORTS
+//#ifndef VXM_Core_EXPORTS
 int main(int argc, char** argv)
 {
     Voxymore::Core::Log::Init();
@@ -23,6 +23,6 @@ int main(int argc, char** argv)
 
     return 0;
 }
-#endif
+//#endif
 
 #endif //VOXYMORE_ENTRYPOINT_HPP

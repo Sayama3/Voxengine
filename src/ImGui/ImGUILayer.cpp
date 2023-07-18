@@ -150,8 +150,8 @@ namespace Voxymore::Core {
 
     void ImGUILayer::OnUpdate() {
 
-        const auto& application = Application::Get();
-        const auto& window = application.GetWindow();
+        auto& application = Application::Get();
+        auto& window = application.GetWindow();
 
         auto& io = ImGui::GetIO();
         io.DisplaySize = ImVec2(window.GetWidth(), window.GetHeight());

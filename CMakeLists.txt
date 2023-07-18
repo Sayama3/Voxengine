@@ -75,7 +75,7 @@ if(VoxymoreCore_SHARED_BUILD)
             src/Layers/LayerStack.cpp
             include/Layers/LayerStack.hpp
             src/ImGui/ImGUILayer.cpp
-            include/ImGUI/ImGUILayer.hpp)
+            include/ImGUI/ImGUILayer.hpp include/Input.hpp platform/other/DefaultInput.cpp platform/other/DefaultInput.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
@@ -100,7 +100,7 @@ else()
             src/Layers/LayerStack.cpp
             include/Layers/LayerStack.hpp
             src/ImGui/ImGUILayer.cpp
-            include/ImGUI/ImGUILayer.hpp)
+            include/ImGUI/ImGUILayer.hpp include/Input.hpp platform/other/DefaultInput.cpp platform/other/DefaultInput.hpp)
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
