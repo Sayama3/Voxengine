@@ -11,7 +11,7 @@ namespace Voxymore::Core {
     void Log::Init()
     {
         // Setting Pattern
-        spdlog::set_pattern("%^[%T] [%l] %n (%g:%#->%!): %v%$");
+        spdlog::set_pattern("%^[%T] [%l] %n (%s:%#->%!): %v%$");
 
         // Creating core logger
         s_CoreLogger = spdlog::stdout_color_mt("VOXYMORE");
