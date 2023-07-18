@@ -5,7 +5,6 @@
 #ifndef VOXYMORE_KEYEVENT_HPP
 #define VOXYMORE_KEYEVENT_HPP
 
-#include "VoxymoreCore.hpp"
 #include "Event.hpp"
 
 namespace Voxymore::Core {
@@ -50,6 +49,21 @@ namespace Voxymore::Core {
             }
 
             EVENT_CLASS_TYPE(EventType::KeyReleased)
+        };
+
+        class VXM_API KeyTypedEvent : public KeyEvent
+        {
+        public:
+            KeyTypedEvent(const int keycode) : KeyEvent(keycode) {}
+
+            inline std::string ToString() const override
+            {
+                std::stringstream ss;
+                ss << "KeyTypedEvent: " << m_KeyCode;
+                return ss.str();
+            }
+
+            EVENT_CLASS_TYPE(EventType::KeyTyped)
         };
 
 }

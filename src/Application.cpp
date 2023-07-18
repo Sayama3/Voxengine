@@ -17,7 +17,7 @@ namespace Voxymore::Core {
         s_Instance = this;
 
         m_Window = std::unique_ptr<Window>(Window::Create());
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
     }
 
     Application::~Application() {
@@ -25,7 +25,7 @@ namespace Voxymore::Core {
     }
     void Application::OnEvent(Event& e){
         EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose, std::placeholders::_1));
 
         VXM_CORE_INFO(e.ToString());
 

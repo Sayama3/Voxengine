@@ -15,6 +15,7 @@
 #endif
 
 //#define BIND_EVENT_FN(x) [this](auto && PH1) { x(std::forward<decltype(PH1)>(PH1)); }
-#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+#define BIND_EVENT_FN(func, ...)	std::bind(&func, this, __VA_ARGS__)
+//#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
 #endif //VOXYMORE_MACROS_HPP

@@ -7,6 +7,7 @@
 #include "Events/ApplicationEvent.hpp"
 #include "Events/MouseEvent.hpp"
 #include "Events/KeyEvent.hpp"
+#include "Logger.hpp"
 
 
 namespace Voxymore::Core {
@@ -113,6 +114,13 @@ namespace Voxymore::Core {
                     break;
                 }
             }
+        });
+
+        glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint){
+            DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
+
+            KeyTypedEvent event(codepoint);
+            data.EventCallback(event);
         });
 
         glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)

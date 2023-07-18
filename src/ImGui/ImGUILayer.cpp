@@ -2,13 +2,20 @@
 // Created by ianpo on 18/07/2023.
 //
 
-#include "ImGUILayer.hpp"
+#include "ImGUI/ImGUILayer.hpp"
+
+#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
+#endif
+
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "Application.hpp"
 
+#include "Macros.hpp"
+
 //TODO: Remove, it's temporary.
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
@@ -27,7 +34,7 @@ namespace Voxymore::Core {
         io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
         io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-        // TEMPORARY, should use my own keycodes...
+        //TODO: TEMPORARY, should use my own keycodes...
         io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
         io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
         io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
@@ -164,6 +171,84 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnEvent(Event &event) {
+        EventDispatcher dispatcher(event);
 
+        dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(ImGUILayer::OnMouseMovedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(ImGUILayer::OnMouseScrolledEvent, std::placeholders::_1));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(ImGUILayer::OnMouseButtonPressedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(ImGUILayer::OnMouseButtonReleasedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImGUILayer::OnKeyPressedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(ImGUILayer::OnKeyReleasedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<KeyTypedEvent>(BIND_EVENT_FN(ImGUILayer::OnKeyTypedEvent, std::placeholders::_1));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(ImGUILayer::OnWindowResizeEvent, std::placeholders::_1));
+
+    }
+
+    bool ImGUILayer::OnMouseMovedEvent(MouseMovedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MousePos = ImVec2(e.GetX(), e.GetY());
+
+        return false;
+    }
+
+    bool ImGUILayer::OnMouseScrolledEvent(MouseScrolledEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseWheel += e.GetYOffset();
+        io.MouseWheelH += e.GetXOffset();
+
+        return false;
+    }
+
+    bool ImGUILayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseDown[e.GetMouseButton()] = true;
+
+        return false;
+    }
+
+    bool ImGUILayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseDown[e.GetMouseButton()] = false;
+
+        return false;
+    }
+
+    bool ImGUILayer::OnKeyPressedEvent(KeyPressedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.KeyMap[e.GetKeyCode()] = true;
+        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+
+        return false;
+    }
+
+    bool ImGUILayer::OnKeyReleasedEvent(KeyReleasedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.KeyMap[e.GetKeyCode()] = false;
+
+        return false;
+    }
+
+
+    bool ImGUILayer::OnKeyTypedEvent(KeyTypedEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        int keycode = e.GetKeyCode();
+        if(keycode > 0 && keycode < 0x10000){
+            io.AddInputCharacter((unsigned int)e.GetKeyCode());
+        }
+
+        return false;
+    }
+
+    bool ImGUILayer::OnWindowResizeEvent(WindowResizeEvent &e) {
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize = ImVec2(static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()));
+        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+        //TODO: Shouldn't be done this way...
+        glViewport(0, 0, e.GetWidth(), e.GetHeight());
+
+        return false;
     }
 } // Core
