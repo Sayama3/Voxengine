@@ -43,7 +43,8 @@ namespace Voxymore::Core {
         {
             //TODO: Remove this, need to be abstract.
             glClear(GL_COLOR_BUFFER_BIT);
-            glClearColor(0,0,0,0);
+            // Softer color.
+            glClearColor(0.9921568627450980392156862745098,0.73725490196078431372549019607843,0.36862745098039215686274509803922,1);
 
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
