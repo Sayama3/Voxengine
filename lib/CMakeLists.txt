@@ -8,6 +8,7 @@ add_subdirectory(glm)
 
 add_subdirectory(spdlog)
 
-#set(IMGUI_GLFW ON)
+set(IMGUI_CUSTOM_LOADER ON)
+set(IMGUI_GLFW ON)
 set(IMGUI_OPENGL3 ON)
 add_subdirectory(imgui)

@@ -10,3 +10,4 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/Sayama3/imgui
+	branch = docking
