@@ -5,6 +5,7 @@
 #ifndef LEARNOPENGL_MATHHELPER_HPP
 #define LEARNOPENGL_MATHHELPER_HPP
 
+#include <Voxymore/Core.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
