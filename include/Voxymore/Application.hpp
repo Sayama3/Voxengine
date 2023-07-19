@@ -10,6 +10,7 @@
 #include "Voxymore/Layers/LayerStack.hpp"
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Window.hpp"
+#include "Voxymore/Renderer/ShaderProgram.hpp"
 
 namespace Voxymore::Core {
 
@@ -35,6 +36,7 @@ namespace Voxymore::Core {
         LayerStack m_LayerStack;
         static Application* s_Instance;
 
+        std::unique_ptr<ShaderProgram> m_ShaderProgram;
         unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
     };
 

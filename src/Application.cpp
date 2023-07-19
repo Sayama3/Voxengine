@@ -5,7 +5,8 @@
 #include "Voxymore/Application.hpp"
 #include "Voxymore/Macros.hpp"
 #include "Voxymore/Logger.hpp"
-#include <Voxymore/Core.hpp>
+#include "Voxymore/Core.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
 
 //TODO: Remove later as it should be abstracted.
 #include <glad/glad.h>
@@ -50,6 +51,31 @@ namespace Voxymore::Core {
                 1,
         };
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index) , index, GL_STATIC_DRAW);
+
+        std::string vertexSrc = R"(
+            #version 330 core
+
+            layout(location = 0) in vec3 a_Position;
+
+            void main() {
+                gl_Position = a_Position;
+            }
+            )";
+
+        std::string fragmentSrc = R"(
+            #version 330 core
+
+            layout(location = 0) out vec4 o_Color;
+
+            void main() {
+                o_Color = vec4(0.8, 0.2, 0.3, 1.0);
+            }
+        )";
+
+        Shader vertexShader = Shader::CreateShaderFromSource(ShaderType::VERTEX_SHADER, vertexSrc);
+        Shader fragmentShader = Shader::CreateShaderFromSource(ShaderType::FRAGMENT_SHADER, fragmentSrc);
+
+        m_ShaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
     }
 
     Application::~Application() {
@@ -78,6 +104,8 @@ namespace Voxymore::Core {
             // Softer color.
             glClearColor(0.1f,0.1f,0.1f,1);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            m_ShaderProgram->Bind();
 
             glBindVertexArray(m_VertexArray);
             glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
