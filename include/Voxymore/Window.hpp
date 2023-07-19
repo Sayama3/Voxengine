@@ -25,7 +25,7 @@ namespace Voxymore::Core {
     };
 
     // Interface for a desktop window.
-    class VXM_API Window
+    class Window
     {
     public:
         using EventCallBackFn = std::function<void(Voxymore::Core::Event&)>;

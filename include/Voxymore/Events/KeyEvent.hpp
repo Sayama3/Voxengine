@@ -8,7 +8,7 @@
 #include "Event.hpp"
 
 namespace Voxymore::Core {
-        class VXM_API KeyEvent : public Event {
+        class KeyEvent : public Event {
         public:
             inline int GetKeyCode() const { return m_KeyCode; }
             EVENT_CLASS_CATEGORY(EventCategory::EventCategoryInput | EventCategory::EventCategoryKeyboard)
@@ -18,7 +18,7 @@ namespace Voxymore::Core {
             int m_KeyCode;
         };
 
-        class VXM_API KeyPressedEvent : public KeyEvent {
+        class KeyPressedEvent : public KeyEvent {
         public:
             KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
@@ -36,7 +36,7 @@ namespace Voxymore::Core {
             int m_RepeatCount;
         };
 
-        class VXM_API KeyReleasedEvent : public KeyEvent
+        class KeyReleasedEvent : public KeyEvent
         {
         public:
             KeyReleasedEvent(const int keycode) : KeyEvent(keycode) {}
@@ -51,7 +51,7 @@ namespace Voxymore::Core {
             EVENT_CLASS_TYPE(EventType::KeyReleased)
         };
 
-        class VXM_API KeyTypedEvent : public KeyEvent
+        class KeyTypedEvent : public KeyEvent
         {
         public:
             KeyTypedEvent(const int keycode) : KeyEvent(keycode) {}

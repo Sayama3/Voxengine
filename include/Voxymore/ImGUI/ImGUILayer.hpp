@@ -21,7 +21,7 @@
 
 namespace Voxymore::Core {
 
-    class VXM_API ImGUILayer : public Layer {
+    class ImGUILayer : public Layer {
     public:
         ImGUILayer();
         ~ImGUILayer();

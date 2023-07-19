@@ -26,16 +26,16 @@ namespace Voxymore::Core {
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         double x, y;
         glfwGetCursorPos(window, &x, &y);
-        return {x,y};
+        return {static_cast<float>(x),static_cast<float>(y)};
     }
 
     float DefaultInput::GetMouseXImpl() {
         auto[x, y] = GetMousePositionImpl();
-        return x;
+        return static_cast<float>(x);
     }
 
     float DefaultInput::GetMouseYImpl() {
         auto[x, y] = GetMousePositionImpl();
-        return y;
+        return static_cast<float>(y);
     }
 } // Core

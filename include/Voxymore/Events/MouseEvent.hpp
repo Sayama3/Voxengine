@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core {
 
-    class VXM_API MouseMovedEvent : public Event
+    class MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(const float x, const float y)
@@ -31,7 +31,7 @@ namespace Voxymore::Core {
         float m_MouseX, m_MouseY;
     };
 
-    class VXM_API MouseScrolledEvent : public Event
+    class MouseScrolledEvent : public Event
     {
     public:
         MouseScrolledEvent(const float xOffset, const float yOffset)
@@ -53,7 +53,7 @@ namespace Voxymore::Core {
         float m_XOffset, m_YOffset;
     };
 
-    class VXM_API MouseButtonEvent : public Event
+    class MouseButtonEvent : public Event
     {
     public:
         int GetMouseButton() const { return m_Button; }
@@ -66,7 +66,7 @@ namespace Voxymore::Core {
         int m_Button;
     };
 
-    class VXM_API MouseButtonPressedEvent : public MouseButtonEvent
+    class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonPressedEvent(const int button)
@@ -82,7 +82,7 @@ namespace Voxymore::Core {
         EVENT_CLASS_TYPE(EventType::MouseButtonPressed)
     };
 
-    class VXM_API MouseButtonReleasedEvent : public MouseButtonEvent
+    class MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonReleasedEvent(const int button)

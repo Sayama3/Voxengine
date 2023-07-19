@@ -7,7 +7,7 @@
 #include <Voxymore/Core.hpp>
 
 namespace Voxymore::Core {
-    class VXM_API Input {
+    class Input {
     public:
         inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
         inline static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }

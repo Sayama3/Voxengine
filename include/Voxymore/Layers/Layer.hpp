@@ -10,7 +10,7 @@
 // We shouldn't search layer by name!!
 
 namespace Voxymore::Core {
-    class VXM_API Layer {
+    class Layer {
     public:
         Layer(const std::string& name = "Layer");
         virtual ~Layer();

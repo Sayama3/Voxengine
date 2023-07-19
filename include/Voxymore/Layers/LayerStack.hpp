@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core {
 
-    class VXM_API LayerStack {
+    class LayerStack {
     public:
         LayerStack();
         ~LayerStack();

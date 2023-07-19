@@ -13,7 +13,7 @@
 
 namespace Voxymore::Core {
 
-    class VXM_API Application {
+    class Application {
     public:
         Application();
         virtual ~Application();
