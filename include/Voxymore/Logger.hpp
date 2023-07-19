@@ -10,6 +10,8 @@
 #endif
 
 #include "Voxymore/Core.hpp"
+#include "Voxymore/Events/Event.hpp"
+#include "Voxymore/Math.hpp"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 

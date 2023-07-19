@@ -5,6 +5,7 @@
 
 #include <Voxymore/ImGUI/ImGUILayer.hpp>
 #include <Voxymore/Core.hpp>
+#include <Voxymore/Logger.hpp>
 #include <glad/glad.h>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
@@ -23,14 +24,15 @@
 
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
-
+        VXM_CORE_INFO("Create ImGUILayer");
     }
 
     ImGUILayer::~ImGUILayer() {
-
+        VXM_CORE_INFO("Destroy ImGUILayer");
     }
 
     void ImGUILayer::OnAttach() {
+        VXM_CORE_INFO("Attach ImGUILayer");
 
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -65,6 +67,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnDetach() {
+        VXM_CORE_INFO("Detach ImGUILayer");
         // Cleanup
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -72,6 +75,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::Begin() {
+        VXM_CORE_INFO("Begin ImGUILayer");
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -79,12 +83,15 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::End() {
+        VXM_CORE_INFO("End ImGUILayer");
+
+        // Rendering
+        ImGui::Render();
+
         auto& app = Application::Get();
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
-        // Rendering
-        ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Update and Render additional Platform Windows
@@ -100,7 +107,8 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnImGuiRender() {
+        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
         static bool showDemoWindow = true;
-        ImGui::ShowDemoWindow(&showDemoWindow);
+        if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
 } // Core
