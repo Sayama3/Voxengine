@@ -164,7 +164,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 #   target_link_libraries(${LIBRARY_TARGET_NAME} FooPackage_LIBRARIES::FooPackage_LIBRARIES)
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only imgui)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glfw)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glfw)
 
 #target_precompile_headers(${LIBRARY_TARGET_NAME}
 #        PUBLIC
