@@ -46,8 +46,6 @@ IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
     add_compile_definitions(Debug)
 ENDIF()
 
-target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/export)
-
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 
 add_subdirectory(platform)
