@@ -80,6 +80,7 @@ namespace Voxymore::Core {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        VXM_CORE_INFO("Add every new Frames");
     }
 
     void ImGUILayer::End() {
