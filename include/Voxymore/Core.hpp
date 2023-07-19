@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+// Not sur if I want my glad & glm library always accessible.
 //#include <glad/glad.h>
 //#include <glm/glm.hpp>
 //#include <glm/gtc/quaternion.hpp>

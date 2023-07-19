@@ -1,0 +1,36 @@
+//
+// Created by ianpo on 19/07/2023.
+//
+
+#pragma once
+
+// Imported from glfw3.h
+#define VXM_MOUSE_BUTTON_1         0
+#define VXM_MOUSE_BUTTON_2         1
+#define VXM_MOUSE_BUTTON_3         2
+#define VXM_MOUSE_BUTTON_4         3
+#define VXM_MOUSE_BUTTON_5         4
+#define VXM_MOUSE_BUTTON_6         5
+#define VXM_MOUSE_BUTTON_7         6
+#define VXM_MOUSE_BUTTON_8         7
+#define VXM_MOUSE_BUTTON_LAST      VXM_MOUSE_BUTTON_8
+#define VXM_MOUSE_BUTTON_LEFT      VXM_MOUSE_BUTTON_1
+#define VXM_MOUSE_BUTTON_RIGHT     VXM_MOUSE_BUTTON_2
+#define VXM_MOUSE_BUTTON_MIDDLE    VXM_MOUSE_BUTTON_3
+
+namespace Voxymore::Core {
+    enum MouseButton : int {
+        MOUSE_BUTTON_1 = VXM_MOUSE_BUTTON_1,
+        MOUSE_BUTTON_2 = VXM_MOUSE_BUTTON_2,
+        MOUSE_BUTTON_3 = VXM_MOUSE_BUTTON_3,
+        MOUSE_BUTTON_4 = VXM_MOUSE_BUTTON_4,
+        MOUSE_BUTTON_5 = VXM_MOUSE_BUTTON_5,
+        MOUSE_BUTTON_6 = VXM_MOUSE_BUTTON_6,
+        MOUSE_BUTTON_7 = VXM_MOUSE_BUTTON_7,
+        MOUSE_BUTTON_8 = VXM_MOUSE_BUTTON_8,
+        MOUSE_BUTTON_LAST = VXM_MOUSE_BUTTON_LAST,
+        MOUSE_BUTTON_LEFT = VXM_MOUSE_BUTTON_LEFT,
+        MOUSE_BUTTON_RIGHT = VXM_MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE = VXM_MOUSE_BUTTON_MIDDLE,
+    };
+}

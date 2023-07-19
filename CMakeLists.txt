@@ -77,7 +77,8 @@ if(VoxymoreCore_SHARED_BUILD)
             src/ImGui/ImGUILayer.cpp
             include/Voxymore/ImGUI/ImGUILayer.hpp
             include/Voxymore/Input.hpp
-            include/Voxymore/Core.hpp)
+            include/Voxymore/Core.hpp
+            include/Voxymore/KeyCodes.hpp include/Voxymore/MouseButtonCodes.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
@@ -104,7 +105,8 @@ else()
             src/ImGui/ImGUILayer.cpp
             include/Voxymore/ImGUI/ImGUILayer.hpp
             include/Voxymore/Input.hpp
-            include/Voxymore/Core.hpp)
+            include/Voxymore/Core.hpp
+            include/Voxymore/KeyCodes.hpp include/Voxymore/MouseButtonCodes.hpp)
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
