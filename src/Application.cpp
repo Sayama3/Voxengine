@@ -22,6 +22,9 @@ namespace Voxymore::Core {
 
         m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
+
+        m_ImGUILayer = new ImGUILayer();
+        PushOverlay(m_ImGUILayer);
     }
 
     Application::~Application() {
@@ -53,6 +56,11 @@ namespace Voxymore::Core {
             for (Layer* layer : m_LayerStack) {
                 layer->OnUpdate();
             }
+            m_ImGUILayer->Begin();
+            for (Layer* layer : m_LayerStack) {
+                layer->OnImGuiRender();
+            }
+            m_ImGUILayer->End();
 
             m_Window->OnUpdate();
         }

@@ -8,6 +8,7 @@
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
+#include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -29,6 +30,7 @@ namespace Voxymore::Core {
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         std::unique_ptr<Window> m_Window;
+        ImGUILayer* m_ImGUILayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
         static Application* s_Instance;

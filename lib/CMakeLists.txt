@@ -8,7 +8,9 @@ add_subdirectory(glm)
 
 add_subdirectory(spdlog)
 
-set(IMGUI_CUSTOM_LOADER ON)
 set(IMGUI_GLFW ON)
 set(IMGUI_OPENGL3 ON)
+set(IMGUI_OPENGL3_LOADER ON)
 add_subdirectory(imgui)
+# Need to say to imgui where is glfw
+target_link_libraries(imgui PRIVATE glfw)
