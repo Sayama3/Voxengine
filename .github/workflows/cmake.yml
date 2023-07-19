@@ -82,7 +82,7 @@ jobs:
         vcvarsall: ${{ contains(matrix.os, 'windows') }}
         cmake: true
         ninja: true
-        vcpkg: true
+        vcpkg: false
         cppcheck: true
         clangtidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
 
