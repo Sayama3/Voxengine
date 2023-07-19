@@ -25,6 +25,31 @@ namespace Voxymore::Core {
 
         m_ImGUILayer = new ImGUILayer();
         PushOverlay(m_ImGUILayer);
+
+        glGenVertexArrays(1, &m_VertexArray);
+        glBindVertexArray(m_VertexArray);
+
+        glGenBuffers(1, &m_VertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+
+        float vertices [3 * 3] = {
+                -0.5f, -0.5f, -0.5f, // 0
+                0.0f, 0.5f, 0.0f,    // 1
+                0.5f, -0.5f, 0.5f,   // 2
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) , vertices, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
+        glGenBuffers(1, &m_IndexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+        unsigned int index[3] = {
+                0,
+                2,
+                1,
+        };
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index) , index, GL_STATIC_DRAW);
     }
 
     Application::~Application() {
@@ -51,8 +76,11 @@ namespace Voxymore::Core {
             //TODO: Remove later as it should be abstracted.
             VXM_CORE_INFO("Clear Screen");
             // Softer color.
-            glClearColor(0.9921568627450980392156862745098,0.73725490196078431372549019607843,0.36862745098039215686274509803922,1);
+            glClearColor(0.1f,0.1f,0.1f,1);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            glBindVertexArray(m_VertexArray);
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
             for (Layer* layer : m_LayerStack) {
                 VXM_CORE_INFO("Update Layer {0}", layer->GetName());
