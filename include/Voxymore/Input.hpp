@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <voxymorecore_export.hpp>
+#include "Voxymore/Core.hpp"
 
 namespace Voxymore::Core {
     class VXM_API Input {

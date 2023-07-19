@@ -2,9 +2,13 @@
 // Created by ianpo on 04/07/2023.
 //
 
-#include "Application.hpp"
-#include "Macros.hpp"
-#include "Logger.hpp"
+#include "Voxymore/Application.hpp"
+#include "Voxymore/Macros.hpp"
+#include "Voxymore/Logger.hpp"
+#include <Voxymore/Core.hpp>
+
+//TODO: Remove later as it should be abstracted.
+#include <glad/glad.h>
 
 
 namespace Voxymore::Core {
@@ -41,7 +45,7 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
-            //TODO: Remove this, need to be abstract.
+            //TODO: Remove later as it should be abstracted.
             glClear(GL_COLOR_BUFFER_BIT);
             // Softer color.
             glClearColor(0.9921568627450980392156862745098,0.73725490196078431372549019607843,0.36862745098039215686274509803922,1);

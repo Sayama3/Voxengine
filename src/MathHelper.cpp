@@ -2,7 +2,7 @@
 // Created by Iannis on 30/05/2023.
 //
 
-#include "MathHelper.hpp"
+#include "Voxymore/MathHelper.hpp"
 
 namespace Voxymore::Core {
     namespace MathHelper {

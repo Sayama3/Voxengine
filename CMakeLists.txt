@@ -57,50 +57,54 @@ if(VoxymoreCore_SHARED_BUILD)
             src/MathHelper.cpp
             src/Logger.cpp
             # List of HPP (header) library files.
-            include/VoxymoreCore.hpp
-            include/Application.hpp
-            include/EntryPoint.hpp
-            include/Logger.hpp
-            include/MathHelper.hpp
-            include/stb_image.h
-            include/SystemHelper.hpp
-            include/Events/Event.hpp
-            include/Events/KeyEvent.hpp
-            include/Events/MouseEvent.hpp
-            include/Events/ApplicationEvent.hpp
-            include/Window.hpp
-            include/Macros.hpp
+            include/Voxymore/Voxymore.hpp
+            include/Voxymore/Application.hpp
+            include/Voxymore/EntryPoint.hpp
+            include/Voxymore/Logger.hpp
+            include/Voxymore/MathHelper.hpp
+            include/Voxymore/stb_image.h
+            include/Voxymore/SystemHelper.hpp
+            include/Voxymore/Events/Event.hpp
+            include/Voxymore/Events/KeyEvent.hpp
+            include/Voxymore/Events/MouseEvent.hpp
+            include/Voxymore/Events/ApplicationEvent.hpp
+            include/Voxymore/Window.hpp
+            include/Voxymore/Macros.hpp
             src/Layers/Layer.cpp
-            include/Layers/Layer.hpp
+            include/Voxymore/Layers/Layer.hpp
             src/Layers/LayerStack.cpp
-            include/Layers/LayerStack.hpp
+            include/Voxymore/Layers/LayerStack.hpp
             src/ImGui/ImGUILayer.cpp
-            include/ImGUI/ImGUILayer.hpp include/Input.hpp platform/other/DefaultInput.cpp platform/other/DefaultInput.hpp)
+            include/Voxymore/ImGUI/ImGUILayer.hpp
+            include/Voxymore/Input.hpp
+            include/Voxymore/Core.hpp)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
             src/MathHelper.cpp
             src/Logger.cpp
             # List of HPP (header) library files.
-            include/VoxymoreCore.hpp
-            include/Application.hpp
-            include/EntryPoint.hpp
-            include/Logger.hpp
-            include/MathHelper.hpp
-            include/stb_image.h
-            include/SystemHelper.hpp
-            include/Events/Event.hpp
-            include/Events/KeyEvent.hpp
-            include/Events/MouseEvent.hpp
-            include/Events/ApplicationEvent.hpp
-            include/Window.hpp
-            include/Macros.hpp
+            include/Voxymore/Voxymore.hpp
+            include/Voxymore/Application.hpp
+            include/Voxymore/EntryPoint.hpp
+            include/Voxymore/Logger.hpp
+            include/Voxymore/MathHelper.hpp
+            include/Voxymore/stb_image.h
+            include/Voxymore/SystemHelper.hpp
+            include/Voxymore/Events/Event.hpp
+            include/Voxymore/Events/KeyEvent.hpp
+            include/Voxymore/Events/MouseEvent.hpp
+            include/Voxymore/Events/ApplicationEvent.hpp
+            include/Voxymore/Window.hpp
+            include/Voxymore/Macros.hpp
             src/Layers/Layer.cpp
-            include/Layers/Layer.hpp
+            include/Voxymore/Layers/Layer.hpp
             src/Layers/LayerStack.cpp
-            include/Layers/LayerStack.hpp
+            include/Voxymore/Layers/LayerStack.hpp
             src/ImGui/ImGUILayer.cpp
-            include/ImGUI/ImGUILayer.hpp include/Input.hpp platform/other/DefaultInput.cpp platform/other/DefaultInput.hpp)
+            include/Voxymore/ImGUI/ImGUILayer.hpp
+            include/Voxymore/Input.hpp
+            include/Voxymore/Core.hpp)
 endif ()
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
@@ -136,7 +140,7 @@ add_subdirectory(platform)
 # Properties are: 1) Library version number 2) list of corresponding public headers
 set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
         VERSION       ${${PROJECT_NAME}_VERSION}
-        PUBLIC_HEADER "include/VoxymoreCore.hpp"
+        PUBLIC_HEADER "include/Voxymore/Voxymore.hpp"
         PUBLIC cxx_std_20)
 
 # Specify include directories for both compilation and installation process.
@@ -145,6 +149,8 @@ set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
 # If you used find_package() you need to use target_include_directories() and/or
 # target_link_libraries(). As explained previously, depending on the imported
@@ -158,31 +164,31 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only imgui)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glfw)
 
-target_precompile_headers(${LIBRARY_TARGET_NAME}
-        PUBLIC
-        <array>
-        <cstdint>
-        <filesystem>
-        <fstream>
-        <functional>
-        <iostream>
-        <memory>
-        <stdexcept>
-        <string>
-        <sstream>
-        <stdexcept>
-        <unordered_map>
-        <utility>
-        <vector>
-        <glad/glad.h>
-        <glm/glm.hpp>
-        <glm/gtc/quaternion.hpp>
-        <glm/gtc/matrix_transform.hpp>
-        <glm/gtc/type_ptr.hpp>
-        <glm/gtx/quaternion.hpp>
-        <glm/gtx/string_cast.hpp>
-        <voxymorecore_export.hpp>
-        )
+#target_precompile_headers(${LIBRARY_TARGET_NAME}
+#        PUBLIC
+#        <array>
+#        <cstdint>
+#        <filesystem>
+#        <fstream>
+#        <functional>
+#        <iostream>
+#        <memory>
+#        <stdexcept>
+#        <string>
+#        <sstream>
+#        <stdexcept>
+#        <unordered_map>
+#        <utility>
+#        <vector>
+#        <glad/glad.h>
+#        <glm/glm.hpp>
+#        <glm/gtc/quaternion.hpp>
+#        <glm/gtc/matrix_transform.hpp>
+#        <glm/gtc/type_ptr.hpp>
+#        <glm/gtx/quaternion.hpp>
+#        <glm/gtx/string_cast.hpp>
+#        <voxymorecore_export.hpp>
+#        )
 
 # Specify installation targets, typology and destination folders.
 install(TARGETS ${LIBRARY_TARGET_NAME}

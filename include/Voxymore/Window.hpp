@@ -5,7 +5,8 @@
 #ifndef VOXYMORE_WINDOW_HPP
 #define VOXYMORE_WINDOW_HPP
 
-#include "Events/Event.hpp"
+#include "Voxymore/Events/Event.hpp"
+#include <Voxymore/Core.hpp>
 
 namespace Voxymore::Core {
     struct WindowProps

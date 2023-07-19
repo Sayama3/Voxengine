@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Layer.hpp"
+#include "Voxymore/Core.hpp"
 
 namespace Voxymore::Core {
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "voxymorecore_export.hpp"
+#include "Voxymore/Core.hpp"
 
 #ifndef BIT
 #define BIT(X) (1 << X)

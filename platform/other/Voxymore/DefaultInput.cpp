@@ -3,8 +3,8 @@
 //
 
 #include "DefaultInput.hpp"
-#include "Application.hpp"
-#include <GLFW/glfw3.h>
+#include "Voxymore/Application.hpp"
+#include "GLFW/glfw3.h"
 
 namespace Voxymore::Core {
     Input* Input::s_Instance = new DefaultInput();

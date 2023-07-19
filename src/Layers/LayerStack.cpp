@@ -2,7 +2,7 @@
 // Created by ianpo on 18/07/2023.
 //
 
-#include "Layers/LayerStack.hpp"
+#include "Voxymore/Layers/LayerStack.hpp"
 
 namespace Voxymore::Core {
     LayerStack::LayerStack() {

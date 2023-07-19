@@ -2,12 +2,13 @@
 // Created by ianpo on 14/07/2023.
 //
 
-#include "Window.hpp"
 #include "DefaultWindow.hpp"
-#include "Events/ApplicationEvent.hpp"
-#include "Events/MouseEvent.hpp"
-#include "Events/KeyEvent.hpp"
-#include "Logger.hpp"
+#include <Voxymore/Window.hpp>
+#include <Voxymore/Events/ApplicationEvent.hpp>
+#include <Voxymore/Events/MouseEvent.hpp>
+#include <Voxymore/Events/KeyEvent.hpp>
+#include <Voxymore/Logger.hpp>
+#include <Voxymore/Core.hpp>
 
 
 namespace Voxymore::Core {

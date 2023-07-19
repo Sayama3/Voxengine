@@ -5,7 +5,7 @@
 #ifndef VOXYMORE_MOUSEEVENT_HPP
 #define VOXYMORE_MOUSEEVENT_HPP
 
-#include "Events/Event.hpp"
+#include "Event.hpp"
 
 namespace Voxymore::Core {
 

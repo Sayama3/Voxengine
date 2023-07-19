@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "Events/Event.hpp"
-#include "Events/ApplicationEvent.hpp"
-#include "Layers/LayerStack.hpp"
+#include "Voxymore/Core.hpp"
+#include "Voxymore/Events/Event.hpp"
+#include "Voxymore/Events/ApplicationEvent.hpp"
+#include "Voxymore/Layers/LayerStack.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {

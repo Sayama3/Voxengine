@@ -5,7 +5,7 @@
 #ifndef VOXYMORE_APPLICATIONEVENT_HPP
 #define VOXYMORE_APPLICATIONEVENT_HPP
 
-#include "Events/Event.hpp"
+#include "Event.hpp"
 
 namespace Voxymore::Core {
 

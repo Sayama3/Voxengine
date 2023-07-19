@@ -8,10 +8,10 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
 #endif
 
-#include "Layers/Layer.hpp"
-#include "Events/MouseEvent.hpp"
-#include "Events/KeyEvent.hpp"
-#include "Events/ApplicationEvent.hpp"
+#include "Voxymore/Layers/Layer.hpp"
+#include "Voxymore/Events/MouseEvent.hpp"
+#include "Voxymore/Events/KeyEvent.hpp"
+#include "Voxymore/Events/ApplicationEvent.hpp"
 
 namespace Voxymore::Core {
 

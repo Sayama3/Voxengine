@@ -18,6 +18,8 @@
 #define VXM_CORE_ASSERT(x, ...)
 #endif
 
+#include <Voxymore/Core.hpp>
+
 namespace Voxymore::Core {
     namespace SystemHelper {
         inline std::string ReadFile(const std::string &path) {

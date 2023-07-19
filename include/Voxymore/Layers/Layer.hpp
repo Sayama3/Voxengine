@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "Events/Event.hpp"
+#include "Voxymore/Events/Event.hpp"
+#include "Voxymore/Core.hpp"
 
 // We shouldn't search layer by name!!
 

@@ -2,19 +2,23 @@
 // Created by ianpo on 18/07/2023.
 //
 
-#include "ImGUI/ImGUILayer.hpp"
+
+#include <glad/glad.h>
+#include <Voxymore/ImGUI/ImGUILayer.hpp>
+#include <Voxymore/Core.hpp>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
 #endif
 
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "Application.hpp"
-
-#include "Macros.hpp"
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include "Voxymore/Application.hpp"
 
 //TODO: Remove, it's temporary.
+#ifndef GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_NONE 1
+#endif
 #include <GLFW/glfw3.h>
 
 namespace Voxymore::Core {
