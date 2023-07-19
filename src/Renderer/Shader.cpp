@@ -49,7 +49,7 @@ namespace Voxymore::Core {
             std::vector<char> infoLog(maxLength);
 
             glGetShaderInfoLog(m_ShaderId, maxLength, &maxLength, &infoLog[0]);
-            VXM_CORE_ERROR("Shader Compilation failure!");
+            VXM_CORE_ERROR("Shader {0} Compilation failure!", ShaderTypeToString(this->m_ShaderType));
             VXM_CORE_ERROR("{0}", infoLog.data());
         }
         return success;

@@ -73,7 +73,9 @@ namespace Voxymore::Core {
         )";
 
         Shader vertexShader = Shader::CreateShaderFromSource(ShaderType::VERTEX_SHADER, vertexSrc);
+        vertexShader.CheckCompilation();
         Shader fragmentShader = Shader::CreateShaderFromSource(ShaderType::FRAGMENT_SHADER, fragmentSrc);
+        fragmentShader.CheckCompilation();
 
         m_ShaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
     }
