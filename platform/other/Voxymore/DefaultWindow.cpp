@@ -9,6 +9,7 @@
 #include <Voxymore/Events/KeyEvent.hpp>
 #include <Voxymore/Logger.hpp>
 #include <Voxymore/Core.hpp>
+#include "Voxymore/Renderer/OpenGLContext.hpp"
 
 
 namespace Voxymore::Core {
@@ -40,6 +41,8 @@ namespace Voxymore::Core {
         m_Data.Width = props.Width;
         m_Data.Height = props.Height;
 
+        VXM_CORE_INFO("Creating window {0} {1} {2}", props.Title, props.Width, props.Height);
+
         //TODO: Log Creating window. Logger not done yet.
 
         if(!s_GLFWInitialized){
@@ -57,10 +60,11 @@ namespace Voxymore::Core {
                 nullptr,
                 nullptr
         );
-        glfwMakeContextCurrent(m_Window);
 
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        VXM_CORE_INFO("glad loading status: {0}", status);
+        m_Context = new OpenGLContext(m_Window);
+
+        m_Context->Init();
+
 
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
@@ -84,12 +88,7 @@ namespace Voxymore::Core {
             WindowCloseEvent event;
             data.EventCallback(event);
         });
-//        Parameters
-//        window - The window that received the event.
-//        key - The [keyboard key](Ref keys) that was pressed or released.
-//        scancode - The platform-specific scancode of the key.
-//        action - `GLFW_PRESS`, `GLFW_RELEASE` or `GLFW_REPEAT`. Future releases may add more actions.
-//        mods - Bit field describing which [modifier keys](mods) were held down
+
         glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
@@ -161,12 +160,13 @@ namespace Voxymore::Core {
     }
 
     void DefaultWindow::Shutdown() {
+        delete m_Context;
         glfwDestroyWindow(m_Window);
     }
 
     void DefaultWindow::OnUpdate() {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
 
     void DefaultWindow::SetVSync(bool enabled) {

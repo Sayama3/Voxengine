@@ -6,7 +6,8 @@
 #define VOXYMORE_WINDOW_HPP
 
 #include "Voxymore/Events/Event.hpp"
-#include <Voxymore/Core.hpp>
+#include "Voxymore/Core.hpp"
+#include "Voxymore/Renderer/GraphicsContext.hpp"
 
 namespace Voxymore::Core {
     struct WindowProps
@@ -45,6 +46,8 @@ namespace Voxymore::Core {
         virtual void* GetNativeWindow() = 0;
 
         static Window* Create(const WindowProps& props = WindowProps());
+    protected:
+        GraphicsContext* m_Context;
     };
 }
 

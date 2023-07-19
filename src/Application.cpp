@@ -50,9 +50,9 @@ namespace Voxymore::Core {
         {
             //TODO: Remove later as it should be abstracted.
             VXM_CORE_INFO("Clear Screen");
-            glClear(GL_COLOR_BUFFER_BIT);
             // Softer color.
             glClearColor(0.9921568627450980392156862745098,0.73725490196078431372549019607843,0.36862745098039215686274509803922,1);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             for (Layer* layer : m_LayerStack) {
                 VXM_CORE_INFO("Update Layer {0}", layer->GetName());
