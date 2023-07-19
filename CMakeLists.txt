@@ -67,6 +67,4 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only imgui)
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glfw)
 
-
-#message(STATUS "Created target ${LIBRARY_TARGET_NAME} for export ${PROJECT_NAME}.")
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

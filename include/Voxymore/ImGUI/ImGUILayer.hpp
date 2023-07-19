@@ -30,8 +30,6 @@ namespace Voxymore::Core {
         virtual void OnDetach() override;
         void OnImGuiRender() override;
 
-        ImGuiContext* GetContext() const;
-
         void Begin();
         void End();
     private:
