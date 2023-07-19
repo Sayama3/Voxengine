@@ -54,14 +54,14 @@ if(VoxymoreCore_SHARED_BUILD)
     add_library(${LIBRARY_TARGET_NAME} SHARED
             # List of CPP (source) library files.
             src/Application.cpp
-            src/MathHelper.cpp
+            src/Math.cpp
             src/Logger.cpp
             # List of HPP (header) library files.
             include/Voxymore/Voxymore.hpp
             include/Voxymore/Application.hpp
             include/Voxymore/EntryPoint.hpp
             include/Voxymore/Logger.hpp
-            include/Voxymore/MathHelper.hpp
+            include/Voxymore/Math.hpp
             include/Voxymore/stb_image.h
             include/Voxymore/SystemHelper.hpp
             include/Voxymore/Events/Event.hpp
@@ -82,14 +82,14 @@ if(VoxymoreCore_SHARED_BUILD)
 else()
     add_library(${LIBRARY_TARGET_NAME}
             src/Application.cpp
-            src/MathHelper.cpp
+            src/Math.cpp
             src/Logger.cpp
             # List of HPP (header) library files.
             include/Voxymore/Voxymore.hpp
             include/Voxymore/Application.hpp
             include/Voxymore/EntryPoint.hpp
             include/Voxymore/Logger.hpp
-            include/Voxymore/MathHelper.hpp
+            include/Voxymore/Math.hpp
             include/Voxymore/stb_image.h
             include/Voxymore/SystemHelper.hpp
             include/Voxymore/Events/Event.hpp
