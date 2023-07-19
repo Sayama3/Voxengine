@@ -112,4 +112,8 @@ namespace Voxymore::Core {
         static bool showDemoWindow = true;
         if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
+
+    ImGuiContext* ImGUILayer::GetContext() const {
+        return ImGui::GetCurrentContext();
+    }
 } // Core

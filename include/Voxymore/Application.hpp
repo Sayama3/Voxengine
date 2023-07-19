@@ -27,6 +27,7 @@ namespace Voxymore::Core {
 
         inline static Application& Get() {return *s_Instance; }
         inline Window& GetWindow() { return *m_Window; }
+        inline ImGUILayer& GetImGUILayer() {return *m_ImGUILayer;}
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         std::unique_ptr<Window> m_Window;

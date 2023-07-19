@@ -13,6 +13,12 @@
 #include "Voxymore/Events/KeyEvent.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 
+#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
+#endif
+
+#include <imgui.h>
+
 namespace Voxymore::Core {
 
     class VXM_API ImGUILayer : public Layer {
@@ -23,6 +29,8 @@ namespace Voxymore::Core {
         virtual void OnAttach() override;
         virtual void OnDetach() override;
         void OnImGuiRender() override;
+
+        ImGuiContext* GetContext() const;
 
         void Begin();
         void End();
