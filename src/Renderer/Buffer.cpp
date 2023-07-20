@@ -11,12 +11,12 @@ namespace Voxymore::Core {
     {
         switch (Renderer::GetAPI())
         {
-            case RendererAPI::None:
+            case RendererAPI::API::None:
             {
-                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::None));
+                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None));
                 return nullptr;
             }
-            case RendererAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
             {
                 return new OpenGLVertexBuffer(size, vertices);
             }
@@ -31,12 +31,12 @@ namespace Voxymore::Core {
     {
         switch (Renderer::GetAPI())
         {
-            case RendererAPI::None:
+            case RendererAPI::API::None:
             {
-                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::None));
+                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None));
                 return nullptr;
             }
-            case RendererAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
             {
                 return new OpenGLIndexBuffer(size, indices);
             }

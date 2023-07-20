@@ -38,9 +38,9 @@ namespace Voxymore::Core{
     Shader *Shader::CreateShader(const ShaderParams& shader1) {
         switch(Renderer::GetAPI())
         {
-            case RendererAPI::None:
+            case RendererAPI::API::None:
                 break;
-            case RendererAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLShader(shader1);
         }
         return nullptr;
@@ -49,9 +49,9 @@ namespace Voxymore::Core{
     Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2) {
         switch(Renderer::GetAPI())
         {
-            case RendererAPI::None:
+            case RendererAPI::API::None:
                 break;
-            case RendererAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLShader(shader1, shader2);
         }
         return nullptr;
@@ -60,9 +60,9 @@ namespace Voxymore::Core{
     Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2, const ShaderParams& shader3) {
         switch(Renderer::GetAPI())
         {
-            case RendererAPI::None:
+            case RendererAPI::API::None:
                 break;
-            case RendererAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLShader(shader1, shader2, shader3);
         }
         return nullptr;

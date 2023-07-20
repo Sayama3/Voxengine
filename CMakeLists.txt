@@ -40,7 +40,7 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/Buffer.hpp
         src/Renderer/Buffer.cpp
         src/Renderer/Renderer.cpp
-        include/Voxymore/Renderer/Renderer.hpp include/Voxymore/Renderer/Shader.hpp src/Renderer/Shader.cpp src/Renderer/VertexArray.cpp include/Voxymore/Renderer/VertexArray.hpp)
+        include/Voxymore/Renderer/Renderer.hpp include/Voxymore/Renderer/Shader.hpp src/Renderer/Shader.cpp src/Renderer/VertexArray.cpp include/Voxymore/Renderer/VertexArray.hpp src/Renderer/RendererAPI.cpp include/Voxymore/Renderer/RendererAPI.hpp include/Voxymore/Renderer/RenderCommand.hpp src/Renderer/RenderCommand.cpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
@@ -65,7 +65,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glad  spdlog::spdlog_header_only imgui)
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glfw)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glfw  spdlog::spdlog_header_only imgui)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad)
 
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

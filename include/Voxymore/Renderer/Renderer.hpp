@@ -5,36 +5,19 @@
 #pragma once
 
 #include "Voxymore/Core.hpp"
+#include "RenderCommand.hpp"
 
 namespace Voxymore {
     namespace Core {
-        enum class RendererAPI {
-            None = 0,
-            OpenGL = 1,
-        };
-
-        static inline std::string RendererAPIToString(RendererAPI api){
-            switch (api) {
-
-                case RendererAPI::None:
-                    return "RendererAPI::None";
-                case RendererAPI::OpenGL:
-                    return "RendererAPI::OpenGL";
-            }
-            return "Unknown";
-        }
-
-        static inline std::ostream& operator<<(std::ostream& os, const RendererAPI& api)
-        {
-            return os << RendererAPIToString(api);
-        }
 
         class Renderer {
         public:
-            inline static RendererAPI GetAPI()  { return s_RendererAPI; }
-            static void SetAPI(RendererAPI api);
-        private:
-            static RendererAPI s_RendererAPI;
+            static void BeginScene();
+            static void EndScene();
+
+            static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+            inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
         };
 
     } // Voxymore

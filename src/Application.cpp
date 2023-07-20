@@ -2,13 +2,11 @@
 // Created by ianpo on 04/07/2023.
 //
 
+#include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Application.hpp"
 #include "Voxymore/Macros.hpp"
 #include "Voxymore/Logger.hpp"
 #include "Voxymore/Core.hpp"
-
-//TODO: Remove later as it should be abstracted.
-#include <glad/glad.h>
 
 
 namespace Voxymore::Core {
@@ -111,14 +109,18 @@ namespace Voxymore::Core {
         {
             //TODO: Remove later as it should be abstracted.
             VXM_CORE_INFO("Clear Screen");
-            // Softer color.
-            glClearColor(0.1f,0.1f,0.1f,1);
-            glClear(GL_COLOR_BUFFER_BIT);
+            RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
+            RenderCommand::Clear();
+
+            Renderer::BeginScene();
 
             m_Shader->Bind();
+            Renderer::Submit(m_VertexArray);
 
+            Renderer::EndScene();
+
+            m_Shader->Bind();
             m_VertexArray->Bind();
-            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (Layer* layer : m_LayerStack) {
                 VXM_CORE_INFO("Update Layer {0}", layer->GetName());
