@@ -37,12 +37,10 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Core.hpp
         include/Voxymore/KeyCodes.hpp
         include/Voxymore/MouseButtonCodes.hpp
-        src/Renderer/Shader.cpp
-        src/Renderer/ShaderProgram.cpp
-        include/Voxymore/Renderer/Shader.hpp
-        include/Voxymore/Renderer/ShaderProgram.hpp
-        include/Voxymore/Renderer/ShaderType.hpp
-        )
+        include/Voxymore/Renderer/Buffer.hpp
+        src/Renderer/Buffer.cpp
+        src/Renderer/Renderer.cpp
+        include/Voxymore/Renderer/Renderer.hpp include/Voxymore/Renderer/Shader.hpp src/Renderer/Shader.cpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 

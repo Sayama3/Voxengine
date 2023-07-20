@@ -1,66 +1,70 @@
 //
-// Created by ianpo on 26/05/2023.
+// Created by ianpo on 20/07/2023.
 //
-
+#include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
+#include "Voxymore/OpenGL/OpenGLShader.hpp"
 #include "Voxymore/SystemHelper.hpp"
-#include "Voxymore/Core.hpp"
 #include "Voxymore/Logger.hpp"
-#include <utility>
 
-namespace Voxymore::Core {
-
-
-    Shader Shader::CreateShaderFromSource(ShaderType shaderType, const std::string &shaderSource) {
-        return Shader(shaderType, shaderSource);
-    }
-
-    Shader::Shader(const std::string &shaderPath, ShaderType shaderType) : m_ShaderType(shaderType),
-                                                                           m_ShaderId(glCreateShader(m_ShaderType)) {
-        std::string shaderSource = SystemHelper::ReadFile(shaderPath);
-        const char *cstr = shaderSource.c_str();
-        glShaderSource(m_ShaderId, 1, &cstr, nullptr);
-        glCompileShader(m_ShaderId);
-    }
-
-    Shader::Shader(ShaderType shaderType, const std::string &shaderSource) : m_ShaderType(shaderType),
-                                                                             m_ShaderId(glCreateShader(m_ShaderType)) {
-        const char *cstr = shaderSource.c_str();
-        glShaderSource(m_ShaderId, 1, &cstr, nullptr);
-        glCompileShader(m_ShaderId);
-    }
-
-    Shader::~Shader() {
-        glDeleteShader(m_ShaderId);
-    }
-
-    unsigned int Shader::GetId() const {
-        return m_ShaderId;
-    }
-
-    bool Shader::CheckCompilation() const {
-        int success;
-        char infoLog[512];
-        glGetShaderiv(m_ShaderId, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            int maxLength = 0;
-            glGetShaderiv(m_ShaderId, GL_INFO_LOG_LENGTH, &maxLength);
-
-            std::vector<char> infoLog(maxLength);
-
-            glGetShaderInfoLog(m_ShaderId, maxLength, &maxLength, &infoLog[0]);
-            VXM_CORE_ERROR("Shader {0} Compilation failure!", ShaderTypeToString(this->m_ShaderType));
-            VXM_CORE_ERROR("{0}", infoLog.data());
+namespace Voxymore::Core{
+    int GetShaderTypeValue(ShaderType shaderType) {
+        switch (shaderType) {
+            case COMPUTE_SHADER:
+                break;
+            case VERTEX_SHADER:
+                break;
+            case TESS_CONTROL_SHADER:
+                break;
+            case TESS_EVALUATION_SHADER:
+                break;
+            case GEOMETRY_SHADER:
+                break;
+            case FRAGMENT_SHADER:
+                break;
         }
-        return success;
+
+        VXM_CORE_ERROR("The shader type {0} is not handled.", ShaderTypeToString(shaderType));
+        return -1;
     }
 
-    ShaderConstructor::ShaderConstructor(std::string path, ShaderType type) : shaderPath(std::move(path)),
-                                                                              shaderType(type) {
-
+    ShaderParams CreateShaderParams(ShaderType type, std::string path) {
+        return ShaderParams{
+            SystemHelper::ReadFile(path),
+            type,
+        };
     }
 
-    Shader ShaderConstructor::CreateShader() const {
-        return {shaderPath, shaderType};
+    Shader *Shader::CreateShader(const ShaderParams& shader1) {
+        switch(Renderer::GetAPI())
+        {
+            case RendererAPI::None:
+                break;
+            case RendererAPI::OpenGL:
+                return new OpenGLShader(shader1);
+        }
+        return nullptr;
+    }
+
+    Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2) {
+        switch(Renderer::GetAPI())
+        {
+            case RendererAPI::None:
+                break;
+            case RendererAPI::OpenGL:
+                return new OpenGLShader(shader1, shader2);
+        }
+        return nullptr;
+    }
+
+    Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2, const ShaderParams& shader3) {
+        switch(Renderer::GetAPI())
+        {
+            case RendererAPI::None:
+                break;
+            case RendererAPI::OpenGL:
+                return new OpenGLShader(shader1, shader2, shader3);
+        }
+        return nullptr;
     }
 }

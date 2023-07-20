@@ -1,48 +1,73 @@
 //
-// Created by ianpo on 26/05/2023.
+// Created by ianpo on 20/07/2023.
 //
 
-#ifndef LEARNOPENGL_SHADER_HPP
-#define LEARNOPENGL_SHADER_HPP
+#pragma once
+#include "Voxymore/Core.hpp"
+#include "Voxymore/SystemHelper.hpp"
 
-#include <string>
-#include "ShaderType.hpp"
 
-#define ViewMatrixName "view"
-#define ProjectionMatrixName "projection"
-#define ModelMatrixName "model"
+namespace Voxymore {
+    namespace Core {
+        enum ShaderType {
+            COMPUTE_SHADER = BIT(0),
+            VERTEX_SHADER = BIT(1),
+            TESS_CONTROL_SHADER = BIT(2),
+            TESS_EVALUATION_SHADER = BIT(3),
+            GEOMETRY_SHADER = BIT(4),
+            FRAGMENT_SHADER = BIT(5)
+        };
 
-namespace Voxymore::Core {
+        inline std::string ShaderTypeToString(ShaderType shaderType) {
+            std::string result = "NOT_FOUND";
+            switch (shaderType) {
+                case COMPUTE_SHADER: {
+                    result = "ShaderType::COMPUTE_SHADER";
+                    break;
+                }
+                case VERTEX_SHADER: {
+                    result = "ShaderType::VERTEX_SHADER";
+                    break;
+                }
+                case TESS_CONTROL_SHADER: {
+                    result = "ShaderType::TESS_CONTROL_SHADER";
+                    break;
+                }
+                case TESS_EVALUATION_SHADER: {
+                    result = "ShaderType::TESS_EVALUATION_SHADER";
+                    break;
+                }
+                case GEOMETRY_SHADER: {
+                    result = "ShaderType::GEOMETRY_SHADER";
+                    break;
+                }
+                case FRAGMENT_SHADER: {
+                    result = "ShaderType::FRAGMENT_SHADER";
+                    break;
+                }
+            }
+            return result;
+        }
+        int GetShaderTypeValue(ShaderType shaderType);
 
-    class Shader {
-    private:
-        const ShaderType m_ShaderType;
-        unsigned int m_ShaderId;
-    public:
-        Shader(const std::string &shaderPath, ShaderType shaderType);
+        struct ShaderParams{
+            const std::string source;
+            const ShaderType type;
+        };
 
-        ~Shader();
+        ShaderParams CreateShaderParams(ShaderType type, std::string path);
 
-        Shader(const Shader &) = delete;
+        class Shader {
+        public:
+            static Shader* CreateShader(const ShaderParams& shader1);
+            static Shader* CreateShader(const ShaderParams& shader1, const ShaderParams& shader2);
+            static Shader* CreateShader(const ShaderParams& shader1, const ShaderParams& shader2, const ShaderParams& shader3);
 
-        Shader &operator=(const Shader &) = delete;
+            virtual ~Shader() {}
+            virtual void Bind() const = 0;
+            virtual void Unbind() const = 0;
+            virtual bool HasType(ShaderType shaderType) const = 0;
+        };
 
-        bool CheckCompilation() const;
-
-        unsigned int GetId() const;
-        static Shader CreateShaderFromSource(ShaderType shaderType, const std::string &shaderSource);
-    private:
-        Shader(ShaderType shaderType, const std::string &shaderSource);
-    };
-
-    struct ShaderConstructor {
-        ShaderConstructor(std::string path, ShaderType type);
-
-        const std::string shaderPath;
-        const ShaderType shaderType;
-
-        Shader CreateShader() const;
-    };
-}
-
-#endif //LEARNOPENGL_SHADER_HPP
+    } // Voxymore
+} // Core

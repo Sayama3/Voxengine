@@ -2,7 +2,7 @@
 // Created by ianpo on 19/07/2023.
 //
 
-#include "Voxymore/Renderer/OpenGLContext.hpp"
+#include "OpenGLContext.hpp"
 #include "Voxymore/Logger.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

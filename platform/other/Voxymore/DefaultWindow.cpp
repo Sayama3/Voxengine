@@ -9,7 +9,7 @@
 #include <Voxymore/Events/KeyEvent.hpp>
 #include <Voxymore/Logger.hpp>
 #include <Voxymore/Core.hpp>
-#include "Voxymore/Renderer/OpenGLContext.hpp"
+#include "Voxymore/OpenGL/OpenGLContext.hpp"
 
 
 namespace Voxymore::Core {
