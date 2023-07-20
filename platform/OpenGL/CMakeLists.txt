@@ -5,6 +5,8 @@ target_sources(${LIBRARY_TARGET_NAME} PRIVATE
         Voxymore/OpenGL/OpenGLContext.hpp
         Voxymore/OpenGL/OpenGLBuffer.cpp
         Voxymore/OpenGL/OpenGLBuffer.hpp
+        Voxymore/OpenGL/OpenGLShader.cpp
+        Voxymore/OpenGL/OpenGLShader.hpp
         Voxymore/OpenGL/OpenGLVertexArray.cpp
         Voxymore/OpenGL/OpenGLVertexArray.hpp
         )
