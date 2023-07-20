@@ -11,6 +11,7 @@
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
+#include "Voxymore/Renderer/VertexArray.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -37,10 +38,11 @@ namespace Voxymore::Core {
         LayerStack m_LayerStack;
         static Application* s_Instance;
 
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
-        unsigned int m_VertexArray/*, m_VertexBuffer, m_IndexBuffer*/;
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
+        std::shared_ptr<VertexBuffer> m_VertexBuffer;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+//        unsigned int m_VertexArray/*, m_VertexBuffer, m_IndexBuffer*/;
     };
 
 } // Core

@@ -4,6 +4,7 @@
 
 #include "DefaultInput.hpp"
 #include "Voxymore/Application.hpp"
+#include "Voxymore/Core.hpp"
 #include "GLFW/glfw3.h"
 
 namespace Voxymore::Core {

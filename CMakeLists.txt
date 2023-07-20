@@ -40,7 +40,7 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/Buffer.hpp
         src/Renderer/Buffer.cpp
         src/Renderer/Renderer.cpp
-        include/Voxymore/Renderer/Renderer.hpp include/Voxymore/Renderer/Shader.hpp src/Renderer/Shader.cpp)
+        include/Voxymore/Renderer/Renderer.hpp include/Voxymore/Renderer/Shader.hpp src/Renderer/Shader.cpp src/Renderer/VertexArray.cpp include/Voxymore/Renderer/VertexArray.hpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
