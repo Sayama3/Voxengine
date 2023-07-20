@@ -12,6 +12,33 @@
 
 
 namespace Voxymore::Core {
+
+    //TODO: remove and abstract
+    static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType shaderDataType){
+        switch (shaderDataType) {
+            case ShaderDataType::Float:     return GL_FLOAT;
+            case ShaderDataType::Float2:    return GL_FLOAT;
+            case ShaderDataType::Float3:    return GL_FLOAT;
+            case ShaderDataType::Float4:    return GL_FLOAT;
+
+            case ShaderDataType::Mat2:      return GL_FLOAT;
+            case ShaderDataType::Mat3:      return GL_FLOAT;
+            case ShaderDataType::Mat4:      return GL_FLOAT;
+
+            case ShaderDataType::Int:       return GL_INT;
+            case ShaderDataType::Int2:      return GL_INT;
+            case ShaderDataType::Int3:      return GL_INT;
+            case ShaderDataType::Int4:      return GL_INT;
+
+            case ShaderDataType::Bool:      return GL_BOOL;
+            case ShaderDataType::Bool2:     return GL_BOOL;
+            case ShaderDataType::Bool3:     return GL_BOOL;
+            case ShaderDataType::Bool4:     return GL_BOOL;
+        }
+        VXM_CORE_ERROR("Unknown ShaderDataType {0}.", (int)shaderDataType);
+        return 0;
+    }
+
     Application* Application::s_Instance = nullptr;
     Application::Application() {
         if(s_Instance != nullptr){
@@ -26,15 +53,24 @@ namespace Voxymore::Core {
         m_ImGUILayer = new ImGUILayer();
         PushOverlay(m_ImGUILayer);
 
-        float vertices [3 * 3] = {
-                -0.5f, -0.5f, -0.5f, // 0
-                0.0f, 0.5f, 0.0f,    // 1
-                0.5f, -0.5f, 0.5f,   // 2
+        float vertices [3 * 3 + 3 * 3 + 3 * 4] = {
+                -0.5f, -0.5f, -0.5f,    -0.5f, -0.5f, -0.5f,    -0.5f, -0.5f, -0.5f, 1.0f,
+                0.0f, 0.5f, 0.0f,       0.0f, 0.5f, 0.0f,       0.0f, 0.5f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.5f,      0.5f, -0.5f, 0.5f,      0.5f, -0.5f, 0.5f, 1.0f,
         };
         m_VertexBuffer.reset(VertexBuffer::Create(sizeof(vertices), vertices));
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        BufferLayout layout = {
+                {ShaderDataType::Float3, "a_Position"},
+                {ShaderDataType::Float3, "a_Normal"},
+                {ShaderDataType::Float4, "a_Color"},
+        };
+        for (int i = 0; i < layout.GetElements().size(); ++i) {
+            const auto& element = layout.GetElements()[i];
+            glEnableVertexAttribArray(i);
+            glVertexAttribPointer(i, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.Size);
+        }
+
 
         uint32_t index[3] = {
                 0,
@@ -48,9 +84,16 @@ namespace Voxymore::Core {
             #version 330 core
 
             layout(location = 0) in vec3 a_Position;
+            layout(location = 1) in vec3 a_Normal;
+            layout(location = 2) in vec4 a_Color;
+
+            out vec3 v_Position;
+            out vec4 v_Color;
 
             void main() {
                 gl_Position = vec4(a_Position, 1.0);
+                v_Position = a_Position;
+                v_Color = a_Color;
             }
             )";
 
@@ -59,8 +102,11 @@ namespace Voxymore::Core {
 
             layout(location = 0) out vec4 o_Color;
 
+            in vec3 v_Position;
+            in vec4 v_Color;
+
             void main() {
-                o_Color = vec4(0.8, 0.2, 0.3, 1.0);
+                o_Color = v_Color;
             }
         )";
         m_Shader.reset(Shader::CreateShader({vertexSrc, ShaderType::VERTEX_SHADER}, {fragmentSrc, ShaderType::FRAGMENT_SHADER}));
