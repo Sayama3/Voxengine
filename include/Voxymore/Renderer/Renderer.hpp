@@ -13,7 +13,7 @@ namespace Voxymore {
             OpenGL = 1,
         };
 
-        std::string RendererAPIToString(RendererAPI api){
+        static inline std::string RendererAPIToString(RendererAPI api){
             switch (api) {
 
                 case RendererAPI::None:
@@ -24,7 +24,7 @@ namespace Voxymore {
             return "Unknown";
         }
 
-        inline std::ostream& operator<<(std::ostream& os, const RendererAPI& api)
+        static inline std::ostream& operator<<(std::ostream& os, const RendererAPI& api)
         {
             return os << RendererAPIToString(api);
         }
