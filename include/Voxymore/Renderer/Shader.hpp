@@ -5,6 +5,7 @@
 #pragma once
 #include "Voxymore/Core.hpp"
 #include "Voxymore/SystemHelper.hpp"
+#include "Voxymore/Math.hpp"
 
 
 namespace Voxymore {
@@ -67,6 +68,9 @@ namespace Voxymore {
             virtual void Bind() const = 0;
             virtual void Unbind() const = 0;
             virtual bool HasType(ShaderType shaderType) const = 0;
+
+			// Uniforms
+			virtual void SetUniformMat4(const std::string& name, const glm::mat4& mat4) = 0;
         };
 
     } // Voxymore

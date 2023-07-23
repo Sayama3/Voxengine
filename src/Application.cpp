@@ -12,7 +12,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application() {
+    Application::Application() : m_Camera(800, 600) {
 
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
@@ -25,6 +25,8 @@ namespace Voxymore::Core {
 
         m_ImGUILayer = new ImGUILayer();
         PushOverlay(m_ImGUILayer);
+
+		m_Camera.SetSize(m_Window->GetWidth(), m_Window->GetHeight());
 
         m_VertexArray.reset(VertexArray::Create());
 
@@ -112,15 +114,11 @@ namespace Voxymore::Core {
             RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
             RenderCommand::Clear();
 
-            Renderer::BeginScene();
+            Renderer::BeginScene(m_Camera);
 
-            m_Shader->Bind();
-            Renderer::Submit(m_VertexArray);
+            Renderer::Submit(m_Shader, m_VertexArray);
 
             Renderer::EndScene();
-
-            m_Shader->Bind();
-            m_VertexArray->Bind();
 
             for (Layer* layer : m_LayerStack) {
                 VXM_CORE_INFO("Update Layer {0}", layer->GetName());

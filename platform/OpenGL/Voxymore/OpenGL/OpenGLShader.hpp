@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Renderer/Shader.hpp"
+#include "Voxymore/Math.hpp"
 
 namespace Voxymore::Core {
     unsigned int GetShaderTypeID(ShaderType shaderType);
@@ -33,7 +34,9 @@ namespace Voxymore::Core {
         virtual void Bind() const override;
         virtual void Unbind() const override;
         virtual bool HasType(ShaderType shaderType) const override;
-    private:
+
+		virtual void SetUniformMat4(const std::string& name, const glm::mat4& mat4) override;
+	private:
         void Attach(const OpenGLSubShader& subShader) const;
         void Link() const;
         unsigned int m_RendererID;

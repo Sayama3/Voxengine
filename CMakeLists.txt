@@ -49,8 +49,10 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/RendererAPI.hpp
         include/Voxymore/Renderer/RenderCommand.hpp
         src/Renderer/RenderCommand.cpp
-        src/Components/Camera.cpp
-        include/Voxymore/Components/Camera.hpp)
+        include/Voxymore/Renderer/Camera.hpp
+        include/Voxymore/Renderer/PerspectiveCamera.hpp
+        src/Renderer/PerspectiveCamera.cpp
+        )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
