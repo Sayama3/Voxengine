@@ -9,11 +9,7 @@
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
-#include "Voxymore/Renderer/Buffer.hpp"
-#include "Voxymore/Renderer/Shader.hpp"
-#include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Window.hpp"
-#include "Voxymore/Renderer/PerspectiveCamera.hpp"
 
 namespace Voxymore::Core {
 
@@ -38,13 +34,6 @@ namespace Voxymore::Core {
         bool m_Running = true;
         LayerStack m_LayerStack;
         static Application* s_Instance;
-
-        std::shared_ptr<Shader> m_Shader;
-        std::shared_ptr<VertexArray> m_VertexArray;
-        std::shared_ptr<VertexBuffer> m_VertexBuffer;
-        std::shared_ptr<IndexBuffer> m_IndexBuffer;
-
-		PerspectiveCamera m_Camera;
     };
 
 } // Core
