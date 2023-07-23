@@ -6,6 +6,8 @@
 #include "Voxymore/Logger.hpp"
 
 namespace Voxymore::Core {
+	const Camera* Renderer::s_Camera = nullptr;
+
     void Renderer::BeginScene(const Camera& camera) {
 		s_Camera = &camera;
     }
