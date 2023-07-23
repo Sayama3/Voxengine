@@ -50,5 +50,9 @@ namespace Voxymore {
 		void PerspectiveCamera::UpdateViewProjectionMatrix() {
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		}
+
+		PerspectiveCamera::~PerspectiveCamera() {
+
+		}
 	} // Voxymore
 } // Core
