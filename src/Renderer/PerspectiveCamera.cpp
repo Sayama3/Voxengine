@@ -16,7 +16,7 @@ namespace Voxymore {
 			m_ViewMatrix = glm::inverse(Math::TRS(m_Position, m_Rotation, m_Scale));
 
 			// Update View Matrix
-			m_ProjectionMatrix = glm::perspectiveFov(m_FOV, m_Width, m_Height, m_NearClip, m_FarClip);
+			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(m_FOV), m_Width, m_Height, m_NearClip, m_FarClip);
 
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		}
@@ -43,7 +43,7 @@ namespace Voxymore {
 
 		void PerspectiveCamera::UpdateProjectionMatrix() {
 			// Update View Matrix
-			m_ProjectionMatrix = glm::perspectiveFov(m_FOV, m_Width, m_Height, m_NearClip, m_FarClip);
+			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(m_FOV), m_Width, m_Height, m_NearClip, m_FarClip);
 			UpdateViewProjectionMatrix();
 		}
 
