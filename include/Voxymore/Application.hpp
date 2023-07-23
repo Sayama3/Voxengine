@@ -13,6 +13,7 @@
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Window.hpp"
+#include "Voxymore/Renderer/PerspectiveCamera.hpp"
 
 namespace Voxymore::Core {
 
@@ -42,7 +43,8 @@ namespace Voxymore::Core {
         std::shared_ptr<VertexArray> m_VertexArray;
         std::shared_ptr<VertexBuffer> m_VertexBuffer;
         std::shared_ptr<IndexBuffer> m_IndexBuffer;
-//        unsigned int m_VertexArray/*, m_VertexBuffer, m_IndexBuffer*/;
+
+		PerspectiveCamera m_Camera;
     };
 
 } // Core

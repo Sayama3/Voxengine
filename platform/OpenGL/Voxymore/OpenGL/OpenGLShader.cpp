@@ -145,5 +145,11 @@ namespace Voxymore::Core {
     bool OpenGLShader::HasType(ShaderType shaderType) const {
         return this->m_ShaderProgramType & shaderType;
     }
+	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& mat4) {
+		//TODO: implement a lookup table for the location of the uniform names.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniformMatrix4fv(location, 1, false, glm::value_ptr(mat4));
+	}
 
 } // Core
