@@ -34,7 +34,7 @@ namespace Voxymore::Core {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose, std::placeholders::_1));
 
-        VXM_CORE_INFO(e.ToString());
+//        VXM_CORE_INFO(e.ToString());
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
             (*--it)->OnEvent(e);{
@@ -49,31 +49,32 @@ namespace Voxymore::Core {
         while (m_Running)
         {
             //TODO: Remove later as it should be abstracted.
-            VXM_CORE_INFO("Clear Screen");
+//            VXM_CORE_INFO("Clear Screen");
             RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
             RenderCommand::Clear();
 
             for (Layer* layer : m_LayerStack) {
-                VXM_CORE_INFO("Update Layer {0}", layer->GetName());
+//                VXM_CORE_INFO("Update Layer {0}", layer->GetName());
                 layer->OnUpdate();
             }
 
-            VXM_CORE_INFO("m_ImGUILayer->Begin(): {0}", m_ImGUILayer->GetName());
+//            VXM_CORE_INFO("m_ImGUILayer->Begin(): {0}", m_ImGUILayer->GetName());
             m_ImGUILayer->Begin();
 
             for (Layer* layer : m_LayerStack) {
-                VXM_CORE_INFO("OnImGuiRender: {0}", layer->GetName());
+//                VXM_CORE_INFO("OnImGuiRender: {0}", layer->GetName());
                 layer->OnImGuiRender();
             }
-            VXM_CORE_INFO("m_ImGUILayer->End: {0}", m_ImGUILayer->GetName());
+//            VXM_CORE_INFO("m_ImGUILayer->End: {0}", m_ImGUILayer->GetName());
             m_ImGUILayer->End();
 
-            VXM_CORE_INFO("Window Update");
+//            VXM_CORE_INFO("Window Update");
             m_Window->OnUpdate();
         }
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &e) {
+		VXM_CORE_INFO("Closing Voxymore Application.");
         m_Running = false;
         return true;
     }

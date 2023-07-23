@@ -75,16 +75,16 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::Begin() {
-        VXM_CORE_INFO("Begin ImGUILayer");
+//        VXM_CORE_INFO("Begin ImGUILayer");
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        VXM_CORE_INFO("Add every new Frames");
+//        VXM_CORE_INFO("Add every new Frames");
     }
 
     void ImGUILayer::End() {
-        VXM_CORE_INFO("End ImGUILayer");
+//        VXM_CORE_INFO("End ImGUILayer");
 
         // Rendering
         ImGui::Render();
@@ -108,7 +108,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnImGuiRender() {
-        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
+//        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
         static bool showDemoWindow = true;
         if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
