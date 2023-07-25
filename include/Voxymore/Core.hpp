@@ -18,13 +18,5 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-// Not sur if I want my glad & glm library always accessible.
-//#include <glad/glad.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/quaternion.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-//#include <glm/gtx/quaternion.hpp>
-//#include <glm/gtx/string_cast.hpp>
 
 #include "Macros.hpp"
