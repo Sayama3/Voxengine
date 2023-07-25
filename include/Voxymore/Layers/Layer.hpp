@@ -6,6 +6,7 @@
 
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Core.hpp"
+#include "Voxymore/Core/TimeStep.hpp"
 
 // We shouldn't search layer by name!!
 
@@ -17,7 +18,7 @@ namespace Voxymore::Core {
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate() {}
+        virtual void OnUpdate(TimeStep timeStep) {}
         virtual void OnImGuiRender() {}
         virtual void OnEvent(Event& event) {}
 

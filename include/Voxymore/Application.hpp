@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core.hpp"
+#include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
@@ -29,6 +30,8 @@ namespace Voxymore::Core {
         inline Window& GetWindow() { return *m_Window; }
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+    private:
+        double m_LastFrameTime;
         std::unique_ptr<Window> m_Window;
         ImGUILayer* m_ImGUILayer;
         bool m_Running = true;

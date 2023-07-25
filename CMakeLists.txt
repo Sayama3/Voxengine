@@ -52,13 +52,12 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/Camera.hpp
         include/Voxymore/Renderer/PerspectiveCamera.hpp
         src/Renderer/PerspectiveCamera.cpp
-        )
+        src/Core/TimeStep.cpp include/Voxymore/Core/TimeStep.hpp include/Voxymore/Core/Platform.hpp src/Core/Platform.cpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
-    add_compile_definitions(VXM_Debug)
-    add_compile_definitions(Debug)
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_Debug)
 ENDIF()
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
@@ -77,7 +76,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glfw  spdlog::spdlog_header_only imgui)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm glfw spdlog::spdlog_header_only imgui)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad)
 
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

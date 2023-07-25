@@ -7,6 +7,7 @@
 #include "Voxymore/Macros.hpp"
 #include "Voxymore/Logger.hpp"
 #include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Platform.hpp"
 
 
 namespace Voxymore::Core {
@@ -48,6 +49,9 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
+            double time = Platform::GetTime();
+            TimeStep timeStep = static_cast<float>(time - m_LastFrameTime);
+            m_LastFrameTime = time;
             //TODO: Remove later as it should be abstracted.
 //            VXM_CORE_INFO("Clear Screen");
             RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
@@ -55,7 +59,7 @@ namespace Voxymore::Core {
 
             for (Layer* layer : m_LayerStack) {
 //                VXM_CORE_INFO("Update Layer {0}", layer->GetName());
-                layer->OnUpdate();
+                layer->OnUpdate(timeStep);
             }
 
 //            VXM_CORE_INFO("m_ImGUILayer->Begin(): {0}", m_ImGUILayer->GetName());

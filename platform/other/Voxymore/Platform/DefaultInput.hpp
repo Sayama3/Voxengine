@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Voxymore/Core.hpp>
+#include "Voxymore/Core.hpp"
 #include "Voxymore/Input.hpp"
 
 namespace Voxymore::Core {

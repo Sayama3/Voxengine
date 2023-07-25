@@ -18,6 +18,8 @@
 #include "Voxymore/Layers/Layer.hpp"
 #include "Voxymore/Logger.hpp"
 
+#include "Voxymore/Core/TimeStep.hpp"
+
 #include "Voxymore/Input.hpp"
 #include "Voxymore/KeyCodes.hpp"
 #include "Voxymore/MouseButtonCodes.hpp"
