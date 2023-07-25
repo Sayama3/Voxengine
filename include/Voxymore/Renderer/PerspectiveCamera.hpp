@@ -13,7 +13,7 @@ namespace Voxymore {
 
         class PerspectiveCamera : public Camera {
         public:
-			PerspectiveCamera(float width, float height, float fov = 60.0f, float nearClip = 0.01f, float farClip = 1000.0f, glm::vec3 position = glm::zero<glm::vec3>(), glm::quat rotation = glm::identity<glm::quat>(), glm::vec3 scale = glm::one<glm::vec3>());
+			PerspectiveCamera(float width, float height, float fov = 60.0f, float nearClip = 0.01f, float farClip = 1000.0f, glm::vec3 position = glm::zero<glm::vec3>(), glm::quat rotation = glm::identity<glm::quat>());
 			virtual ~PerspectiveCamera() override;
 
             virtual glm::mat4 GetViewProjectionMatrix() const override;

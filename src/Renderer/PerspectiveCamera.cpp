@@ -8,8 +8,14 @@
 namespace Voxymore {
     namespace Core {
 
-		PerspectiveCamera::PerspectiveCamera(float width, float height, float fov, float nearClip, float farClip, glm::vec3 position, glm::quat rotation, glm::vec3 scale)
-		 : m_Width(width), m_Height(height), m_FOV(fov), m_NearClip(nearClip), m_FarClip(farClip), m_Position(position), m_Rotation(rotation), m_Scale(scale)
+		PerspectiveCamera::PerspectiveCamera(float width, float height, float fov, float nearClip, float farClip, glm::vec3 position, glm::quat rotation)
+		 : m_Width(width),
+         m_Height(height),
+         m_FOV(fov),
+         m_NearClip(nearClip),
+         m_FarClip(farClip),
+         m_Position(position),
+         m_Rotation(rotation)
 		{
 			// Update View Matrix (inversing the TRS matrix because
 			// it's a camera, and therefore it move the world so every movement is reverse.)
