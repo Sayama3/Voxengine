@@ -12,11 +12,10 @@ namespace Voxymore::Core {
     class MouseMovedEvent : public Event
     {
     public:
-        MouseMovedEvent(const float x, const float y)
-                : m_MouseX(x), m_MouseY(y) {}
+        inline MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
 
-        float GetX() const { return m_MouseX; }
-        float GetY() const { return m_MouseY; }
+        inline float GetX() const { return m_MouseX; }
+        inline float GetY() const { return m_MouseY; }
 
         inline std::string ToString() const override
         {
@@ -34,11 +33,10 @@ namespace Voxymore::Core {
     class MouseScrolledEvent : public Event
     {
     public:
-        MouseScrolledEvent(const float xOffset, const float yOffset)
-                : m_XOffset(xOffset), m_YOffset(yOffset) {}
+        inline MouseScrolledEvent(const float xOffset, const float yOffset) : m_XOffset(xOffset), m_YOffset(yOffset) {}
 
-        float GetXOffset() const { return m_XOffset; }
-        float GetYOffset() const { return m_YOffset; }
+        inline float GetXOffset() const { return m_XOffset; }
+        inline float GetYOffset() const { return m_YOffset; }
 
         inline std::string ToString() const override
         {
@@ -56,12 +54,11 @@ namespace Voxymore::Core {
     class MouseButtonEvent : public Event
     {
     public:
-        int GetMouseButton() const { return m_Button; }
+        inline int GetMouseButton() const { return m_Button; }
 
         EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput | EventCategory::EventCategoryMouseButton)
     protected:
-        MouseButtonEvent(const int button)
-                : m_Button(button) {}
+        inline MouseButtonEvent(const int button) : m_Button(button) {}
 
         int m_Button;
     };
@@ -69,8 +66,7 @@ namespace Voxymore::Core {
     class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonPressedEvent(const int button)
-                : MouseButtonEvent(button) {}
+        inline MouseButtonPressedEvent(const int button) : MouseButtonEvent(button) {}
 
         inline std::string ToString() const override
         {
@@ -85,8 +81,7 @@ namespace Voxymore::Core {
     class MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonReleasedEvent(const int button)
-                : MouseButtonEvent(button) {}
+        inline MouseButtonReleasedEvent(const int button) : MouseButtonEvent(button) {}
 
         inline std::string ToString() const override
         {

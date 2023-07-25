@@ -180,7 +180,6 @@ namespace Voxymore::Core {
         m_Data.VSync = enabled;
     }
 
-
     bool DefaultWindow::IsVSync() const {
         return m_Data.VSync;
     }

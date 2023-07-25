@@ -6,10 +6,9 @@
 
 namespace Voxymore::Core {
 	glm::mat4 Math::TRS(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) {
-		glm::mat4 trs(1.0f);
-		trs = glm::translate(trs, position);
-		trs = trs * glm::toMat4(rotation);
-		trs = glm::scale(trs, scale);
-		return trs;
+		glm::mat4 t = glm::translate(glm::mat4(1.0f), position); // Translation Matrix
+		glm::mat4 r = glm::toMat4(rotation); // Rotation Matrix
+        glm::mat4 s = glm::scale(glm::mat4(1.0f), scale); // Scale Matrix
+		return t * r * s; // Translation * Rotation * Scale => TRS Matrix.
 	}
 }
