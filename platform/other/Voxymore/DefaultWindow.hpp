@@ -27,6 +27,7 @@ namespace Voxymore::Core {
         virtual inline void* GetNativeWindow() override {
             return m_Window;
         }
+        virtual void SetCursorState(CursorState cursorState) override;
     private:
         virtual void Init(const WindowProps& props);
         virtual void Shutdown();
@@ -41,6 +42,7 @@ namespace Voxymore::Core {
             EventCallBackFn  EventCallback;
         };
         DefaultData m_Data;
+        CursorState m_CursorState;
     };
 
 } // Core

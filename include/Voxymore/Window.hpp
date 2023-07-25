@@ -10,6 +10,11 @@
 #include "Voxymore/Renderer/GraphicsContext.hpp"
 
 namespace Voxymore::Core {
+    enum class CursorState {
+        None,
+        Locked,
+    };
+
     struct WindowProps
     {
         std::string Title;
@@ -42,6 +47,7 @@ namespace Voxymore::Core {
         virtual void SetEventCallback(const EventCallBackFn& callback) = 0;
         virtual void SetVSync(bool enabled) = 0;
         virtual bool IsVSync() const = 0;
+        virtual void SetCursorState(CursorState cursorState) = 0;
 
         virtual void* GetNativeWindow() = 0;
 

@@ -28,7 +28,7 @@ namespace Voxymore::Core {
         return new DefaultWindow(props);
     }
 
-    DefaultWindow::DefaultWindow(const Voxymore::Core::WindowProps &props) {
+    DefaultWindow::DefaultWindow(const Voxymore::Core::WindowProps &props) : m_CursorState(CursorState::None) {
         Init(props);
     }
 
@@ -182,6 +182,18 @@ namespace Voxymore::Core {
 
     bool DefaultWindow::IsVSync() const {
         return m_Data.VSync;
+    }
+
+    void DefaultWindow::SetCursorState(CursorState cursorState) {
+        switch (cursorState) {
+            case CursorState::None:
+                glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                break;
+            case CursorState::Locked:
+                glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                break;
+        }
+        m_CursorState = cursorState;
     }
 
 } // Core
