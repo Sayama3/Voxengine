@@ -21,22 +21,22 @@ namespace Voxymore {
             virtual glm::mat4 GetViewMatrix() const override;
 
 			// View Matrix Getter/Setter
-			inline void SetPosition(const glm::vec3& position) { m_Position = position; UpdateViewMatrix(); }
-			inline void SetRotation(const glm::quat& rotation) { m_Rotation = rotation; UpdateViewMatrix(); }
-			inline void SetScale(const glm::vec3& scale) { m_Scale = scale; UpdateViewMatrix(); }
+			inline void SetPosition(const glm::vec3& position) { m_Position = position; }
+			inline void SetRotation(const glm::quat& rotation) { m_Rotation = rotation; }
+			inline void SetScale(const glm::vec3& scale) { m_Scale = scale; }
 
 			inline glm::vec3 GetPosition() const { return m_Position; }
 			inline glm::quat GetRotation() const { return m_Rotation; }
 			inline glm::vec3 GetScale() const { return m_Scale; }
 
 			// Projection Matrix Getter / Setter
-			inline void SetFOV(float fov) { m_FOV = fov; UpdateProjectionMatrix(); }
-			inline void SetNearClip(float nearClip) { m_NearClip = nearClip; UpdateProjectionMatrix(); }
-			inline void SetFarClip(float farClip) { m_FarClip = farClip; UpdateProjectionMatrix(); }
-			inline void SetSize(glm::vec2 size) { m_Width = size.x; m_Height = size.y;  UpdateProjectionMatrix(); }
-			inline void SetSize(float width, float height) { m_Width = width; m_Height = height;  UpdateProjectionMatrix(); }
-			inline void SetWidth(float width) { m_Width = width; UpdateProjectionMatrix(); }
-			inline void SetHeight(float height) { m_Height = height; UpdateProjectionMatrix(); }
+			inline void SetFOV(float fov) { m_FOV = fov; }
+			inline void SetNearClip(float nearClip) { m_NearClip = nearClip; }
+			inline void SetFarClip(float farClip) { m_FarClip = farClip; }
+			inline void SetSize(glm::vec2 size) { m_Width = size.x; m_Height = size.y; }
+			inline void SetSize(float width, float height) { m_Width = width; m_Height = height; }
+			inline void SetWidth(float width) { m_Width = width; }
+			inline void SetHeight(float height) { m_Height = height; }
 
 			inline float GetFOV() const { return m_FOV; }
 			inline float GetNearClip() const { return m_NearClip; }
@@ -44,6 +44,8 @@ namespace Voxymore {
 			inline float GetWidth() const { return m_Width; }
 			inline float GetHeight() const { return m_Height; }
 
+        public:
+            void UpdateAllMatrix();
 		private:
 			void UpdateViewMatrix();
 			void UpdateProjectionMatrix();
