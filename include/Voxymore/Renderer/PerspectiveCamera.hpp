@@ -23,11 +23,9 @@ namespace Voxymore {
 			// View Matrix Getter/Setter
 			inline void SetPosition(const glm::vec3& position) { m_Position = position; }
 			inline void SetRotation(const glm::quat& rotation) { m_Rotation = rotation; }
-			inline void SetScale(const glm::vec3& scale) { m_Scale = scale; }
 
 			inline glm::vec3 GetPosition() const { return m_Position; }
 			inline glm::quat GetRotation() const { return m_Rotation; }
-			inline glm::vec3 GetScale() const { return m_Scale; }
 
 			// Projection Matrix Getter / Setter
 			inline void SetFOV(float fov) { m_FOV = fov; }
@@ -58,7 +56,6 @@ namespace Voxymore {
             // Transform components
             glm::vec3 m_Position = glm::zero<glm::vec3>();
             glm::quat m_Rotation = glm::identity<glm::quat>();
-            glm::vec3 m_Scale = glm::one<glm::vec3>();
             // Perspective PerspectiveCamera components
             // In degrees.
             float m_FOV = 65.0f;

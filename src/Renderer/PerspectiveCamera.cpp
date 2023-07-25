@@ -13,7 +13,7 @@ namespace Voxymore {
 		{
 			// Update View Matrix (inversing the TRS matrix because
 			// it's a camera, and therefore it move the world so every movement is reverse.)
-			m_ViewMatrix = glm::inverse(Math::TRS(m_Position, m_Rotation, m_Scale));
+			m_ViewMatrix = glm::inverse(Math::TRS(m_Position, m_Rotation, glm::one<glm::vec3>()));
 
 			// Update View Matrix
 			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(m_FOV), m_Width, m_Height, m_NearClip, m_FarClip);
