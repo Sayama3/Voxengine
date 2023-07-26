@@ -8,39 +8,56 @@
 #include "Voxymore/Math.hpp"
 
 namespace Voxymore::Core {
-    unsigned int GetShaderTypeID(ShaderType shaderType);
+    enum OpenGLShaderType {
+        COMPUTE_SHADER = 0,
+        VERTEX_SHADER = 1,
+        TESS_CONTROL_SHADER = 2,
+        TESS_EVALUATION_SHADER = 3,
+        GEOMETRY_SHADER = 4,
+        FRAGMENT_SHADER = 5
+    };
+
 
     class OpenGLSubShader {
     public:
-        OpenGLSubShader(const ShaderParams& shader);
-        OpenGLSubShader(const std::string& source, ShaderType shaderType);
-
+        OpenGLSubShader(const std::string& src, OpenGLShaderType shaderType);
         ~OpenGLSubShader();
 
-        inline unsigned int GetId() const { return m_RendererID; }
-        inline unsigned int GetType() const { return GetShaderTypeID(m_Type); }
-        bool Compile() const;
+        OpenGLSubShader (const OpenGLSubShader&) = delete;
+        OpenGLSubShader& operator= (const OpenGLSubShader&) = delete;
+
+        bool Compile();
+        uint32_t GetID();
     private:
-        ShaderType m_Type;
-        unsigned int m_RendererID;
+        OpenGLShaderType m_Type;
+        uint32_t m_RendererID;
     };
 
     class OpenGLShader : public Shader {
     public:
-        OpenGLShader(const ShaderParams& shader1);
-        OpenGLShader(const ShaderParams& shader1, const ShaderParams& shader2);
-        OpenGLShader(const ShaderParams& shader1, const ShaderParams& shader2, const ShaderParams& shader3);
+        OpenGLShader(const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
+
+        OpenGLShader (const OpenGLShader&) = delete;
+        OpenGLShader& operator= (const OpenGLShader&) = delete;
+
         virtual void Bind() const override;
         virtual void Unbind() const override;
-        virtual bool HasType(ShaderType shaderType) const override;
 
-		virtual void SetUniformMat4(const std::string& name, const glm::mat4& mat4) override;
+
+
+		void SetUniformInt(const std::string& name, int value);
+
+		void SetUniformFloat(const std::string& name, float value);
+		void SetUniformFloat2(const std::string& name, const glm::vec2& value);
+		void SetUniformFloat3(const std::string& name, const glm::vec3& value);
+		void SetUniformFloat4(const std::string& name, const glm::vec4& value);
+
+		void SetUniformMat3(const std::string& name, const glm::mat3& value);
+		void SetUniformMat4(const std::string& name, const glm::mat4& value);
 	private:
-        void Attach(const OpenGLSubShader& subShader) const;
-        void Link() const;
+        void Link();
         unsigned int m_RendererID;
-        ShaderType m_ShaderProgramType;
     };
 
 } // Core

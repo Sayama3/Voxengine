@@ -9,15 +9,6 @@
 #define BIT(X) (1 << X)
 #endif
 
-//TODO: Write some real assert!
-#ifdef VXM_ENABLE_ASSERTS
-#define VXM_ASSERT(x, ...)
-    #define VXM_CORE_ASSERT(x, ...)
-#else
-#define VXM_ASSERT(x, ...)
-#define VXM_CORE_ASSERT(x, ...)
-#endif
-
 #include <Voxymore/Core.hpp>
 
 namespace Voxymore::Core {

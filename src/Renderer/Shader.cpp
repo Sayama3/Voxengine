@@ -8,63 +8,20 @@
 #include "Voxymore/Logger.hpp"
 
 namespace Voxymore::Core{
-    int GetShaderTypeValue(ShaderType shaderType) {
-        switch (shaderType) {
-            case COMPUTE_SHADER:
-                break;
-            case VERTEX_SHADER:
-                break;
-            case TESS_CONTROL_SHADER:
-                break;
-            case TESS_EVALUATION_SHADER:
-                break;
-            case GEOMETRY_SHADER:
-                break;
-            case FRAGMENT_SHADER:
-                break;
-        }
 
-        VXM_CORE_ERROR("The shader type {0} is not handled.", ShaderTypeToString(shaderType));
-        return -1;
-    }
+    Shader *Shader::Create(const std::string &srcVertex, const std::string &srcFragment)
+    {
+        switch (Renderer::GetAPI()) {
 
-    ShaderParams CreateShaderParams(ShaderType type, std::string path) {
-        return ShaderParams{
-            SystemHelper::ReadFile(path),
-            type,
-        };
-    }
-
-    Shader *Shader::CreateShader(const ShaderParams& shader1) {
-        switch(Renderer::GetAPI())
-        {
             case RendererAPI::API::None:
+                VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+                return nullptr;
                 break;
             case RendererAPI::API::OpenGL:
-                return new OpenGLShader(shader1);
-        }
-        return nullptr;
-    }
-
-    Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2) {
-        switch(Renderer::GetAPI())
-        {
-            case RendererAPI::API::None:
+                return new OpenGLShader(srcVertex, srcFragment);
                 break;
-            case RendererAPI::API::OpenGL:
-                return new OpenGLShader(shader1, shader2);
         }
-        return nullptr;
-    }
-
-    Shader *Shader::CreateShader(const ShaderParams& shader1, const ShaderParams& shader2, const ShaderParams& shader3) {
-        switch(Renderer::GetAPI())
-        {
-            case RendererAPI::API::None:
-                break;
-            case RendererAPI::API::OpenGL:
-                return new OpenGLShader(shader1, shader2, shader3);
-        }
+        VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
         return nullptr;
     }
 }

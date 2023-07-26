@@ -4,6 +4,7 @@
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Logger.hpp"
+#include "Voxymore/OpenGL/OpenGLShader.hpp"
 
 namespace Voxymore::Core {
 	const Camera* Renderer::s_Camera = nullptr;
@@ -23,8 +24,8 @@ namespace Voxymore::Core {
 		}
 		shader->Bind();
         //TODO: Set the view projection matrix once per frame not once per model drawn.
-        shader->SetUniformMat4("u_ViewProjectionMatrix", s_Camera->GetViewProjectionMatrix());
-        shader->SetUniformMat4("u_Transform", transform);
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_Camera->GetViewProjectionMatrix());
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);
     }

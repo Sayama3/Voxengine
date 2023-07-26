@@ -8,7 +8,7 @@
 
 
 namespace Voxymore::Core {
-    unsigned int GetShaderTypeID(ShaderType shaderType) {
+    unsigned int GetShaderTypeID(OpenGLShaderType shaderType) {
         switch (shaderType) {
             case COMPUTE_SHADER:
                 return GL_COMPUTE_SHADER;
@@ -30,25 +30,46 @@ namespace Voxymore::Core {
                 break;
         }
 
-        VXM_CORE_ERROR("ShaderType {0} not supported in OpenGL.", ShaderTypeToString(shaderType));
+        VXM_CORE_ASSERT(false, "ShaderType {0} not supported in OpenGL.", shaderType);
         return 0;
     }
 
-    OpenGLSubShader::OpenGLSubShader(const ShaderParams& shader) : m_Type(shader.type), m_RendererID(glCreateShader(GetType())) {
-        const char* src = shader.source.c_str();
-        glShaderSource(GetId(), 1, &src, nullptr);
+    std::string ShaderTypeToString(OpenGLShaderType shaderType){
+
+        switch (shaderType) {
+            case COMPUTE_SHADER:
+                return "COMPUTE_SHADER";
+                break;
+            case VERTEX_SHADER:
+                return "VERTEX_SHADER";
+                break;
+            case TESS_CONTROL_SHADER:
+                return "TESS_CONTROL_SHADER";
+                break;
+            case TESS_EVALUATION_SHADER:
+                return "TESS_EVALUATION_SHADER";
+                break;
+            case GEOMETRY_SHADER:
+                return "GEOMETRY_SHADER";
+                break;
+            case FRAGMENT_SHADER:
+                return "FRAGMENT_SHADER";
+                break;
+        }
+        return "UNKNOWN";
     }
 
-    OpenGLSubShader::OpenGLSubShader(const std::string &source, ShaderType shaderType) : m_Type(shaderType),  m_RendererID(glCreateShader(GetType())) {
+
+    OpenGLSubShader::OpenGLSubShader(const std::string &source, OpenGLShaderType shaderType) : m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
         const char* src = source.c_str();
-        glShaderSource(GetId(), 1, &src, nullptr);
+        glShaderSource(m_RendererID, 1, &src, nullptr);
     }
 
     OpenGLSubShader::~OpenGLSubShader() {
         glDeleteShader(m_RendererID);
     }
 
-    bool OpenGLSubShader::Compile() const {
+    bool OpenGLSubShader::Compile() {
         // Compile the vertex shader
         glCompileShader(m_RendererID);
         GLint isCompiled = 0;
@@ -69,46 +90,39 @@ namespace Voxymore::Core {
             VXM_CORE_ERROR("Compiling of shader {0} failed.", ShaderTypeToString(m_Type));
             VXM_CORE_ERROR("{0}", infoLog.data());
             // In this simple program, we'll just leave
+
             return false;
         }
         return true;
     }
 
-#define ADD_SUB_SHADER(name, shader) OpenGLSubShader name(shader); \
-                                name.Compile(); \
-                                this->Attach(name)
+    uint32_t OpenGLSubShader::GetID() {
+        return m_RendererID;
+    }
 
 
-    OpenGLShader::OpenGLShader(const ShaderParams &shader1) : m_RendererID(glCreateProgram()), m_ShaderProgramType(shader1.type) {
-        ADD_SUB_SHADER(s1, shader1);
+    OpenGLShader::OpenGLShader(const std::string &srcVertex, const std::string &srcFragment) : m_RendererID(glCreateProgram()) {
+        OpenGLSubShader vertexShader(srcVertex, OpenGLShaderType::VERTEX_SHADER);
+        vertexShader.Compile();
+        glAttachShader(m_RendererID, vertexShader.GetID());
+
+        OpenGLSubShader fragmentShader(srcFragment, OpenGLShaderType::FRAGMENT_SHADER);
+        fragmentShader.Compile();
+        glAttachShader(m_RendererID, fragmentShader.GetID());
+
         Link();
     }
 
-    OpenGLShader::OpenGLShader(const ShaderParams &shader1, const ShaderParams &shader2) : m_RendererID(glCreateProgram()), m_ShaderProgramType((ShaderType)((int)shader1.type | (int)shader2.type)) {
-        ADD_SUB_SHADER(s1, shader1);
-        ADD_SUB_SHADER(s2, shader2);
-        Link();
-
+    OpenGLShader::~OpenGLShader(){
+        glDeleteProgram(m_RendererID);
     }
 
-    OpenGLShader::OpenGLShader(const ShaderParams &shader1, const ShaderParams &shader2, const ShaderParams &shader3) : m_RendererID(glCreateProgram()), m_ShaderProgramType((ShaderType)((int)shader1.type | (int)shader2.type | (int)shader3.type)) {
-        ADD_SUB_SHADER(s1, shader1);
-        ADD_SUB_SHADER(s2, shader2);
-        ADD_SUB_SHADER(s3, shader3);
-        Link();
-    }
-
-
-    void OpenGLShader::Attach(const OpenGLSubShader& subShader) const {
-        glAttachShader(m_RendererID, subShader.GetId());
-    }
-
-    void OpenGLShader::Link() const {// Note the different functions here: glGetProgram* instead of glGetShader*.
+    void OpenGLShader::Link() {
         // Link our program
         glLinkProgram(m_RendererID);
 
         GLint isLinked = 0;
-        glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int *)&isLinked);
+        glGetProgramiv(m_RendererID, GL_LINK_STATUS, &isLinked);
         if (isLinked == GL_FALSE)
         {
             GLint maxLength = 0;
@@ -130,10 +144,6 @@ namespace Voxymore::Core {
         }
     }
 
-    OpenGLShader::~OpenGLShader() {
-        glDeleteProgram(m_RendererID);
-    }
-
     void OpenGLShader::Bind() const {
         glUseProgram(m_RendererID);
     }
@@ -142,14 +152,53 @@ namespace Voxymore::Core {
         glUseProgram(0);
     }
 
-    bool OpenGLShader::HasType(ShaderType shaderType) const {
-        return this->m_ShaderProgramType & shaderType;
-    }
-	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& mat4) {
-		//TODO: implement a lookup table for the location of the uniform names.
+    void OpenGLShader::SetUniformInt(const std::string& name, int value){
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
 		const char* cname = name.c_str();
 		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniformMatrix4fv(location, 1, false, glm::value_ptr(mat4));
+		glUniform1i(location, value);
+    }
+
+    void OpenGLShader::SetUniformFloat(const std::string& name, float value){
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniform1f(location, value);
+    }
+
+    void OpenGLShader::SetUniformFloat2(const std::string& name, const glm::vec2& value){
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniform2fv(location, 1, glm::value_ptr(value));
+    }
+
+    void OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value){
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniform3fv(location, 1, glm::value_ptr(value));
+    }
+
+    void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value){
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniform4fv(location, 1, glm::value_ptr(value));
+    }
+
+	void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& value) {
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
+	}
+
+	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) {
+		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
+		const char* cname = name.c_str();
+		int location = glGetUniformLocation(m_RendererID, cname);
+		glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
 	}
 
 } // Core

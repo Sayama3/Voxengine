@@ -13,7 +13,7 @@ namespace Voxymore::Core {
         {
             case RendererAPI::API::None:
             {
-                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None));
+                VXM_CORE_ASSERT(false, "{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None));
                 return nullptr;
             }
             case RendererAPI::API::OpenGL:
@@ -33,7 +33,7 @@ namespace Voxymore::Core {
         {
             case RendererAPI::API::None:
             {
-                VXM_CORE_ERROR("{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None));
+                VXM_CORE_ASSERT(false, "{0} is not supported yet!", RendererAPIToString(RendererAPI::API::None))
                 return nullptr;
             }
             case RendererAPI::API::OpenGL:
