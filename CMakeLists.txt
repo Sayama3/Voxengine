@@ -52,7 +52,7 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/Camera.hpp
         include/Voxymore/Renderer/PerspectiveCamera.hpp
         src/Renderer/PerspectiveCamera.cpp
-        src/Core/TimeStep.cpp include/Voxymore/Core/TimeStep.hpp include/Voxymore/Core/Platform.hpp src/Core/Platform.cpp)
+        src/Core/TimeStep.cpp include/Voxymore/Core/TimeStep.hpp include/Voxymore/Core/Platform.hpp src/Core/Platform.cpp include/Voxymore/Core/SmartPointers.hpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 

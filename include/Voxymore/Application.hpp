@@ -6,6 +6,7 @@
 
 #include "Voxymore/Core.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
@@ -32,7 +33,7 @@ namespace Voxymore::Core {
         bool OnWindowClose(WindowCloseEvent& e);
     private:
         double m_LastFrameTime;
-        std::unique_ptr<Window> m_Window;
+        Scope<Window> m_Window;
         ImGUILayer* m_ImGUILayer;
         bool m_Running = true;
         LayerStack m_LayerStack;

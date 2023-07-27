@@ -17,7 +17,7 @@ namespace Voxymore::Core {
 		s_Camera = nullptr;
     }
 
-    void Renderer::Submit(std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray> &vertexArray, const glm::mat4& transform) {
+    void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform) {
 		if(s_Camera == nullptr) {
 			VXM_CORE_ERROR("No valid camera set, begin the scene with a camera before submitting meshes.");
 			return;

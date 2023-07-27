@@ -10,6 +10,7 @@
 #include "Voxymore/Logger.hpp"
 #include "Voxymore/Core.hpp"
 #include "Voxymore/OpenGL/OpenGLContext.hpp"
+#include "GLFW/glfw3.h"
 
 
 namespace Voxymore::Core {

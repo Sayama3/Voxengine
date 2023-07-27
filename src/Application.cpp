@@ -21,7 +21,7 @@ namespace Voxymore::Core {
 
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create());
+        m_Window = Scope<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
 
         m_ImGUILayer = new ImGUILayer();
