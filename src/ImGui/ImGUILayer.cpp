@@ -24,7 +24,7 @@
 
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
-        VXM_CORE_INFO("Create ImGUILayer");
+        VXM_CORE_INFO("CreateFromSource ImGUILayer");
     }
 
     ImGUILayer::~ImGUILayer() {

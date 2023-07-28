@@ -14,13 +14,21 @@
 namespace Voxymore::Core {
     namespace SystemHelper {
         inline std::string ReadFile(const std::string &path) {
+            std::string result;
             std::ifstream fileStream(path);
-            std::stringstream file;
-            std::string line;
-            while (std::getline(fileStream, line)) {
-                file << line << "\n";
+            if(fileStream)
+            {
+                fileStream.seekg(0, std::ios::end);
+                result.resize(fileStream.tellg());
+                fileStream.seekg(0, std::ios::beg);
+                fileStream.read(result.data(), result.size());
+                fileStream.close();
             }
-            return file.str();
+            else
+            {
+                VXM_CORE_ERROR("Could not open file '{0}'.", path);
+            }
+            return result;
         }
     }
 }

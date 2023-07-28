@@ -38,6 +38,9 @@ namespace Voxymore::Core {
         OpenGLShader(const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
 
+
+        std::unordered_map<unsigned int, std::string> PreProcess(const std::vector<std::string>& paths);
+
         OpenGLShader (const OpenGLShader&) = delete;
         OpenGLShader& operator= (const OpenGLShader&) = delete;
 
@@ -57,6 +60,7 @@ namespace Voxymore::Core {
 		void SetUniformMat4(const std::string& name, const glm::mat4& value);
 	private:
         void Link();
+        std::unordered_map<unsigned int, std::string> shaderSources;
         unsigned int m_RendererID;
     };
 

@@ -32,6 +32,9 @@
 #define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
 #define VXM_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
 #endif
+#elif VXM_USE_ASSERT
+#define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
+#define VXM_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
 #else
 #define VXM_CORE_ASSERT(condition, ...)
 #define VXM_ASSERT(condition, ...)

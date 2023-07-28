@@ -3,8 +3,24 @@
 //
 
 #include "OpenGLShader.hpp"
+#include "Voxymore/Core.hpp"
 #include "Voxymore/Logger.hpp"
 #include <glad/glad.h>
+
+#ifdef _WIN32
+#define NEWLINE "\r\n"
+#elif defined macintosh // OS 9
+#define NEWLINE "\r"
+#else
+    #define NEWLINE "\n" // Mac OS X uses \n
+#endif
+
+#define SHADER_DEFINE_TYPE "#define  __TYPE_"
+#define VERTEX_TYPE "VERTEX_SHADER__"
+#define FRAGMENT_TYPE "FRAGMENT_SHADER__"
+#define PIXEL_TYPE "PIXEL_SHADER__"
+#define GEOMETRY_TYPE "GEOMETRY_SHADER__"
+#define COMPUTE_TYPE "COMPUTE_SHADER__"
 
 
 namespace Voxymore::Core {
@@ -59,6 +75,15 @@ namespace Voxymore::Core {
         return "UNKNOWN";
     }
 
+    GLenum ShaderTypeFromString(std::string type)
+    {
+        if(type == VERTEX_TYPE) return GL_VERTEX_SHADER;
+        else if(type == FRAGMENT_TYPE || type == PIXEL_TYPE) return GL_FRAGMENT_SHADER;
+        else if(type == GEOMETRY_TYPE) return GL_GEOMETRY_SHADER;
+        else if(type == COMPUTE_TYPE) return GL_COMPUTE_SHADER;
+        return 0;
+    }
+
 
     OpenGLSubShader::OpenGLSubShader(const std::string &source, OpenGLShaderType shaderType) : m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
         const char* src = source.c_str();
@@ -101,7 +126,41 @@ namespace Voxymore::Core {
     }
 
 
-    OpenGLShader::OpenGLShader(const std::string &srcVertex, const std::string &srcFragment) : m_RendererID(glCreateProgram()) {
+    OpenGLShader::OpenGLShader(const std::initializer_list<std::string>& paths) : m_RendererID(glCreateProgram())
+    {
+        std::vector<std::string> str;
+        PreProcess(str);
+        Link();
+    }
+
+    std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::vector<std::string>& paths)
+    {
+        std::unordered_map<unsigned int, std::string> shaderSources;
+        size_t typeTokenLength = strlen(SHADER_DEFINE_TYPE);
+
+        for (const auto& path : paths) {
+            std::string source = SystemHelper::ReadFile(path);
+            size_t pos = source.find(SHADER_DEFINE_TYPE, 0);
+            while(pos != std::string::npos)
+            {
+
+                size_t eol = source.find_first_of(NEWLINE, pos);
+                VXM_CORE_ASSERT(eol != std::string::npos, "Syntax error.");
+                size_t begin = pos + typeTokenLength;
+                std::string type = source.substr(begin, eol - begin);
+                VXM_CORE_ASSERT(ShaderTypeFromString(type), "Type '{0}' not supported...", type);
+
+                size_t beginSource = pos;
+                size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
+                pos = source.find(SHADER_DEFINE_TYPE, nextLinePos);
+                shaderSources[ShaderTypeFromString(type)] = source.substr(beginSource, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
+            }
+        }
+
+        return shaderSources;
+    }
+
+    OpenGLShader::OpenGLShader(const std::string& srcVertex, const std::string& srcFragment) : m_RendererID(glCreateProgram()) {
         OpenGLSubShader vertexShader(srcVertex, OpenGLShaderType::VERTEX_SHADER);
         vertexShader.Compile();
         glAttachShader(m_RendererID, vertexShader.GetID());

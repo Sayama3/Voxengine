@@ -18,7 +18,7 @@ namespace Voxymore::Core {
     class Math {
 	public:
 		/**
-		 * Create a Transform matrix from a position, a rotation, and a scale.
+		 * CreateFromSource a Transform matrix from a position, a rotation, and a scale.
 		 * @param position The position as a 3D vector.
 		 * @param rotation The rotation as a quaternion.
 		 * @param scale The scale as a 3D vector.
