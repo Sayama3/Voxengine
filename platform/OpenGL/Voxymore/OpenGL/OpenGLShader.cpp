@@ -82,7 +82,7 @@ namespace Voxymore::Core {
     }
 
 
-    OpenGLSubShader::OpenGLSubShader(const std::string &source, ShaderType shaderType) : m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
+    OpenGLSubShader::OpenGLSubShader(const std::string &source, ShaderType shaderType) : m_Type(shaderType), m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
         const char* src = source.c_str();
         glShaderSource(m_RendererID, 1, &src, nullptr);
     }
