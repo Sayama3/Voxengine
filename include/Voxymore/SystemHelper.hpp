@@ -12,8 +12,9 @@
 #include <Voxymore/Core.hpp>
 
 namespace Voxymore::Core {
-    namespace SystemHelper {
-        inline std::string ReadFile(const std::string &path) {
+    class SystemHelper {
+    public:
+        inline static std::string ReadFile(const std::string &path) {
             std::string result;
             std::ifstream fileStream(path);
             if(fileStream)
@@ -30,6 +31,6 @@ namespace Voxymore::Core {
             }
             return result;
         }
-    }
+    };
 }
 #endif //LEARNOPENGL_SYSTEMHELPER_HPP

@@ -24,68 +24,69 @@
 
 
 namespace Voxymore::Core {
-    unsigned int GetShaderTypeID(OpenGLShaderType shaderType) {
+    unsigned int GetShaderTypeID(ShaderType shaderType) {
         switch (shaderType) {
-            case COMPUTE_SHADER:
+            case ShaderType::COMPUTE_SHADER:
                 return GL_COMPUTE_SHADER;
                 break;
-            case VERTEX_SHADER:
+            case ShaderType::VERTEX_SHADER:
                 return GL_VERTEX_SHADER;
                 break;
-            case TESS_CONTROL_SHADER:
+            case ShaderType::TESS_CONTROL_SHADER:
                 return GL_TESS_CONTROL_SHADER;
                 break;
-            case TESS_EVALUATION_SHADER:
+            case ShaderType::TESS_EVALUATION_SHADER:
                 return GL_TESS_EVALUATION_SHADER;
                 break;
-            case GEOMETRY_SHADER:
+            case ShaderType::GEOMETRY_SHADER:
                 return GL_GEOMETRY_SHADER;
                 break;
-            case FRAGMENT_SHADER:
+            case ShaderType::FRAGMENT_SHADER:
                 return GL_FRAGMENT_SHADER;
                 break;
         }
 
-        VXM_CORE_ASSERT(false, "ShaderType {0} not supported in OpenGL.", shaderType);
+        VXM_CORE_ASSERT(false, "ShaderType {0} not supported in OpenGL.", (int)shaderType);
         return 0;
     }
 
-    std::string ShaderTypeToString(OpenGLShaderType shaderType){
+    std::string ShaderTypeToString(ShaderType shaderType){
 
         switch (shaderType) {
-            case COMPUTE_SHADER:
+            case ShaderType::COMPUTE_SHADER:
                 return "COMPUTE_SHADER";
                 break;
-            case VERTEX_SHADER:
+            case ShaderType::VERTEX_SHADER:
                 return "VERTEX_SHADER";
                 break;
-            case TESS_CONTROL_SHADER:
+            case ShaderType::TESS_CONTROL_SHADER:
                 return "TESS_CONTROL_SHADER";
                 break;
-            case TESS_EVALUATION_SHADER:
+            case ShaderType::TESS_EVALUATION_SHADER:
                 return "TESS_EVALUATION_SHADER";
                 break;
-            case GEOMETRY_SHADER:
+            case ShaderType::GEOMETRY_SHADER:
                 return "GEOMETRY_SHADER";
                 break;
-            case FRAGMENT_SHADER:
+            case ShaderType::FRAGMENT_SHADER:
                 return "FRAGMENT_SHADER";
                 break;
         }
         return "UNKNOWN";
     }
 
-    GLenum ShaderTypeFromString(std::string type)
+    ShaderType ShaderTypeFromString(std::string type)
     {
-        if(type == VERTEX_TYPE) return GL_VERTEX_SHADER;
-        else if(type == FRAGMENT_TYPE || type == PIXEL_TYPE) return GL_FRAGMENT_SHADER;
-        else if(type == GEOMETRY_TYPE) return GL_GEOMETRY_SHADER;
-        else if(type == COMPUTE_TYPE) return GL_COMPUTE_SHADER;
-        return 0;
+        if(type == VERTEX_TYPE) return ShaderType::VERTEX_SHADER;
+        else if(type == FRAGMENT_TYPE || type == PIXEL_TYPE) return ShaderType::FRAGMENT_SHADER;
+        else if(type == GEOMETRY_TYPE) return ShaderType::GEOMETRY_SHADER;
+        else if(type == COMPUTE_TYPE) return ShaderType::COMPUTE_SHADER;
+        VXM_CORE_ASSERT(false, "Type {0} unknown.", type);
+        return ShaderType::None;
     }
 
 
-    OpenGLSubShader::OpenGLSubShader(const std::string &source, OpenGLShaderType shaderType) : m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
+    OpenGLSubShader::OpenGLSubShader(const std::string &source, ShaderType shaderType) : m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
         const char* src = source.c_str();
         glShaderSource(m_RendererID, 1, &src, nullptr);
     }
@@ -112,8 +113,8 @@ namespace Voxymore::Core {
             glDeleteShader(m_RendererID);
 
             // Use the infoLog as you see fit.
-            VXM_CORE_ERROR("Compiling of shader {0} failed.", ShaderTypeToString(m_Type));
             VXM_CORE_ERROR("{0}", infoLog.data());
+            VXM_CORE_ASSERT(false, "Compiling of shader {0} failed.", ShaderTypeToString(m_Type));
             // In this simple program, we'll just leave
 
             return false;
@@ -126,16 +127,62 @@ namespace Voxymore::Core {
     }
 
 
-    OpenGLShader::OpenGLShader(const std::initializer_list<std::string>& paths) : m_RendererID(glCreateProgram())
+    OpenGLShader::OpenGLShader(const std::unordered_map<ShaderType, std::string>& paths)
     {
-        std::vector<std::string> str;
-        PreProcess(str);
-        Link();
+        std::unordered_map<ShaderType, std::string> sources(paths.size());
+        for (auto& kp:paths) {
+            sources[kp.first] = SystemHelper::ReadFile(kp.second);
+        }
+        Compile(sources);
     }
 
-    std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::vector<std::string>& paths)
+    OpenGLShader::OpenGLShader(const std::vector<std::string>& paths)
     {
-        std::unordered_map<unsigned int, std::string> shaderSources;
+        auto shaderSources = PreProcess(paths);
+        Compile(shaderSources);
+    }
+
+    OpenGLShader::OpenGLShader(const std::string& srcVertex, const std::string& srcFragment) {
+        Compile({
+            {ShaderType::VERTEX_SHADER,   srcVertex},
+            {ShaderType::FRAGMENT_SHADER, srcFragment},
+        });
+    }
+
+    void OpenGLShader::Compile(std::unordered_map<ShaderType, std::string> shaders)
+    {
+        unsigned int program = glCreateProgram();
+        std::vector<OpenGLSubShader*> subShaders(shaders.size());
+        for (auto& kv : shaders)
+        {
+            ShaderType type = kv.first;
+            const std::string& source = kv.second;
+
+            subShaders.push_back(new OpenGLSubShader(source, type));
+            if(subShaders[subShaders.size() - 1]->Compile()){
+                glAttachShader(m_RendererID,subShaders[subShaders.size() - 1]->GetID());
+            } else {
+                break;
+            }
+        }
+
+
+        if(Link(program)) {
+            m_RendererID = program;
+        } else {
+            for (OpenGLSubShader* subShader: subShaders) {
+                glDetachShader(program, subShader->GetID());
+            }
+        }
+
+        for (OpenGLSubShader* subShader: subShaders) {
+            delete subShader;
+        }
+    }
+
+    std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::vector<std::string>& paths)
+    {
+        std::unordered_map<ShaderType, std::string> shaderSources;
         size_t typeTokenLength = strlen(SHADER_DEFINE_TYPE);
 
         for (const auto& path : paths) {
@@ -143,12 +190,11 @@ namespace Voxymore::Core {
             size_t pos = source.find(SHADER_DEFINE_TYPE, 0);
             while(pos != std::string::npos)
             {
-
                 size_t eol = source.find_first_of(NEWLINE, pos);
                 VXM_CORE_ASSERT(eol != std::string::npos, "Syntax error.");
                 size_t begin = pos + typeTokenLength;
                 std::string type = source.substr(begin, eol - begin);
-                VXM_CORE_ASSERT(ShaderTypeFromString(type), "Type '{0}' not supported...", type);
+                VXM_CORE_ASSERT((int)ShaderTypeFromString(type), "Type '{0}' not supported...", type);
 
                 size_t beginSource = pos;
                 size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
@@ -160,47 +206,39 @@ namespace Voxymore::Core {
         return shaderSources;
     }
 
-    OpenGLShader::OpenGLShader(const std::string& srcVertex, const std::string& srcFragment) : m_RendererID(glCreateProgram()) {
-        OpenGLSubShader vertexShader(srcVertex, OpenGLShaderType::VERTEX_SHADER);
-        vertexShader.Compile();
-        glAttachShader(m_RendererID, vertexShader.GetID());
-
-        OpenGLSubShader fragmentShader(srcFragment, OpenGLShaderType::FRAGMENT_SHADER);
-        fragmentShader.Compile();
-        glAttachShader(m_RendererID, fragmentShader.GetID());
-
-        Link();
-    }
-
     OpenGLShader::~OpenGLShader(){
         glDeleteProgram(m_RendererID);
     }
 
-    void OpenGLShader::Link() {
+    bool OpenGLShader::Link() {
+        return Link(m_RendererID);
+    }
+    bool OpenGLShader::Link(unsigned int rendererId) {
         // Link our program
-        glLinkProgram(m_RendererID);
+        glLinkProgram(rendererId);
 
         GLint isLinked = 0;
-        glGetProgramiv(m_RendererID, GL_LINK_STATUS, &isLinked);
+        glGetProgramiv(rendererId, GL_LINK_STATUS, &isLinked);
         if (isLinked == GL_FALSE)
         {
             GLint maxLength = 0;
-            glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
+            glGetProgramiv(rendererId, GL_INFO_LOG_LENGTH, &maxLength);
 
             // The maxLength includes the NULL character
             std::vector<GLchar> infoLog(maxLength);
-            glGetProgramInfoLog(m_RendererID, maxLength, &maxLength, &infoLog[0]);
+            glGetProgramInfoLog(rendererId, maxLength, &maxLength, &infoLog[0]);
 
             // We don't need the program anymore.
-            glDeleteProgram(m_RendererID);
+            glDeleteProgram(rendererId);
 
             // Use the infoLog as you see fit.
-            VXM_CORE_ERROR("Linking of shader program failed.");
             VXM_CORE_ERROR("{0}", infoLog.data());
+            VXM_CORE_ASSERT(false, "Linking of shader program failed.");
 
             // In this simple program, we'll just leave
-            return;
+            return false;
         }
+        return true;
     }
 
     void OpenGLShader::Bind() const {

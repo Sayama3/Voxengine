@@ -6,21 +6,12 @@
 
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Math.hpp"
+#include "Voxymore/SystemHelper.hpp"
 
 namespace Voxymore::Core {
-    enum OpenGLShaderType {
-        COMPUTE_SHADER = 0,
-        VERTEX_SHADER = 1,
-        TESS_CONTROL_SHADER = 2,
-        TESS_EVALUATION_SHADER = 3,
-        GEOMETRY_SHADER = 4,
-        FRAGMENT_SHADER = 5
-    };
-
-
     class OpenGLSubShader {
     public:
-        OpenGLSubShader(const std::string& src, OpenGLShaderType shaderType);
+        OpenGLSubShader(const std::string& src, ShaderType shaderType);
         ~OpenGLSubShader();
 
         OpenGLSubShader (const OpenGLSubShader&) = delete;
@@ -29,17 +20,17 @@ namespace Voxymore::Core {
         bool Compile();
         uint32_t GetID();
     private:
-        OpenGLShaderType m_Type;
+        ShaderType m_Type;
         uint32_t m_RendererID;
     };
 
+    // TODO: Analyse shaders to get the different uniform inside.
     class OpenGLShader : public Shader {
     public:
+        OpenGLShader(const std::vector<std::string>& paths);
+        OpenGLShader(const std::unordered_map<ShaderType, std::string>& paths);
         OpenGLShader(const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
-
-
-        std::unordered_map<unsigned int, std::string> PreProcess(const std::vector<std::string>& paths);
 
         OpenGLShader (const OpenGLShader&) = delete;
         OpenGLShader& operator= (const OpenGLShader&) = delete;
@@ -59,8 +50,11 @@ namespace Voxymore::Core {
 		void SetUniformMat3(const std::string& name, const glm::mat3& value);
 		void SetUniformMat4(const std::string& name, const glm::mat4& value);
 	private:
-        void Link();
-        std::unordered_map<unsigned int, std::string> shaderSources;
+        std::unordered_map<ShaderType, std::string> PreProcess(const std::vector<std::string>& paths);
+        void Compile(std::unordered_map<ShaderType, std::string> shaders);
+        bool Link();
+        bool Link(unsigned int rendererId);
+    private:
         unsigned int m_RendererID;
     };
 
