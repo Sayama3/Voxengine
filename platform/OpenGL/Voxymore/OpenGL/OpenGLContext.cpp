@@ -26,6 +26,8 @@ namespace Voxymore {
             VXM_CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
             VXM_CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
             VXM_CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
+
+            glEnable(GL_DEPTH_TEST);
         }
 
         void OpenGLContext::SwapBuffers() {
