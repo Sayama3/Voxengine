@@ -26,6 +26,7 @@ namespace Voxymore {
             glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
             glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height);
 
+            //TODO: Add parameter on the Texture API to be able to change this type of parameters.
             glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
