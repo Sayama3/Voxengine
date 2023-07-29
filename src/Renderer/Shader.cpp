@@ -4,7 +4,6 @@
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
-#include "Voxymore/SystemHelper.hpp"
 #include "Voxymore/Logger.hpp"
 
 namespace Voxymore::Core{
@@ -22,6 +21,38 @@ namespace Voxymore::Core{
                 break;
         }
         VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
+        return nullptr;
+    }
+
+    static Shader* Create(const std::vector<std::string>& paths)
+    {
+        switch (Renderer::GetAPI()) {
+
+            case RendererAPI::API::None:
+                VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+                return nullptr;
+                break;
+            case RendererAPI::API::OpenGL:
+                return new OpenGLShader(paths);
+                break;
+        }
+        VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
+        return nullptr;
+    }
+
+    static Shader* Create(const std::unordered_map<ShaderType, std::string>& paths)
+    {
+        switch (Renderer::GetAPI()) {
+
+            case RendererAPI::API::None:
+                VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+                return nullptr;
+                break;
+            case RendererAPI::API::OpenGL:
+                return new OpenGLShader(paths);
+                break;
+        }
+        VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
         return nullptr;
     }
 }
