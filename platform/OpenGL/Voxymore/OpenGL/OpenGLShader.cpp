@@ -196,10 +196,9 @@ namespace Voxymore::Core {
                 std::string type = source.substr(begin, eol - begin);
                 VXM_CORE_ASSERT((int)ShaderTypeFromString(type), "Type '{0}' not supported...", type);
 
-                size_t beginSource = pos;
                 size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
                 pos = source.find(SHADER_DEFINE_TYPE, nextLinePos);
-                shaderSources[ShaderTypeFromString(type)] = source.substr(beginSource, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
+                shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
             }
         }
 
