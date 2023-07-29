@@ -8,13 +8,7 @@
 #include <glad/glad.h>
 
 #ifndef NEWLINE
-#ifdef _WIN32
-#define NEWLINE "\r\n"
-#elif defined macintosh // OS 9
-#define NEWLINE "\r"
-#else
-    #define NEWLINE "\n" // Mac OS X uses \n
-#endif
+#define NEWLINE "\n"
 #endif
 
 #define SHADER_DEFINE_TYPE "#define  __TYPE_"
