@@ -9,6 +9,10 @@
 namespace Voxymore::Core {
 	const Camera* Renderer::s_Camera = nullptr;
 
+    void Renderer::Init() {
+        RenderCommand::Init();
+    }
+
     void Renderer::BeginScene(const Camera& camera) {
 		s_Camera = &camera;
     }

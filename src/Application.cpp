@@ -24,6 +24,8 @@ namespace Voxymore::Core {
         m_Window = Scope<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
 
+        Renderer::Init();
+
         m_ImGUILayer = new ImGUILayer();
         PushOverlay(m_ImGUILayer);
     }

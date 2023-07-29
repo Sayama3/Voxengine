@@ -12,6 +12,7 @@ namespace Voxymore::Core {
         public:
             OpenGLRenderAPI();
             virtual ~OpenGLRenderAPI() override;
+            virtual void Init() override;
             virtual void SetClearColor(const glm::vec4& color) override;
             virtual void Clear() override;
 
