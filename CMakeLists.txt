@@ -19,7 +19,7 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/EntryPoint.hpp
         include/Voxymore/Logger.hpp
         include/Voxymore/Math.hpp
-        include/Voxymore/stb_image.h
+        include/vendor/stb_image.h
         include/Voxymore/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp
         include/Voxymore/Events/KeyEvent.hpp
@@ -52,7 +52,13 @@ set(SRC_FILES src/Application.cpp
         include/Voxymore/Renderer/Camera.hpp
         include/Voxymore/Renderer/PerspectiveCamera.hpp
         src/Renderer/PerspectiveCamera.cpp
-        src/Core/TimeStep.cpp include/Voxymore/Core/TimeStep.hpp include/Voxymore/Core/Platform.hpp src/Core/Platform.cpp include/Voxymore/Core/SmartPointers.hpp)
+        src/Core/TimeStep.cpp
+        include/Voxymore/Core/TimeStep.hpp
+        include/Voxymore/Core/Platform.hpp
+        src/Core/Platform.cpp
+        include/Voxymore/Core/SmartPointers.hpp
+        src/Renderer/Texture.cpp
+        include/Voxymore/Renderer/Texture.hpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 

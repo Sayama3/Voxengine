@@ -32,6 +32,7 @@
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
+#include "Voxymore/Renderer/Texture.hpp"
 
 
 #include <Voxymore/EntryPoint.hpp>

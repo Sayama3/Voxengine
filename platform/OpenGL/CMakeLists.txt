@@ -11,6 +11,8 @@ target_sources(${LIBRARY_TARGET_NAME} PRIVATE
         Voxymore/OpenGL/OpenGLVertexArray.hpp
         Voxymore/OpenGL/OpenGLRenderAPI.cpp
         Voxymore/OpenGL/OpenGLRenderAPI.hpp
+        Voxymore/OpenGL/OpenGLTexture2D.cpp
+        Voxymore/OpenGL/OpenGLTexture2D.hpp
         )
 
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
