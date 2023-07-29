@@ -156,7 +156,7 @@ namespace Voxymore::Core {
 
             subShaders.push_back(new OpenGLSubShader(source, type));
             if(subShaders[subShaders.size() - 1]->Compile()){
-                glAttachShader(m_RendererID,subShaders[subShaders.size() - 1]->GetID());
+                glAttachShader(program, subShaders[subShaders.size() - 1]->GetID());
             } else {
                 break;
             }
@@ -178,7 +178,7 @@ namespace Voxymore::Core {
 
     std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::vector<std::string>& paths)
     {
-        std::unordered_map<ShaderType, std::string> shaderSources;
+        std::unordered_map<ShaderType, std::string> shaderSources(paths.size());
         size_t typeTokenLength = strlen(SHADER_DEFINE_TYPE);
 
         for (const auto& path : paths) {
