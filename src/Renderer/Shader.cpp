@@ -24,7 +24,7 @@ namespace Voxymore::Core{
         return nullptr;
     }
 
-    static Shader* Create(const std::vector<std::string>& paths)
+    Shader* Shader::Create(const std::vector<std::string>& paths)
     {
         switch (Renderer::GetAPI()) {
 
@@ -40,7 +40,7 @@ namespace Voxymore::Core{
         return nullptr;
     }
 
-    static Shader* Create(const std::unordered_map<ShaderType, std::string>& paths)
+    Shader* Shader::Create(const std::unordered_map<ShaderType, std::string>& paths)
     {
         switch (Renderer::GetAPI()) {
 
