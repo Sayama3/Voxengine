@@ -23,14 +23,14 @@
 
 #ifdef VXM_Debug
 #if (_MSC_VER && !__INTEL_COMPILER) || (__MINGW32__ || __MINGW64__)
-#define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_CORE_ERROR(__VA_ARGS__); __debugbreak(); }
-#define VXM_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); __debugbreak(); }
+#define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); __debugbreak(); }
+#define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); __debugbreak(); }
 #elif _POSIX
-#define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_CORE_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
-#define VXM_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
+#define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
+#define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
 #else
-#define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
-#define VXM_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
+#define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); }
+#define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); }
 #endif
 #elif VXM_USE_ASSERT
 #define VXM_CORE_ASSERT(condition, ...) if(condition) { VXM_ERROR(__VA_ARGS__); }
