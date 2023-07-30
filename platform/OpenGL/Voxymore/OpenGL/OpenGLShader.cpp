@@ -7,17 +7,19 @@
 #include "Voxymore/Logger.hpp"
 #include <glad/glad.h>
 #include <filesystem>
+#include <regex>
 
 #ifndef NEWLINE
 #define NEWLINE "\n"
 #endif
 
-#define SHADER_DEFINE_TYPE "#define  __TYPE_"
-#define VERTEX_TYPE "VERTEX_SHADER__"
-#define FRAGMENT_TYPE "FRAGMENT_SHADER__"
-#define PIXEL_TYPE "PIXEL_SHADER__"
-#define GEOMETRY_TYPE "GEOMETRY_SHADER__"
-#define COMPUTE_TYPE "COMPUTE_SHADER__"
+#define VERTEX_TYPE "__TYPE_VERTEX_SHADER__"
+#define FRAGMENT_TYPE "__TYPE_FRAGMENT_SHADER__"
+#define PIXEL_TYPE "__TYPE_PIXEL_SHADER__"
+#define GEOMETRY_TYPE "__TYPE_GEOMETRY_SHADER__"
+#define COMPUTE_TYPE "__TYPE_COMPUTE_SHADER__"
+#define TESS_CONTROL_SHADER_TYPE "__TYPE_TESS_CONTROL_SHADER__"
+#define TESS_EVALUATION_SHADER_TYPE "__TYPE_TESS_EVALUATION_SHADER__"
 
 
 namespace Voxymore::Core {
@@ -51,22 +53,22 @@ namespace Voxymore::Core {
 
         switch (shaderType) {
             case ShaderType::COMPUTE_SHADER:
-                return "COMPUTE_SHADER";
+                return COMPUTE_TYPE;
                 break;
             case ShaderType::VERTEX_SHADER:
-                return "VERTEX_SHADER";
+                return VERTEX_TYPE;
                 break;
             case ShaderType::TESS_CONTROL_SHADER:
-                return "TESS_CONTROL_SHADER";
+                return "__TYPE_TESS_CONTROL_SHADER__";
                 break;
             case ShaderType::TESS_EVALUATION_SHADER:
-                return "TESS_EVALUATION_SHADER";
+                return "__TYPE_TESS_EVALUATION_SHADER__";
                 break;
             case ShaderType::GEOMETRY_SHADER:
-                return "GEOMETRY_SHADER";
+                return GEOMETRY_TYPE;
                 break;
             case ShaderType::FRAGMENT_SHADER:
-                return "FRAGMENT_SHADER";
+                return FRAGMENT_TYPE;
                 break;
         }
         return "UNKNOWN";
@@ -74,10 +76,12 @@ namespace Voxymore::Core {
 
     ShaderType ShaderTypeFromString(std::string type)
     {
-        if(type == VERTEX_TYPE) return ShaderType::VERTEX_SHADER;
-        else if(type == FRAGMENT_TYPE || type == PIXEL_TYPE) return ShaderType::FRAGMENT_SHADER;
-        else if(type == GEOMETRY_TYPE) return ShaderType::GEOMETRY_SHADER;
-        else if(type == COMPUTE_TYPE) return ShaderType::COMPUTE_SHADER;
+        if(type == (VERTEX_TYPE)) return ShaderType::VERTEX_SHADER;
+        else if(type == (FRAGMENT_TYPE) || type == PIXEL_TYPE) return ShaderType::FRAGMENT_SHADER;
+        else if(type == (GEOMETRY_TYPE)) return ShaderType::GEOMETRY_SHADER;
+        else if(type == (COMPUTE_TYPE)) return ShaderType::COMPUTE_SHADER;
+        else if(type == (TESS_CONTROL_SHADER_TYPE)) return ShaderType::TESS_CONTROL_SHADER;
+        else if(type == (TESS_EVALUATION_SHADER_TYPE)) return ShaderType::TESS_EVALUATION_SHADER;
         VXM_CORE_ASSERT(false, "Type {0} unknown.", type);
         return ShaderType::None;
     }
@@ -100,9 +104,9 @@ namespace Voxymore::Core {
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment) : m_Name(name)
     {
         Compile({
-            {ShaderType::VERTEX_SHADER,   srcVertex},
-            {ShaderType::FRAGMENT_SHADER, srcFragment},
-        });
+                        {ShaderType::VERTEX_SHADER,   srcVertex},
+                        {ShaderType::FRAGMENT_SHADER, srcFragment},
+                });
     }
 
     void OpenGLShader::Compile(const std::unordered_map<ShaderType, std::string>& shaders)
@@ -144,22 +148,28 @@ namespace Voxymore::Core {
     std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::string& path)
     {
         std::unordered_map<ShaderType, std::string> shaderSources;
-        size_t typeTokenLength = strlen(SHADER_DEFINE_TYPE);
 
         std::string source = SystemHelper::ReadFile(path);
-        size_t pos = source.find(SHADER_DEFINE_TYPE, 0);
-        while(pos != std::string::npos)
-        {
-            size_t eol = source.find_first_of(NEWLINE, pos);
-            VXM_CORE_ASSERT(eol != std::string::npos, "Syntax error.");
-            size_t begin = pos + typeTokenLength;
-            std::string type = source.substr(begin, eol - begin);
-            VXM_CORE_ASSERT((int)ShaderTypeFromString(type), "Type '{0}' not supported...", type);
 
-            size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
-            pos = source.find(SHADER_DEFINE_TYPE, nextLinePos);
-            shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
+        std::regex regex("#define\\s*(__TYPE_\\w+)\\r?\\n", std::regex_constants::ECMAScript);
+
+        auto words_begin = std::sregex_iterator(source.begin(), source.end(), regex);
+        auto words_end = std::sregex_iterator();
+        auto count = std::distance(words_begin, words_end);
+        VXM_CORE_INFO("Found {0} shaders.", count);
+
+        for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+            auto next = i; ++next;
+
+            std::smatch match = *i;
+
+            const std::string& type = match[1].str();
+
+            int begin = static_cast<int>(match.position() + match.length());
+            int end = static_cast<int>(next != words_end ? next->position() : source.size());
+            shaderSources[ShaderTypeFromString(type)] = source.substr(begin, end - begin);
         }
+
         return shaderSources;
     }
 
@@ -208,53 +218,53 @@ namespace Voxymore::Core {
     }
 
     void OpenGLShader::SetUniformInt(const std::string& name, int value){
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniform1i(location, value);
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniform1i(location, value);
     }
 
     void OpenGLShader::SetUniformFloat(const std::string& name, float value){
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniform1f(location, value);
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniform1f(location, value);
     }
 
     void OpenGLShader::SetUniformFloat2(const std::string& name, const glm::vec2& value){
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniform2fv(location, 1, glm::value_ptr(value));
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniform2fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value){
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniform3fv(location, 1, glm::value_ptr(value));
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniform3fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value){
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniform4fv(location, 1, glm::value_ptr(value));
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniform4fv(location, 1, glm::value_ptr(value));
     }
 
-	void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& value) {
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
-	}
+    void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& value) {
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
+    }
 
-	void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) {
-		//TODO: Precalculate every uniform and use buffer instead of setting them manually.
-		const char* cname = name.c_str();
-		int location = glGetUniformLocation(m_RendererID, cname);
-		glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
-	}
+    void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) {
+        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
+        const char* cname = name.c_str();
+        int location = glGetUniformLocation(m_RendererID, cname);
+        glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
+    }
 
     uint32_t OpenGLShader::CreateSubShader(ShaderType type, const std::string &source) {
         auto id = glCreateShader(GetShaderTypeID(type));
