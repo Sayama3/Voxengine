@@ -6,6 +6,7 @@
 #include "Voxymore/Core.hpp"
 #include "Voxymore/Logger.hpp"
 #include <glad/glad.h>
+#include <filesystem>
 
 #ifndef NEWLINE
 #define NEWLINE "\n"
@@ -81,82 +82,46 @@ namespace Voxymore::Core {
         return ShaderType::None;
     }
 
-
-    OpenGLSubShader::OpenGLSubShader(const std::string &source, ShaderType shaderType) : m_Type(shaderType), m_RendererID(glCreateShader(GetShaderTypeID(shaderType))) {
-        const char* src = source.c_str();
-        glShaderSource(m_RendererID, 1, &src, nullptr);
-    }
-
-    OpenGLSubShader::~OpenGLSubShader() {
-        glDeleteShader(m_RendererID);
-    }
-
-    bool OpenGLSubShader::Compile() {
-        // Compile the vertex shader
-        glCompileShader(m_RendererID);
-        GLint isCompiled = 0;
-        glGetShaderiv(m_RendererID, GL_COMPILE_STATUS, &isCompiled);
-        if(isCompiled == GL_FALSE)
-        {
-            GLint maxLength = 0;
-            glGetShaderiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
-
-            // The maxLength includes the NULL character
-            std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(m_RendererID, maxLength, &maxLength, &infoLog[0]);
-
-            // We don't need the shader anymore.
-            glDeleteShader(m_RendererID);
-
-            // Use the infoLog as you see fit.
-            VXM_CORE_ERROR("{0}", infoLog.data());
-            VXM_CORE_ASSERT(false, "Compiling of shader {0} failed.", ShaderTypeToString(m_Type));
-            // In this simple program, we'll just leave
-
-            return false;
-        }
-        return true;
-    }
-
-    uint32_t OpenGLSubShader::GetID() {
-        return m_RendererID;
-    }
-
-
-    OpenGLShader::OpenGLShader(const std::unordered_map<ShaderType, std::string>& paths)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& path) : m_Name(name)
     {
-        std::unordered_map<ShaderType, std::string> sources(paths.size());
-        for (auto& kp:paths) {
-            sources[kp.first] = SystemHelper::ReadFile(kp.second);
-        }
-        Compile(sources);
-    }
-
-    OpenGLShader::OpenGLShader(const std::vector<std::string>& paths)
-    {
-        auto shaderSources = PreProcess(paths);
+        auto shaderSources = PreProcess(path);
         Compile(shaderSources);
     }
 
-    OpenGLShader::OpenGLShader(const std::string& srcVertex, const std::string& srcFragment) {
+    OpenGLShader::OpenGLShader(const std::string& path)
+    {
+        std::filesystem::path p(path);
+        m_Name = p.stem().string();
+
+        auto shaderSources = PreProcess(path);
+        Compile(shaderSources);
+    }
+
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment) : m_Name(name)
+    {
         Compile({
             {ShaderType::VERTEX_SHADER,   srcVertex},
             {ShaderType::FRAGMENT_SHADER, srcFragment},
         });
     }
 
-    void OpenGLShader::Compile(std::unordered_map<ShaderType, std::string> shaders)
+    void OpenGLShader::Compile(const std::unordered_map<ShaderType, std::string>& shaders)
     {
         unsigned int program = glCreateProgram();
-        std::vector<OpenGLSubShader*> subShaders(shaders.size());
+        glObjectLabel(GL_PROGRAM, program, static_cast<GLsizei>(m_Name.size()), m_Name.c_str());
+
+        std::array<uint32_t, ShaderTypeCount> subShaders{};
+        uint32_t offset = 0;
+
         for (auto& kv : shaders)
         {
             ShaderType type = kv.first;
             const std::string& source = kv.second;
 
-            subShaders.push_back(new OpenGLSubShader(source, type));
-            if(subShaders[subShaders.size() - 1]->Compile()){
-                glAttachShader(program, subShaders[subShaders.size() - 1]->GetID());
+            uint32_t id = CreateSubShader(type, source);
+            subShaders[offset++] = id;
+            if(CompileSubShader(id)){
+                glAttachShader(program, id);
             } else {
                 break;
             }
@@ -166,38 +131,35 @@ namespace Voxymore::Core {
         if(Link(program)) {
             m_RendererID = program;
         } else {
-            for (OpenGLSubShader* subShader: subShaders) {
-                glDetachShader(program, subShader->GetID());
+            for (int i = 0; i <= offset; ++i) {
+                glDetachShader(program, subShaders[i]);
             }
         }
 
-        for (OpenGLSubShader* subShader: subShaders) {
-            delete subShader;
+        for (int i = 0; i <= offset; ++i) {
+            glDeleteShader(subShaders[i]);
         }
     }
 
-    std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::vector<std::string>& paths)
+    std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::string& path)
     {
-        std::unordered_map<ShaderType, std::string> shaderSources(paths.size());
+        std::unordered_map<ShaderType, std::string> shaderSources;
         size_t typeTokenLength = strlen(SHADER_DEFINE_TYPE);
 
-        for (const auto& path : paths) {
-            std::string source = SystemHelper::ReadFile(path);
-            size_t pos = source.find(SHADER_DEFINE_TYPE, 0);
-            while(pos != std::string::npos)
-            {
-                size_t eol = source.find_first_of(NEWLINE, pos);
-                VXM_CORE_ASSERT(eol != std::string::npos, "Syntax error.");
-                size_t begin = pos + typeTokenLength;
-                std::string type = source.substr(begin, eol - begin);
-                VXM_CORE_ASSERT((int)ShaderTypeFromString(type), "Type '{0}' not supported...", type);
+        std::string source = SystemHelper::ReadFile(path);
+        size_t pos = source.find(SHADER_DEFINE_TYPE, 0);
+        while(pos != std::string::npos)
+        {
+            size_t eol = source.find_first_of(NEWLINE, pos);
+            VXM_CORE_ASSERT(eol != std::string::npos, "Syntax error.");
+            size_t begin = pos + typeTokenLength;
+            std::string type = source.substr(begin, eol - begin);
+            VXM_CORE_ASSERT((int)ShaderTypeFromString(type), "Type '{0}' not supported...", type);
 
-                size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
-                pos = source.find(SHADER_DEFINE_TYPE, nextLinePos);
-                shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
-            }
+            size_t nextLinePos = source.find_first_not_of(NEWLINE, eol);
+            pos = source.find(SHADER_DEFINE_TYPE, nextLinePos);
+            shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
         }
-
         return shaderSources;
     }
 
@@ -208,6 +170,7 @@ namespace Voxymore::Core {
     bool OpenGLShader::Link() {
         return Link(m_RendererID);
     }
+
     bool OpenGLShader::Link(unsigned int rendererId) {
         // Link our program
         glLinkProgram(rendererId);
@@ -292,5 +255,43 @@ namespace Voxymore::Core {
 		int location = glGetUniformLocation(m_RendererID, cname);
 		glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
 	}
+
+    uint32_t OpenGLShader::CreateSubShader(ShaderType type, const std::string &source) {
+        auto id = glCreateShader(GetShaderTypeID(type));
+        const char* src = source.c_str();
+        glShaderSource(id, 1, &src, nullptr);
+        return id;
+    }
+
+    bool OpenGLShader::CompileSubShader(uint32_t id) {
+        // Compile the vertex shader
+        glCompileShader(id);
+        GLint isCompiled = 0;
+        glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
+        if(isCompiled == GL_FALSE)
+        {
+            GLint maxLength = 0;
+            glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+            // The maxLength includes the NULL character
+            std::vector<GLchar> infoLog(maxLength);
+            glGetShaderInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+            // We don't need the shader anymore.
+            glDeleteShader(id);
+
+            // Use the infoLog as you see fit.
+            VXM_CORE_ERROR("{0}", infoLog.data());
+            VXM_CORE_ASSERT(false, "Compiling of shader failed.");
+            // In this simple program, we'll just leave
+
+            return false;
+        }
+        return true;
+    }
+
+    void OpenGLShader::DeleteSubShader(uint32_t id) {
+        glDeleteShader(m_RendererID);
+    }
 
 } // Core

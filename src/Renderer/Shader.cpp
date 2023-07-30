@@ -8,7 +8,7 @@
 
 namespace Voxymore::Core{
 
-    Shader *Shader::Create(const std::string &srcVertex, const std::string &srcFragment)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string &srcVertex, const std::string &srcFragment)
     {
         switch (Renderer::GetAPI()) {
 
@@ -17,14 +17,14 @@ namespace Voxymore::Core{
                 return nullptr;
                 break;
             case RendererAPI::API::OpenGL:
-                return new OpenGLShader(srcVertex, srcFragment);
+                return std::make_shared<OpenGLShader>(name, srcVertex, srcFragment);
                 break;
         }
         VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
         return nullptr;
     }
 
-    Shader* Shader::Create(const std::vector<std::string>& paths)
+    Ref<Shader> Shader::Create(const std::string& path)
     {
         switch (Renderer::GetAPI()) {
 
@@ -33,14 +33,14 @@ namespace Voxymore::Core{
                 return nullptr;
                 break;
             case RendererAPI::API::OpenGL:
-                return new OpenGLShader(paths);
+                return std::make_shared<OpenGLShader>(path);
                 break;
         }
         VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
         return nullptr;
     }
 
-    Shader* Shader::Create(const std::initializer_list<std::string>& paths)
+    Ref<Shader> Shader::Create(const std::string& name, const std::string& path)
     {
         switch (Renderer::GetAPI()) {
 
@@ -49,26 +49,45 @@ namespace Voxymore::Core{
                 return nullptr;
                 break;
             case RendererAPI::API::OpenGL:
-                return new OpenGLShader(paths);
+                return std::make_shared<OpenGLShader>(name, path);
                 break;
         }
         VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
         return nullptr;
     }
 
-    Shader* Shader::Create(const std::unordered_map<ShaderType, std::string>& paths)
-    {
-        switch (Renderer::GetAPI()) {
+    void ShaderLibrary::Add(const Ref<Shader> &shader) {
+        const auto& name = shader->GetName();
+        VXM_CORE_ASSERT(!m_Shaders.contains(name), "Shader Library already contains '{0}'.", name);
+        m_Shaders[name] = shader;
+    }
 
-            case RendererAPI::API::None:
-                VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
-                return nullptr;
-                break;
-            case RendererAPI::API::OpenGL:
-                return new OpenGLShader(paths);
-                break;
-        }
-        VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
-        return nullptr;
+    void ShaderLibrary::Add(const std::string& name, const Ref<Shader> &shader) {
+        VXM_CORE_ASSERT(!m_Shaders.contains(name), "Shader Library already contains '{0}'.", name);
+        m_Shaders[name] = shader;
+    }
+
+    Ref<Shader> ShaderLibrary::Load(const std::string& path)
+    {
+        auto shader = Shader::Create(path);
+        Add(shader);
+        return m_Shaders[shader->GetName()];
+    }
+
+    Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& path)
+    {
+        auto shader = Shader::Create(name, path);
+        Add(name, shader);
+        return m_Shaders[name];
+    }
+
+
+    Ref<Shader> ShaderLibrary::Get(const std::string &name) {
+        VXM_CORE_ASSERT(m_Shaders.contains(name), "The shader library doesn't contain '{0}'.", name);
+        return m_Shaders[name];
+    }
+
+    bool ShaderLibrary::Exists(const std::string &name) const {
+        return m_Shaders.contains(name);
     }
 }

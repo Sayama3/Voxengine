@@ -16,7 +16,7 @@ namespace Voxymore::Core {
     public:
         inline static std::string ReadFile(const std::string &path) {
             std::string result;
-            std::ifstream fileStream(path);
+            std::ifstream fileStream(path, std::ios::in | std::ios::binary);
             if(fileStream)
             {
                 fileStream.seekg(0, std::ios::end);
