@@ -81,6 +81,15 @@ namespace Voxymore::Core {
             data.EventCallback(event);
         });
 
+        glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconify)
+        {
+            DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
+            data.Minified = iconify == GLFW_TRUE;
+
+            WindowMinifyEvent event(iconify == GLFW_TRUE);
+            data.EventCallback(event);
+;        });
+
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
@@ -182,6 +191,10 @@ namespace Voxymore::Core {
 
     bool DefaultWindow::IsVSync() const {
         return m_Data.VSync;
+    }
+
+    bool DefaultWindow::IsMinify() const {
+        return m_Data.Minified || (m_Data.Width == 0 || m_Data.Height == 0);
     }
 
     void DefaultWindow::SetCursorState(CursorState cursorState) {

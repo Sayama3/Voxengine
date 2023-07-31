@@ -14,7 +14,7 @@ namespace Voxymore::Core {
 
         enum class EventType : int {
             None = 0,
-            WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+            WindowClose, WindowResize, WindowMinify, WindowFocus, WindowLostFocus, WindowMoved,
             AppTick, AppUpdate, AppRender,
             KeyPressed, KeyReleased, KeyTyped,
             MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,

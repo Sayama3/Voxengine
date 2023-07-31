@@ -29,8 +29,10 @@ namespace Voxymore::Core {
 
         inline static Application& Get() {return *s_Instance; }
         inline Window& GetWindow() { return *m_Window; }
+
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowResize(WindowResizeEvent& e);
     private:
         double m_LastFrameTime;
         Scope<Window> m_Window;

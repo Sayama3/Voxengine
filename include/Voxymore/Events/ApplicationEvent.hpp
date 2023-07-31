@@ -31,6 +31,27 @@ namespace Voxymore::Core {
         unsigned int m_Width, m_Height;
     };
 
+    class WindowMinifyEvent : public Event
+    {
+    public:
+        WindowMinifyEvent(bool minify)
+                : m_Minify(minify) {}
+
+        bool GetMinify() const { return m_Minify; }
+
+        std::string ToString() const override
+        {
+            std::stringstream ss;
+            ss << "WindowMinifyEvent: " << m_Minify ;
+            return ss.str();
+        }
+
+        EVENT_CLASS_TYPE(EventType::WindowMinify)
+        EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
+    private:
+        bool m_Minify;
+    };
+
     class WindowCloseEvent : public Event
     {
     public:

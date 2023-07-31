@@ -24,6 +24,7 @@ namespace Voxymore::Core {
         virtual inline void SetEventCallback(const EventCallBackFn& callback) override { m_Data.EventCallback = callback; }
         virtual void SetVSync(bool enabled) override;
         virtual bool IsVSync() const override;
+        virtual bool IsMinify() const override;
         virtual inline void* GetNativeWindow() override {
             return m_Window;
         }
@@ -37,6 +38,7 @@ namespace Voxymore::Core {
         {
             std::string Title;
             unsigned int Width, Height;
+            bool Minified;
             bool VSync;
 
             EventCallBackFn  EventCallback;

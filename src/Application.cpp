@@ -36,6 +36,7 @@ namespace Voxymore::Core {
     void Application::OnEvent(Event& e){
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose, std::placeholders::_1));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize, std::placeholders::_1));
 
 //        VXM_CORE_INFO(e.ToString());
 
@@ -59,9 +60,12 @@ namespace Voxymore::Core {
             RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
             RenderCommand::Clear();
 
-            for (Layer* layer : m_LayerStack) {
+            if(!GetWindow().IsMinify())
+            {
+                for (Layer *layer: m_LayerStack) {
 //                VXM_CORE_INFO("Update Layer {0}", layer->GetName());
-                layer->OnUpdate(timeStep);
+                    layer->OnUpdate(timeStep);
+                }
             }
 
 //            VXM_CORE_INFO("m_ImGUILayer->Begin(): {0}", m_ImGUILayer->GetName());
@@ -83,6 +87,18 @@ namespace Voxymore::Core {
 		VXM_CORE_INFO("Closing Voxymore Application.");
         m_Running = false;
         return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent &e)
+    {
+        if(e.GetWidth() == 0 || e.GetHeight() == 0)
+        {
+            return false;
+        }
+
+        // Resizing the renderer only if we got a valid width & height.
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+        return false;
     }
 
     void Application::PushLayer(Layer *layer) {

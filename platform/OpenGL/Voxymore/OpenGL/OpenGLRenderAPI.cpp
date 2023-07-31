@@ -32,5 +32,9 @@ namespace Voxymore {
             glEnable(GL_CULL_FACE);
             glEnable(GL_DEPTH_TEST);
         }
+
+        void OpenGLRenderAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+            glViewport(static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+        }
     } // Voxymore
 } // Core

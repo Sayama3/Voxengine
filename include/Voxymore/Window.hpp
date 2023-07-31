@@ -47,6 +47,7 @@ namespace Voxymore::Core {
         virtual void SetEventCallback(const EventCallBackFn& callback) = 0;
         virtual void SetVSync(bool enabled) = 0;
         virtual bool IsVSync() const = 0;
+        virtual bool IsMinify() const = 0;
         virtual void SetCursorState(CursorState cursorState) = 0;
 
         virtual void* GetNativeWindow() = 0;
