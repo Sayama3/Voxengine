@@ -6,5 +6,5 @@
 #include "Voxymore/OpenGL/OpenGLRenderAPI.hpp"
 
 namespace Voxymore::Core {
-    Scope<RendererAPI> RenderCommand::s_RendererAPI = std::make_unique<OpenGLRenderAPI>();
+    RendererAPI* RenderCommand::s_RendererAPI = new OpenGLRenderAPI();
 }

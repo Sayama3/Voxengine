@@ -12,15 +12,14 @@
 
 namespace Voxymore::Core {
 
-    Scope<Application> Application::s_Instance = nullptr;
-
+    Application* Application::s_Instance = nullptr;
     Application::Application() {
 
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
         }
 
-        s_Instance.reset(this);
+        s_Instance = this;
 
         m_Window = Scope<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));

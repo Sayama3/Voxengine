@@ -54,7 +54,7 @@ namespace Voxymore::Core {
 
         static Window* Create(const WindowProps& props = WindowProps());
     protected:
-        Scope<GraphicsContext> m_Context;
+        GraphicsContext* m_Context;
     };
 }
 
