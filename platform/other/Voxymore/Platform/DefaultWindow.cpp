@@ -71,8 +71,7 @@ namespace Voxymore::Core {
         SetVSync(true);
 
         // Set GLFW Callbacks
-
-        glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
         {
             DefaultData& data = *(DefaultData*)glfwGetWindowUserPointer(window);
             data.Width = width;
