@@ -10,7 +10,7 @@
 
 namespace Voxymore::Core {
 
-    class DefaultWindow : public Window {
+    class DefaultWindow : public Voxymore::Core::Window {
     public:
         DefaultWindow(const WindowProps& props);
         virtual ~DefaultWindow();
