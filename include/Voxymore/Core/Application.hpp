@@ -39,7 +39,7 @@ namespace Voxymore::Core {
         ImGUILayer* m_ImGUILayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
-        static Application* s_Instance;
+        static Scope<Application> s_Instance;
     };
 
 } // Core

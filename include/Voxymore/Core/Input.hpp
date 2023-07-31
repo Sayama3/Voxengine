@@ -4,11 +4,14 @@
 
 #pragma once
 
-#include "Core.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
 
 namespace Voxymore::Core {
     class Input {
     public:
+        inline virtual ~Input() = default;
+
         inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
         inline static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }
         inline static float GetMouseX() {return s_Instance->GetMouseXImpl();};
@@ -21,6 +24,6 @@ namespace Voxymore::Core {
         virtual float GetMouseYImpl() = 0;
         virtual std::pair<float, float> GetMousePositionImpl() = 0;
     private:
-        static Input* s_Instance;
+        static Scope<Input> s_Instance;
     };
 }

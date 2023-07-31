@@ -8,7 +8,7 @@
 #include "GLFW/glfw3.h"
 
 namespace Voxymore::Core {
-    Input* Input::s_Instance = new DefaultInput();
+    Scope<Input> Input::s_Instance = std::make_unique<DefaultInput>();
 
     bool DefaultInput::IsKeyPressedImpl(int keycode)
     {
