@@ -63,7 +63,7 @@ namespace Voxymore::Core {
                 nullptr
         );
 
-        m_Context = std::make_unique<OpenGLContext>(m_Window);
+        m_Context = new OpenGLContext(m_Window);
 
         m_Context->Init();
 
