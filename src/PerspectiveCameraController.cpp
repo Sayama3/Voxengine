@@ -121,7 +121,7 @@ namespace Voxymore::Core {
     }
 
     void PerspectiveCameraController::OnUpdate(TimeStep ts) {
-        m_Position += m_Movement * ts.GetSeconds() * c_TranslationSpeed;
+        m_Position += (m_Rotation * m_Movement) * (ts * c_TranslationSpeed);
         m_Camera.SetViewMatrix(m_Position, m_Rotation);
     }
 
