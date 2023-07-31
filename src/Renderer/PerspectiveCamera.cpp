@@ -9,20 +9,13 @@ namespace Voxymore {
     namespace Core {
 
 		PerspectiveCamera::PerspectiveCamera(float width, float height, float fov, float nearClip, float farClip, glm::vec3 position, glm::quat rotation)
-		 : m_Width(width),
-         m_Height(height),
-         m_FOV(fov),
-         m_NearClip(nearClip),
-         m_FarClip(farClip),
-         m_Position(position),
-         m_Rotation(rotation)
 		{
 			// Update View Matrix (inversing the TRS matrix because
-			// it's a camera, and therefore it move the world so every movement is reverse.)
-			m_ViewMatrix = glm::inverse(Math::TRS(m_Position, m_Rotation, glm::one<glm::vec3>()));
+			// it's a camera, and therefore it move the world so every m_Movement is reverse.)
+			m_ViewMatrix = glm::inverse(Math::TRS(position, rotation, glm::one<glm::vec3>()));
 
 			// Update View Matrix
-			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(m_FOV), m_Width, m_Height, m_NearClip, m_FarClip);
+			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(fov), width, height, nearClip, farClip);
 
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		}
@@ -40,29 +33,22 @@ namespace Voxymore {
             return m_ViewProjectionMatrix;
         }
 
-		void PerspectiveCamera::UpdateViewMatrix() {
-			// Update View Matrix (inversing the TRS matrix because
-			// it's a camera, and therefore it move the world so every movement is reverse.)
-			m_ViewMatrix = glm::inverse(Math::TRS(m_Position, m_Rotation, glm::one<glm::vec3>()));
-		}
+        void PerspectiveCamera::SetProjectionMatrix(float width, float height, float fov, float nearClip, float farClip) {
+            m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(fov), width, height, nearClip, farClip);
+            UpdateViewProjectionMatrix();
+        }
 
-		void PerspectiveCamera::UpdateProjectionMatrix() {
-			// Update View Matrix
-			m_ProjectionMatrix = glm::perspectiveFov(glm::radians<float>(m_FOV), m_Width, m_Height, m_NearClip, m_FarClip);
-		}
+        void PerspectiveCamera::SetViewMatrix(glm::vec3 position, glm::quat rotation) {
+            m_ViewMatrix = glm::inverse(Math::TRS(position, rotation, glm::one<glm::vec3>()));
+            UpdateViewProjectionMatrix();
+        }
 
 		void PerspectiveCamera::UpdateViewProjectionMatrix() {
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		}
 
-        void PerspectiveCamera::UpdateAllMatrix() {
-            UpdateViewMatrix();
-            UpdateProjectionMatrix();
-            UpdateViewProjectionMatrix();
-        }
-
 		PerspectiveCamera::~PerspectiveCamera() {
 
 		}
-	} // Voxymore
+    } // Voxymore
 } // Core
