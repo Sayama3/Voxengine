@@ -34,7 +34,7 @@ namespace Voxymore::Core {
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
     private:
-        double m_LastFrameTime;
+        double m_LastFrameTime = 0.0;
         Scope<Window> m_Window;
         ImGUILayer* m_ImGUILayer;
         bool m_Running = true;
