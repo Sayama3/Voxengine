@@ -25,12 +25,15 @@ namespace Voxymore::Core {
     void PerspectiveCameraController::OnEvent(Event &e) {
         Voxymore::Core::EventDispatcher dispatcher(e);
         dispatcher.Dispatch<Voxymore::Core::WindowResizeEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnWindowResize, std::placeholders::_1));
-        dispatcher.Dispatch<Voxymore::Core::KeyPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyPressed, std::placeholders::_1));
-        dispatcher.Dispatch<Voxymore::Core::KeyReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyReleased, std::placeholders::_1));
-        dispatcher.Dispatch<Voxymore::Core::MouseMovedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved, std::placeholders::_1));
-        dispatcher.Dispatch<Voxymore::Core::MouseScrolledEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled, std::placeholders::_1));
+        if(m_Enable)
+        {
+            dispatcher.Dispatch<Voxymore::Core::KeyPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyPressed, std::placeholders::_1));
+            dispatcher.Dispatch<Voxymore::Core::KeyReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyReleased, std::placeholders::_1));
+            dispatcher.Dispatch<Voxymore::Core::MouseMovedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved, std::placeholders::_1));
+            dispatcher.Dispatch<Voxymore::Core::MouseScrolledEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled, std::placeholders::_1));
 //        dispatcher.Dispatch<Voxymore::Core::MouseButtonPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonPressed, std::placeholders::_1));
 //        dispatcher.Dispatch<Voxymore::Core::MouseButtonReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased, std::placeholders::_1));
+        }
     }
 
     bool PerspectiveCameraController::OnKeyPressed(KeyPressedEvent &e) {
@@ -127,9 +130,12 @@ namespace Voxymore::Core {
 
     void PerspectiveCameraController::SetEnable(bool isEnable)
     {
-        m_Movement = {0,0,0};
-        m_HasSetMouse = false;
-        m_Enable = isEnable;
+        if(isEnable != m_Enable)
+        {
+            m_Movement = {0, 0, 0};
+            m_HasSetMouse = false;
+            m_Enable = isEnable;
+        }
     }
 
     bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent &e) {
