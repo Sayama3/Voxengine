@@ -7,7 +7,7 @@
 
 #include "Application.hpp"
 #include "Logger.hpp"
-#include "Voxymore/Core.hpp"
+#include "Core.hpp"
 
 namespace Voxymore::Core {
     extern Voxymore::Core::Application* CreateApplication();

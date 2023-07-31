@@ -2,7 +2,7 @@
 // Created by ianpo on 30/07/2023.
 //
 
-#include "Voxymore/PerspectiveCameraController.hpp"
+#include "Voxymore/Core/PerspectiveCameraController.hpp"
 #include <cfloat>
 
 // TODO (01) : Add camera movement and rotation (WASD + Mouse) only when right clicking on the viewport

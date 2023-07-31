@@ -3,10 +3,10 @@
 //
 
 #include "Voxymore/Renderer/Renderer.hpp"
-#include "Voxymore/Application.hpp"
-#include "Voxymore/Macros.hpp"
-#include "Voxymore/Logger.hpp"
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Application.hpp"
+#include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Platform.hpp"
 
 

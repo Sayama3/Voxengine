@@ -13,16 +13,16 @@
     #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
 #endif
 
-#include "Voxymore/Macros.hpp"
-#include "Voxymore/Application.hpp"
+#include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Layers/Layer.hpp"
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Logger.hpp"
 
 #include "Voxymore/Core/TimeStep.hpp"
 
-#include "Voxymore/Input.hpp"
-#include "Voxymore/KeyCodes.hpp"
-#include "Voxymore/MouseButtonCodes.hpp"
+#include "Voxymore/Core/Input.hpp"
+#include "Voxymore/Core/KeyCodes.hpp"
+#include "Voxymore/Core/MouseButtonCodes.hpp"
 
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 
@@ -35,4 +35,4 @@
 #include "Voxymore/Renderer/Texture.hpp"
 
 
-#include <Voxymore/EntryPoint.hpp>
+#include "Voxymore/Core/EntryPoint.hpp"

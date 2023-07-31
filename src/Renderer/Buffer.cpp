@@ -1,10 +1,10 @@
 //
 // Created by ianpo on 20/07/2023.
 //
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/OpenGL/OpenGLBuffer.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Logger.hpp"
 namespace Voxymore::Core {
 
     VertexBuffer* Voxymore::Core::VertexBuffer::Create(uint32_t size, void* vertices)

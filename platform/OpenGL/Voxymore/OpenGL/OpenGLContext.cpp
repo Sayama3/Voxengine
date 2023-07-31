@@ -3,7 +3,7 @@
 //
 
 #include "OpenGLContext.hpp"
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 

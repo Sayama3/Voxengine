@@ -5,8 +5,8 @@
 #pragma once
 
 #include "Voxymore/Renderer/Camera.hpp"
-#include "Voxymore/Core.hpp"
-#include "Voxymore/Math.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Math.hpp"
 
 namespace Voxymore::Core {
 

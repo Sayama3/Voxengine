@@ -3,12 +3,12 @@
 //
 
 #include "DefaultWindow.hpp"
-#include "Voxymore/Window.hpp"
+#include "Voxymore/Core/Window.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Events/MouseEvent.hpp"
 #include "Voxymore/Events/KeyEvent.hpp"
-#include "Voxymore/Logger.hpp"
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/OpenGL/OpenGLContext.hpp"
 #include "GLFW/glfw3.h"
 

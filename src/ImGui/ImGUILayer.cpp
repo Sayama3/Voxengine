@@ -4,8 +4,8 @@
 
 
 #include <Voxymore/ImGUI/ImGUILayer.hpp>
-#include <Voxymore/Core.hpp>
-#include <Voxymore/Logger.hpp>
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include <glad/glad.h>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
@@ -15,7 +15,7 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
-#include "Voxymore/Application.hpp"
+#include "Voxymore/Core/Application.hpp"
 
 #ifndef GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_NONE 1

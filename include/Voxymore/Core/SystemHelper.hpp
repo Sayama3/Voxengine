@@ -9,7 +9,7 @@
 #define BIT(X) (1 << X)
 #endif
 
-#include <Voxymore/Core.hpp>
+#include "Core.hpp"
 
 namespace Voxymore::Core {
     class SystemHelper {

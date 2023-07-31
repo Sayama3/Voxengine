@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Voxymore/Core.hpp"
-#include "Voxymore/KeyCodes.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/KeyCodes.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Layers/Layer.hpp"
 #include "Voxymore/Events/Event.hpp"

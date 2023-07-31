@@ -3,7 +3,7 @@
 //
 
 #include "Voxymore/Renderer/PerspectiveCamera.hpp"
-#include "Voxymore/Application.hpp"
+#include "Voxymore/Core/Application.hpp"
 
 namespace Voxymore {
     namespace Core {

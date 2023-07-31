@@ -5,7 +5,7 @@
 #ifndef VOXYMORE_MACROS_HPP
 #define VOXYMORE_MACROS_HPP
 
-#include "Voxymore/Logger.hpp"
+#include "Logger.hpp"
 #include <csignal>
 
 // Defining the "_USE_MATH_DEFINES" for visual studio in the main hpp

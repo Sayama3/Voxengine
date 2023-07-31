@@ -9,9 +9,9 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #endif
 
-#include "Voxymore/Core.hpp"
+#include "Core.hpp"
 #include "Voxymore/Events/Event.hpp"
-#include "Voxymore/Math.hpp"
+#include "Math.hpp"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 

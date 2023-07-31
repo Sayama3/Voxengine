@@ -6,7 +6,7 @@
 #define VOXYMORE_WINDOW_HPP
 
 #include "Voxymore/Events/Event.hpp"
-#include "Voxymore/Core.hpp"
+#include "Core.hpp"
 #include "Voxymore/Renderer/GraphicsContext.hpp"
 
 namespace Voxymore::Core {

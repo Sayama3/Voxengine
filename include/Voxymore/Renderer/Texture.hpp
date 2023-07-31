@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 
 namespace Voxymore::Core {

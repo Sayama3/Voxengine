@@ -3,8 +3,8 @@
 //
 
 #include "OpenGLShader.hpp"
-#include "Voxymore/Core.hpp"
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include <glad/glad.h>
 #include <filesystem>
 #include <regex>

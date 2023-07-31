@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "RenderCommand.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Shader.hpp"

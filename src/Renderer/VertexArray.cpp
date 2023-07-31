@@ -5,7 +5,7 @@
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/OpenGL/OpenGLVertexArray.hpp"
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 
 namespace Voxymore::Core {
     VertexArray *VertexArray::Create() {

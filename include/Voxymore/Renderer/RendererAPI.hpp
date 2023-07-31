@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/Math.hpp"
+#include "Voxymore/Core/Math.hpp"
 #include "VertexArray.hpp"
 
 namespace Voxymore {

@@ -2,7 +2,7 @@
 // Created by ianpo on 17/06/2023.
 //
 
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Logger.hpp"
 
 namespace Voxymore::Core {
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;

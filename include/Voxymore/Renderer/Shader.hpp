@@ -3,10 +3,10 @@
 //
 
 #pragma once
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/SystemHelper.hpp"
-#include "Voxymore/Math.hpp"
+#include "Voxymore/Core/SystemHelper.hpp"
+#include "Voxymore/Core/Math.hpp"
 #include <unordered_map>
 
 namespace Voxymore::Core {

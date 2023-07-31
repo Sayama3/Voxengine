@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Voxymore/Core.hpp"
-#include "Voxymore/Input.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Input.hpp"
 
 namespace Voxymore::Core {
     class DefaultInput : public Input

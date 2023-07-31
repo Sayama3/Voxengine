@@ -11,32 +11,32 @@ set(CMAKE_CXX_STANDARD 20)
 
 option(VoxymoreCore_SHARED_BUILD "The ${VoxymoreCore} lib in shared mode" OFF)
 
-set(SRC_FILES src/Application.cpp
-        src/Math.cpp
-        src/Logger.cpp
+set(SRC_FILES src/Core/Application.cpp
+        src/Core/Math.cpp
+        src/Core/Logger.cpp
         include/Voxymore/Voxymore.hpp
-        include/Voxymore/Application.hpp
-        include/Voxymore/EntryPoint.hpp
-        include/Voxymore/Logger.hpp
-        include/Voxymore/Math.hpp
+        include/Voxymore/Core/Application.hpp
+        include/Voxymore/Core/EntryPoint.hpp
+        include/Voxymore/Core/Logger.hpp
+        include/Voxymore/Core/Math.hpp
         include/vendor/stb_image.h
-        include/Voxymore/SystemHelper.hpp
+        include/Voxymore/Core/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp
         include/Voxymore/Events/KeyEvent.hpp
         include/Voxymore/Events/MouseEvent.hpp
         include/Voxymore/Events/ApplicationEvent.hpp
-        include/Voxymore/Window.hpp
-        include/Voxymore/Macros.hpp
+        include/Voxymore/Core/Window.hpp
+        include/Voxymore/Core/Macros.hpp
         src/Layers/Layer.cpp
         include/Voxymore/Layers/Layer.hpp
         src/Layers/LayerStack.cpp
         include/Voxymore/Layers/LayerStack.hpp
         src/ImGui/ImGUILayer.cpp
         include/Voxymore/ImGUI/ImGUILayer.hpp
-        include/Voxymore/Input.hpp
-        include/Voxymore/Core.hpp
-        include/Voxymore/KeyCodes.hpp
-        include/Voxymore/MouseButtonCodes.hpp
+        include/Voxymore/Core/Input.hpp
+        include/Voxymore/Core/Core.hpp
+        include/Voxymore/Core/KeyCodes.hpp
+        include/Voxymore/Core/MouseButtonCodes.hpp
         include/Voxymore/Renderer/Buffer.hpp
         src/Renderer/Buffer.cpp
         src/Renderer/Renderer.cpp
@@ -58,7 +58,7 @@ set(SRC_FILES src/Application.cpp
         src/Core/Platform.cpp
         include/Voxymore/Core/SmartPointers.hpp
         src/Renderer/Texture.cpp
-        include/Voxymore/Renderer/Texture.hpp src/PerspectiveCameraController.cpp include/Voxymore/PerspectiveCameraController.hpp)
+        include/Voxymore/Renderer/Texture.hpp src/Core/PerspectiveCameraController.cpp include/Voxymore/Core/PerspectiveCameraController.hpp)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 

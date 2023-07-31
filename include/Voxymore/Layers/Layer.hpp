@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Voxymore/Events/Event.hpp"
-#include "Voxymore/Core.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 
 // We shouldn't search layer by name!!

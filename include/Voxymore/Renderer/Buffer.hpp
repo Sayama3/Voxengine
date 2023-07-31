@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Voxymore/Core.hpp>
-#include "Voxymore/Logger.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Logger.hpp"
 
 namespace Voxymore::Core
 {

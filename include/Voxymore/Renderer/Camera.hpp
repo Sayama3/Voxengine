@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "Voxymore/Core.hpp"
-#include "Voxymore/Math.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Math.hpp"
 
 namespace Voxymore::Core {
 	class Camera {
