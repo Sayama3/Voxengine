@@ -35,7 +35,7 @@ namespace Voxymore::Core {
         inline bool GetEnable() const { return m_Enable; }
         void SetEnable(bool isEnable);
     private:
-        bool m_Enable;
+        bool m_Enable = true;
     private:
         const float c_ScrollStep = 0.5f;
         const float c_TranslationSpeed = 5.0f;
