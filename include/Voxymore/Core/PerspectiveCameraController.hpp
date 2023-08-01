@@ -24,18 +24,33 @@ namespace Voxymore::Core {
 
         inline PerspectiveCamera& GetCamera() { return m_Camera; }
         inline const PerspectiveCamera& GetCamera() const { return m_Camera; }
+
+    public:
+        inline bool IsEnable() const { return m_Enable; }
+        void SetEnable(bool isEnable);
+
+        inline float GetWidth() const { return m_Width; }
+        inline float GetHeight() const { return m_Height; }
+
+        inline float GetFOV() const { return m_FOV; }
+        inline void SetFOV(float fOV) { m_FOV = fOV; m_UpdateProjectionMatrix = true; }
+
+        inline float GetNearClip() const { return m_NearClip; }
+        inline void SetNearClip(float nearClip) { m_NearClip = nearClip; m_UpdateProjectionMatrix = true; }
+
+        inline float GetFarClip() const { return m_FarClip; }
+        inline void SetFarClip(float farClip) { m_FarClip = farClip; m_UpdateProjectionMatrix = true; }
+
     private:
         bool OnMouseScrolled(MouseScrolledEvent& e);
         bool OnKeyPressed(KeyPressedEvent& e);
         bool OnKeyReleased(KeyReleasedEvent& e);
         bool OnMouseMoved(MouseMovedEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
-
-    public:
-        inline bool GetEnable() const { return m_Enable; }
-        void SetEnable(bool isEnable);
     private:
         bool m_Enable = true;
+        bool m_UpdateViewMatrix = false;
+        bool m_UpdateProjectionMatrix = false;
     private:
         const float c_ScrollStep = 0.5f;
         const float c_TranslationSpeed = 5.0f;

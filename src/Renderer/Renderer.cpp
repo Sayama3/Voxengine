@@ -7,28 +7,31 @@
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
 
 namespace Voxymore::Core {
-	const Camera* Renderer::s_Camera = nullptr;
+    Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
     void Renderer::Init() {
         RenderCommand::Init();
     }
 
+    void Renderer::Shutdown() {
+        RenderCommand::Shutdown();
+    }
+
     void Renderer::BeginScene(const Camera& camera) {
-		s_Camera = &camera;
+        RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
+        RenderCommand::Clear();
+        s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene() {
-		s_Camera = nullptr;
+
     }
 
     void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform) {
-		if(s_Camera == nullptr) {
-			VXM_CORE_ERROR("No valid camera set, begin the scene with a camera before submitting meshes.");
-			return;
-		}
+        VXM_CORE_ASSERT(s_SceneData->ViewProjectionMatrix != glm::zero<glm::mat4>(), "A valid View Projection Matrix is required to submit data to the renderer.");
 		shader->Bind();
         //TODO: Set the view projection matrix once per frame not once per model drawn.
-        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_Camera->GetViewProjectionMatrix());
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_SceneData->ViewProjectionMatrix);
         std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);

@@ -58,7 +58,12 @@ set(SRC_FILES src/Core/Application.cpp
         src/Core/Platform.cpp
         include/Voxymore/Core/SmartPointers.hpp
         src/Renderer/Texture.cpp
-        include/Voxymore/Renderer/Texture.hpp src/Core/PerspectiveCameraController.cpp include/Voxymore/Core/PerspectiveCameraController.hpp)
+        include/Voxymore/Renderer/Texture.hpp
+        src/Core/PerspectiveCameraController.cpp
+        include/Voxymore/Core/PerspectiveCameraController.hpp
+        src/Renderer/Material.cpp
+        include/Voxymore/Renderer/Material.hpp
+)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 

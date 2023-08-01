@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include <filesystem>
 #include <regex>
+#include <string>
 
 #ifndef NEWLINE
 #define NEWLINE "\n"
@@ -99,14 +100,22 @@ namespace Voxymore::Core {
 
         auto shaderSources = PreProcess(path);
         Compile(shaderSources);
+        FillUniforms();
     }
 
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment) : m_Name(name)
     {
+        m_Uniforms = GetAllUniform(srcVertex);
+        auto uFrag = GetAllUniform(srcFragment);
+        for (auto&& kp : uFrag) {
+            if(!m_Uniforms.contains(kp.first)) m_Uniforms[kp.first] = -1;
+        }
+
         Compile({
                         {ShaderType::VERTEX_SHADER,   srcVertex},
                         {ShaderType::FRAGMENT_SHADER, srcFragment},
                 });
+        FillUniforms();
     }
 
     void OpenGLShader::Compile(const std::unordered_map<ShaderType, std::string>& shaders)
@@ -151,6 +160,8 @@ namespace Voxymore::Core {
 
         std::string source = SystemHelper::ReadFile(path);
 
+        m_Uniforms = GetAllUniform(source);
+
         std::regex regex("#define\\s*(__TYPE_\\w+)\\r?\\n", std::regex_constants::ECMAScript);
 
         auto words_begin = std::sregex_iterator(source.begin(), source.end(), regex);
@@ -171,6 +182,30 @@ namespace Voxymore::Core {
         }
 
         return shaderSources;
+    }
+
+    std::unordered_map<std::string, int> OpenGLShader::GetAllUniform(const std::string& source){
+        std::unordered_map<std::string, int> uniforms;
+
+        std::regex regex(".*uniform\\s+(\\w+)\\s+(\\w+)(\\s*\\[\\s*(\\w+)\\s*\\])?", std::regex_constants::ECMAScript);
+        std::regex numberRegex("\\d+", std::regex_constants::ECMAScript);
+        auto uniformBegin = std::sregex_iterator(source.begin(), source.end(), regex);
+        auto uniformEnd = std::sregex_iterator();
+        auto count = std::distance(uniformBegin, uniformEnd);
+        uniforms.reserve(count);
+
+        for (std::sregex_iterator i = uniformBegin; i != uniformEnd; ++i) {
+            auto next = i; ++next;
+
+            std::smatch match = *i;
+
+            std::string name = match[1].str();
+            if(!uniforms.contains(name)) {
+                uniforms[name] = -1;
+            }
+        }
+
+        return uniforms;
     }
 
     OpenGLShader::~OpenGLShader(){
@@ -218,51 +253,44 @@ namespace Voxymore::Core {
     }
 
     void OpenGLShader::SetUniformInt(const std::string& name, int value){
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniform1i(location, value);
     }
 
     void OpenGLShader::SetUniformFloat(const std::string& name, float value){
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniform1f(location, value);
     }
 
     void OpenGLShader::SetUniformFloat2(const std::string& name, const glm::vec2& value){
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniform2fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value){
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniform3fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value){
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniform4fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& value) {
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) {
-        //TODO: Precalculate every uniform and use buffer instead of setting them manually.
-        const char* cname = name.c_str();
-        int location = glGetUniformLocation(m_RendererID, cname);
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+        int location = m_Uniforms[name];
         glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
     }
 
@@ -302,6 +330,21 @@ namespace Voxymore::Core {
 
     void OpenGLShader::DeleteSubShader(uint32_t id) {
         glDeleteShader(m_RendererID);
+    }
+
+    std::vector<std::string> OpenGLShader::GetUniforms() const {
+        std::vector<std::string> uniforms;
+        uniforms.reserve(m_Uniforms.size());
+        for (auto&& kp : m_Uniforms) {
+            uniforms.push_back(kp.first);
+        }
+        return uniforms;
+    }
+
+    void OpenGLShader::FillUniforms() {
+        for (auto&& kv : m_Uniforms) {
+            m_Uniforms[kv.first] = glGetUniformLocation(m_RendererID, kv.first.c_str());
+        }
     }
 
 } // Core

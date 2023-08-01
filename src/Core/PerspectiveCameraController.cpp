@@ -126,6 +126,9 @@ namespace Voxymore::Core {
     void PerspectiveCameraController::OnUpdate(TimeStep ts) {
         m_Position += (m_Rotation * m_Movement) * (ts * c_TranslationSpeed);
         m_Camera.SetViewMatrix(m_Position, m_Rotation);
+        if(m_UpdateProjectionMatrix){
+            m_Camera.SetProjectionMatrix(m_Width, m_Height, m_FOV, m_NearClip, m_FarClip);
+        }
     }
 
     void PerspectiveCameraController::SetEnable(bool isEnable)

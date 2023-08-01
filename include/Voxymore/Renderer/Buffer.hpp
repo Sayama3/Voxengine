@@ -28,6 +28,30 @@ namespace Voxymore::Core
         Bool4,
     };
 
+    inline std::string ShaderDataTypeToString(ShaderDataType shaderDataType)
+    {
+        switch (shaderDataType) {
+
+            case ShaderDataType::None: return "None";
+            case ShaderDataType::Float: return "Float";
+            case ShaderDataType::Float2: return "Float2";
+            case ShaderDataType::Float3: return "Float3";
+            case ShaderDataType::Float4: return "Float4";
+            case ShaderDataType::Mat2: return "Mat2";
+            case ShaderDataType::Mat3: return "Mat3";
+            case ShaderDataType::Mat4: return "Mat4";
+            case ShaderDataType::Int: return "Int";
+            case ShaderDataType::Int2: return "Int2";
+            case ShaderDataType::Int3: return "Int3";
+            case ShaderDataType::Int4: return "Int4";
+            case ShaderDataType::Bool: return "Bool";
+            case ShaderDataType::Bool2: return "Bool2";
+            case ShaderDataType::Bool3: return "Bool3";
+            case ShaderDataType::Bool4: return "Bool4";
+        }
+        return "Unknown";
+    }
+
     inline static uint32_t ShaderDataTypeSize(ShaderDataType type)
     {
         switch (type) {

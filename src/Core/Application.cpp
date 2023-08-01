@@ -56,9 +56,6 @@ namespace Voxymore::Core {
             TimeStep timeStep = static_cast<float>(time - m_LastFrameTime);
             m_LastFrameTime = time;
             //TODO: Remove later as it should be abstracted.
-//            VXM_CORE_INFO("Clear Screen");
-            RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
-            RenderCommand::Clear();
 
             if(!GetWindow().IsMinify())
             {
