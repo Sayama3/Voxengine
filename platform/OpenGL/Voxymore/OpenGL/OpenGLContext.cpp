@@ -18,6 +18,7 @@ namespace Voxymore {
         }
 
         void OpenGLContext::Init() {
+            VXM_PROFILE_FUNCTION();
             glfwMakeContextCurrent(m_WindowHandle);
             int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
             VXM_CORE_INFO("glad loading status: {0}", status);
@@ -29,6 +30,7 @@ namespace Voxymore {
         }
 
         void OpenGLContext::SwapBuffers() {
+            VXM_PROFILE_FUNCTION();
             glfwSwapBuffers(m_WindowHandle);
         }
     } // Voxymore

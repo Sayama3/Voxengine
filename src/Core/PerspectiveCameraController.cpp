@@ -37,6 +37,7 @@ namespace Voxymore::Core {
     }
 
     bool PerspectiveCameraController::OnKeyPressed(KeyPressedEvent &e) {
+        VXM_PROFILE_FUNCTION();
         if (e.GetKeyCode() == m_ForwardKey && e.GetRepeatCount() == 0) {
             VXM_CORE_INFO("Press KEY W.");
             m_Movement += glm::vec3(0, 0, -1);
@@ -66,6 +67,7 @@ namespace Voxymore::Core {
     }
 
     bool PerspectiveCameraController::OnKeyReleased(KeyReleasedEvent &e) {
+        VXM_PROFILE_FUNCTION();
         if(glm::length2(m_Movement) < FLT_EPSILON) return false;
 
         if (e.GetKeyCode() == m_ForwardKey) {
@@ -96,6 +98,7 @@ namespace Voxymore::Core {
     }
 
     bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent &event) {
+        VXM_PROFILE_FUNCTION();
         if (!m_HasSetMouse) {
             m_MouseX = event.GetX();
             m_MouseY = event.GetY();
@@ -124,6 +127,7 @@ namespace Voxymore::Core {
     }
 
     void PerspectiveCameraController::OnUpdate(TimeStep ts) {
+        VXM_PROFILE_FUNCTION();
         m_Position += (m_Rotation * m_Movement) * (ts * c_TranslationSpeed);
         m_Camera.SetViewMatrix(m_Position, m_Rotation);
         if(m_UpdateProjectionMatrix){
@@ -142,6 +146,7 @@ namespace Voxymore::Core {
     }
 
     bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent &e) {
+        VXM_PROFILE_FUNCTION();
         if (m_Enable) {
             m_Position += glm::vec3(e.GetXOffset(),0.0f, e.GetYOffset()) * c_ScrollStep;
         }
@@ -149,6 +154,7 @@ namespace Voxymore::Core {
     }
 
     bool PerspectiveCameraController::OnWindowResize(WindowResizeEvent &e) {
+        VXM_PROFILE_FUNCTION();
         m_Width = static_cast<float>(e.GetWidth());
         m_Height = static_cast<float>(e.GetHeight());
         m_Camera.SetProjectionMatrix(m_Width, m_Height, m_FOV, m_NearClip, m_FarClip);

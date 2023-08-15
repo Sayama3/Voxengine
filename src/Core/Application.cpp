@@ -14,7 +14,7 @@ namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
     Application::Application() {
-
+        VXM_PROFILE_FUNCTION();
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
         }
@@ -59,29 +59,27 @@ namespace Voxymore::Core {
 
             if(!GetWindow().IsMinify())
             {
+                VXM_PROFILE_SCOPE("Application -> Update Layer");
                 for (Layer *layer: m_LayerStack) {
-//                VXM_CORE_INFO("Update Layer {0}", layer->GetName());
                     layer->OnUpdate(timeStep);
                 }
             }
 
-//            VXM_CORE_INFO("m_ImGUILayer->Begin(): {0}", m_ImGUILayer->GetName());
             m_ImGUILayer->Begin();
 
-            for (Layer* layer : m_LayerStack) {
-//                VXM_CORE_INFO("OnImGuiRender: {0}", layer->GetName());
-                layer->OnImGuiRender();
+            {
+                VXM_PROFILE_SCOPE("Application -> ImGuiRender Layer");
+                for (Layer *layer: m_LayerStack) {
+                    layer->OnImGuiRender();
+                }
             }
-//            VXM_CORE_INFO("m_ImGUILayer->End: {0}", m_ImGUILayer->GetName());
             m_ImGUILayer->End();
 
-//            VXM_CORE_INFO("Window Update");
             m_Window->OnUpdate();
         }
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &e) {
-		VXM_CORE_INFO("Closing Voxymore Application.");
         m_Running = false;
         return true;
     }
@@ -99,11 +97,13 @@ namespace Voxymore::Core {
     }
 
     void Application::PushLayer(Layer *layer) {
+        VXM_PROFILE_FUNCTION();
         m_LayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer *overlay) {
+        VXM_PROFILE_FUNCTION();
         m_LayerStack.PushOverlay(overlay);
         overlay->OnAttach();
     }

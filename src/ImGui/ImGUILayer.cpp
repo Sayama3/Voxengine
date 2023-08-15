@@ -32,6 +32,8 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnAttach() {
+        VXM_PROFILE_FUNCTION();
+
         VXM_CORE_INFO("Attach ImGUILayer");
 
         // Setup Dear ImGui context
@@ -67,6 +69,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnDetach() {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_INFO("Detach ImGUILayer");
         // Cleanup
         ImGui_ImplOpenGL3_Shutdown();
@@ -75,6 +78,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::Begin() {
+        VXM_PROFILE_FUNCTION();
 //        VXM_CORE_INFO("Begin ImGUILayer");
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -84,6 +88,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::End() {
+        VXM_PROFILE_FUNCTION();
 //        VXM_CORE_INFO("End ImGUILayer");
 
         // Rendering
@@ -108,6 +113,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnImGuiRender() {
+        VXM_PROFILE_FUNCTION();
 //        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
         static bool showDemoWindow = true;
         if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);

@@ -51,6 +51,7 @@ namespace Voxymore::Core {
     }
 
     std::string ShaderTypeToString(ShaderType shaderType){
+        VXM_PROFILE_FUNCTION();
 
         switch (shaderType) {
             case ShaderType::COMPUTE_SHADER:
@@ -77,6 +78,7 @@ namespace Voxymore::Core {
 
     ShaderType ShaderTypeFromString(std::string type)
     {
+        VXM_PROFILE_FUNCTION();
         if(type == (VERTEX_TYPE)) return ShaderType::VERTEX_SHADER;
         else if(type == (FRAGMENT_TYPE) || type == PIXEL_TYPE) return ShaderType::FRAGMENT_SHADER;
         else if(type == (GEOMETRY_TYPE)) return ShaderType::GEOMETRY_SHADER;
@@ -89,12 +91,14 @@ namespace Voxymore::Core {
 
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& path) : m_Name(name)
     {
+        VXM_PROFILE_FUNCTION();
         auto shaderSources = PreProcess(path);
         Compile(shaderSources);
     }
 
     OpenGLShader::OpenGLShader(const std::string& path)
     {
+        VXM_PROFILE_FUNCTION();
         std::filesystem::path p(path);
         m_Name = p.stem().string();
 
@@ -105,6 +109,7 @@ namespace Voxymore::Core {
 
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment) : m_Name(name)
     {
+        VXM_PROFILE_FUNCTION();
         m_Uniforms = GetAllUniform(srcVertex);
         auto uFrag = GetAllUniform(srcFragment);
         for (auto&& kp : uFrag) {
@@ -120,6 +125,7 @@ namespace Voxymore::Core {
 
     void OpenGLShader::Compile(const std::unordered_map<ShaderType, std::string>& shaders)
     {
+        VXM_PROFILE_FUNCTION();
         unsigned int program = glCreateProgram();
         glObjectLabel(GL_PROGRAM, program, static_cast<GLsizei>(m_Name.size()), m_Name.c_str());
 
@@ -156,6 +162,7 @@ namespace Voxymore::Core {
 
     std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const std::string& path)
     {
+        VXM_PROFILE_FUNCTION();
         std::unordered_map<ShaderType, std::string> shaderSources;
 
         std::string source = SystemHelper::ReadFile(path);
@@ -185,6 +192,7 @@ namespace Voxymore::Core {
     }
 
     std::unordered_map<std::string, int> OpenGLShader::GetAllUniform(const std::string& source){
+        VXM_PROFILE_FUNCTION();
         std::unordered_map<std::string, int> uniforms;
 
         std::regex regex(".*uniform\\s+(\\w+)\\s+(\\w+)(\\s*\\[\\s*(\\w+)\\s*\\])?", std::regex_constants::ECMAScript);
@@ -209,6 +217,7 @@ namespace Voxymore::Core {
     }
 
     OpenGLShader::~OpenGLShader(){
+        VXM_PROFILE_FUNCTION();
         glDeleteProgram(m_RendererID);
     }
 
@@ -217,6 +226,7 @@ namespace Voxymore::Core {
     }
 
     bool OpenGLShader::Link(unsigned int rendererId) {
+        VXM_PROFILE_FUNCTION();
         // Link our program
         glLinkProgram(rendererId);
 
@@ -245,56 +255,66 @@ namespace Voxymore::Core {
     }
 
     void OpenGLShader::Bind() const {
+        VXM_PROFILE_FUNCTION();
         glUseProgram(m_RendererID);
     }
 
     void OpenGLShader::Unbind() const {
+        VXM_PROFILE_FUNCTION();
         glUseProgram(0);
     }
 
     void OpenGLShader::SetUniformInt(const std::string& name, int value){
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniform1i(location, value);
     }
 
     void OpenGLShader::SetUniformFloat(const std::string& name, float value){
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniform1f(location, value);
     }
 
     void OpenGLShader::SetUniformFloat2(const std::string& name, const glm::vec2& value){
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniform2fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value){
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniform3fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value){
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniform4fv(location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformMat3(const std::string& name, const glm::mat3& value) {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
     }
 
     void OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name];
         glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
     }
 
     uint32_t OpenGLShader::CreateSubShader(ShaderType type, const std::string &source) {
+        VXM_PROFILE_FUNCTION();
         auto id = glCreateShader(GetShaderTypeID(type));
         const char* src = source.c_str();
         glShaderSource(id, 1, &src, nullptr);
@@ -302,6 +322,7 @@ namespace Voxymore::Core {
     }
 
     bool OpenGLShader::CompileSubShader(uint32_t id) {
+        VXM_PROFILE_FUNCTION();
         // Compile the vertex shader
         glCompileShader(id);
         GLint isCompiled = 0;
@@ -329,10 +350,12 @@ namespace Voxymore::Core {
     }
 
     void OpenGLShader::DeleteSubShader(uint32_t id) {
+        VXM_PROFILE_FUNCTION();
         glDeleteShader(m_RendererID);
     }
 
     std::vector<std::string> OpenGLShader::GetUniforms() const {
+        VXM_PROFILE_FUNCTION();
         std::vector<std::string> uniforms;
         uniforms.reserve(m_Uniforms.size());
         for (auto&& kp : m_Uniforms) {
@@ -342,6 +365,7 @@ namespace Voxymore::Core {
     }
 
     void OpenGLShader::FillUniforms() {
+        VXM_PROFILE_FUNCTION();
         for (auto&& kv : m_Uniforms) {
             m_Uniforms[kv.first] = glGetUniformLocation(m_RendererID, kv.first.c_str());
         }

@@ -9,6 +9,7 @@ namespace Voxymore::Core {
 
     Material::Material(Ref<Shader> &shader) : m_Shader(shader), m_Uniforms()
     {
+        VXM_PROFILE_FUNCTION();
         m_Uniforms.reserve(m_Shader->GetUniforms().size());
         for (const std::string& uniform : m_Shader->GetUniforms()) {
             m_Uniforms[uniform] = {ShaderDataType::None, nullptr};
@@ -17,6 +18,7 @@ namespace Voxymore::Core {
 
     void Material::SetUniformInt(const std::string& name, int value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -28,6 +30,7 @@ namespace Voxymore::Core {
 
     void Material::SetUniformFloat(const std::string& name, float value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -38,6 +41,7 @@ namespace Voxymore::Core {
     }
     void Material::SetUniformFloat2(const std::string& name, const glm::vec2& value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -48,6 +52,7 @@ namespace Voxymore::Core {
     }
     void Material::SetUniformFloat3(const std::string& name, const glm::vec3& value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -58,6 +63,7 @@ namespace Voxymore::Core {
     }
     void Material::SetUniformFloat4(const std::string& name, const glm::vec4& value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -69,6 +75,7 @@ namespace Voxymore::Core {
 
     void Material::SetUniformMat3(const std::string& name, const glm::mat3& value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -79,6 +86,7 @@ namespace Voxymore::Core {
     }
     void Material::SetUniformMat4(const std::string& name, const glm::mat4& value)
     {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
         if(m_Uniforms[name].ValuePtr != nullptr)
         {
@@ -89,6 +97,7 @@ namespace Voxymore::Core {
     }
 
     void Material::Delete(MaterialValue<void>& materialValue) {
+        VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(materialValue.ValuePtr != nullptr, "The ValuePtr must be different than nullptr to be deleted.");
         switch (materialValue.DataType) {
             case ShaderDataType::Float: delete (float*)materialValue.ValuePtr; break;
@@ -112,6 +121,7 @@ namespace Voxymore::Core {
 
     Material::~Material()
     {
+        VXM_PROFILE_FUNCTION();
         for (auto&& uniform : m_Uniforms)
         {
             if(uniform.second.ValuePtr != nullptr) {
@@ -121,6 +131,7 @@ namespace Voxymore::Core {
     }
 
     void Material::Bind() const {
+        VXM_PROFILE_FUNCTION();
         m_Shader->Bind();
         for (auto&& kp : m_Uniforms)
         {
@@ -194,6 +205,7 @@ namespace Voxymore::Core {
         }
     }
     void Material::Unbind() const {
+        VXM_PROFILE_FUNCTION();
         m_Shader->Unbind();
     }
 } // Voxymore
