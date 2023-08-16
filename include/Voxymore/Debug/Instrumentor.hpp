@@ -129,12 +129,9 @@ namespace Voxymore::Core {
 }
 
 #if VXM_PROFILING
-    #define VXM_PROFILE_CONCAT(x, y) x ## y
-    #define VXM_PROFILE_C(x, y) VXM_PROFILE_CONCAT(x, y)
-
     #define VXM_PROFILE_BEGIN_SESSION(name, filepath) ::Voxymore::Core::Instrumentor::Get().BeginSession(name, filepath)
     #define VXM_PROFILE_END_SESSION() ::Voxymore::Core::Instrumentor::Get().EndSession()
-    #define VXM_PROFILE_SCOPE(name) ::Voxymore::Core::InstrumentationTimer VXM_PROFILE_C(timer, __LINE__)(name)
+    #define VXM_PROFILE_SCOPE(name) ::Voxymore::Core::InstrumentationTimer VXM_COMBINE(timer, __LINE__)(name)
     #define VXM_PROFILE_FUNCTION() VXM_PROFILE_SCOPE(__FUNCSIG__)
 #else
     #define VXM_PROFILE_BEGIN_SESSION(name, filepath)

@@ -18,9 +18,17 @@ int main(int argc, char** argv)
 {
     Voxymore::Core::Log::Init();
 
+    VXM_PROFILE_BEGIN_SESSION("startup", "Logs/VoxymoreProfile-Startup.json");
     Voxymore::Core::Application* application = Voxymore::Core::CreateApplication();
+    VXM_PROFILE_END_SESSION();
+
+    VXM_PROFILE_BEGIN_SESSION("runtime", "Logs/VoxymoreProfile-Runtime.json");
     application->Run();
+    VXM_PROFILE_END_SESSION();
+
+    VXM_PROFILE_BEGIN_SESSION("shutdown", "Logs/VoxymoreProfile-Shutdown.json");
     delete application;
+    VXM_PROFILE_END_SESSION();
 
     return 0;
 }

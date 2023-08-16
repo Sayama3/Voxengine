@@ -126,14 +126,20 @@ namespace Voxymore::Core {
     void OpenGLShader::Compile(const std::unordered_map<ShaderType, std::string>& shaders)
     {
         VXM_PROFILE_FUNCTION();
-        unsigned int program = glCreateProgram();
-        glObjectLabel(GL_PROGRAM, program, static_cast<GLsizei>(m_Name.size()), m_Name.c_str());
+
+        unsigned int program;
+        {
+            VXM_PROFILE_SCOPE("OpenGLShader::Compile -> Create Shader Program");
+            program = glCreateProgram();
+            glObjectLabel(GL_PROGRAM, program, static_cast<GLsizei>(m_Name.size()), m_Name.c_str());
+        }
 
         std::array<uint32_t, ShaderTypeCount> subShaders{};
         uint32_t offset = 0;
 
         for (auto& kv : shaders)
         {
+            VXM_PROFILE_SCOPE("OpenGLShader::Compile -> Create and Attach Shader");
             ShaderType type = kv.first;
             const std::string& source = kv.second;
 
@@ -147,16 +153,23 @@ namespace Voxymore::Core {
         }
 
 
-        if(Link(program)) {
+        if(Link(program))
+        {
             m_RendererID = program;
-        } else {
+        }
+        else
+        {
+            VXM_PROFILE_SCOPE("OpenGLShader::Compile -> Detach shaders");
             for (int i = 0; i <= offset; ++i) {
                 glDetachShader(program, subShaders[i]);
             }
         }
 
-        for (int i = 0; i <= offset; ++i) {
-            glDeleteShader(subShaders[i]);
+        {
+            VXM_PROFILE_SCOPE("OpenGLShader::Compile -> Delete shaders");
+            for (int i = 0; i <= offset; ++i) {
+                glDeleteShader(subShaders[i]);
+            }
         }
     }
 
