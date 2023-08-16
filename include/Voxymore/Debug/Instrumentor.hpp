@@ -132,7 +132,7 @@ namespace Voxymore::Core {
     #define VXM_PROFILE_BEGIN_SESSION(name, filepath) ::Voxymore::Core::Instrumentor::Get().BeginSession(name, filepath)
     #define VXM_PROFILE_END_SESSION() ::Voxymore::Core::Instrumentor::Get().EndSession()
     #define VXM_PROFILE_SCOPE(name) ::Voxymore::Core::InstrumentationTimer timer##__LINE__(name)
-    #define VXM_PROFILE_FUNCTION() VMX_PROFILE_SCOPE(__FUNCSIG__)
+    #define VXM_PROFILE_FUNCTION() VXM_PROFILE_SCOPE(__FUNCSIG__)
 #else
     #define VXM_PROFILE_BEGIN_SESSION(name, filepath)
     #define VXM_PROFILE_END_SESSION()
