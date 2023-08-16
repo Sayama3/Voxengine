@@ -63,7 +63,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/PerspectiveCameraController.hpp
         src/Renderer/Material.cpp
         include/Voxymore/Renderer/Material.hpp
-        include/Voxymore/Core/Instrumentor.hpp
+        include/Voxymore/Debug/Instrumentor.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
