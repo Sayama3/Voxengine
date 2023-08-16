@@ -58,12 +58,18 @@ set(SRC_FILES src/Core/Application.cpp
         src/Core/Platform.cpp
         include/Voxymore/Core/SmartPointers.hpp
         src/Renderer/Texture.cpp
-        include/Voxymore/Renderer/Texture.hpp src/Core/PerspectiveCameraController.cpp include/Voxymore/Core/PerspectiveCameraController.hpp)
+        include/Voxymore/Renderer/Texture.hpp
+        src/Core/PerspectiveCameraController.cpp
+        include/Voxymore/Core/PerspectiveCameraController.hpp
+        src/Renderer/Material.cpp
+        include/Voxymore/Renderer/Material.hpp
+        include/Voxymore/Debug/Instrumentor.hpp
+)
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
 IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
-    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_Debug)
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DEBUG)
 ENDIF()
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})

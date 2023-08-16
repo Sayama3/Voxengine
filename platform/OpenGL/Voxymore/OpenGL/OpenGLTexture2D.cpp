@@ -15,6 +15,8 @@ namespace Voxymore {
 
         OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path)
         {
+            VXM_PROFILE_FUNCTION();
+
             stbi_set_flip_vertically_on_load(true);
             int width, height, channels;
             stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -47,6 +49,7 @@ namespace Voxymore {
         }
 
         OpenGLTexture2D::~OpenGLTexture2D() {
+            VXM_PROFILE_FUNCTION();
             glDeleteTextures(1, &m_RendererID);
         }
 
@@ -59,6 +62,7 @@ namespace Voxymore {
         }
 
         void OpenGLTexture2D::Bind(uint32_t slot) const {
+            VXM_PROFILE_FUNCTION();
             glBindTextureUnit(slot, m_RendererID);
         }
     } // Voxymore

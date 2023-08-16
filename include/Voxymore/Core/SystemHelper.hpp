@@ -15,6 +15,7 @@ namespace Voxymore::Core {
     class SystemHelper {
     public:
         inline static std::string ReadFile(const std::string &path) {
+            VXM_PROFILE_FUNCTION();
             std::string result;
             std::ifstream fileStream(path, std::ios::in | std::ios::binary);
             if(fileStream)

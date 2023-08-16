@@ -38,6 +38,7 @@ namespace Voxymore::Core {
     }
 
     void DefaultWindow::Init(const Voxymore::Core::WindowProps &props) {
+        VXM_PROFILE_FUNCTION();
         m_Data.Title = props.Title;
         m_Data.Width = props.Width;
         m_Data.Height = props.Height;
@@ -48,6 +49,7 @@ namespace Voxymore::Core {
         //TODO: Log Creating window. Logger not done yet.
 
         if(!s_GLFWInitialized){
+            VXM_PROFILE_SCOPE("DefaultWindow -> Init GLFW");
             int success = glfwInit();
 //            VXM_CORE_ASSERT(success, "GLFW couldn't be initialized.")
 
@@ -55,17 +57,22 @@ namespace Voxymore::Core {
             s_GLFWInitialized = true;
         }
 
-        m_Window = glfwCreateWindow(
-                static_cast<int>(m_Data.Width),
-                static_cast<int>(m_Data.Height),
-                m_Data.Title.c_str(),
-                nullptr,
-                nullptr
-        );
+        {
+            VXM_PROFILE_SCOPE("DefaultWindow -> Create GLFW Window");
+            m_Window = glfwCreateWindow(
+                    static_cast<int>(m_Data.Width),
+                    static_cast<int>(m_Data.Height),
+                    m_Data.Title.c_str(),
+                    nullptr,
+                    nullptr
+            );
+        }
 
-        m_Context = new OpenGLContext(m_Window);
-
-        m_Context->Init();
+        {
+            VXM_PROFILE_SCOPE("DefaultWindow -> Init OpenGL Context");
+            m_Context = new OpenGLContext(m_Window);
+            m_Context->Init();
+        }
 
 
         glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -170,11 +177,13 @@ namespace Voxymore::Core {
     }
 
     void DefaultWindow::Shutdown() {
+        VXM_PROFILE_FUNCTION();
         delete m_Context;
         glfwDestroyWindow(m_Window);
     }
 
     void DefaultWindow::OnUpdate() {
+        VXM_PROFILE_FUNCTION();
         glfwPollEvents();
         m_Context->SwapBuffers();
     }

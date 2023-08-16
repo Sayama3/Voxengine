@@ -33,22 +33,28 @@ namespace Voxymore::Core {
     }
 
     OpenGLVertexArray::OpenGLVertexArray() {
+        VXM_PROFILE_FUNCTION();
         glGenVertexArrays(1, &m_RendererID);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
+        VXM_PROFILE_FUNCTION();
         glDeleteVertexArrays(1, &m_RendererID);
     }
 
     void OpenGLVertexArray::Bind() const {
+        VXM_PROFILE_FUNCTION();
         glBindVertexArray(m_RendererID);
     }
 
     void OpenGLVertexArray::Unbind() const {
+        VXM_PROFILE_FUNCTION();
         glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer) {
+        VXM_PROFILE_FUNCTION();
+
         glBindVertexArray(m_RendererID);
         vertexBuffer->Bind();
 
@@ -71,6 +77,8 @@ namespace Voxymore::Core {
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &indexBuffer) {
+        VXM_PROFILE_FUNCTION();
+
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
 

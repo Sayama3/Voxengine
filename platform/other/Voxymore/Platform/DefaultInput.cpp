@@ -12,18 +12,22 @@ namespace Voxymore::Core {
 
     bool DefaultInput::IsKeyPressedImpl(int keycode)
     {
+        VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         auto keyState = glfwGetKey(window, keycode);
         return keyState == GLFW_PRESS || keyState == GLFW_REPEAT;
     }
 
-    bool DefaultInput::IsMouseButtonPressedImpl(int button) {
+    bool DefaultInput::IsMouseButtonPressedImpl(int button)
+    {
+        VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         auto buttonState = glfwGetMouseButton(window, button);
         return buttonState == GLFW_PRESS;
     }
 
     std::pair<float, float> DefaultInput::GetMousePositionImpl() {
+        VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         double x, y;
         glfwGetCursorPos(window, &x, &y);

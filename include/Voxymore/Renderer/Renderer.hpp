@@ -16,6 +16,7 @@ namespace Voxymore {
         class Renderer {
         public:
             static void Init();
+            static void Shutdown();
             static void OnWindowResize(uint32_t width, uint32_t height);
 
             static void BeginScene(const Camera& camera);
@@ -25,7 +26,11 @@ namespace Voxymore {
 
             inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		private:
-			static const Camera* s_Camera;
+            struct SceneData
+            {
+                glm::mat4 ViewProjectionMatrix;
+            };
+            static Scope<SceneData> s_SceneData;
         };
 
     } // Voxymore

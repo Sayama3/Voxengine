@@ -4,13 +4,13 @@
 
 #include "Voxymore/Core/Platform.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
-#if VXM_Default
+#if VXM_DEFAULT
 #include <GLFW/glfw3.h>
 #endif
 
 namespace Voxymore::Core{
     double Platform::GetTime() {
-#if VXM_Default
+#if VXM_DEFAULT
         return glfwGetTime();
 #endif
     }

@@ -24,24 +24,32 @@ namespace Voxymore::Core {
         virtual void Unbind() const override;
         inline virtual const std::string& GetName() const override { return m_Name; }
 
-		void SetUniformInt(const std::string& name, int value);
+        virtual std::vector<std::string> GetUniforms() const override;
+        inline const std::unordered_map<std::string, int>& GetUniformMap() const { return m_Uniforms; }
 
-		void SetUniformFloat(const std::string& name, float value);
-		void SetUniformFloat2(const std::string& name, const glm::vec2& value);
-		void SetUniformFloat3(const std::string& name, const glm::vec3& value);
-		void SetUniformFloat4(const std::string& name, const glm::vec4& value);
+		virtual void SetUniformInt(const std::string& name, int value) override;
 
-		void SetUniformMat3(const std::string& name, const glm::mat3& value);
-		void SetUniformMat4(const std::string& name, const glm::mat4& value);
+		virtual void SetUniformFloat(const std::string& name, float value) override;
+		virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) override;
+		virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) override;
+		virtual void SetUniformFloat4(const std::string& name, const glm::vec4& value) override;
+
+		virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) override;
+		virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) override;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const std::string& path);
+        std::unordered_map<std::string, int> GetAllUniform(const std::string& source);
+
         void Compile(const std::unordered_map<ShaderType, std::string>& shaders);
         bool Link();
         bool Link(unsigned int rendererId);
+        void FillUniforms();
     private:
         uint32_t CreateSubShader(ShaderType type, const std::string& source);
         bool CompileSubShader(uint32_t id);
         void DeleteSubShader(uint32_t id);
+    private:
+        std::unordered_map<std::string, int> m_Uniforms;
     private:
         std::string m_Name;
         unsigned int m_RendererID;

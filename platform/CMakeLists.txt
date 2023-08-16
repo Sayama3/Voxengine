@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.24)
 # The fallback is currently "other".
 
 # TODO: add renderer dependent choice.
-target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_OpenGL)
+target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_OPENGL)
 add_subdirectory(OpenGL)
 
 # TODO: add platform dependent.
-target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_Default)
+target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DEFAULT)
 add_subdirectory(other)
