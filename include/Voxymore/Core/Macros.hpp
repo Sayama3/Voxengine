@@ -19,6 +19,9 @@
 #ifndef __FUNCSIG__
 #ifdef __PRETTY_FUNCTION__
     #define __FUNCSIG__ __PRETTY_FUNCTION__
+#else
+    #define __FUNCSIG__ __FUNCTION__
+#endif
 #endif
 #endif
 
