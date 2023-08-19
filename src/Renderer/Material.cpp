@@ -119,7 +119,7 @@ namespace Voxymore::Core {
             case ShaderDataType::Sampler1D: delete (uint32_t*)ValuePtr; break;
             case ShaderDataType::Sampler2D: delete (uint32_t*)ValuePtr; break;
             case ShaderDataType::Sampler3D: delete (uint32_t*)ValuePtr; break;
-            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(materialValue.DataType));} break;
+            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
         }
 
     }
@@ -146,7 +146,7 @@ namespace Voxymore::Core {
             case ShaderDataType::Sampler1D: ValuePtr = new uint32_t(); break;
             case ShaderDataType::Sampler2D: ValuePtr = new uint32_t(); break;
             case ShaderDataType::Sampler3D: ValuePtr = new uint32_t(); break;
-            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(materialValue.DataType));} break;
+            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
         }
     }
 
@@ -189,7 +189,7 @@ namespace Voxymore::Core {
             case ShaderDataType::Sampler1D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
             case ShaderDataType::Sampler2D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
             case ShaderDataType::Sampler3D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
-            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(materialValue.DataType));} break;
+            default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
         }
 
     }
