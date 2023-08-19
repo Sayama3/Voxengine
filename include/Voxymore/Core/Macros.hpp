@@ -23,7 +23,6 @@
     #define __FUNCSIG__ __FUNCTION__
 #endif
 #endif
-#endif
 
 #ifndef STB_IMAGE_IMPLEMENTATION
     #define STB_IMAGE_IMPLEMENTATION
