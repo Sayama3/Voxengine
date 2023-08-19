@@ -23,10 +23,19 @@ namespace Voxymore::Core {
             case ShaderDataType::Int3:      return GL_INT;
             case ShaderDataType::Int4:      return GL_INT;
 
+            case ShaderDataType::UInt:       return GL_UNSIGNED_INT;
+            case ShaderDataType::UInt2:      return GL_UNSIGNED_INT;
+            case ShaderDataType::UInt3:      return GL_UNSIGNED_INT;
+            case ShaderDataType::UInt4:      return GL_UNSIGNED_INT;
+
             case ShaderDataType::Bool:      return GL_BOOL;
             case ShaderDataType::Bool2:     return GL_BOOL;
             case ShaderDataType::Bool3:     return GL_BOOL;
             case ShaderDataType::Bool4:     return GL_BOOL;
+
+            case ShaderDataType::Sampler1D: return GL_SAMPLER_1D;
+            case ShaderDataType::Sampler2D: return GL_SAMPLER_2D;
+            case ShaderDataType::Sampler3D: return GL_SAMPLER_3D;
         }
         VXM_CORE_ERROR("Unknown ShaderDataType {0}.", (int)shaderDataType);
         return 0;

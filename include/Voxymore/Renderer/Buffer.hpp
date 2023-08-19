@@ -6,75 +6,9 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
 
-namespace Voxymore::Core
-{
-    enum class ShaderDataType {
-        None = 0,
-        Float,
-        Float2,
-        Float3,
-        Float4,
-        Mat2,
-        Mat3,
-        Mat4,
-        Int,
-        Int2,
-        Int3,
-        Int4,
-        Bool,
-        Bool2,
-        Bool3,
-        Bool4,
-    };
-
-    inline std::string ShaderDataTypeToString(ShaderDataType shaderDataType)
-    {
-        switch (shaderDataType) {
-
-            case ShaderDataType::None: return "None";
-            case ShaderDataType::Float: return "Float";
-            case ShaderDataType::Float2: return "Float2";
-            case ShaderDataType::Float3: return "Float3";
-            case ShaderDataType::Float4: return "Float4";
-            case ShaderDataType::Mat2: return "Mat2";
-            case ShaderDataType::Mat3: return "Mat3";
-            case ShaderDataType::Mat4: return "Mat4";
-            case ShaderDataType::Int: return "Int";
-            case ShaderDataType::Int2: return "Int2";
-            case ShaderDataType::Int3: return "Int3";
-            case ShaderDataType::Int4: return "Int4";
-            case ShaderDataType::Bool: return "Bool";
-            case ShaderDataType::Bool2: return "Bool2";
-            case ShaderDataType::Bool3: return "Bool3";
-            case ShaderDataType::Bool4: return "Bool4";
-        }
-        return "Unknown";
-    }
-
-    inline static uint32_t ShaderDataTypeSize(ShaderDataType type)
-    {
-        switch (type) {
-            case ShaderDataType::Float:     return 4 * 1;
-            case ShaderDataType::Float2:    return 4 * 2;
-            case ShaderDataType::Float3:    return 4 * 3;
-            case ShaderDataType::Float4:    return 4 * 4;
-            case ShaderDataType::Mat2:      return 4 * 2 * 2;
-            case ShaderDataType::Mat3:      return 4 * 3 * 3;
-            case ShaderDataType::Mat4:      return 4 * 4 * 4;
-            case ShaderDataType::Int:       return 4 * 1;
-            case ShaderDataType::Int2:      return 4 * 2;
-            case ShaderDataType::Int3:      return 4 * 3;
-            case ShaderDataType::Int4:      return 4 * 4;
-            case ShaderDataType::Bool:      return 1 * 1;
-            case ShaderDataType::Bool2:     return 1 * 2;
-            case ShaderDataType::Bool3:     return 1 * 3;
-            case ShaderDataType::Bool4:     return 1 * 4;
-        }
-
-        VXM_CORE_ERROR("Unknown ShaderDataType {0}.", (int)type);
-        return 0;
-    }
+namespace Voxymore::Core {
 
     struct BufferElement{
         std::string Name;
@@ -102,10 +36,19 @@ namespace Voxymore::Core
                 case ShaderDataType::Int3: return 3;
                 case ShaderDataType::Int4: return 4;
 
+                case ShaderDataType::UInt: return 1;
+                case ShaderDataType::UInt2: return 2;
+                case ShaderDataType::UInt3: return 3;
+                case ShaderDataType::UInt4: return 4;
+
                 case ShaderDataType::Bool: return 1;
                 case ShaderDataType::Bool2: return 2;
                 case ShaderDataType::Bool3: return 3;
                 case ShaderDataType::Bool4: return 4;
+
+                case ShaderDataType::Sampler1D: return 1;
+                case ShaderDataType::Sampler2D: return 1;
+                case ShaderDataType::Sampler3D: return 1;
             }
 
             VXM_CORE_ERROR("Unknown ShaderDataType {0}.", (int)Type);

@@ -9,6 +9,16 @@
 #include "Voxymore/Core/SystemHelper.hpp"
 
 namespace Voxymore::Core {
+
+    struct OpenGLUniformDescription : public UniformDescription
+    {
+    public:
+        int Location;
+    public:
+        OpenGLUniformDescription() = default;
+        inline OpenGLUniformDescription(const std::string& name, ShaderDataType type, int size, int location) : UniformDescription(name, type, size), Location(location) {}
+    };
+
     // TODO: Analyse shaders to get the different uniform inside.
     class OpenGLShader : public Shader {
     public:
@@ -24,9 +34,9 @@ namespace Voxymore::Core {
         virtual void Unbind() const override;
         inline virtual const std::string& GetName() const override { return m_Name; }
 
-        virtual std::vector<std::string> GetUniforms() const override;
-        inline const std::unordered_map<std::string, int>& GetUniformMap() const { return m_Uniforms; }
+        virtual std::unordered_map<std::string, UniformDescription> GetUniforms() const override;
 
+        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) override;
 		virtual void SetUniformInt(const std::string& name, int value) override;
 
 		virtual void SetUniformFloat(const std::string& name, float value) override;
@@ -38,21 +48,22 @@ namespace Voxymore::Core {
 		virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) override;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const std::string& path);
-        std::unordered_map<std::string, int> GetAllUniform(const std::string& source);
+        std::unordered_map<std::string, OpenGLUniformDescription> GetAllUniform(uint32_t program);
 
-        void Compile(const std::unordered_map<ShaderType, std::string>& shaders);
+        bool Compile(const std::unordered_map<ShaderType, std::string>& shaders);
         bool Link();
         bool Link(unsigned int rendererId);
-        void FillUniforms();
     private:
         uint32_t CreateSubShader(ShaderType type, const std::string& source);
         bool CompileSubShader(uint32_t id);
         void DeleteSubShader(uint32_t id);
     private:
-        std::unordered_map<std::string, int> m_Uniforms;
+        std::unordered_map<std::string, OpenGLUniformDescription> m_Uniforms;
     private:
         std::string m_Name;
         unsigned int m_RendererID;
     };
+
+
 
 } // Core

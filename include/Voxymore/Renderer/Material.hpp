@@ -12,10 +12,28 @@
 
 namespace Voxymore::Core {
 
-    template<typename T>
     struct MaterialValue {
+    private :
         ShaderDataType DataType;
-        T* ValuePtr;
+        void* ValuePtr;
+    public:
+        MaterialValue(ShaderDataType dataType);
+        ~MaterialValue();
+
+        MaterialValue ();
+        MaterialValue (const MaterialValue&);
+        MaterialValue& operator= (const MaterialValue&);
+    public:
+        template<typename T>
+        void SetValue(const T& value);
+        void SetValue(const void* value, uint32_t size);
+
+        const void* GetValue() const;
+        uint32_t GetSize() const;
+        ShaderDataType GetType() const;
+    private:
+        void DeleteValue();
+        void CreateValue();
     };
 
     class Material {
@@ -36,10 +54,8 @@ namespace Voxymore::Core {
         void Bind() const;
         void Unbind() const;
     private:
-        void Delete(MaterialValue<void>& materialValue);
         Ref<Shader> m_Shader;
-//            std::vector<std::string> m_Uniforms;
-        std::unordered_map<std::string, MaterialValue<void>> m_Uniforms;
+        std::unordered_map<std::string, MaterialValue> m_Uniforms;
     };
 
 } // Voxymore

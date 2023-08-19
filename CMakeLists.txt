@@ -68,9 +68,13 @@ set(SRC_FILES src/Core/Application.cpp
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
 
-IF(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
+if(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DEBUG)
-ENDIF()
+elseif(CMAKE_BUILD_TYPE MATCHES "[Rr][Ee][Ll][Ee][Aa][Ss][Ee]")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_RELEASE)
+elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DIST)
+endif()
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 
