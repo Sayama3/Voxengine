@@ -29,7 +29,7 @@ namespace Voxymore::Core {
 
 }
 
-#ifdef VXM_Debug
+#ifdef VXM_DEBUG
 //  spdlog::source_loc(__FILE__, __LINE__, __FUNCTION__ )
 #define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCSIG__}, spdlog::level::trace, __VA_ARGS__)
 #define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCSIG__}, spdlog::level::info, __VA_ARGS__)
