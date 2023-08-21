@@ -68,16 +68,16 @@ namespace Voxymore::Core {
                         layer->OnUpdate(timeStep);
                     }
                 }
-
-                m_ImGUILayer->Begin();
-                {
-                    VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
-                    for (Layer *layer: m_LayerStack) {
-                        layer->OnImGuiRender();
-                    }
-                }
-                m_ImGUILayer->End();
             }
+
+            m_ImGUILayer->Begin();
+            {
+                VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
+                for (Layer *layer: m_LayerStack) {
+                    layer->OnImGuiRender();
+                }
+            }
+            m_ImGUILayer->End();
 
             m_Window->OnUpdate();
         }
