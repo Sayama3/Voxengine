@@ -64,6 +64,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Renderer/Material.cpp
         include/Voxymore/Renderer/Material.hpp
         include/Voxymore/Debug/Instrumentor.hpp
+        src/Renderer/Framebuffer.cpp
+        include/Voxymore/Renderer/Framebuffer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
