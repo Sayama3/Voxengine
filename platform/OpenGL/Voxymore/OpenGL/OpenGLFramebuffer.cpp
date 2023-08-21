@@ -29,6 +29,7 @@ namespace Voxymore::Core {
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
+        glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
 
         //TODO: put the GL_RGBA8 into the specification so that it's can be HDR compatible.
         //TODO: Put the GL_RGBA into the specification because we might not need all the info.
@@ -38,6 +39,7 @@ namespace Voxymore::Core {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
+        glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
         glTexStorage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);

@@ -24,8 +24,6 @@ namespace Voxymore::Core {
     void Renderer::BeginScene(const Camera& camera) {
         VXM_PROFILE_FUNCTION();
 
-        RenderCommand::SetClearColor({0.1f,0.1f,0.1f,1});
-        RenderCommand::Clear();
         s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
