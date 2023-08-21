@@ -46,7 +46,7 @@ namespace Voxymore::Core {
 
         VXM_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete.");
 
-        glBindFramebuffer(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void OpenGLFramebuffer::Bind() {
