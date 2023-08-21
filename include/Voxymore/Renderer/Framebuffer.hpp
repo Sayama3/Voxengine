@@ -25,7 +25,7 @@ namespace Voxymore::Core {
     public:
         static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 
-        virtual ~Framebuffer() = 0;
+        virtual ~Framebuffer() = default;
         virtual const FramebufferSpecification& GetSpecification() const = 0;
 
         virtual void Bind() = 0;
