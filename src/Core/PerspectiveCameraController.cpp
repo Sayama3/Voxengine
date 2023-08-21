@@ -155,6 +155,11 @@ namespace Voxymore::Core {
 
     bool PerspectiveCameraController::OnWindowResize(WindowResizeEvent &e) {
         VXM_PROFILE_FUNCTION();
+        if(e.GetWidth() == 0 || e.GetHeight() == 0)
+        {
+            return false;
+        }
+
         m_Width = static_cast<float>(e.GetWidth());
         m_Height = static_cast<float>(e.GetHeight());
         m_Camera.SetProjectionMatrix(m_Width, m_Height, m_FOV, m_NearClip, m_FarClip);

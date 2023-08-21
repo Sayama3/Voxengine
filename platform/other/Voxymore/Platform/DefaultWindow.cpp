@@ -204,7 +204,7 @@ namespace Voxymore::Core {
     }
 
     bool DefaultWindow::IsMinify() const {
-        return m_Data.Minified || (m_Data.Width == 0 || m_Data.Height == 0);
+        return m_Data.Minified || m_Data.Width == 0 || m_Data.Height == 0;
     }
 
     void DefaultWindow::SetCursorState(CursorState cursorState) {
