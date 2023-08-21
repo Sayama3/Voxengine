@@ -107,4 +107,9 @@ namespace Voxymore::Core {
         m_LayerStack.PushOverlay(overlay);
         overlay->OnAttach();
     }
+
+    void Application::Close() {
+        VXM_CORE_INFO("Application is closing.");
+        m_Running = false;
+    }
 } // Core
