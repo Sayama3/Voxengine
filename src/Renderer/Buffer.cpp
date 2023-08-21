@@ -7,7 +7,7 @@
 #include "Voxymore/Core/Logger.hpp"
 namespace Voxymore::Core {
 
-    VertexBuffer* Voxymore::Core::VertexBuffer::Create(uint32_t size, void* vertices)
+    Ref<VertexBuffer> Voxymore::Core::VertexBuffer::Create(uint32_t size, void* vertices)
     {
         switch (Renderer::GetAPI())
         {
@@ -18,7 +18,7 @@ namespace Voxymore::Core {
             }
             case RendererAPI::API::OpenGL:
             {
-                return new OpenGLVertexBuffer(size, vertices);
+                return CreateRef<OpenGLVertexBuffer>(size, vertices);
             }
         }
 
@@ -27,7 +27,7 @@ namespace Voxymore::Core {
         return nullptr;
     }
 
-    IndexBuffer* Voxymore::Core::IndexBuffer::Create(uint32_t size, uint32_t *indices)
+    Ref<IndexBuffer> Voxymore::Core::IndexBuffer::Create(uint32_t size, uint32_t *indices)
     {
         switch (Renderer::GetAPI())
         {
@@ -38,7 +38,7 @@ namespace Voxymore::Core {
             }
             case RendererAPI::API::OpenGL:
             {
-                return new OpenGLIndexBuffer(size, indices);
+                return CreateRef<OpenGLIndexBuffer>(size, indices);
             }
         }
 
