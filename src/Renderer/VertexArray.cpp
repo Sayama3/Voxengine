@@ -8,7 +8,7 @@
 #include "Voxymore/Core/Core.hpp"
 
 namespace Voxymore::Core {
-    VertexArray *VertexArray::Create() {
+    Ref<VertexArray> VertexArray::Create() {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None:
             {
@@ -18,7 +18,7 @@ namespace Voxymore::Core {
 
             case RendererAPI::API::OpenGL:
             {
-                return new OpenGLVertexArray();
+                return CreateRef<OpenGLVertexArray>();
             }
         }
 
