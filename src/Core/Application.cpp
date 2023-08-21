@@ -52,28 +52,32 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
-            double time = Platform::GetTime();
-            TimeStep timeStep = static_cast<float>(time - m_LastFrameTime);
-            m_LastFrameTime = time;
-            //TODO: Remove later as it should be abstracted.
-
+            TimeStep timeStep;
+            {
+                VXM_PROFILE_SCOPE("Application::Run -> Get TimeStep");
+                double time = Platform::GetTime();
+                timeStep = static_cast<float>(time - m_LastFrameTime);
+                m_LastFrameTime = time;
+            }
+            //TODO: Remove later as it should be abstracted?
             if(!GetWindow().IsMinify())
             {
-                VXM_PROFILE_SCOPE("Application -> Update Layer");
-                for (Layer *layer: m_LayerStack) {
-                    layer->OnUpdate(timeStep);
+                {
+                    VXM_PROFILE_SCOPE("Application::Run -> Update Layer");
+                    for (Layer *layer: m_LayerStack) {
+                        layer->OnUpdate(timeStep);
+                    }
                 }
-            }
 
-            m_ImGUILayer->Begin();
-
-            {
-                VXM_PROFILE_SCOPE("Application -> ImGuiRender Layer");
-                for (Layer *layer: m_LayerStack) {
-                    layer->OnImGuiRender();
+                m_ImGUILayer->Begin();
+                {
+                    VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
+                    for (Layer *layer: m_LayerStack) {
+                        layer->OnImGuiRender();
+                    }
                 }
+                m_ImGUILayer->End();
             }
-            m_ImGUILayer->End();
 
             m_Window->OnUpdate();
         }
