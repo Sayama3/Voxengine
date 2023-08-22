@@ -160,10 +160,28 @@ namespace Voxymore::Core {
             return false;
         }
 
-        m_Width = static_cast<float>(e.GetWidth());
-        m_Height = static_cast<float>(e.GetHeight());
-        m_Camera.SetProjectionMatrix(m_Width, m_Height, m_FOV, m_NearClip, m_FarClip);
+        SetSize(e.GetWidth(), e.GetHeight());
         return false;
+    }
+
+    void PerspectiveCameraController::SetHeight(uint32_t height) {
+        VXM_CORE_ASSERT(height > 0, "Camera height must be superior to 0.");
+        m_Height = height;
+        m_UpdateProjectionMatrix = true;
+    }
+
+    void PerspectiveCameraController::SetWidth(uint32_t width) {
+        VXM_CORE_ASSERT(width > 0, "Camera width must be superior to 0.");
+        m_Width = width;
+        m_UpdateProjectionMatrix = true;
+    }
+
+    void PerspectiveCameraController::SetSize(uint32_t width, uint32_t height) {
+        VXM_CORE_ASSERT(width > 0, "Camera width must be superior to 0.");
+        VXM_CORE_ASSERT(height > 0, "Camera height must be superior to 0.");
+        m_Width = width;
+        m_Height = height;
+        m_UpdateProjectionMatrix = true;
     }
 
 } // Core

@@ -31,6 +31,9 @@ namespace Voxymore::Core {
 
         inline float GetWidth() const { return m_Width; }
         inline float GetHeight() const { return m_Height; }
+        inline void SetWidth(uint32_t width);
+        inline void SetHeight(uint32_t height);
+        inline void SetSize(uint32_t width, uint32_t height);
 
         inline float GetFOV() const { return m_FOV; }
         inline void SetFOV(float fOV) { m_FOV = fOV; m_UpdateProjectionMatrix = true; }
