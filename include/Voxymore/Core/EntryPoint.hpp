@@ -2,8 +2,7 @@
 // Created by ianpo on 12/07/2023.
 //
 
-#ifndef VOXYMORE_ENTRYPOINT_HPP
-#define VOXYMORE_ENTRYPOINT_HPP
+#pragma once
 
 #include "Application.hpp"
 #include "Logger.hpp"
@@ -32,6 +31,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-//#endif
-
-#endif //VOXYMORE_ENTRYPOINT_HPP

@@ -35,4 +35,4 @@
 #include "Voxymore/Renderer/Texture.hpp"
 
 
-#include "Voxymore/Core/EntryPoint.hpp"
+//#include "Voxymore/Core/EntryPoint.hpp"
