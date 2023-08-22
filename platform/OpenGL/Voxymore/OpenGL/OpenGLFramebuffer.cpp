@@ -10,6 +10,9 @@ namespace Voxymore::Core {
 
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
     {
+        VXM_CORE_ASSERT(m_Specification.Width > 0, "Framebufffer Width must be superior to 0.");
+        VXM_CORE_ASSERT(m_Specification.Height > 0, "Framebufffer Height must be superior to 0.");
+
         Invalidate();
     }
 
@@ -75,6 +78,9 @@ namespace Voxymore::Core {
 
     void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
     {
+        VXM_CORE_ASSERT(width > 0, "Framebufffer Width must be superior to 0.");
+        VXM_CORE_ASSERT(height > 0, "Framebufffer Height must be superior to 0.");
+
         m_Specification.Width = width;
         m_Specification.Height = height;
 
