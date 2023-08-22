@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 
 namespace Voxymore::Core {
@@ -30,6 +31,8 @@ namespace Voxymore::Core {
 
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
+
+        virtual void Resize(uint32_t width, uint32_t height) = 0;
 
         virtual uint32_t GetColorAttachmentRendererID() const = 0;
         virtual uint32_t GetDepthAttachmentRendererID() const = 0;

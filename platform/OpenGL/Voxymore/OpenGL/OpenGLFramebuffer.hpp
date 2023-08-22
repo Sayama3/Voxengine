@@ -11,9 +11,9 @@ namespace Voxymore::Core {
     class OpenGLFramebuffer : public Framebuffer {
     private:
         FramebufferSpecification m_Specification;
-        uint32_t m_RendererID;
-        uint32_t m_ColorAttachment;
-        uint32_t m_DepthAttachment;
+        uint32_t m_RendererID = 0;
+        uint32_t m_ColorAttachment = 0;
+        uint32_t m_DepthAttachment = 0;
     private:
         void Invalidate();
     public:
@@ -23,6 +23,7 @@ namespace Voxymore::Core {
 
         virtual void Bind() override;
         virtual void Unbind() override;
+        virtual void Resize(uint32_t width, uint32_t height) override;
         virtual uint32_t GetColorAttachmentRendererID() const override;
         virtual uint32_t GetDepthAttachmentRendererID() const override;
     };
