@@ -37,7 +37,7 @@ namespace Voxymore::Core {
         struct DefaultData
         {
             std::string Title;
-            unsigned int Width, Height;
+            uint32_t Width, Height;
             bool Minified;
             bool VSync;
 
