@@ -115,7 +115,7 @@ namespace Voxymore::Core {
     void ImGUILayer::OnImGuiRender() {
         VXM_PROFILE_FUNCTION();
 //        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
-        static bool showDemoWindow = true;
-        if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
+//        static bool showDemoWindow = true;
+//        if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
 } // Core
