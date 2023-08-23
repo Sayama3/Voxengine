@@ -23,7 +23,7 @@ namespace Voxymore::Core {
 
         WindowProps props(name);
         m_Window = Scope<Window>(Window::Create(props));
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent, std::placeholders::_1));
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
         Renderer::Init();
 
@@ -36,8 +36,8 @@ namespace Voxymore::Core {
     }
     void Application::OnEvent(Event& e){
         EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose, std::placeholders::_1));
-        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize, std::placeholders::_1));
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
 //        VXM_CORE_INFO(e.ToString());
 

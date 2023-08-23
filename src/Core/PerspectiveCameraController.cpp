@@ -24,15 +24,15 @@ namespace Voxymore::Core {
 
     void PerspectiveCameraController::OnEvent(Event &e) {
         Voxymore::Core::EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<Voxymore::Core::WindowResizeEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnWindowResize, std::placeholders::_1));
+        dispatcher.Dispatch<Voxymore::Core::WindowResizeEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnWindowResize));
         if(m_Enable)
         {
-            dispatcher.Dispatch<Voxymore::Core::KeyPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyPressed, std::placeholders::_1));
-            dispatcher.Dispatch<Voxymore::Core::KeyReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyReleased, std::placeholders::_1));
-            dispatcher.Dispatch<Voxymore::Core::MouseMovedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved, std::placeholders::_1));
-            dispatcher.Dispatch<Voxymore::Core::MouseScrolledEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled, std::placeholders::_1));
-//        dispatcher.Dispatch<Voxymore::Core::MouseButtonPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonPressed, std::placeholders::_1));
-//        dispatcher.Dispatch<Voxymore::Core::MouseButtonReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased, std::placeholders::_1));
+            dispatcher.Dispatch<Voxymore::Core::KeyPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyPressed));
+            dispatcher.Dispatch<Voxymore::Core::KeyReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyReleased));
+            dispatcher.Dispatch<Voxymore::Core::MouseMovedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
+            dispatcher.Dispatch<Voxymore::Core::MouseScrolledEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+//        dispatcher.Dispatch<Voxymore::Core::MouseButtonPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonPressed));
+//        dispatcher.Dispatch<Voxymore::Core::MouseButtonReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased));
         }
     }
 
