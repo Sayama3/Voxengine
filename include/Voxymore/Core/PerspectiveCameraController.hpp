@@ -46,10 +46,11 @@ namespace Voxymore::Core {
 
     private:
         bool OnMouseScrolled(MouseScrolledEvent& e);
-        bool OnKeyPressed(KeyPressedEvent& e);
-        bool OnKeyReleased(KeyReleasedEvent& e);
-        bool OnMouseMoved(MouseMovedEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
+
+        void UpdateMovement();
+        void UpdateRotation();
+        void UpdateScroll();
     private:
         bool m_Enable = true;
         bool m_UpdateViewMatrix = false;

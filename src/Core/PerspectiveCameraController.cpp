@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Core/PerspectiveCameraController.hpp"
+#include "Voxymore/Core/Input.hpp"
 #include <cfloat>
 
 // TODO (01) : Add camera movement and rotation (WASD + Mouse) only when right clicking on the viewport
@@ -27,107 +28,19 @@ namespace Voxymore::Core {
         dispatcher.Dispatch<Voxymore::Core::WindowResizeEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnWindowResize));
         if(m_Enable)
         {
-            dispatcher.Dispatch<Voxymore::Core::KeyPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyPressed));
-            dispatcher.Dispatch<Voxymore::Core::KeyReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnKeyReleased));
-            dispatcher.Dispatch<Voxymore::Core::MouseMovedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
             dispatcher.Dispatch<Voxymore::Core::MouseScrolledEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
-//        dispatcher.Dispatch<Voxymore::Core::MouseButtonPressedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonPressed));
-//        dispatcher.Dispatch<Voxymore::Core::MouseButtonReleasedEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased));
         }
-    }
-
-    bool PerspectiveCameraController::OnKeyPressed(KeyPressedEvent &e) {
-        VXM_PROFILE_FUNCTION();
-        if (e.GetKeyCode() == m_ForwardKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY W.");
-            m_Movement += glm::vec3(0, 0, -1);
-        }
-        if (e.GetKeyCode() == m_BackwardKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY S.");
-            m_Movement += glm::vec3(0, 0, 1);
-        }
-        if (e.GetKeyCode() == m_RightKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY D.");
-            m_Movement += glm::vec3(1, 0, 0);
-        }
-        if (e.GetKeyCode() == m_LeftKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY A.");
-            m_Movement += glm::vec3(-1, 0, 0);
-        }
-        if (e.GetKeyCode() == m_UpKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY E.");
-            m_Movement += glm::vec3(0, 1, 0);
-        }
-        if (e.GetKeyCode() == m_DownKey && e.GetRepeatCount() == 0) {
-            VXM_CORE_INFO("Press KEY Q.");
-            m_Movement += glm::vec3(0, -1, 0);
-        }
-
-        return false;
-    }
-
-    bool PerspectiveCameraController::OnKeyReleased(KeyReleasedEvent &e) {
-        VXM_PROFILE_FUNCTION();
-        if(glm::length2(m_Movement) < FLT_EPSILON) return false;
-
-        if (e.GetKeyCode() == m_ForwardKey) {
-            VXM_CORE_INFO("Release KEY W.");
-            m_Movement -= glm::vec3(0, 0, -1);
-        }
-        if (e.GetKeyCode() == m_BackwardKey) {
-            VXM_CORE_INFO("Release KEY S.");
-            m_Movement -= glm::vec3(0, 0, 1);
-        }
-        if (e.GetKeyCode() == m_RightKey) {
-            VXM_CORE_INFO("Release KEY D.");
-            m_Movement -= glm::vec3(1, 0, 0);
-        }
-        if (e.GetKeyCode() == m_LeftKey) {
-            VXM_CORE_INFO("Release KEY A.");
-            m_Movement -= glm::vec3(-1, 0, 0);
-        }
-        if (e.GetKeyCode() == m_UpKey) {
-            VXM_CORE_INFO("Release KEY E.");
-            m_Movement -= glm::vec3(0, 1, 0);
-        }
-        if (e.GetKeyCode() == m_DownKey) {
-            VXM_CORE_INFO("Release KEY Q.");
-            m_Movement -= glm::vec3(0, -1, 0);
-        }
-        return false;
-    }
-
-    bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent &event) {
-        VXM_PROFILE_FUNCTION();
-        if (!m_HasSetMouse) {
-            m_MouseX = event.GetX();
-            m_MouseY = event.GetY();
-            m_HasSetMouse = true;
-            return false;
-        }
-        glm::vec2 currentPos = {event.GetX(), event.GetY()};
-        glm::vec2 olPos = {m_MouseX, m_MouseY};
-
-        glm::vec2 deltaMove = currentPos - olPos;
-
-        // old pos.
-        m_MouseX = event.GetX();
-        m_MouseY = event.GetY();
-
-        VXM_INFO("Mouse Delta: x:{0}, y: {1}", deltaMove.x, deltaMove.y);
-        glm::vec2 movement = glm::radians(glm::vec2(deltaMove.x, deltaMove.y)) * (m_Sensitivity * c_RotationSpeed);
-        glm::vec3 right = glm::vec3{1, 0, 0};
-        glm::vec3 up = {0, 1, 0};
-        auto upwardRotation = glm::rotate(glm::identity<glm::quat>(), -movement.y, right); // Inverse because that's the way it works.
-        auto rightwardRotation = glm::rotate(glm::identity<glm::quat>(), -movement.x, up); // Inverse because that's the way it works.
-        m_Rotation = m_Rotation * upwardRotation; // Around the local right axis of the current rotation.
-        m_Rotation = rightwardRotation * m_Rotation; // Around the global up axis.
-
-        return false;
     }
 
     void PerspectiveCameraController::OnUpdate(TimeStep ts) {
         VXM_PROFILE_FUNCTION();
+
+        if(m_Enable)
+        {
+            UpdateMovement();
+            UpdateRotation();
+        }
+
         m_Position += (m_Rotation * m_Movement) * (ts * c_TranslationSpeed);
         m_Camera.SetViewMatrix(m_Position, m_Rotation);
         if(m_UpdateProjectionMatrix){
@@ -182,6 +95,63 @@ namespace Voxymore::Core {
         m_Width = width;
         m_Height = height;
         m_UpdateProjectionMatrix = true;
+    }
+
+    void PerspectiveCameraController::UpdateMovement() {
+        VXM_PROFILE_FUNCTION();
+        m_Movement = glm::vec3(0);
+        if (Input::IsKeyPressed(KeyCode::KEY_W)) {
+            VXM_CORE_INFO("Press KEY W.");
+            m_Movement += glm::vec3(0, 0, -1);
+        }
+        if (Input::IsKeyPressed(KeyCode::KEY_S)) {
+            VXM_CORE_INFO("Press KEY S.");
+            m_Movement += glm::vec3(0, 0, 1);
+        }
+        if (Input::IsKeyPressed(KeyCode::KEY_D)) {
+            VXM_CORE_INFO("Press KEY D.");
+            m_Movement += glm::vec3(1, 0, 0);
+        }
+        if (Input::IsKeyPressed(KeyCode::KEY_A)) {
+            VXM_CORE_INFO("Press KEY A.");
+            m_Movement += glm::vec3(-1, 0, 0);
+        }
+        if (Input::IsKeyPressed(KeyCode::KEY_E)) {
+            VXM_CORE_INFO("Press KEY E.");
+            m_Movement += glm::vec3(0, 1, 0);
+        }
+        if (Input::IsKeyPressed(KeyCode::KEY_Q)) {
+            VXM_CORE_INFO("Press KEY Q.");
+            m_Movement += glm::vec3(0, -1, 0);
+        }
+    }
+
+    void PerspectiveCameraController::UpdateRotation() {
+        VXM_PROFILE_FUNCTION();
+        auto[x, y] = Input::GetMousePosition();
+        if (!m_HasSetMouse) {
+            m_MouseX = x;
+            m_MouseY = y;
+            m_HasSetMouse = true;
+            return;
+        }
+        glm::vec2 currentPos = {x, y};
+        glm::vec2 olPos = {m_MouseX, m_MouseY};
+
+        glm::vec2 deltaMove = currentPos - olPos;
+
+        // old pos.
+        m_MouseX = x;
+        m_MouseY = y;
+
+        VXM_INFO("Mouse Delta: x:{0}, y: {1}", deltaMove.x, deltaMove.y);
+        glm::vec2 movement = glm::radians(glm::vec2(deltaMove.x, deltaMove.y)) * (m_Sensitivity * c_RotationSpeed);
+        glm::vec3 right = glm::vec3{1, 0, 0};
+        glm::vec3 up = {0, 1, 0};
+        auto upwardRotation = glm::rotate(glm::identity<glm::quat>(), -movement.y, right); // Inverse because that's the way it works.
+        auto rightwardRotation = glm::rotate(glm::identity<glm::quat>(), -movement.x, up); // Inverse because that's the way it works.
+        m_Rotation = m_Rotation * upwardRotation; // Around the local right axis of the current rotation.
+        m_Rotation = rightwardRotation * m_Rotation; // Around the global up axis.
     }
 
 } // Core
