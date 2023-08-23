@@ -13,8 +13,8 @@ namespace Voxymore::Core {
 
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
     {
-        VXM_CORE_ASSERT(m_Specification.Width > 0 && m_Specification.Width < s_MaxFramebufferSize, "Framebufffer width '{0}' must be superior to 0 and inferior to {1}.", m_Specification.Width, s_MaxFramebufferSize);
-        VXM_CORE_ASSERT(m_Specification.Height > 0 && m_Specification.Height < s_MaxFramebufferSize, "Framebufffer height '{0}'  must be superior to 0 and inferior to {1}.", m_Specification.Height, s_MaxFramebufferSize);
+        VXM_CORE_ASSERT(m_Specification.Width > 0 && m_Specification.Width <= s_MaxFramebufferSize, "Framebufffer width '{0}' must be superior to 0 and inferior to {1}.", m_Specification.Width, s_MaxFramebufferSize);
+        VXM_CORE_ASSERT(m_Specification.Height > 0 && m_Specification.Height <= s_MaxFramebufferSize, "Framebufffer height '{0}'  must be superior to 0 and inferior to {1}.", m_Specification.Height, s_MaxFramebufferSize);
 
         Invalidate();
     }
@@ -81,8 +81,8 @@ namespace Voxymore::Core {
 
     void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
     {
-        if(width > 0 && width < s_MaxFramebufferSize &&
-            height > 0 && height < s_MaxFramebufferSize)
+        if(width == 0 || width > s_MaxFramebufferSize ||
+            height == 0 || height > s_MaxFramebufferSize)
         {
             VXM_CORE_WARNING("The Framebuffer size [{0}, {1}] is not valid.", width, height);
             return;
