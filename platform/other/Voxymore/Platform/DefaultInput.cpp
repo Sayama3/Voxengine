@@ -2,31 +2,29 @@
 // Created by ianpo on 18/07/2023.
 //
 
-#include "DefaultInput.hpp"
+#include "Voxymore/Core/Input.hpp"
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "GLFW/glfw3.h"
 
 namespace Voxymore::Core {
-    Input* Input::s_Instance = new DefaultInput();
-
-    bool DefaultInput::IsKeyPressedImpl(int keycode)
+    bool Input::IsKeyPressed(KeyCode keycode)
     {
         VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        auto keyState = glfwGetKey(window, keycode);
+        auto keyState = glfwGetKey(window, static_cast<int32_t>(keycode));
         return keyState == GLFW_PRESS || keyState == GLFW_REPEAT;
     }
 
-    bool DefaultInput::IsMouseButtonPressedImpl(int button)
+    bool Input::IsMouseButtonPressed(MouseButton button)
     {
         VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        auto buttonState = glfwGetMouseButton(window, button);
+        auto buttonState = glfwGetMouseButton(window, static_cast<int32_t>(button));
         return buttonState == GLFW_PRESS;
     }
 
-    std::pair<float, float> DefaultInput::GetMousePositionImpl() {
+    std::pair<float, float> Input::GetMousePosition() {
         VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         double x, y;
@@ -34,13 +32,13 @@ namespace Voxymore::Core {
         return {static_cast<float>(x),static_cast<float>(y)};
     }
 
-    float DefaultInput::GetMouseXImpl() {
-        auto[x, y] = GetMousePositionImpl();
-        return static_cast<float>(x);
+    float Input::GetMouseX() {
+        auto[x, y] = GetMousePosition();
+        return x;
     }
 
-    float DefaultInput::GetMouseYImpl() {
-        auto[x, y] = GetMousePositionImpl();
-        return static_cast<float>(y);
+    float Input::GetMouseY() {
+        auto[x, y] = GetMousePosition();
+        return y;
     }
 } // Core
