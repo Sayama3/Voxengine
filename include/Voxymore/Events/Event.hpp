@@ -41,6 +41,7 @@ namespace Voxymore::Core {
         public:
             bool m_Handled = false;
 
+            virtual ~Event() = default;
             virtual EventType GetEventType() const = 0;
             virtual const char* GetName() const = 0;
             virtual int GetCategoryFlags() const = 0;
