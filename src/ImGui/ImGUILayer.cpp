@@ -118,4 +118,12 @@ namespace Voxymore::Core {
 //        static bool showDemoWindow = true;
 //        if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
+
+    void ImGUILayer::OnEvent(Event &e) {
+        if(m_BlockEvents) {
+            ImGuiIO &io = ImGui::GetIO();
+            e.m_Handled |= e.IsInCategory(EventCategory::EventCategoryMouse) & io.WantCaptureMouse;
+            e.m_Handled |= e.IsInCategory(EventCategory::EventCategoryKeyboard) & io.WantCaptureKeyboard;
+        }
+    }
 } // Core

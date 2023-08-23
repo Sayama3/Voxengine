@@ -29,6 +29,7 @@ namespace Voxymore::Core {
 
         inline static Application& Get() {return *s_Instance; }
         inline Window& GetWindow() { return *m_Window; }
+        inline ImGUILayer* GetImGuiLayer() { return m_ImGUILayer; }
 
         void Close();
 

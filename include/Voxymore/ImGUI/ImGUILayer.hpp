@@ -28,11 +28,16 @@ namespace Voxymore::Core {
 
         virtual void OnAttach() override;
         virtual void OnDetach() override;
+        virtual void OnEvent(Event& e) override;
         void OnImGuiRender() override;
 
         void Begin();
         void End();
+
+        inline void SetBlockEvents(bool blockEvents) {m_BlockEvents = blockEvents;}
+        inline bool GetBlockEvents() const {return m_BlockEvents;}
     private:
+        bool m_BlockEvents = true;
         float m_Time = 0.0f;
     };
 
