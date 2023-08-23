@@ -8,10 +8,13 @@
 
 namespace Voxymore::Core {
 
+    //TODO: retrieve the max depending on the GPU capabilities.
+    static const uint32_t s_MaxFramebufferSize = 8192;
+
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
     {
-        VXM_CORE_ASSERT(m_Specification.Width > 0, "Framebufffer Width must be superior to 0.");
-        VXM_CORE_ASSERT(m_Specification.Height > 0, "Framebufffer Height must be superior to 0.");
+        VXM_CORE_ASSERT(m_Specification.Width > 0 && m_Specification.Width < s_MaxFramebufferSize, "Framebufffer width '{0}' must be superior to 0 and inferior to {1}.", m_Specification.Width, s_MaxFramebufferSize);
+        VXM_CORE_ASSERT(m_Specification.Height > 0 && m_Specification.Height < s_MaxFramebufferSize, "Framebufffer height '{0}'  must be superior to 0 and inferior to {1}.", m_Specification.Height, s_MaxFramebufferSize);
 
         Invalidate();
     }
@@ -52,7 +55,6 @@ namespace Voxymore::Core {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
         glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 
         VXM_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete.");
@@ -79,8 +81,12 @@ namespace Voxymore::Core {
 
     void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
     {
-        VXM_CORE_ASSERT(width > 0, "Framebufffer Width must be superior to 0.");
-        VXM_CORE_ASSERT(height > 0, "Framebufffer Height must be superior to 0.");
+        if(width > 0 && width < s_MaxFramebufferSize &&
+            height > 0 && height < s_MaxFramebufferSize)
+        {
+            VXM_CORE_WARNING("The Framebuffer size [{0}, {1}] is not valid.", width, height);
+            return;
+        }
 
         m_Specification.Width = width;
         m_Specification.Height = height;
