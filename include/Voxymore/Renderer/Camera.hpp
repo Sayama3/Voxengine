@@ -9,7 +9,7 @@
 namespace Voxymore::Core {
 	class Camera {
 	public:
-		inline virtual ~Camera() {}
+		inline virtual ~Camera() = default;
 		virtual glm::mat4 GetViewProjectionMatrix() const = 0;
 		virtual glm::mat4 GetProjectionMatrix() const = 0;
 		virtual glm::mat4 GetViewMatrix() const = 0;

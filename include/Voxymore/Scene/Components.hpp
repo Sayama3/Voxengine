@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Renderer/RenderingCamera.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 
@@ -50,5 +51,17 @@ namespace Voxymore::Core
 		inline TagComponent() = default;
 		inline TagComponent(const TagComponent&) = default;
 		inline TagComponent(const std::string& tag) : Tag(tag) {}
+	};
+
+	struct CameraComponent
+	{
+		RenderingCamera Camera;
+		bool Primary = true;
+
+		inline CameraComponent() = default;
+		inline CameraComponent(const CameraComponent&) = default;
+		inline CameraComponent(const glm::mat4& projection) : Camera(projection) {}
+		inline CameraComponent(const RenderingCamera& camera) : Camera(camera) {}
+
 	};
 }
