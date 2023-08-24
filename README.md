@@ -12,4 +12,4 @@ The core engine of the Voxymore Game Engine.
 - [glm](https://github.com/g-truc/glm): a header only C++ mathematics library for graphics software based on the OpenGL Shading Language (GLSL) specifications.
 - [glad](https://glad.dav1d.de): Multi-Language GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs
 - [spdlog](https://github.com/gabime/spdlog): Very fast, header-only/compiled, C++ logging library.
-- [EnTT](https://github.com/skypjack/entt): Header-only Entity Component System, tiny and easy to use library for game programming and much more written in modern C++
+- [EnTT](https://github.com/skypjack/entt): Tiny and easy to use header-only Entity Component System library, for game programming and much more. Written in modern C++.
