@@ -4,11 +4,13 @@
 
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/Components.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 
 
 namespace Voxymore::Core
 {
+	static uint32_t count = 0;
 	Scene::Scene()
 	{
 	}
@@ -27,14 +29,15 @@ namespace Voxymore::Core
 		}
 	}
 
-	entt::entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& name)
 	{
-		entt::entity entity = m_Registry.create();
+		Entity entity = {m_Registry.create(), this};
+
+		entity.AddComponent<TransformComponent>();
+		auto& tag = entity.AddComponent<TagComponent>();
+		tag.Tag = name.empty() ? &"SceneEntity_" [ count++] : name;
+
 		return entity;
-	}
-	entt::registry& Scene::Reg()
-	{
-		return m_Registry;
 	}
 } // Voxymore
 // Core

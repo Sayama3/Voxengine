@@ -9,15 +9,16 @@
 
 namespace Voxymore::Core
 {
+	class Entity;
 
     class Scene
     {
+		friend Entity;
     public:
         Scene();
         ~Scene();
 
-		entt::entity CreateEntity();
-		entt::registry& Reg();
+		Entity CreateEntity(const std::string& name = "");
 		void OnUpdate(TimeStep ts);
     private:
         entt::registry m_Registry;

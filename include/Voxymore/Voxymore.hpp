@@ -27,6 +27,7 @@
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 
 #include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Components.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"

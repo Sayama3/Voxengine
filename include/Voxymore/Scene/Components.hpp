@@ -42,4 +42,13 @@ namespace Voxymore::Core
 		inline MeshComponent(const MeshComponent&) = default;
 		inline MeshComponent(const Ref<Material>& material,const Ref<VertexArray>& vertexArray) : Mat(material), Mesh(vertexArray) {}
 	};
+
+	struct TagComponent
+	{
+		std::string Tag;
+
+		inline TagComponent() = default;
+		inline TagComponent(const TagComponent&) = default;
+		inline TagComponent(const std::string& tag) : Tag(tag) {}
+	};
 }
