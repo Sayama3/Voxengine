@@ -17,34 +17,51 @@ namespace Voxymore::Core
 		entt::entity m_EntityID{entt::null};
 		Scene* m_Scene = nullptr;
 	public:
-		Entity() = default;
-		Entity(const Entity&) = default;
-		Entity(entt::entity entityID, Scene* scene);
+		inline Entity() = default;
+		inline Entity(const Entity&) = default;
+		inline Entity(entt::entity entityID, Scene* scene) : m_EntityID(entityID), m_Scene(scene)
+		{
+		}
 
 		inline bool IsValid() const {return m_EntityID != entt::null;}
 
 		template<typename T>
-		bool HasComponent() const;
+		inline bool HasComponent() const
+		{
+			m_Scene->m_Registry.any_of<T>(m_EntityID);
+		}
 
 		template<typename T>
-		T& GetComponent();
+		inline T& GetComponent()
+		{
+			VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+			return m_Scene->m_Registry.get<T>(m_EntityID);
+		}
 
 		template<typename T,  typename... Args>
-		T& AddComponent(Args &&...args);
+		inline T& AddComponent(Args &&...args)
+		{
+			VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
+			return m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
+		}
 
 		template<typename T>
-		void RemoveComponent();
+		inline void RemoveComponent()
+		{
+			VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+			m_Scene->m_Registry.remove<T>(m_EntityID);
+		}
 
-		operator bool() const { return IsValid(); }
-		operator entt::entity() const { return m_EntityID; }
-		operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
+		inline operator bool() const { return IsValid(); }
+		inline operator entt::entity() const { return m_EntityID; }
+		inline operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
 
-		bool operator==(const Entity& other) const
+		inline bool operator==(const Entity& other) const
 		{
 			return m_EntityID == other.m_EntityID && m_Scene == other.m_Scene;
 		}
 
-		bool operator!=(const Entity& other) const
+		inline bool operator!=(const Entity& other) const
 		{
 			return !(*this == other);
 		}
