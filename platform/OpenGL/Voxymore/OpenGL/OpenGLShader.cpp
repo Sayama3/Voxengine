@@ -432,8 +432,8 @@ namespace Voxymore::Core {
             case ShaderDataType::Sampler1D: SetUniformInt(name, *(int*)valuePtr); break;
             case ShaderDataType::Sampler2D: SetUniformInt(name, *(int*)valuePtr); break;
             case ShaderDataType::Sampler3D: SetUniformInt(name, *(int*)valuePtr); break;
+			default: VXM_CORE_ASSERT(false, "The ShaderDataType '{0}' is currently not handled by OpenGLShader.", ShaderDataTypeToString(m_Uniforms[name].Type)); break;
         }
-        VXM_CORE_ASSERT(false, "The ShaderDataType '{0}' is currently not handled by OpenGLShader.", ShaderDataTypeToString(m_Uniforms[name].Type));
     }
 
     void OpenGLShader::SetUniformInt(const std::string& name, int value){
