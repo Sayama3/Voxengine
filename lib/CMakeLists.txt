@@ -14,3 +14,5 @@ set(IMGUI_OPENGL3_LOADER ON)
 add_subdirectory(imgui)
 # Need to say to imgui where is glfw
 target_link_libraries(imgui PUBLIC glfw)
+
+add_subdirectory(entt)
