@@ -21,11 +21,18 @@ namespace Voxymore::Core {
         RenderCommand::Shutdown();
     }
 
-    void Renderer::BeginScene(const Camera& camera) {
+    void Renderer::BeginScene(const PerspectiveCamera& camera) {
         VXM_PROFILE_FUNCTION();
 
         s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
+
+	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		s_SceneData->ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
+	}
 
     void Renderer::EndScene() {
         VXM_PROFILE_FUNCTION();

@@ -21,11 +21,32 @@ namespace Voxymore::Core
 
 	void Scene::OnUpdate(TimeStep ts)
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-		for (auto entity : group)
+		Camera* mainCamera = nullptr;
+		glm::mat4 cameraTransform;
+
+		auto camerasGroup = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
+		for (auto entity : camerasGroup) {
+			auto&& [transform, camera] = camerasGroup.get<TransformComponent, CameraComponent>(entity);
+
+			if(camera.Primary)
+			{
+				mainCamera = &camera.Camera;
+				cameraTransform = transform.GetTransform();
+				break;
+			}
+		}
+
+		if(mainCamera)
 		{
-			auto&& [transform, mesh] = group.get<TransformComponent, MeshComponent>(entity);
-			Renderer::Submit(mesh.Mat, mesh.Mesh, transform.GetTransform());
+			Renderer::BeginScene(*mainCamera, cameraTransform);
+
+			auto group = m_Registry.group<MeshComponent>(entt::get<TransformComponent>);
+			for (auto entity: group) {
+				auto &&[transform, mesh] = group.get<TransformComponent, MeshComponent>(entity);
+				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform());
+			}
+
+			Renderer::EndScene();
 		}
 	}
 
@@ -38,6 +59,21 @@ namespace Voxymore::Core
 		tag.Tag = name.empty() ? "SceneEntity_" +std::to_string(count++) : name;
 
 		return entity;
+	}
+
+	void Scene::SetViewportSize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		auto cameraGroup = m_Registry.group<CameraComponent>();
+		for (auto entity : cameraGroup) {
+			auto& camera = cameraGroup.get<CameraComponent>(entity);
+			if(!camera.FixedAspectRation)
+			{
+				camera.Camera.SetViewportSize(width, height);
+			}
+		}
 	}
 } // Voxymore
 // Core

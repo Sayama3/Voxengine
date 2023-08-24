@@ -18,8 +18,8 @@ namespace Voxymore::Core
 		Scene* m_Scene = nullptr;
 	public:
 		Entity() = default;
-		Entity(entt::entity entityID, Scene* scene);
 		Entity(const Entity&) = default;
+		Entity(entt::entity entityID, Scene* scene);
 
 		inline bool IsValid() const {return m_EntityID != entt::null;}
 

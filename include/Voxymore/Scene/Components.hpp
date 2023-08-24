@@ -6,7 +6,7 @@
 
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/Renderer/RenderingCamera.hpp"
+#include "Voxymore/Scene/SceneCamera.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 
@@ -36,12 +36,12 @@ namespace Voxymore::Core
 
 	struct MeshComponent
 	{
-		Ref<Material> Mat;
+		Ref<Voxymore::Core::Material> Material;
 		Ref<VertexArray> Mesh;
 
 		inline MeshComponent() = default;
 		inline MeshComponent(const MeshComponent&) = default;
-		inline MeshComponent(const Ref<Material>& material,const Ref<VertexArray>& vertexArray) : Mat(material), Mesh(vertexArray) {}
+		inline MeshComponent(const Ref<Voxymore::Core::Material>& material,const Ref<VertexArray>& vertexArray) : Material(material), Mesh(vertexArray) {}
 	};
 
 	struct TagComponent
@@ -55,13 +55,33 @@ namespace Voxymore::Core
 
 	struct CameraComponent
 	{
-		RenderingCamera Camera;
+		Voxymore::Core::SceneCamera Camera;
+		// TODO: Moving primary camera logic on Scene.
 		bool Primary = true;
+		bool FixedAspectRation = false;
 
 		inline CameraComponent() = default;
 		inline CameraComponent(const CameraComponent&) = default;
-		inline CameraComponent(const glm::mat4& projection) : Camera(projection) {}
-		inline CameraComponent(const RenderingCamera& camera) : Camera(camera) {}
+
+		/**
+		 * Orthographic Camera Constructor.
+		 * @param width
+		 * @param height
+		 * @param size
+		 * @param nearClip
+		 * @param farClip
+		 */
+		inline CameraComponent(uint32_t width, uint32_t height, float size, float nearClip, float farClip) : Camera(width, height, size, nearClip, farClip) {}
+		/**
+		 * Perspective Camera Constructor.
+		 * @param fov
+		 * @param nearClip
+		 * @param farClip
+		 * @param width
+		 * @param height
+		 */
+		inline CameraComponent(float fov, float nearClip, float farClip, uint32_t width, uint32_t height) : Camera(fov, nearClip, farClip, width, height) {}
+		inline CameraComponent(const Voxymore::Core::SceneCamera& camera) : Camera(camera) {}
 
 	};
 }
