@@ -28,7 +28,7 @@ namespace Voxymore::Core
 		template<typename T>
 		inline bool HasComponent() const
 		{
-			m_Scene->m_Registry.any_of<T>(m_EntityID);
+			return m_Scene->m_Registry.any_of<T>(m_EntityID);
 		}
 
 		template<typename T>
