@@ -19,45 +19,45 @@ namespace Voxymore::Core {
     void Material::SetUniformInt(const std::string& name, int value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
 
     void Material::SetUniformFloat(const std::string& name, float value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
     void Material::SetUniformFloat2(const std::string& name, const glm::vec2& value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
     void Material::SetUniformFloat3(const std::string& name, const glm::vec3& value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
     void Material::SetUniformFloat4(const std::string& name, const glm::vec4& value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
 
     void Material::SetUniformMat3(const std::string& name, const glm::mat3& value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
     void Material::SetUniformMat4(const std::string& name, const glm::mat4& value)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.");
+        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
         m_Uniforms[name].SetValue(value);
     }
 
