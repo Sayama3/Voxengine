@@ -25,7 +25,7 @@ namespace Voxymore::Core {
         }
 
         VXM_CORE_ERROR("Renderer API '{0}' is not supported.", RendererAPIToString(Renderer::GetAPI()));
-
+        return nullptr;
     }
 } // Voxymore
 // Core
