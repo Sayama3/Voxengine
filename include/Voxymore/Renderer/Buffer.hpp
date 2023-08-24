@@ -17,42 +17,11 @@ namespace Voxymore::Core {
         uint32_t Offset;
         bool Normalized;
 
-        inline BufferElement(ShaderDataType type, const std::string& name, bool normalized = false) : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized) {}
+        inline BufferElement(ShaderDataType type, const std::string& name, bool normalized = false) : Name(name), Type(type), Size(GetShaderDataTypeSize(type)), Offset(0), Normalized(normalized) {}
 
         inline uint32_t GetComponentCount() const
         {
-            switch (Type) {
-                case ShaderDataType::Float: return 1;
-                case ShaderDataType::Float2: return 2;
-                case ShaderDataType::Float3: return 3;
-                case ShaderDataType::Float4: return 4;
-
-                case ShaderDataType::Mat2: return 2 * 2;
-                case ShaderDataType::Mat3: return 3 * 3;
-                case ShaderDataType::Mat4: return 4 * 4;
-
-                case ShaderDataType::Int: return 1;
-                case ShaderDataType::Int2: return 2;
-                case ShaderDataType::Int3: return 3;
-                case ShaderDataType::Int4: return 4;
-
-                case ShaderDataType::UInt: return 1;
-                case ShaderDataType::UInt2: return 2;
-                case ShaderDataType::UInt3: return 3;
-                case ShaderDataType::UInt4: return 4;
-
-                case ShaderDataType::Bool: return 1;
-                case ShaderDataType::Bool2: return 2;
-                case ShaderDataType::Bool3: return 3;
-                case ShaderDataType::Bool4: return 4;
-
-                case ShaderDataType::Sampler1D: return 1;
-                case ShaderDataType::Sampler2D: return 1;
-                case ShaderDataType::Sampler3D: return 1;
-            }
-
-            VXM_CORE_ERROR("Unknown ShaderDataType {0}.", (int)Type);
-            return 0;
+            return GetShaderDataTypeCount(Type);
         }
     };
 

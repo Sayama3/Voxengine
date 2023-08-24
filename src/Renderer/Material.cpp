@@ -169,7 +169,7 @@ namespace Voxymore::Core {
     void MaterialValue::SetValue(const void* value, uint32_t size)
     {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_ASSERT(size == ShaderDataTypeSize(DataType), "The size is different than the one in the struct.");
+        VXM_CORE_ASSERT(size == GetShaderDataTypeSize(DataType), "The size is different than the one in the struct.");
         switch (DataType) {
             case ShaderDataType::Float: *(float*)ValuePtr = *(float*)value; break;
             case ShaderDataType::Float2: *(glm::vec2*)ValuePtr = *(glm::vec2*)value; break;
@@ -201,7 +201,7 @@ namespace Voxymore::Core {
 
     uint32_t MaterialValue::GetSize() const
     {
-        return ShaderDataTypeSize(DataType);
+        return GetShaderDataTypeSize(DataType);
     }
 
     ShaderDataType MaterialValue::GetType() const

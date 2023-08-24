@@ -347,8 +347,9 @@ namespace Voxymore::Core {
             glGetActiveUniform(program, (GLuint)i, bufSize, &length, &size, &type, name);
 
             std::string s_name(name, length);
-
-            uniforms.insert({s_name,OpenGLUniformDescription(s_name, GetShaderDataType(type), size, glGetUniformLocation(program, s_name.c_str()))});
+			auto dataType = GetShaderDataType(type);
+			auto dataSize = GetShaderDataTypeSize(dataType);
+            uniforms.insert({s_name,OpenGLUniformDescription(s_name, GetShaderDataType(type), dataSize, glGetUniformLocation(program, s_name.c_str()))});
 
             VXM_CORE_INFO("Uniform #%d Type: %u Name: %s\n", i, type, name);
         }
