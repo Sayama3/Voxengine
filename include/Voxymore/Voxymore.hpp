@@ -26,10 +26,14 @@
 
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 
+#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Components.hpp"
+
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"
 #include "Voxymore/Renderer/PerspectiveCamera.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
+#include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/Texture.hpp"

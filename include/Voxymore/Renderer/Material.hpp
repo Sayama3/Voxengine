@@ -37,6 +37,9 @@ namespace Voxymore::Core {
     };
 
     class Material {
+	private:
+		Ref<Shader> m_Shader;
+		std::unordered_map<std::string, MaterialValue> m_Uniforms;
     public:
         Material(Ref<Shader>& shader);
         ~Material();
@@ -53,9 +56,8 @@ namespace Voxymore::Core {
 
         void Bind() const;
         void Unbind() const;
-    private:
-        Ref<Shader> m_Shader;
-        std::unordered_map<std::string, MaterialValue> m_Uniforms;
+
+		inline Ref<Shader> GetShader() { return m_Shader; }
     };
 
 } // Voxymore

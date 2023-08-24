@@ -42,6 +42,18 @@ namespace Voxymore::Core {
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);
     }
+	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		VXM_CORE_ASSERT(s_SceneData->ViewProjectionMatrix != glm::zero<glm::mat4>(), "A valid View Projection Matrix is required to submit data to the renderer.");
+		material->SetUniformMat4("u_ViewProjectionMatrix", s_SceneData->ViewProjectionMatrix);
+		material->SetUniformMat4("u_Transform", transform);
+		material->Bind();
+		vertexArray->Bind();
+		RenderCommand::DrawIndexed(vertexArray);
+
+	}
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     {
