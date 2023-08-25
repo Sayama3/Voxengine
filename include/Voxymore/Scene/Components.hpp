@@ -59,7 +59,7 @@ namespace Voxymore::Core
 		Voxymore::Core::SceneCamera Camera;
 		// TODO: Moving primary camera logic on Scene.
 		bool Primary = true;
-		bool FixedAspectRation = false;
+		bool FixedAspectRatio = false;
 
 		inline CameraComponent() = default;
 		inline CameraComponent(const CameraComponent&) = default;

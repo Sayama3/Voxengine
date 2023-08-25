@@ -83,7 +83,7 @@ namespace Voxymore::Core
 		auto cameraView = m_Registry.view<CameraComponent>();
 		for (auto entity : cameraView) {
 			auto& camera = cameraView.get<CameraComponent>(entity);
-			if(!camera.FixedAspectRation)
+			if(!camera.FixedAspectRatio)
 			{
 				camera.Camera.SetViewportSize(width, height);
 			}
