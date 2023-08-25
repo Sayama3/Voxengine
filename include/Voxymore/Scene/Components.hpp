@@ -15,17 +15,32 @@ namespace Voxymore::Core
 {
 	struct TransformComponent
 	{
+	private:
 		glm::vec3 Position = glm::vec3(0.0f);
 		glm::quat Rotation = glm::identity<glm::quat>();
+		glm::vec3 EulerRotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
+	public:
 
 		inline TransformComponent() = default;
 		inline TransformComponent(const TransformComponent&) = default;
-		inline TransformComponent(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) : Position(position), Rotation(rotation), Scale(scale) {}
+		inline TransformComponent(const glm::vec3& position, const glm::quat& rotation = glm::identity<glm::quat>(), const glm::vec3& scale = glm::vec3(1.0f)) : Position(position), Rotation(rotation), EulerRotation(glm::eulerAngles(rotation)), Scale(scale) {}
+	public:
+		inline glm::vec3 GetPosition() const { return Position; }
+		inline void SetPosition(const glm::vec3& position) { Position = position; }
 
+		inline glm::vec3 GetScale() const { return Scale; }
+		inline void SetScale(const glm::vec3& scale) { Scale = scale; }
+
+		inline glm::quat GetRotation() const { return Rotation; }
+		inline void SetRotation(const glm::quat& rotation) {Rotation = rotation; EulerRotation = glm::eulerAngles(rotation);}
+
+		inline glm::vec3 GetEulerRotation() const { return EulerRotation; }
+		inline void SetEulerRotation(const glm::vec3& rotation) {EulerRotation = rotation; Rotation = glm::quat(rotation); }
+	public:
 		inline glm::mat4 GetTransform() const
 		{
-			// Not using Math::TRS because I don't have to pass reference this way so it should therefore be faster... I think... Need to be verified.
+			// Not using Math::TRS because I don't have to pass reference this way, so it should therefore be faster... I think... Need to be verified.
 			VXM_PROFILE_FUNCTION();
 			glm::mat4 trs(1.0f);
 			trs = glm::translate(trs, Position); // Translation Matrix
