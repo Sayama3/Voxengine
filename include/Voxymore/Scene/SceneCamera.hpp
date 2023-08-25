@@ -37,6 +37,17 @@ namespace Voxymore::Core
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float radianFov, float nearClip, float farClip);
 		void SwitchToPerspective(bool value);
+	public:
+		inline bool IsOrthographic() const { return m_IsOrthographic; }
+		inline float GetAspectRatio() const { return m_AspectRatio; }
+
+		inline float GetOrthographicSize() const { return m_OrthographicSize; }
+		inline float GetOrthographicNear() const { return m_OrthographicNear; }
+		inline float GetOrthographicFar() const { return m_OrthographicFar; }
+
+		inline float GetPerspectiveFOV() const { return m_PerspectiveFOV; }
+		inline float GetPerspectiveNear() const { return m_PerspectiveNear; }
+		inline float GetPerspectiveFar() const { return m_PerspectiveFar; }
 	private:
 		void CalculateProjectionMatrix();
 		void CalculateOrthographic();
