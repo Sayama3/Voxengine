@@ -46,6 +46,7 @@ namespace Voxymore::Core
 		inline float GetOrthographicFar() const { return m_OrthographicFar; }
 
 		inline float GetPerspectiveFOV() const { return m_PerspectiveFOV; }
+		inline float GetPerspectiveFOVDegree() const { return glm::degrees(m_PerspectiveFOV); }
 		inline float GetPerspectiveNear() const { return m_PerspectiveNear; }
 		inline float GetPerspectiveFar() const { return m_PerspectiveFar; }
 	private:
@@ -60,7 +61,7 @@ namespace Voxymore::Core
 		float m_OrthographicNear = -1.0f;
 		float m_OrthographicFar = 1.0f;
 	private:
-		float m_PerspectiveFOV = 60.0f;
+		float m_PerspectiveFOV = glm::radians(60.0f);
 		float m_PerspectiveNear = 0.01f;
 		float m_PerspectiveFar = 1000.0f;
 	};
