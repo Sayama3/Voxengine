@@ -20,7 +20,7 @@ namespace Voxymore::Core
     class Scene
     {
 	private:
-		friend class SceneHierarchyPanel;
+		friend class Voxymore::Editor::SceneHierarchyPanel;
 		friend class Entity;
     public:
         Scene();
