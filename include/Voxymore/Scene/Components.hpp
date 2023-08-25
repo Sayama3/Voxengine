@@ -6,9 +6,10 @@
 
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/Scene/SceneCamera.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
+#include "Voxymore/Scene/ScriptableEntity.hpp"
+#include "Voxymore/Scene/SceneCamera.hpp"
 
 namespace Voxymore::Core
 {
@@ -83,5 +84,29 @@ namespace Voxymore::Core
 		inline CameraComponent(float fov, float nearClip, float farClip, uint32_t width, uint32_t height) : Camera(fov, nearClip, farClip, width, height) {}
 		inline CameraComponent(const Voxymore::Core::SceneCamera& camera) : Camera(camera) {}
 
+	};
+
+	struct NativeScriptComponent
+	{
+		friend class Scene;
+	private:
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity*(*InstantiateScript)();
+		void(*DestroyScript)(NativeScriptComponent*);
+
+		inline bool IsValid() { return Instance != nullptr; }
+
+		inline void CreateInstance() { Instance = InstantiateScript(); }
+		inline void DestroyInstance() { DestroyScript(this); }
+	public:
+		template<typename T>
+		inline void Bind()
+		{
+			VXM_CORE_ASSERT(Instance != nullptr, "Instance already exist. Binding will cause memory leaks.");
+
+			InstantiateScript = []() { return static_cast<ScriptableEntity>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete (T*)nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 }

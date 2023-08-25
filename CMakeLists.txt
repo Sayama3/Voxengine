@@ -72,6 +72,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/Entity.hpp
         src/Scene/SceneCamera.cpp
         include/Voxymore/Scene/SceneCamera.hpp
+        include/Voxymore/Scene/ScriptableEntity.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

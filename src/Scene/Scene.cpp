@@ -21,12 +21,26 @@ namespace Voxymore::Core
 
 	void Scene::OnUpdate(TimeStep ts)
 	{
+		// TODO: make it happen only when the scene play !
+		{
+			m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
+		  	{
+			 	if(!nsc.IsValid())
+				{
+					nsc.CreateInstance();
+					nsc.Instance->m_Entity = Entity{entity, this};
+					nsc.Instance->OnCreate();
+			 	}
+				nsc.Instance->OnUpdate(ts);
+		  	});
+		}
+
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 
 		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>();
 		for (auto entity : camerasView) {
-			auto&& [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
+			auto [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
 
 			if(camera.Primary)
 			{
@@ -42,7 +56,7 @@ namespace Voxymore::Core
 
 			auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
 			for (auto entity: meshesView) {
-				auto &&[transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
+				auto [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
 				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform());
 			}
 
