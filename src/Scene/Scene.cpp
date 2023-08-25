@@ -24,9 +24,9 @@ namespace Voxymore::Core
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 
-		auto camerasGroup = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		for (auto entity : camerasGroup) {
-			auto&& [transform, camera] = camerasGroup.get<TransformComponent, CameraComponent>(entity);
+		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>();
+		for (auto entity : camerasView) {
+			auto&& [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
 
 			if(camera.Primary)
 			{
@@ -40,9 +40,9 @@ namespace Voxymore::Core
 		{
 			Renderer::BeginScene(*mainCamera, cameraTransform);
 
-			auto group = m_Registry.group<MeshComponent>(entt::get<TransformComponent>);
-			for (auto entity: group) {
-				auto &&[transform, mesh] = group.get<TransformComponent, MeshComponent>(entity);
+			auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
+			for (auto entity: meshesView) {
+				auto &&[transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
 				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform());
 			}
 
@@ -66,9 +66,9 @@ namespace Voxymore::Core
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		auto cameraGroup = m_Registry.group<CameraComponent>();
-		for (auto entity : cameraGroup) {
-			auto& camera = cameraGroup.get<CameraComponent>(entity);
+		auto cameraView = m_Registry.view<CameraComponent>();
+		for (auto entity : cameraView) {
+			auto& camera = cameraView.get<CameraComponent>(entity);
 			if(!camera.FixedAspectRation)
 			{
 				camera.Camera.SetViewportSize(width, height);
