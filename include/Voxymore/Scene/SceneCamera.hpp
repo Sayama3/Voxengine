@@ -36,7 +36,8 @@ namespace Voxymore::Core
 		void SetViewportSize(uint32_t width, uint32_t height);
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float radianFov, float nearClip, float farClip);
-		void SwitchToPerspective(bool value);
+		void SwitchToPerspective(bool isPerspective);
+		void SwitchToOrthographic(bool isOrthographic);
 	public:
 		inline bool IsOrthographic() const { return m_IsOrthographic; }
 		inline float GetAspectRatio() const { return m_AspectRatio; }

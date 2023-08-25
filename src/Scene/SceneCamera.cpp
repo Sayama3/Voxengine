@@ -54,9 +54,15 @@ namespace Voxymore
 			CalculatePerspective();
 		}
 
-		void SceneCamera::SwitchToPerspective(bool value)
+		void SceneCamera::SwitchToPerspective(bool isPerspective)
 		{
-			m_IsOrthographic = !value;
+			m_IsOrthographic = !isPerspective;
+			CalculateProjectionMatrix();
+		}
+
+		void SceneCamera::SwitchToOrthographic(bool isOrthographic)
+		{
+			m_IsOrthographic = isOrthographic;
 			CalculateProjectionMatrix();
 		}
 
