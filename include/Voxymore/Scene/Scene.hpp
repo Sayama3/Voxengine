@@ -7,6 +7,11 @@
 #include <entt/entt.hpp>
 #include "Voxymore/Core/TimeStep.hpp"
 
+// TODO: find a better way?
+namespace Voxymore::Editor {
+	class SceneHierarchyPanel;
+}
+
 //TODO: add a way to create/delete system (that can go onto the whole scene) instead of juste NativeScriptComponent.
 namespace Voxymore::Core
 {
@@ -14,6 +19,7 @@ namespace Voxymore::Core
 
     class Scene
     {
+	private:
 		friend class SceneHierarchyPanel;
 		friend class Entity;
     public:
