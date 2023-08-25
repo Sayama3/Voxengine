@@ -20,8 +20,7 @@ namespace Voxymore
 
 		SceneCamera::SceneCamera(float radianFov, float nearClip, float farClip, uint32_t width, uint32_t height) :
 			m_AspectRatio((float)width / (float)height),
-			m_IsOrthographic(false),
-			m_PerspectiveFOV(radianFov),
+			m_IsOrthographic(false), m_PerspectiveVerticalFOV(radianFov),
 			m_PerspectiveNear(nearClip),
 			m_PerspectiveFar(farClip)
 		{
@@ -45,10 +44,10 @@ namespace Voxymore
 			CalculateOrthographic();
 		}
 
-		void SceneCamera::SetPerspective(float radianFov, float nearClip, float farClip)
+		void SceneCamera::SetPerspective(float radianVerticalFov, float nearClip, float farClip)
 		{
 			m_IsOrthographic = false;
-			m_PerspectiveFOV = radianFov;
+			m_PerspectiveVerticalFOV = radianVerticalFov;
 			m_PerspectiveNear = nearClip;
 			m_PerspectiveFar = farClip;
 			CalculatePerspective();
@@ -84,7 +83,7 @@ namespace Voxymore
 
 		void SceneCamera::CalculatePerspective()
 		{
-			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_ProjectionMatrix = glm::perspective(m_PerspectiveVerticalFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 
 		void SceneCamera::CalculateProjectionMatrix()
