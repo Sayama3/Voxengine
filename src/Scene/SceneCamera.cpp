@@ -40,8 +40,8 @@ namespace Voxymore
 		{
 			m_IsOrthographic = true;
 			m_OrthographicSize = size;
-			m_OrthographicFar = nearClip;
-			m_OrthographicNear = farClip;
+			m_OrthographicNear = nearClip;
+			m_OrthographicFar = farClip;
 			CalculateOrthographic();
 		}
 
