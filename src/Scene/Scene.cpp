@@ -95,5 +95,34 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
 		m_Registry.destroy(entity);
 	}
+
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(entt::entity entity, TagComponent& tagComponent)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(entt::entity entity, TransformComponent& transformComponent)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<MeshComponent>(entt::entity entity, MeshComponent& meshComponent)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(entt::entity entity, CameraComponent& cameraComponent)
+	{
+		if(!cameraComponent.FixedAspectRatio)
+		{
+			cameraComponent.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		}
+	}
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(entt::entity entity, NativeScriptComponent& nativeScriptComponent)
+	{
+	}
 } // Voxymore
 // Core

@@ -42,7 +42,10 @@ namespace Voxymore::Core
 		inline T& AddComponent(Args &&...args)
 		{
 			VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
-			return m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
+			// Using the operator in case later on we change this to take our Entity
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
 		}
 
 		template<typename T>

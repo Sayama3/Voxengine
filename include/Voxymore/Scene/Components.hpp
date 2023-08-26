@@ -13,6 +13,15 @@
 
 namespace Voxymore::Core
 {
+	struct TagComponent
+	{
+		std::string Tag;
+
+		inline TagComponent() = default;
+		inline TagComponent(const TagComponent&) = default;
+		inline TagComponent(const std::string& tag) : Tag(tag) {}
+	};
+
 	struct TransformComponent
 	{
 	private:
@@ -58,15 +67,6 @@ namespace Voxymore::Core
 		inline MeshComponent() = default;
 		inline MeshComponent(const MeshComponent&) = default;
 		inline MeshComponent(const Ref<Voxymore::Core::Material>& material,const Ref<VertexArray>& vertexArray) : Material(material), Mesh(vertexArray) {}
-	};
-
-	struct TagComponent
-	{
-		std::string Tag;
-
-		inline TagComponent() = default;
-		inline TagComponent(const TagComponent&) = default;
-		inline TagComponent(const std::string& tag) : Tag(tag) {}
 	};
 
 	struct CameraComponent
