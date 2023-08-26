@@ -91,5 +91,12 @@ namespace Voxymore
 			if(m_IsOrthographic) CalculateOrthographic();
 			else CalculatePerspective();
 		}
+
+		void SceneCamera::SetAspectRatio(float aspectRatio)
+		{
+			VXM_CORE_ASSERT(aspectRatio != 0.0f, "Aspect Ratio cannot be 0.");
+			m_AspectRatio = aspectRatio;
+			CalculateProjectionMatrix();
+		}
 	}// namespace Core
 }// namespace Voxymore

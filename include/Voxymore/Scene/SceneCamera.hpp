@@ -34,6 +34,7 @@ namespace Voxymore::Core
 		virtual ~SceneCamera() override;
 
 		void SetViewportSize(uint32_t width, uint32_t height);
+		void SetAspectRatio(float aspectRatio);
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float radianVerticalFov, float nearClip, float farClip);
 		void SwitchToPerspective(bool isPerspective);
