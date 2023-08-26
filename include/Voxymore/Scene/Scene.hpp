@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include <entt/entt.hpp>
+#include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include <entt/entt.hpp>
 
 // TODO: find a better way?
 namespace Voxymore::Editor {
@@ -33,11 +34,25 @@ namespace Voxymore::Core
 		void SetViewportSize(uint32_t width, uint32_t height);
 	private:
 		template<typename T>
-		inline void OnComponentAdded(entt::entity entity, T& component) {}
+		inline void OnComponentAdded(entt::entity entity, T& component);
 private:
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         entt::registry m_Registry;
     };
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(entt::entity entity, TagComponent& tagComponent);
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(entt::entity entity, TransformComponent& transformComponent);
+
+	template<>
+	void Scene::OnComponentAdded<MeshComponent>(entt::entity entity, MeshComponent& meshComponent);
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(entt::entity entity, CameraComponent& cameraComponent);
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(entt::entity entity, NativeScriptComponent& nativeScriptComponent);
 
 } // Voxymore
 // Core

@@ -96,6 +96,11 @@ namespace Voxymore::Core
 		m_Registry.destroy(entity);
 	}
 
+		template<typename T>
+	void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
+	{
+	}
+
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(entt::entity entity, TagComponent& tagComponent)
 	{
