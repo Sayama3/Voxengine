@@ -89,5 +89,11 @@ namespace Voxymore::Core
 			}
 		}
 	}
+
+	void Scene::DestroyEntity(Entity entity)
+	{
+		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
+		m_Registry.destroy(entity);
+	}
 } // Voxymore
 // Core

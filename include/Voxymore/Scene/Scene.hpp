@@ -26,7 +26,8 @@ namespace Voxymore::Core
         Scene();
         ~Scene();
 
-		Entity CreateEntity(const std::string& name = "");
+		Entity CreateEntity(const std::string& name = std::string());
+		void DestroyEntity(Entity entity);
 
 		void OnUpdate(TimeStep ts);
 		void SetViewportSize(uint32_t width, uint32_t height);
