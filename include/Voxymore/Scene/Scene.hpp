@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include <entt/entt.hpp>
 
@@ -17,6 +16,11 @@ namespace Voxymore::Editor {
 namespace Voxymore::Core
 {
 	class Entity;
+	struct TagComponent;
+	struct TransformComponent;
+	struct MeshComponent;
+	struct CameraComponent;
+	struct NativeScriptComponent;
 
     class Scene
     {
