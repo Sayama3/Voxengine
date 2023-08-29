@@ -56,7 +56,11 @@ namespace Voxymore::Core {
 		void AddFont(const std::string& path, float size, FontType fontType, bool isDefault = false);
 		ImFont* GetFont(FontType fontType);
 		void PushFont(FontType fontType);
+		void SetDarkThemeColors();
+		void SetLightThemeColors();
+		inline bool IsDarkTheme() const { return m_IsDarkTheme; }
     private:
+		bool m_IsDarkTheme;
         bool m_BlockEvents = true;
         float m_Time = 0.0f;
 		std::unordered_map<FontType, ImFont*> m_Fonts;
