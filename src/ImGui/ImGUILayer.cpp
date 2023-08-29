@@ -25,6 +25,7 @@
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
         VXM_CORE_INFO("Create ImGUILayer");
+		m_Fonts.reserve((uint8_t )FontType::Count);
     }
 
     ImGUILayer::~ImGUILayer() {
@@ -126,4 +127,18 @@ namespace Voxymore::Core {
             e.m_Handled |= e.IsInCategory(EventCategory::EventCategoryKeyboard) & io.WantCaptureKeyboard;
         }
     }
+
+	void ImGUILayer::AddFont(const std::string &path, float size, FontType fontType, bool isDefault)
+	{
+		ImGuiIO &io = ImGui::GetIO();
+		auto* fontPtr = io.Fonts->AddFontFromFileTTF(path.c_str(), size);
+		if(isDefault) io.FontDefault = fontPtr;
+		m_Fonts[fontType] = fontPtr;
+	}
+
+	ImFont* ImGUILayer::GetFont(FontType fontType)
+	{
+		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
+		return m_Fonts[fontType];
+	}
 } // Core
