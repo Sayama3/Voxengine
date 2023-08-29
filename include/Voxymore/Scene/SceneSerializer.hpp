@@ -24,7 +24,6 @@ namespace Voxymore::Core
 		bool DeserializeRuntime(const std::string& filePath);
 	private:
 		static void SerializeEntity(YAML::Emitter& emitter, Entity entity);
-		Entity DeserializeEntity(YAML::Node &yamlEntity);
 	private:
 		Ref<Scene> m_Scene;
 	};

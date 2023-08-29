@@ -173,9 +173,66 @@ namespace Voxymore::Core
 		auto entities = data["Entities"];
 		if(entities)
 		{
-			for (auto entity : entities)
+			for (YAML::Node yamlEntity : entities)
 			{
-				DeserializeEntity(entity);
+				auto id = yamlEntity["Entity"];
+				uint64_t uuid = id.as<uint64_t>();
+
+				std::string name;
+				auto tagComponent = yamlEntity["TagComponent"];
+				if(tagComponent)
+				{
+					name = tagComponent["Tag"].as<std::string>();
+				}
+				VXM_CORE_TRACE("Deserialize Entity with name: {0} and id: {1}", name, uuid);
+
+				Entity entity = m_Scene->CreateEntity(name);
+
+
+				auto transformComponent = yamlEntity["TransformComponent"];
+				if(transformComponent)
+				{
+					auto& tc = entity.GetComponent<TransformComponent>();
+					tc.SetPosition(transformComponent["Position"].as<glm::vec3>());
+					tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
+					auto rotation = transformComponent["Rotation"].as<glm::quat>() ;
+					auto eulerRotation = transformComponent["EulerRotation"].as<glm::vec3>() ;
+					if(rotation != glm::quat(eulerRotation))
+					{
+						tc.SetRotation(rotation);
+					}
+					else
+					{
+						tc.SetEulerRotation(eulerRotation);
+					}
+
+				}
+
+				auto cameraComponent = yamlEntity["CameraComponent"];
+				if(cameraComponent)
+				{
+					auto& cc = entity.AddComponent<CameraComponent>();
+
+					cc.Primary = cameraComponent["Primary"].as<bool>();
+					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+
+					auto camera = cameraComponent["Camera"];
+					auto aspectRatio = camera["AspectRatio"].as<float>();
+					cc.Camera.SetAspectRatio(aspectRatio);
+
+					auto orthographicSize = camera["OrthographicSize"].as<float>();
+					auto orthographicNear = camera["OrthographicNear"].as<float>();
+					auto orthographicFar = camera["OrthographicFar"].as<float>();
+					cc.Camera.SetOrthographic(orthographicSize, orthographicNear, orthographicFar);
+
+					auto perspectiveVerticalFOV = camera["PerspectiveVerticalFOV"].as<float>();
+					auto perspectiveNear = camera["PerspectiveNear"].as<float>();
+					auto perspectiveFar = camera["PerspectiveFar"].as<float>();
+					cc.Camera.SetPerspective(perspectiveVerticalFOV, perspectiveNear, perspectiveFar);
+
+					cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<bool>());
+				}
+
 			}
 		}
 		return true;
@@ -195,7 +252,7 @@ namespace Voxymore::Core
 	{
 		out << YAML::BeginMap; // Entity
 
-		out << KEYVAL("Entity", "0123456789"); //TODO: set entity ID;
+		out << KEYVAL("Entity", "123456789"); //TODO: set entity ID;
 
 		if(entity.HasComponent<TagComponent>())
 		{
@@ -252,66 +309,5 @@ namespace Voxymore::Core
 		//TODO: serialize the NativeScriptComponent.
 
 		out << YAML::EndMap; // Entity
-	}
-	Entity SceneSerializer::DeserializeEntity(YAML::Node &yamlEntity)
-	{
-		uint64_t uuid = yamlEntity["Entity"].as<uint64_t>();
-
-		std::string name;
-		auto tagComponent = yamlEntity["TagComponent"];
-		if(tagComponent)
-		{
-			name = tagComponent["Tag"].as<std::string>();
-		}
-		VXM_CORE_TRACE("Deserialize Entity with name: {0} and id: {1}", name, uuid);
-
-		Entity entity = m_Scene->CreateEntity(name);
-
-
-		auto transformComponent = yamlEntity["TransformComponent"];
-		if(transformComponent)
-		{
-			auto& tc = entity.GetComponent<TransformComponent>();
-			tc.SetPosition(transformComponent["Position"].as<glm::vec3>());
-			tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
-			auto rotation = transformComponent["Rotation"].as<glm::quat>() ;
-			auto eulerRotation = transformComponent["EulerRotation"].as<glm::vec3>() ;
-			if(rotation != glm::quat(eulerRotation))
-			{
-				tc.SetRotation(rotation);
-			}
-			else
-			{
-				tc.SetEulerRotation(eulerRotation);
-			}
-
-		}
-
-		auto cameraComponent = yamlEntity["CameraComponent"];
-		if(cameraComponent)
-		{
-			auto& cc = entity.AddComponent<CameraComponent>();
-
-			cc.Primary = cameraComponent["Primary"].as<int>();
-			cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<int>();
-
-			auto camera = cameraComponent["Camera"];
-			auto aspectRatio = camera["AspectRatio"].as<float>();
-			cc.Camera.SetAspectRatio(aspectRatio);
-
-			auto orthographicSize = camera["OrthographicSize"].as<float>();
-			auto orthographicNear = camera["OrthographicNear"].as<float>();
-			auto orthographicFar = camera["OrthographicFar"].as<float>();
-			cc.Camera.SetOrthographic(orthographicSize, orthographicNear, orthographicFar);
-
-			auto perspectiveVerticalFOV = camera["PerspectiveVerticalFOV"].as<float>();
-			auto perspectiveNear = camera["PerspectiveNear"].as<float>();
-			auto perspectiveFar = camera["PerspectiveFar"].as<float>();
-			cc.Camera.SetPerspective(perspectiveVerticalFOV, perspectiveNear, perspectiveFar);
-
-			cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<int>());
-		}
-
-		return entity;
 	}
 } // namespace Voxymore::Core
