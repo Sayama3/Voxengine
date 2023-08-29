@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
 
 message("Voxymore::Core is a STATIC library.")
 
@@ -75,6 +75,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/ScriptableEntity.hpp
         src/Scene/SceneSerializer.cpp
         include/Voxymore/Scene/SceneSerializer.hpp
+        src/Renderer/UniformBuffer.cpp
+        include/Voxymore/Renderer/UniformBuffer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -105,5 +107,11 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
+#target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::SPIRV-Tools Vulkan::shaderc-combined)
 
+find_package(Vulkan REQUIRED
+        COMPONENTS shaderc_combined glslang SPIRV-Tools)
+
+target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::glslang Vulkan::SPIRV-Tools)
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

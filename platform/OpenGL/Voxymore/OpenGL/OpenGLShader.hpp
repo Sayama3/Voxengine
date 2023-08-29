@@ -48,18 +48,26 @@ namespace Voxymore::Core {
 		virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) override;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const std::string& path);
-        std::unordered_map<std::string, OpenGLUniformDescription> GetAllUniform(uint32_t program);
 
-        bool Compile(const std::unordered_map<ShaderType, std::string>& shaders);
-        bool Link();
-        bool Link(unsigned int rendererId);
+		void CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string>& shaders);
+		void CompileOrGetOpenGLBinaries();
+		void CreateProgram();
+		void Reflect(ShaderType stage, const std::vector<uint32_t>& shaderData);
+
     private:
         uint32_t CreateSubShader(ShaderType type, const std::string& source);
         bool CompileSubShader(uint32_t id);
         void DeleteSubShader(uint32_t id);
     private:
         std::unordered_map<std::string, OpenGLUniformDescription> m_Uniforms;
+
+		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
+		std::unordered_map<ShaderType, std::vector<uint32_t>> m_OpenGLSPIRV;
+		std::unordered_map<ShaderType, bool> m_HashesChanged;
+
+		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
     private:
+		std::string m_FilePath;
         std::string m_Name;
         unsigned int m_RendererID;
     };

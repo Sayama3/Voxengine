@@ -4,6 +4,13 @@
  
 The core engine of the Voxymore Game Engine.
 
+# Requirement
+
+You **need** to have the [Vulkan SDK]() installed.
+
+On windows, do not forget to add the installation path to the environement variable.
+ie. `VULKAN_SDK=C:\VulkanSDK\1.3.250.1`
+
 # Credits
 
 - [imgui](https://github.com/ocornut/imgui): Bloat-free Graphical User interface for C++ with minimal dependencies
