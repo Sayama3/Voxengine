@@ -17,7 +17,7 @@ namespace Voxymore::Core {
 
     class Application {
     public:
-        Application(const std::string& name = "Voxymore Application");
+        Application(const std::string& name = "Voxymore Application", uint32_t width = 1600, uint32_t height = 900);
         virtual ~Application();
 
         void Run();

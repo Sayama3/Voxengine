@@ -13,7 +13,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(const std::string& name) {
+    Application::Application(const std::string& name, uint32_t width, uint32_t height) {
         VXM_PROFILE_FUNCTION();
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
@@ -21,7 +21,7 @@ namespace Voxymore::Core {
 
         s_Instance = this;
 
-        WindowProps props(name);
+        WindowProps props(name, width, height);
         m_Window = Scope<Window>(Window::Create(props));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
