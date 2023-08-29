@@ -55,6 +55,7 @@ namespace Voxymore::Core {
 
 		void AddFont(const std::string& path, float size, FontType fontType, bool isDefault = false);
 		ImFont* GetFont(FontType fontType);
+		void PushFont(FontType fontType);
     private:
         bool m_BlockEvents = true;
         float m_Time = 0.0f;

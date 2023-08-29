@@ -141,4 +141,10 @@ namespace Voxymore::Core {
 		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
 		return m_Fonts[fontType];
 	}
+
+	void ImGUILayer::PushFont(FontType fontType)
+	{
+		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
+		ImGui::PushFont(m_Fonts[fontType]);
+	}
 } // Core
