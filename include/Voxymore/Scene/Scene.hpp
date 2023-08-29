@@ -15,6 +15,7 @@ namespace Voxymore::Editor {
 //TODO: add a way to create/delete system (that can go onto the whole scene) instead of juste NativeScriptComponent.
 namespace Voxymore::Core
 {
+	class SceneSerializer;
 	class Entity;
 	struct TagComponent;
 	struct TransformComponent;
@@ -27,6 +28,7 @@ namespace Voxymore::Core
 	private:
 		friend class Voxymore::Editor::SceneHierarchyPanel;
 		friend class Entity;
+		friend class SceneSerializer;
     public:
         Scene();
         ~Scene();

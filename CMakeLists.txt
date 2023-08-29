@@ -54,7 +54,7 @@ set(SRC_FILES src/Core/Application.cpp
         src/Renderer/PerspectiveCamera.cpp
         src/Core/TimeStep.cpp
         include/Voxymore/Core/TimeStep.hpp
-        include/Voxymore/Core/Platform.hpp
+        include/Voxymore/Utils/Platform.hpp
         src/Core/Platform.cpp
         include/Voxymore/Core/SmartPointers.hpp
         src/Renderer/Texture.cpp
@@ -73,6 +73,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Scene/SceneCamera.cpp
         include/Voxymore/Scene/SceneCamera.hpp
         include/Voxymore/Scene/ScriptableEntity.hpp
+        src/Scene/SceneSerializer.cpp
+        include/Voxymore/Scene/SceneSerializer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

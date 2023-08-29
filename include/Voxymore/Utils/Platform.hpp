@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 namespace Voxymore::Core {
     class Platform {
     public:
@@ -13,4 +16,11 @@ namespace Voxymore::Core {
          */
         static double GetTime();
     };
+
+	class FileDialogs
+	{
+	public:
+		static std::string OpenFile(const std::vector<std::string>& filter);
+		static std::string SaveFile(const std::vector<std::string>& filter);
+	};
 }

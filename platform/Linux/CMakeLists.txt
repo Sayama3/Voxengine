@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 
+
 target_sources(${LIBRARY_TARGET_NAME} PRIVATE
-        Voxymore/Default/DefaultInput.cpp
-        Voxymore/Default/DefaultWindow.cpp
-        Voxymore/Default/DefaultWindow.hpp
+        Voxymore/Linux/LinuxPlatform.cpp
+        Voxymore/Linux/portable-file-dialogs.h
 )
 
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE

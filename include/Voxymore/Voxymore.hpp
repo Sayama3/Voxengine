@@ -29,6 +29,7 @@
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Components.hpp"
+#include "Voxymore/Scene/SceneSerializer.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"
