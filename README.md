@@ -13,3 +13,4 @@ The core engine of the Voxymore Game Engine.
 - [glad](https://glad.dav1d.de): Multi-Language GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs
 - [spdlog](https://github.com/gabime/spdlog): Very fast, header-only/compiled, C++ logging library.
 - [EnTT](https://github.com/skypjack/entt): Tiny and easy to use header-only Entity Component System library, for game programming and much more. Written in modern C++.
+- [yaml-cpp](https://github.com/jbeder/yaml-cpp): YAML parser and emitter in C++ matching the YAML 1.2 spec.

@@ -16,3 +16,5 @@ add_subdirectory(imgui)
 target_link_libraries(imgui PUBLIC glfw)
 
 add_subdirectory(entt)
+
+add_subdirectory(yaml-cpp)
