@@ -151,6 +151,9 @@ namespace Voxymore::Core
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
+		std::ofstream fileOut(filePath);
+		fileOut << out.c_str();
+
 		return true;
 	}
 
@@ -172,7 +175,7 @@ namespace Voxymore::Core
 		{
 			for (auto entity : entities)
 			{
-
+				DeserializeEntity(entity);
 			}
 		}
 		return true;
