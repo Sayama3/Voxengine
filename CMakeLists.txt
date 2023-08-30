@@ -107,11 +107,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
-#target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::SPIRV-Tools Vulkan::shaderc-combined)
-
-find_package(Vulkan REQUIRED
-        COMPONENTS shaderc_combined glslang SPIRV-Tools)
-
-target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::glslang Vulkan::SPIRV-Tools)
+find_package(Vulkan REQUIRED COMPONENTS shaderc_combined SPIRV-Tools)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Tools)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE spirv-cross-cpp)
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

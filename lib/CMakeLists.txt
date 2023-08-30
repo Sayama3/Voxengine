@@ -18,3 +18,5 @@ target_link_libraries(imgui PUBLIC glfw)
 add_subdirectory(entt)
 
 add_subdirectory(yaml-cpp)
+
+add_subdirectory(spirv-cross)
