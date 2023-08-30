@@ -14,7 +14,7 @@ elseif(APPLE)
 # /* We also have to check __ANDROID__ before __linux__
 # * since android is based on the linux kernel
 # * it has __linux__ defined */
-elseif (CMAKE_SYSTEM_NAME == "Android")
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_PLATFORM_ANDROID)
     set(VOXYMORE_PLATFORM_ANDROID 1)
     message(FATAL_ERROR "Android is not supported!")
