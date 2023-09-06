@@ -112,7 +112,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 
 find_package(Vulkan REQUIRED
         COMPONENTS glslc glslang SPIRV-Tools spirv-cross-cpp shaderc_combined glslang
