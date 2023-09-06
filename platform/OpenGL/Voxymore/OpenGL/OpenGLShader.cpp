@@ -10,8 +10,8 @@
 #include <regex>
 #include <string>
 #include <shaderc/shaderc.hpp>
-#include <spirv_cross.hpp>
-#include <spirv_glsl.hpp>
+#include <spirv_cross/spirv_cross.hpp>
+#include <spirv_cross/spirv_glsl.hpp>
 
 #ifndef NEWLINE
 #define NEWLINE "\n"
