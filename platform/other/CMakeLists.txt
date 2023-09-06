@@ -4,6 +4,8 @@ target_sources(${LIBRARY_TARGET_NAME} PRIVATE
         Voxymore/Default/DefaultInput.cpp
         Voxymore/Default/DefaultWindow.cpp
         Voxymore/Default/DefaultWindow.hpp
+        Voxymore/Default/DefaultPlatform.cpp
+        Voxymore/Default/portable-file-dialogs.h
 )
 
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
