@@ -55,10 +55,6 @@ namespace Voxymore::Core {
 		void Reflect(ShaderType stage, const std::vector<uint32_t>& shaderData);
 
     private:
-        uint32_t CreateSubShader(ShaderType type, const std::string& source);
-        bool CompileSubShader(uint32_t id);
-        void DeleteSubShader(uint32_t id);
-    private:
         std::unordered_map<std::string, OpenGLUniformDescription> m_Uniforms;
 
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;

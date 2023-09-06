@@ -8,6 +8,8 @@ project(Voxymore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Gam
 set(LIBRARY_TARGET_NAME Core)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_COMPUTED_DEFAULT "20")
+
 
 option(VoxymoreCore_SHARED_BUILD "The ${VoxymoreCore} lib in shared mode" OFF)
 
@@ -89,6 +91,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DIST)
 endif()
 
+target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
+
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 
 add_subdirectory(platform)
@@ -107,7 +111,13 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
-find_package(Vulkan REQUIRED COMPONENTS shaderc_combined SPIRV-Tools)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Tools)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE spirv-cross-cpp)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
+find_package(Vulkan REQUIRED
+        COMPONENTS glslc glslang SPIRV-Tools spirv-cross-cpp shaderc_combined glslang
+)
+
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Tools Vulkan::SPIRV-Cross-CPP)
+
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

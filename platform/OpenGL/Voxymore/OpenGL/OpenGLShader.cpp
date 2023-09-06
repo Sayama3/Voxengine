@@ -602,12 +602,17 @@ namespace Voxymore::Core {
 			const auto& bufferType = compiler.get_type(resource.base_type_id);
 			uint32_t bufferSize = compiler.get_declared_struct_size(bufferType);
 			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			int memberCount = bufferType.member_types.size();
+			const spirv_cross::SPIRType& type = compiler.get_type(resource.id);
 
+			int memberCount = bufferType.member_types.size();
 			VXM_CORE_TRACE("  {0}", resource.name);
 			VXM_CORE_TRACE("    Size = {0}", bufferSize);
 			VXM_CORE_TRACE("    Binding = {0}", binding);
 			VXM_CORE_TRACE("    Members = {0}", memberCount);
+			for (uint32_t i = 0; i < memberCount; ++i) {
+				const std::string& memberName = compiler.get_member_name(resource.id, i);
+				VXM_CORE_TRACE("    Member[{0}] = {1}", i, memberName);
+			}
 		}
 	}
 
@@ -699,47 +704,6 @@ namespace Voxymore::Core {
         VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
         int location = m_Uniforms[name].Location;
         glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
-    }
-
-    uint32_t OpenGLShader::CreateSubShader(ShaderType type, const std::string &source) {
-        VXM_PROFILE_FUNCTION();
-        auto id = glCreateShader(Utils::ShaderTypeToOpenGL(type));
-        const char* src = source.c_str();
-        glShaderSource(id, 1, &src, nullptr);
-        return id;
-    }
-
-    bool OpenGLShader::CompileSubShader(uint32_t id) {
-        VXM_PROFILE_FUNCTION();
-        // Compile the vertex shader
-        glCompileShader(id);
-        GLint isCompiled = 0;
-        glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
-        if(isCompiled == GL_FALSE)
-        {
-            GLint maxLength = 0;
-            glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
-
-            // The maxLength includes the NULL character
-            std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(id, maxLength, &maxLength, &infoLog[0]);
-
-            // We don't need the shader anymore.
-            glDeleteShader(id);
-
-            // Use the infoLog as you see fit.
-            VXM_CORE_ERROR("{0}", infoLog.data());
-            VXM_CORE_ASSERT(false, "Compiling of shader failed.");
-            // In this simple program, we'll just leave
-
-            return false;
-        }
-        return true;
-    }
-
-    void OpenGLShader::DeleteSubShader(uint32_t id) {
-        VXM_PROFILE_FUNCTION();
-        glDeleteShader(m_RendererID);
     }
 
     std::unordered_map<std::string, UniformDescription> OpenGLShader::GetUniforms() const {

@@ -19,4 +19,4 @@ add_subdirectory(entt)
 
 add_subdirectory(yaml-cpp)
 
-add_subdirectory(spirv-cross)
+#add_subdirectory(vulkan)

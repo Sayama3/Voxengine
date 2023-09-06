@@ -7,6 +7,11 @@
     <mapping directory="$PROJECT_DIR$/lib/glm" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/spdlog" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/vulkan/glslang" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/vulkan/shaderc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/vulkan/spirv-cross" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/vulkan/spirv-headers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/vulkan/spirv-tools" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/yaml-cpp" vcs="Git" />
   </component>
 </project>
