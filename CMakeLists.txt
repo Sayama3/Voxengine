@@ -114,10 +114,8 @@ target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 
-find_package(Vulkan REQUIRED
-        COMPONENTS glslc glslang SPIRV-Tools spirv-cross-cpp shaderc_combined glslang
-)
+find_package(Vulkan REQUIRED COMPONENTS SPIRV-Tools spirv-cross-core spirv-cross-glsl shaderc_combined)
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Tools Vulkan::SPIRV-Cross-CPP)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Cross-Core Vulkan::SPIRV-Cross-GLSL)
 
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")
