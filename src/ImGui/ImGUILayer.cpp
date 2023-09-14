@@ -21,6 +21,7 @@
 #define GLFW_INCLUDE_NONE 1
 #endif
 #include <GLFW/glfw3.h>
+#include <ImGuizmo.h>
 
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
@@ -87,6 +88,7 @@ namespace Voxymore::Core {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 //        VXM_CORE_INFO("Add every new Frames");
     }
 

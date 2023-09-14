@@ -109,7 +109,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")

@@ -19,4 +19,7 @@ add_subdirectory(entt)
 
 add_subdirectory(yaml-cpp)
 
+add_subdirectory(ImGuizmo)
+target_link_libraries(ImGuizmo PUBLIC imgui)
+
 #add_subdirectory(vulkan)

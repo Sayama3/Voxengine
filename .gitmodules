@@ -17,3 +17,6 @@
 [submodule "lib/yaml-cpp"]
 	path = lib/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "lib/ImGuizmo"]
+	path = lib/ImGuizmo
+	url = https://github.com/Sayama3/ImGuizmo
