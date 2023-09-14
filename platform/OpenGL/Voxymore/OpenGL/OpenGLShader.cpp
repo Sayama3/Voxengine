@@ -662,6 +662,27 @@ namespace Voxymore::Core
 			}
 		}
 	}
+
+	//    void DebugUniforms(uint32_t id)
+	//    {
+	//        VXM_CORE_INFO("Debug Uniforms");
+	//        int count = 0;
+	//        int bufSize = 0;
+	//        glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
+	//        glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufSize);
+	//        std::vector<char> name(bufSize);
+	//        memset(name.data(), 0, bufSize);
+	//        for (uint32_t index = 0; index < count; ++index)
+	//        {
+	//            GLsizei length;
+	//            GLint size;
+	//            GLenum type;
+	//            glGetActiveUniform(id, index, bufSize, &length, &size, &type, name.data());
+	//            VXM_CORE_INFO("Uniform named '{0}': size = {1}", name.data(), size);
+	//            memset(name.data(), 0, bufSize);
+	//
+	//        }
+	//    }
 	void OpenGLShader::CreateProgram()
 	{
 		GLuint program = glCreateProgram();
@@ -673,6 +694,9 @@ namespace Voxymore::Core
 			glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
 			glAttachShader(program, shaderID);
 		}
+
+		glLinkProgram(program);
+
 		GLint isLinked;
 		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
 		if (isLinked == GL_FALSE) {
@@ -782,7 +806,6 @@ namespace Voxymore::Core
 		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePath);
 	}
 
-
 	void OpenGLShader::Bind() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -795,47 +818,47 @@ namespace Voxymore::Core
 		glUseProgram(0);
 	}
 
-//	void OpenGLShader::SetUniform(const std::string &name, const void *valuePtr, uint32_t size)
-//	{
-//		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		VXM_CORE_ASSERT(m_Uniforms[name].Size == size, "The value size doesn't match the size found of the uniform.", name);
-//		switch (m_Uniforms[name].Type) {
-//			case ShaderDataType::Float: SetUniformFloat(name, *(float *) valuePtr); break;
-//			case ShaderDataType::Float2: SetUniformFloat2(name, *(glm::vec2 *) valuePtr); break;
-//			case ShaderDataType::Float3: SetUniformFloat3(name, *(glm::vec3 *) valuePtr); break;
-//			case ShaderDataType::Float4:
-//				SetUniformFloat4(name, *(glm::vec4 *) valuePtr);
-//				break;
-//				//            case ShaderDataType::Mat2: SetUniformMat2(name, *(glm::mat2*)valuePtr); break;
-//			case ShaderDataType::Mat3: SetUniformMat3(name, *(glm::mat3 *) valuePtr); break;
-//			case ShaderDataType::Mat4: SetUniformMat4(name, *(glm::mat4 *) valuePtr); break;
-//			case ShaderDataType::Int:
-//				SetUniformInt(name, *(int *) valuePtr);
-//				break;
-//				//            case ShaderDataType::Int2: SetUniformInt2(name, *(glm::ivec2*)valuePtr); break;
-//				//            case ShaderDataType::Int3: SetUniformInt3(name, *(glm::ivec3*)valuePtr); break;
-//				//            case ShaderDataType::Int4: SetUniformInt4(name, *(glm::ivec4*)valuePtr); break;
-//				//            case ShaderDataType::UInt: SetUniformUInt(name, *(uint32_t *)valuePtr); break;
-//				//            case ShaderDataType::UInt2: SetUniformUInt2(name, *(glm::uvec2*)valuePtr); break;
-//				//            case ShaderDataType::UInt3: SetUniformUInt3(name, *(glm::uvec3*)valuePtr); break;
-//				//            case ShaderDataType::UInt4: SetUniformUInt4(name, *(glm::uvec4*)valuePtr); break;
-//				//            case ShaderDataType::Bool: SetUniformBool(name, *(bool*)valuePtr); break;
-//				//            case ShaderDataType::Bool2: SetUniformBool2(name, *(glm::bool2*)valuePtr); break;
-//				//            case ShaderDataType::Bool3: SetUniformBool3(name, *(glm::bool3*)valuePtr); break;
-//				//            case ShaderDataType::Bool4: SetUniformBool4(name, *(glm::bool4*)valuePtr); break;
-//			case ShaderDataType::Sampler1D: SetUniformInt(name, *(int *) valuePtr); break;
-//			case ShaderDataType::Sampler2D: SetUniformInt(name, *(int *) valuePtr); break;
-//			case ShaderDataType::Sampler3D: SetUniformInt(name, *(int *) valuePtr); break;
-//			default: VXM_CORE_ASSERT(false, "The ShaderDataType '{0}' is currently not handled by OpenGLShader.", ShaderDataTypeToString(m_Uniforms[name].Type)); break;
-//		}
-//	}
+	//	void OpenGLShader::SetUniform(const std::string &name, const void *valuePtr, uint32_t size)
+	//	{
+	//		VXM_PROFILE_FUNCTION();
+	//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+	//		VXM_CORE_ASSERT(m_Uniforms[name].Size == size, "The value size doesn't match the size found of the uniform.", name);
+	//		switch (m_Uniforms[name].Type) {
+	//			case ShaderDataType::Float: SetUniformFloat(name, *(float *) valuePtr); break;
+	//			case ShaderDataType::Float2: SetUniformFloat2(name, *(glm::vec2 *) valuePtr); break;
+	//			case ShaderDataType::Float3: SetUniformFloat3(name, *(glm::vec3 *) valuePtr); break;
+	//			case ShaderDataType::Float4:
+	//				SetUniformFloat4(name, *(glm::vec4 *) valuePtr);
+	//				break;
+	//				//            case ShaderDataType::Mat2: SetUniformMat2(name, *(glm::mat2*)valuePtr); break;
+	//			case ShaderDataType::Mat3: SetUniformMat3(name, *(glm::mat3 *) valuePtr); break;
+	//			case ShaderDataType::Mat4: SetUniformMat4(name, *(glm::mat4 *) valuePtr); break;
+	//			case ShaderDataType::Int:
+	//				SetUniformInt(name, *(int *) valuePtr);
+	//				break;
+	//				//            case ShaderDataType::Int2: SetUniformInt2(name, *(glm::ivec2*)valuePtr); break;
+	//				//            case ShaderDataType::Int3: SetUniformInt3(name, *(glm::ivec3*)valuePtr); break;
+	//				//            case ShaderDataType::Int4: SetUniformInt4(name, *(glm::ivec4*)valuePtr); break;
+	//				//            case ShaderDataType::UInt: SetUniformUInt(name, *(uint32_t *)valuePtr); break;
+	//				//            case ShaderDataType::UInt2: SetUniformUInt2(name, *(glm::uvec2*)valuePtr); break;
+	//				//            case ShaderDataType::UInt3: SetUniformUInt3(name, *(glm::uvec3*)valuePtr); break;
+	//				//            case ShaderDataType::UInt4: SetUniformUInt4(name, *(glm::uvec4*)valuePtr); break;
+	//				//            case ShaderDataType::Bool: SetUniformBool(name, *(bool*)valuePtr); break;
+	//				//            case ShaderDataType::Bool2: SetUniformBool2(name, *(glm::bool2*)valuePtr); break;
+	//				//            case ShaderDataType::Bool3: SetUniformBool3(name, *(glm::bool3*)valuePtr); break;
+	//				//            case ShaderDataType::Bool4: SetUniformBool4(name, *(glm::bool4*)valuePtr); break;
+	//			case ShaderDataType::Sampler1D: SetUniformInt(name, *(int *) valuePtr); break;
+	//			case ShaderDataType::Sampler2D: SetUniformInt(name, *(int *) valuePtr); break;
+	//			case ShaderDataType::Sampler3D: SetUniformInt(name, *(int *) valuePtr); break;
+	//			default: VXM_CORE_ASSERT(false, "The ShaderDataType '{0}' is currently not handled by OpenGLShader.", ShaderDataTypeToString(m_Uniforms[name].Type)); break;
+	//		}
+	//	}
 
 	void OpenGLShader::SetUniformInt(const std::string &name, int value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1i(location, value);
@@ -843,8 +866,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformInt2(const std::string& name, const glm::ivec2& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform2iv(location, 1, glm::value_ptr(value));
@@ -852,8 +875,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformInt3(const std::string& name, const glm::ivec3& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform3iv(location, 1, glm::value_ptr(value));
@@ -861,8 +884,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformInt4(const std::string& name, const glm::ivec4& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform4iv(location, 1, glm::value_ptr(value));
@@ -871,8 +894,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformFloat(const std::string &name, float value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1f(location, value);
@@ -881,8 +904,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformFloat2(const std::string &name, const glm::vec2 &value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform2fv(location, 1, glm::value_ptr(value));
@@ -891,8 +914,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformFloat3(const std::string &name, const glm::vec3 &value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform3fv(location, 1, glm::value_ptr(value));
@@ -901,8 +924,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformFloat4(const std::string &name, const glm::vec4 &value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform4fv(location, 1, glm::value_ptr(value));
@@ -912,8 +935,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformMat3(const std::string &name, const glm::mat3 &value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
@@ -922,9 +945,10 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformMat4(const std::string &name, const glm::mat4 &value)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
+
 		if(location < 0) return;
 		glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
 	}
@@ -932,8 +956,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformBool(const std::string& name, const bool& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1i(location, value);
@@ -941,8 +965,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformBool2(const std::string& name, const glm::bvec2& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform2iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
@@ -950,8 +974,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformBool3(const std::string& name, const glm::bvec3& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform3iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
@@ -959,8 +983,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformBool4(const std::string& name, const glm::bvec4& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform4iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
@@ -969,8 +993,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformSampler1D(const std::string& name, const uint32_t& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1ui(location, value);
@@ -978,8 +1002,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformSampler2D(const std::string& name, const uint32_t& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1ui(location, value);
@@ -987,8 +1011,8 @@ namespace Voxymore::Core
 	void OpenGLShader::SetUniformSampler3D(const std::string& name, const uint32_t& value) {
 
 		VXM_PROFILE_FUNCTION();
-//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-//		int location = m_Uniforms[name].Location;
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if(location < 0) return;
 		glUniform1ui(location, value);
