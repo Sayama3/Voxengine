@@ -10,75 +10,86 @@ namespace Voxymore::Core {
 	Material::Material(Ref<Shader> &shader) : m_Shader(shader), m_Uniforms()
 	{
 		VXM_PROFILE_FUNCTION();
-//        m_Uniforms.reserve(m_Shader->GetUniforms().size());
-//        for (std::pair<std::string, UniformDescription>&& uniform : m_Shader->GetUniforms()) {
-//            m_Uniforms[uniform.first] = MaterialValue(uniform.second.Type);
-//        }
+		//        m_Uniforms.reserve(m_Shader->GetUniforms().size());
+		//        for (std::pair<std::string, UniformDescription>&& uniform : m_Shader->GetUniforms()) {
+		//            m_Uniforms[uniform.first] = MaterialValue(uniform.second.Type);
+		//        }
 	}
 
 	void Material::SetUniformInt(const std::string& name, int value)
 	{
 		VXM_PROFILE_FUNCTION();
-//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Int) m_Uniforms[name] = MaterialValue(ShaderDataType::Int);
 		m_Uniforms[name].SetValue(value);
 	}
 
 	void Material::SetUniformInt2(const std::string& name, const glm::ivec2& value)
 	{
 		VXM_PROFILE_FUNCTION();
+		if(m_Uniforms[name].GetType() != ShaderDataType::Int2) m_Uniforms[name] = MaterialValue(ShaderDataType::Int2);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformInt3(const std::string& name, const glm::ivec3& value)
 	{
 		VXM_PROFILE_FUNCTION();
+		if(m_Uniforms[name].GetType() != ShaderDataType::Int3) m_Uniforms[name] = MaterialValue(ShaderDataType::Int3);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformInt4(const std::string& name, const glm::ivec4& value)
 	{
 		VXM_PROFILE_FUNCTION();
+		if(m_Uniforms[name].GetType() != ShaderDataType::Int4) m_Uniforms[name] = MaterialValue(ShaderDataType::Int4);
 		m_Uniforms[name].SetValue(value);
 	}
 
 	void Material::SetUniformFloat(const std::string& name, float value)
 	{
 		VXM_PROFILE_FUNCTION();
-//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Float) m_Uniforms[name] = MaterialValue(ShaderDataType::Float);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformFloat2(const std::string& name, const glm::vec2& value)
 	{
 		VXM_PROFILE_FUNCTION();
-//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Float2) m_Uniforms[name] = MaterialValue(ShaderDataType::Float2);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformFloat3(const std::string& name, const glm::vec3& value)
 	{
 		VXM_PROFILE_FUNCTION();
-//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Float3) m_Uniforms[name] = MaterialValue(ShaderDataType::Float3);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformFloat4(const std::string& name, const glm::vec4& value)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Float4) m_Uniforms[name] = MaterialValue(ShaderDataType::Float4);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformMat2(const std::string& name, const glm::mat2& value)
 	{
 		VXM_PROFILE_FUNCTION();
+		if(m_Uniforms[name].GetType() != ShaderDataType::Mat2) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat2);
 		m_Uniforms[name].SetValue(value);
 	}
 
 	void Material::SetUniformMat3(const std::string& name, const glm::mat3& value)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Mat3) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat3);
 		m_Uniforms[name].SetValue(value);
 	}
 	void Material::SetUniformMat4(const std::string& name, const glm::mat4& value)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
+		if(m_Uniforms[name].GetType() != ShaderDataType::Mat4) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat4);
 		m_Uniforms[name].SetValue(value);
 	}
 
@@ -123,18 +134,22 @@ namespace Voxymore::Core {
 
 
 	MaterialValue::MaterialValue(ShaderDataType dataType) : DataType(dataType), ValuePtr(nullptr) {
+		VXM_PROFILE_FUNCTION();
 		CreateValue();
 	}
 
 	MaterialValue::MaterialValue(const MaterialValue & other) : DataType(other.DataType), ValuePtr(nullptr) {
+		VXM_PROFILE_FUNCTION();
 		CreateValue();
 		SetValue(other.GetValue(), other.GetSize());
 	}
 
 	MaterialValue::MaterialValue() : DataType(ShaderDataType::None), ValuePtr(nullptr) {
+		VXM_PROFILE_FUNCTION();
 	}
 
 	MaterialValue::~MaterialValue() {
+		VXM_PROFILE_FUNCTION();
 		DeleteValue();
 	}
 
@@ -231,7 +246,7 @@ namespace Voxymore::Core {
 			case ShaderDataType::Sampler1D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
 			case ShaderDataType::Sampler2D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
 			case ShaderDataType::Sampler3D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
-			default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
+			default: {VXM_CORE_ASSERT(false, "Couldn't assign the type '{0}'.", ShaderDataTypeToString(DataType));} break;
 		}
 
 	}
