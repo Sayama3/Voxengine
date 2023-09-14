@@ -4,6 +4,13 @@
  
 The core engine of the Voxymore Game Engine.
 
+# Requirement
+
+You **need** to have the [Vulkan SDK]() installed.
+
+On windows, do not forget to add the installation path to the environement variable.
+ie. `VULKAN_SDK=C:\VulkanSDK\1.3.250.1`
+
 # Credits
 
 - [imgui](https://github.com/ocornut/imgui): Bloat-free Graphical User interface for C++ with minimal dependencies
@@ -14,3 +21,5 @@ The core engine of the Voxymore Game Engine.
 - [spdlog](https://github.com/gabime/spdlog): Very fast, header-only/compiled, C++ logging library.
 - [EnTT](https://github.com/skypjack/entt): Tiny and easy to use header-only Entity Component System library, for game programming and much more. Written in modern C++.
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp): YAML parser and emitter in C++ matching the YAML 1.2 spec.
+- [spriv-cross](https://github.com/KhronosGroup/SPIRV-Cross): practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.
+- [shaderc](https://github.com/google/shaderc): A collection of tools, libraries, and tests for Vulkan shader compilation.

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
 
 message("Voxymore::Core is a STATIC library.")
 
@@ -8,6 +8,8 @@ project(Voxymore VERSION 0.0.1 DESCRIPTION "The core library of the Voxymore Gam
 set(LIBRARY_TARGET_NAME Core)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_COMPUTED_DEFAULT "20")
+
 
 option(VoxymoreCore_SHARED_BUILD "The ${VoxymoreCore} lib in shared mode" OFF)
 
@@ -75,6 +77,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/ScriptableEntity.hpp
         src/Scene/SceneSerializer.cpp
         include/Voxymore/Scene/SceneSerializer.hpp
+        src/Renderer/UniformBuffer.cpp
+        include/Voxymore/Renderer/UniformBuffer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -86,6 +90,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Rr][Ee][Ll][Ee][Aa][Ss][Ee]")
 elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DIST)
 endif()
+
+target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 
@@ -105,5 +111,11 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui EnTT::EnTT yaml-cpp::yaml-cpp)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
+
+find_package(Vulkan REQUIRED COMPONENTS SPIRV-Tools spirv-cross-core spirv-cross-glsl shaderc_combined)
+
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE Vulkan::shaderc_combined Vulkan::SPIRV-Cross-Core Vulkan::SPIRV-Cross-GLSL)
 
 message(STATUS "Created target ${LIBRARY_TARGET_NAME}.")

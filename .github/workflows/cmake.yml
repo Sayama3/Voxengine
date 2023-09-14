@@ -54,7 +54,19 @@ jobs:
           ${{ env.APPDATA }}\vcpkg\archives
         key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
         restore-keys: |
-          ${{ runner.os }}-${{ env.BUILD_TYPE }}-      
+          ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+
+#    - name: Prepare Vulkan SDK
+#      uses: humbletim/setup-vulkan-sdk@v1.2.0
+#      with:
+#        vulkan-query-version: latest
+#        vulkan-use-cache: true
+#        vulkan-components: SPIRV-Cross shaderc
+
+    - name: Install Vulkan SDK
+      uses: humbletim/install-vulkan-sdk@v1.1.1
+      with:
+        cache: true
 
       # Setup ubuntu
     - name: Install X11 dependencies on Unix-like system

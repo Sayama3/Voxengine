@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
 
 add_subdirectory(glad)
 
@@ -18,3 +18,5 @@ target_link_libraries(imgui PUBLIC glfw)
 add_subdirectory(entt)
 
 add_subdirectory(yaml-cpp)
+
+#add_subdirectory(vulkan)

@@ -1,5 +1,5 @@
 //
-// Created by ianpo on 29/08/2023.
+// Created by ianpo on 06/09/2023.
 //
 
 #include "Voxymore/Utils/Platform.hpp"
@@ -10,7 +10,7 @@ namespace Voxymore::Core {
 	std::string FileDialogs::OpenFile(const std::vector<std::string>& filter)
 	{
 		std::vector<std::string> result = pfd::open_file("Select a file", ".", filter).result();
-		if(result.empty()) return std::string();
+		if(result.empty()) return {};
 		else return result[0];
 	}
 
