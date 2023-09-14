@@ -40,7 +40,10 @@ namespace Voxymore::Core
 		void SetViewportSize(uint32_t width, uint32_t height);
 	private:
 		template<typename T>
-		inline void OnComponentAdded(entt::entity entity, T& component);
+		void OnComponentAdded(entt::entity entity, T& component);
+	public:
+		// Helper:
+		Entity GetPrimaryCameraEntity();
 private:
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         entt::registry m_Registry;

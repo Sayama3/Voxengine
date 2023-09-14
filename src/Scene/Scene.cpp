@@ -95,8 +95,21 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
 		m_Registry.destroy(entity);
 	}
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto cameraView = m_Registry.view<CameraComponent>();
+		for (auto entity : cameraView)
+		{
+			auto& camera = cameraView.get<CameraComponent>(entity);
+			if(camera.Primary)
+			{
+				return Entity(entity, this);
+			}
+		}
+		return Entity();
+	}
 
-		template<typename T>
+	template<typename T>
 	void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
 	{
 	}
