@@ -45,12 +45,16 @@ namespace Voxymore::Core {
         ~Material();
 
         void SetUniformInt(const std::string& name, int value);
+		void SetUniformInt2(const std::string& name, const glm::ivec2& value);
+		void SetUniformInt3(const std::string& name, const glm::ivec3& value);
+		void SetUniformInt4(const std::string& name, const glm::ivec4& value);
 
         void SetUniformFloat(const std::string& name, float value);
         void SetUniformFloat2(const std::string& name, const glm::vec2& value);
         void SetUniformFloat3(const std::string& name, const glm::vec3& value);
         void SetUniformFloat4(const std::string& name, const glm::vec4& value);
 
+		void SetUniformMat2(const std::string& name, const glm::mat2& value);
         void SetUniformMat3(const std::string& name, const glm::mat3& value);
         void SetUniformMat4(const std::string& name, const glm::mat4& value);
 

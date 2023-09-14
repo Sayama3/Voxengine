@@ -149,16 +149,16 @@ namespace Voxymore::Core {
     };
     static const int ShaderTypeCount = 6;
 
-    struct UniformDescription
-    {
-    public:
-        std::string Name;
-        ShaderDataType Type;
-        int Size;
-    public:
-        inline UniformDescription() = default;
-        inline UniformDescription(const std::string& name, ShaderDataType type, int size) : Name(name), Type(type), Size(size) {}
-    };
+//    struct UniformDescription
+//    {
+//    public:
+//        std::string Name;
+//        ShaderDataType Type;
+//        int Size;
+//    public:
+//        inline UniformDescription() = default;
+//        inline UniformDescription(const std::string& name, ShaderDataType type, int size) : Name(name), Type(type), Size(size) {}
+//    };
 
     class Shader {
     public:
@@ -173,19 +173,30 @@ namespace Voxymore::Core {
         static Ref<Shader> Create(const std::string& name, const std::string& path);
         static Ref<Shader> Create(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
 
-        virtual std::unordered_map<std::string, UniformDescription> GetUniforms() const = 0;
-
-        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
+//        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
 
         virtual void SetUniformInt(const std::string& name, int value) = 0;
+		virtual void SetUniformInt2(const std::string& name, const glm::ivec2& value) = 0;
+		virtual void SetUniformInt3(const std::string& name, const glm::ivec3& value) = 0;
+		virtual void SetUniformInt4(const std::string& name, const glm::ivec4& value) = 0;
 
         virtual void SetUniformFloat(const std::string& name, float value) = 0;
         virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) = 0;
         virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) = 0;
         virtual void SetUniformFloat4(const std::string& name, const glm::vec4& value) = 0;
 
+        virtual void SetUniformMat2(const std::string& name, const glm::mat2& value) = 0;
         virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) = 0;
         virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) = 0;
+
+		virtual void SetUniformBool(const std::string& name, const bool& value) = 0;
+		virtual void SetUniformBool2(const std::string& name, const glm::bvec2& value) = 0;
+		virtual void SetUniformBool3(const std::string& name, const glm::bvec3& value) = 0;
+		virtual void SetUniformBool4(const std::string& name, const glm::bvec4& value) = 0;
+
+		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) = 0;
+		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) = 0;
+		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) = 0;
     };
 
     class ShaderLibrary
