@@ -66,7 +66,7 @@ namespace Voxymore::Core
 
 		if (!m_FPS && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
 		{
-			m_MousePan = m_ViewportFocused || m_MousePan;
+			m_MousePan = m_ViewportHovered || m_MousePan;
 		}
 		else
 		{
@@ -75,7 +75,7 @@ namespace Voxymore::Core
 
 		if (!m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
 		{
-			m_MouseRotate = m_ViewportFocused || m_MouseRotate;
+			m_MouseRotate = m_ViewportHovered || m_MouseRotate;
 		}
 		else
 		{
@@ -84,7 +84,7 @@ namespace Voxymore::Core
 
 		if (!m_MousePan && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
 		{
-			m_FPS = m_ViewportFocused || m_FPS;
+			m_FPS = m_ViewportHovered || m_FPS;
 			Application::Get().GetWindow().SetCursorState(CursorState::Locked);
 		}
 		else
