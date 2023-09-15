@@ -25,6 +25,8 @@ namespace Voxymore::Core {
 		 * @return A 4x4 matrix representation of the Transform matrix.
 		 */
 		static glm::mat4 TRS(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
+
+		static bool DecomposeTransform(const glm::mat4& transform, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale);
     };
 
 	inline std::ostream& operator << (std::ostream & os, const glm::mat4 value){
