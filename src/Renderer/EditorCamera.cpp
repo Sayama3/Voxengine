@@ -63,6 +63,7 @@ namespace Voxymore::Core
 		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 		m_InitialMousePosition = mouse;
+		bool altPressed = Input::IsKeyPressed(Key::LeftAlt) ||Input::IsKeyPressed(Key::RightAlt);
 
 		if (m_EnableMovement && !m_FPS && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
 		{
@@ -73,7 +74,7 @@ namespace Voxymore::Core
 			m_MousePan = false;
 		}
 
-		if (m_EnableMovement && !m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+		if (m_EnableMovement && altPressed && !m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
 		{
 			m_MouseRotate = m_ViewportHovered || m_MouseRotate;
 		}
@@ -165,9 +166,9 @@ namespace Voxymore::Core
 		if (Input::IsKeyPressed(m_DownKey)) localMovement += glm::vec3(0, -1, 0);
 
 		auto [xSpeed, ySpeed] = PanSpeed();
-		m_FocalPoint += GetForwardDirection() * (localMovement.z * (boost ? xSpeed * 2.0f : xSpeed));
-		m_FocalPoint += GetRightDirection() * (localMovement.x * (boost ? xSpeed * 2.0f : xSpeed));
-		m_FocalPoint += GetUpDirection() * (localMovement.y * (boost ? ySpeed * 2.0f : ySpeed));
+		m_FocalPoint += GetForwardDirection() * (localMovement.z * (boost ? xSpeed * 2.0f : xSpeed) * ts);
+		m_FocalPoint += GetRightDirection() * (localMovement.x * (boost ? xSpeed * 2.0f : xSpeed) * ts);
+		m_FocalPoint += GetUpDirection() * (localMovement.y * (boost ? ySpeed * 2.0f : ySpeed) * ts);
 	}
 
 	glm::vec3 EditorCamera::GetUpDirection() const
