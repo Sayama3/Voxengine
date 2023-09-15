@@ -8,7 +8,7 @@
 #include "GLFW/glfw3.h"
 
 namespace Voxymore::Core {
-    bool Input::IsKeyPressed(KeyCode keycode)
+    bool Input::IsKeyPressed(Key keycode)
     {
         VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());

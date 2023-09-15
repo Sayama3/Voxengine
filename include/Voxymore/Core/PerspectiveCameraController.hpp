@@ -73,12 +73,12 @@ namespace Voxymore::Core {
         float m_MouseX, m_MouseY;
         float m_Sensitivity = 1.0f;
     private:
-        KeyCode m_ForwardKey = KeyCode::KEY_W;
-        KeyCode m_BackwardKey = KeyCode::KEY_S;
-        KeyCode m_RightKey = KeyCode::KEY_D;
-        KeyCode m_LeftKey = KeyCode::KEY_A;
-        KeyCode m_UpKey = KeyCode::KEY_E;
-        KeyCode m_DownKey = KeyCode::KEY_Q;
+		Key m_ForwardKey = Key::W;
+		Key m_BackwardKey = Key::S;
+		Key m_RightKey = Key::D;
+		Key m_LeftKey = Key::A;
+		Key m_UpKey = Key::E;
+		Key m_DownKey = Key::Q;
     private:
         PerspectiveCamera m_Camera;
     };

@@ -100,27 +100,27 @@ namespace Voxymore::Core {
     void PerspectiveCameraController::UpdateMovement() {
         VXM_PROFILE_FUNCTION();
         m_Movement = glm::vec3(0);
-        if (Input::IsKeyPressed(KeyCode::KEY_W)) {
+        if (Input::IsKeyPressed(m_ForwardKey)) {
             VXM_CORE_INFO("Press KEY W.");
             m_Movement += glm::vec3(0, 0, -1);
         }
-        if (Input::IsKeyPressed(KeyCode::KEY_S)) {
+        if (Input::IsKeyPressed(m_BackwardKey)) {
             VXM_CORE_INFO("Press KEY S.");
             m_Movement += glm::vec3(0, 0, 1);
         }
-        if (Input::IsKeyPressed(KeyCode::KEY_D)) {
+        if (Input::IsKeyPressed(m_RightKey)) {
             VXM_CORE_INFO("Press KEY D.");
             m_Movement += glm::vec3(1, 0, 0);
         }
-        if (Input::IsKeyPressed(KeyCode::KEY_A)) {
+        if (Input::IsKeyPressed(m_LeftKey)) {
             VXM_CORE_INFO("Press KEY A.");
             m_Movement += glm::vec3(-1, 0, 0);
         }
-        if (Input::IsKeyPressed(KeyCode::KEY_E)) {
+        if (Input::IsKeyPressed(m_UpKey)) {
             VXM_CORE_INFO("Press KEY E.");
             m_Movement += glm::vec3(0, 1, 0);
         }
-        if (Input::IsKeyPressed(KeyCode::KEY_Q)) {
+        if (Input::IsKeyPressed(m_DownKey)) {
             VXM_CORE_INFO("Press KEY Q.");
             m_Movement += glm::vec3(0, -1, 0);
         }

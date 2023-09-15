@@ -11,7 +11,7 @@
 namespace Voxymore::Core {
     class Input {
     public:
-        static bool IsKeyPressed(KeyCode keycode);
+        static bool IsKeyPressed(Key keycode);
         static bool IsMouseButtonPressed(MouseButton button);
         static float GetMouseX();
         static float GetMouseY();

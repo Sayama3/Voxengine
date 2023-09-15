@@ -8,6 +8,7 @@
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/MouseEvent.hpp"
+#include "Voxymore/Core/KeyCodes.hpp"
 
 namespace Voxymore::Core
 {
@@ -38,6 +39,11 @@ namespace Voxymore::Core
 
 		inline float GetPitch() const { return m_Pitch; }
 		inline float GetYaw() const { return m_Yaw; }
+
+		inline bool GetViewportFocused() const { return m_ViewportFocused; }
+		inline void SetViewportFocused(bool viewportFocused) { m_ViewportFocused = viewportFocused;}
+		inline bool GetViewportHovered() const { return m_ViewportHovered; }
+		inline void SetViewportHovered(bool viewportHovered) { m_ViewportHovered = viewportHovered;}
 	private:
 		void UpdateProjection();
 		void UpdateView();
@@ -47,6 +53,8 @@ namespace Voxymore::Core
 		void MousePan(const glm::vec2& delta);
 		void MouseRotate(const glm::vec2& delta);
 		void MouseZoom(float delta);
+
+		void FirstPersonController(TimeStep ts, const glm::vec2& mouseDelta);
 
 		glm::vec3 CalculatePosition() const;
 
@@ -67,6 +75,17 @@ namespace Voxymore::Core
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;
 
 		float m_ViewportWidth = 1280, m_ViewportHeight = 720;
+		bool m_ViewportFocused = false, m_ViewportHovered = false;
+
+		bool m_MousePan = false, m_MouseRotate = false, m_FPS = false;
+	public:
+		Key m_BoostKey = Key::LeftShift;
+		Key m_ForwardKey = Key::W;
+		Key m_BackwardKey = Key::S;
+		Key m_RightKey = Key::D;
+		Key m_LeftKey = Key::A;
+		Key m_UpKey = Key::E;
+		Key m_DownKey = Key::Q;
 	};
 
 }// namespace Voxymore::Core

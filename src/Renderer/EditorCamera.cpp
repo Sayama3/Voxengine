@@ -5,7 +5,7 @@
 #include "Voxymore/Renderer/EditorCamera.hpp"
 
 #include "Voxymore/Core/Input.hpp"
-#include "Voxymore/Core/KeyCodes.hpp"
+#include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/MouseButtonCodes.hpp"
 #include "Voxymore/Core/Math.hpp"
 
@@ -60,18 +60,48 @@ namespace Voxymore::Core
 
 	void EditorCamera::OnUpdate(TimeStep ts)
 	{
-		if (Input::IsKeyPressed(KeyCode::KEY_LEFT_ALT))
-		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
-			m_InitialMousePosition = mouse;
+		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+		m_InitialMousePosition = mouse;
 
-			if (Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
-				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
-				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
-				MouseZoom(delta.y);
+		if (!m_FPS && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
+		{
+			m_MousePan = m_ViewportFocused || m_MousePan;
+		}
+		else
+		{
+			m_MousePan = false;
+		}
+
+		if (!m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+		{
+			m_MouseRotate = m_ViewportFocused || m_MouseRotate;
+		}
+		else
+		{
+			m_MouseRotate = false;
+		}
+
+		if (!m_MousePan && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+		{
+			m_FPS = m_ViewportFocused || m_FPS;
+			Application::Get().GetWindow().SetCursorState(CursorState::Locked);
+		}
+		else
+		{
+			m_FPS = false;
+			Application::Get().GetWindow().SetCursorState(CursorState::None);
+		}
+
+		if(m_MousePan)
+		{
+			MousePan(delta);
+		} else if (m_MouseRotate)
+		{
+			MouseRotate(delta);
+		} else if (m_FPS)
+		{
+			FirstPersonController(ts, delta);
 		}
 
 		UpdateView();
@@ -113,6 +143,25 @@ namespace Voxymore::Core
 			m_FocalPoint += GetForwardDirection();
 			m_Distance = 1.0f;
 		}
+	}
+
+	void EditorCamera::FirstPersonController(TimeStep ts, const glm::vec2& mouseDelta)
+	{
+		MouseRotate(mouseDelta);
+
+		glm::vec3 localMovement(0);
+		bool boost = Input::IsKeyPressed(m_BoostKey);
+		if (Input::IsKeyPressed(m_ForwardKey)) localMovement += glm::vec3(0, 0, -1);
+		if (Input::IsKeyPressed(m_BackwardKey)) localMovement += glm::vec3(0, 0, 1);
+		if (Input::IsKeyPressed(m_RightKey)) localMovement += glm::vec3(1, 0, 0);
+		if (Input::IsKeyPressed(m_LeftKey)) localMovement += glm::vec3(-1, 0, 0);
+		if (Input::IsKeyPressed(m_UpKey)) localMovement += glm::vec3(0, 1, 0);
+		if (Input::IsKeyPressed(m_DownKey)) localMovement += glm::vec3(0, -1, 0);
+
+		auto [xSpeed, ySpeed] = PanSpeed();
+		m_FocalPoint += GetForwardDirection() * (localMovement.z * (boost ? xSpeed * 2.0f : xSpeed));
+		m_FocalPoint += GetRightDirection() * (localMovement.x * (boost ? xSpeed * 2.0f : xSpeed));
+		m_FocalPoint += GetUpDirection() * (localMovement.y * (boost ? ySpeed * 2.0f : ySpeed));
 	}
 
 	glm::vec3 EditorCamera::GetUpDirection() const
