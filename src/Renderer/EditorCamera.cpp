@@ -64,7 +64,7 @@ namespace Voxymore::Core
 		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 		m_InitialMousePosition = mouse;
 
-		if (!m_FPS && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
+		if (m_EnableMovement && !m_FPS && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_MIDDLE))
 		{
 			m_MousePan = m_ViewportHovered || m_MousePan;
 		}
@@ -73,7 +73,7 @@ namespace Voxymore::Core
 			m_MousePan = false;
 		}
 
-		if (!m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+		if (m_EnableMovement && !m_MousePan && !m_FPS && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
 		{
 			m_MouseRotate = m_ViewportHovered || m_MouseRotate;
 		}
@@ -82,7 +82,7 @@ namespace Voxymore::Core
 			m_MouseRotate = false;
 		}
 
-		if (!m_MousePan && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
+		if (m_EnableMovement && !m_MousePan && !m_MouseRotate && Input::IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_RIGHT))
 		{
 			m_FPS = m_ViewportHovered || m_FPS;
 			Application::Get().GetWindow().SetCursorState(CursorState::Locked);
@@ -147,12 +147,18 @@ namespace Voxymore::Core
 
 	void EditorCamera::FirstPersonController(TimeStep ts, const glm::vec2& mouseDelta)
 	{
+		// Rotation
+		glm::vec3 oldPosition = CalculatePosition();
 		MouseRotate(mouseDelta);
+		glm::vec3 newPosition = CalculatePosition();
+		glm::vec3 movement = newPosition - oldPosition;
+		m_FocalPoint -= movement;
 
+		// Translation
 		glm::vec3 localMovement(0);
 		bool boost = Input::IsKeyPressed(m_BoostKey);
-		if (Input::IsKeyPressed(m_ForwardKey)) localMovement += glm::vec3(0, 0, -1);
-		if (Input::IsKeyPressed(m_BackwardKey)) localMovement += glm::vec3(0, 0, 1);
+		if (Input::IsKeyPressed(m_ForwardKey)) localMovement += glm::vec3(0, 0, 1);
+		if (Input::IsKeyPressed(m_BackwardKey)) localMovement += glm::vec3(0, 0, -1);
 		if (Input::IsKeyPressed(m_RightKey)) localMovement += glm::vec3(1, 0, 0);
 		if (Input::IsKeyPressed(m_LeftKey)) localMovement += glm::vec3(-1, 0, 0);
 		if (Input::IsKeyPressed(m_UpKey)) localMovement += glm::vec3(0, 1, 0);

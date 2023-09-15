@@ -44,6 +44,8 @@ namespace Voxymore::Core
 		inline void SetViewportFocused(bool viewportFocused) { m_ViewportFocused = viewportFocused;}
 		inline bool GetViewportHovered() const { return m_ViewportHovered; }
 		inline void SetViewportHovered(bool viewportHovered) { m_ViewportHovered = viewportHovered;}
+		inline void EnableMovement(bool enable) { m_EnableMovement = enable;}
+		inline bool MovementIsEnable() const { return m_EnableMovement;}
 	private:
 		void UpdateProjection();
 		void UpdateView();
@@ -77,6 +79,7 @@ namespace Voxymore::Core
 		float m_ViewportWidth = 1280, m_ViewportHeight = 720;
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
+		bool m_EnableMovement = true;
 		bool m_MousePan = false, m_MouseRotate = false, m_FPS = false;
 	public:
 		Key m_BoostKey = Key::LeftShift;
