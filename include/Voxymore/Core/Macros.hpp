@@ -28,7 +28,9 @@
     #define STB_IMAGE_IMPLEMENTATION
 #endif
 
-#define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+#define VXM_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+//deprecated. Use VXM_BIND_EVENT_FN
+#define BIND_EVENT_FN(fn) VXM_BIND_EVENT_FN(fn)
 //#define BIND_EVENT_FN(func) [this](auto && PH1) { func(std::forward<decltype(PH1)>(PH1)); }
 //#define BIND_EVENT_FN(func, ...)	std::bind(&func, this, __VA_ARGS__)
 //#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)

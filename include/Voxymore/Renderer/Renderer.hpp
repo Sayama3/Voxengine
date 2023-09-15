@@ -7,6 +7,7 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Renderer/Camera.hpp"
 #include "Voxymore/Renderer/PerspectiveCamera.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
@@ -51,6 +52,7 @@ namespace Voxymore {
 			static void OnWindowResize(uint32_t width, uint32_t height);
 
 			static void BeginScene(const Camera& camera, const glm::mat4& transform);
+			static void BeginScene(const EditorCamera& camera);
 			static void BeginScene(const PerspectiveCamera& camera);
 			static void EndScene();
 

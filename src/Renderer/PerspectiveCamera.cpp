@@ -9,7 +9,7 @@
 namespace Voxymore::Core {
 
 	PerspectiveCamera::PerspectiveCamera(float width, float height, float fov, float nearClip, float farClip, glm::vec3 position, glm::quat rotation) :
-			Camera( glm::perspectiveFov(glm::radians<float>(fov), width, height, nearClip, farClip)),
+			m_ProjectionMatrix( glm::perspectiveFov(glm::radians<float>(fov), width, height, nearClip, farClip)),
 			m_ViewMatrix(glm::inverse(Math::TRS(position, rotation, glm::one<glm::vec3>()))),
 			m_ViewProjectionMatrix(m_ProjectionMatrix * m_ViewMatrix)
 	{
@@ -22,6 +22,10 @@ namespace Voxymore::Core {
 
 	glm::mat4 PerspectiveCamera::GetViewProjectionMatrix() const {
 		return m_ViewProjectionMatrix;
+	}
+	glm::mat4 PerspectiveCamera::GetProjectionMatrix() const
+	{
+		return m_ProjectionMatrix;
 	}
 
 	void PerspectiveCamera::SetProjectionMatrix(float width, float height, float fov, float nearClip, float farClip) {

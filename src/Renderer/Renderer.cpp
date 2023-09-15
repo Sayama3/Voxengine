@@ -30,6 +30,14 @@ namespace Voxymore::Core {
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
+	void Renderer::BeginScene(const EditorCamera &camera)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+	}
+
 	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform)
 	{
 		VXM_PROFILE_FUNCTION();

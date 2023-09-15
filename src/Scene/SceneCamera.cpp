@@ -15,7 +15,6 @@ namespace Voxymore
 			m_OrthographicNear(nearClip),
 			m_OrthographicFar(farClip)
 		{
-			CalculateOrthographic();
 		}
 
 		SceneCamera::SceneCamera(float radianFov, float nearClip, float farClip, uint32_t width, uint32_t height) :
@@ -24,10 +23,9 @@ namespace Voxymore
 			m_PerspectiveNear(nearClip),
 			m_PerspectiveFar(farClip)
 		{
-			CalculatePerspective();
 		}
 
-		SceneCamera::SceneCamera() : Camera(glm::mat4(1.0f))
+		SceneCamera::SceneCamera()
 		{
 		}
 
@@ -41,7 +39,6 @@ namespace Voxymore
 			m_OrthographicSize = size;
 			m_OrthographicNear = nearClip;
 			m_OrthographicFar = farClip;
-			CalculateOrthographic();
 		}
 
 		void SceneCamera::SetPerspective(float radianVerticalFov, float nearClip, float farClip)
@@ -50,53 +47,51 @@ namespace Voxymore
 			m_PerspectiveVerticalFOV = radianVerticalFov;
 			m_PerspectiveNear = nearClip;
 			m_PerspectiveFar = farClip;
-			CalculatePerspective();
 		}
 
 		void SceneCamera::SwitchToPerspective(bool isPerspective)
 		{
 			m_IsOrthographic = !isPerspective;
-			CalculateProjectionMatrix();
 		}
 
 		void SceneCamera::SwitchToOrthographic(bool isOrthographic)
 		{
 			m_IsOrthographic = isOrthographic;
-			CalculateProjectionMatrix();
 		}
 
 		void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
 		{
 			VXM_CORE_ASSERT(width > 0 && height > 0, "Width({0}) and Height({1}) must be superior to 0.", width, height);
 			m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
-			CalculateProjectionMatrix();
 		}
 
-		void SceneCamera::CalculateOrthographic()
+		glm::mat4 SceneCamera::CalculateOrthographic() const
 		{
 			float left = -m_OrthographicSize * m_AspectRatio * 0.5f;
 			float right = +m_OrthographicSize * m_AspectRatio * 0.5f;
 			float top = +m_OrthographicSize * 0.5f;
 			float bottom = -m_OrthographicSize * 0.5f;
-			m_ProjectionMatrix = glm::ortho(left, right, bottom, top, m_OrthographicNear, m_OrthographicFar);
+			return glm::ortho(left, right, bottom, top, m_OrthographicNear, m_OrthographicFar);
 		}
 
-		void SceneCamera::CalculatePerspective()
+		glm::mat4 SceneCamera::CalculatePerspective() const
 		{
-			m_ProjectionMatrix = glm::perspective(m_PerspectiveVerticalFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			return glm::perspective(m_PerspectiveVerticalFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 
-		void SceneCamera::CalculateProjectionMatrix()
+		glm::mat4 SceneCamera::CalculateProjectionMatrix() const
 		{
-			if(m_IsOrthographic) CalculateOrthographic();
-			else CalculatePerspective();
+			return m_IsOrthographic ? CalculateOrthographic() : CalculatePerspective();
 		}
 
 		void SceneCamera::SetAspectRatio(float aspectRatio)
 		{
 			VXM_CORE_ASSERT(aspectRatio != 0.0f, "Aspect Ratio cannot be 0.");
 			m_AspectRatio = aspectRatio;
-			CalculateProjectionMatrix();
+		}
+		glm::mat4 SceneCamera::GetProjectionMatrix() const
+		{
+			return CalculateProjectionMatrix();
 		}
 	}// namespace Core
 }// namespace Voxymore

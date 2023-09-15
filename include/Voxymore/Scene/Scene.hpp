@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
 #include <entt/entt.hpp>
 
 // TODO: find a better way?
@@ -36,7 +37,8 @@ namespace Voxymore::Core
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(TimeStep ts);
+		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
+		void OnUpdateRuntime(TimeStep ts);
 		void SetViewportSize(uint32_t width, uint32_t height);
 	private:
 		template<typename T>

@@ -50,10 +50,12 @@ namespace Voxymore::Core
 		inline float GetPerspectiveVerticalFOV() const { return m_PerspectiveVerticalFOV; }
 		inline float GetPerspectiveNear() const { return m_PerspectiveNear; }
 		inline float GetPerspectiveFar() const { return m_PerspectiveFar; }
+
+		virtual glm::mat4 GetProjectionMatrix() const override;
 	private:
-		void CalculateProjectionMatrix();
-		void CalculateOrthographic();
-		void CalculatePerspective();
+		glm::mat4 CalculateProjectionMatrix() const;
+		glm::mat4 CalculateOrthographic() const;
+		glm::mat4 CalculatePerspective() const;
 	private:
 		float m_AspectRatio = 16.0f/9.0f;
 		bool m_IsOrthographic = false;

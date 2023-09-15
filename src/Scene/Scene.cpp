@@ -19,7 +19,20 @@ namespace Voxymore::Core
 	{
 	}
 
-	void Scene::OnUpdate(TimeStep ts)
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+		Renderer::BeginScene(camera);
+
+		auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
+		for (auto entity: meshesView) {
+			auto [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
+			Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform());
+		}
+
+		Renderer::EndScene();
+	}
+
+	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
 		// TODO: make it happen only when the scene play !
 		{
