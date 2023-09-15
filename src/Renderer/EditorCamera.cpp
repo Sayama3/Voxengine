@@ -166,9 +166,15 @@ namespace Voxymore::Core
 		if (Input::IsKeyPressed(m_DownKey)) localMovement += glm::vec3(0, -1, 0);
 
 		auto [xSpeed, ySpeed] = PanSpeed();
-		m_FocalPoint += GetForwardDirection() * (localMovement.z * (boost ? xSpeed * 2.0f : xSpeed) * ts);
-		m_FocalPoint += GetRightDirection() * (localMovement.x * (boost ? xSpeed * 2.0f : xSpeed) * ts);
-		m_FocalPoint += GetUpDirection() * (localMovement.y * (boost ? ySpeed * 2.0f : ySpeed) * ts);
+		float zSpeed = xSpeed;
+
+		xSpeed *= 15.0f;
+		ySpeed *= 15.0f;
+		zSpeed *= 15.0f;
+
+		m_FocalPoint += GetForwardDirection() * (localMovement.z * (boost ? zSpeed * 4.5f : zSpeed) * ts);
+		m_FocalPoint += GetRightDirection() * (localMovement.x * (boost ? xSpeed * 4.5f : xSpeed) * ts);
+		m_FocalPoint += GetUpDirection() * (localMovement.y * (boost ? ySpeed * 4.5f : ySpeed) * ts);
 	}
 
 	glm::vec3 EditorCamera::GetUpDirection() const
