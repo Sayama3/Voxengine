@@ -10,10 +10,42 @@
 
 namespace Voxymore::Core {
 
+	enum class FramebufferTextureFormat
+	{
+		None = 0,
+		// Color
+		RGBA8,
+		RGBA16,
+
+		// Depth/Stencil
+		DEPTH24STENCIL8,
+
+		//Default
+		Color = RGBA8,
+		Depth = DEPTH24STENCIL8,
+	};
+
+	struct FramebufferTextureSpecification
+	{
+		FramebufferTextureSpecification() = default;
+		inline FramebufferTextureSpecification(FramebufferTextureFormat format) : TextureFormat(format) {}
+
+		FramebufferTextureFormat TextureFormat;
+		//TODO: filtering/wrap
+	};
+
+	struct FramebufferAttachmentSpecification
+	{
+		FramebufferAttachmentSpecification() = default;
+		inline FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments) : Attachments(attachments) {}
+		std::vector<FramebufferTextureSpecification> Attachments;
+	};
+
     struct FramebufferSpecification
     {
         uint32_t Width, Height;
         uint32_t Samples = 1;
+		FramebufferAttachmentSpecification Attachements;
 
         //TODO: add format.
         bool SwapChainTarget = false;
