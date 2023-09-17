@@ -235,5 +235,18 @@ namespace Voxymore::Core {
 
         Invalidate();
     }
+
+	int OpenGLFramebuffer::ReadPixel(uint32_t index, int x, int y)
+	{
+		int pixelData;
+
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
+		VXM_CORE_ASSERT(m_ColorAttachmentSpecifications[index].TextureFormat == FramebufferTextureFormat::RED_INTEGER, "This function read from a RED_INTEGER texture format.");
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
+		glReadPixels(x, y, 1 , 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+		return pixelData;
+	}
 } // Voxymore
 // Core
