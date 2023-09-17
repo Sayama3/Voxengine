@@ -82,6 +82,32 @@ namespace Voxymore::Core {
 			}
 			return false;
 		}
+
+		static GLenum GetTextureFormat(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+				case FramebufferTextureFormat::RGBA16: return GL_RGBA16;
+				case FramebufferTextureFormat::RED_INTEGER: return GL_R16I;
+				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+			}
+			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
+			return 0;
+		}
+
+		static GLenum GetTextureValueType(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+				case FramebufferTextureFormat::RGBA8: return GL_FLOAT;
+				case FramebufferTextureFormat::RGBA16: return GL_FLOAT;
+				case FramebufferTextureFormat::RED_INTEGER: return GL_INT;
+				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_FLOAT;
+			}
+			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
+			return 0;
+		}
 	}
 
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
@@ -247,6 +273,14 @@ namespace Voxymore::Core {
 		glReadPixels(x, y, 1 , 1, GL_RED_INTEGER, GL_INT, &pixelData);
 
 		return pixelData;
+	}
+
+	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, const void* valuePtr)
+	{
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
+		auto spec = m_ColorAttachmentSpecifications[index];
+
+		glClearTexImage(index, Utils::TextureTarget(m_Specification.Samples > 1), Utils::GetTextureFormat(spec.TextureFormat), Utils::GetTextureValueType(spec.TextureFormat), valuePtr);
 	}
 } // Voxymore
 // Core
