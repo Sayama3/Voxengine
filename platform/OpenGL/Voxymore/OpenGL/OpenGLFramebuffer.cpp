@@ -136,7 +136,7 @@ namespace Voxymore::Core {
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
 
 			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
-			for (size_t i = 0; i < m_ColorAttachments.size(); ++i)
+			for (int i = 0; i < m_ColorAttachments.size(); ++i)
 			{
 				auto spec = m_ColorAttachmentSpecifications[i];
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
@@ -189,7 +189,7 @@ namespace Voxymore::Core {
 #define MAX_COLOR_ATTACHEMENT 5
 			VXM_ASSERT(m_ColorAttachments.size() <= MAX_COLOR_ATTACHEMENT, "We only support {0} color attachment on a framebuffer at the moment.", MAX_COLOR_ATTACHEMENT);
 
-			GLenum buffers[MAX_COLOR_ATTACHEMENT] = {GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5};
+			GLenum buffers[MAX_COLOR_ATTACHEMENT] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4};
 
 			glDrawBuffers(m_ColorAttachments.size(), buffers);
 		}
