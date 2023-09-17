@@ -27,7 +27,7 @@ namespace Voxymore::Core {
 			glBindTexture(TextureTarget(multisampled), textureId);
 		}
 
-		static void AttachmentColorTexture(uint32_t id, uint32_t samples, GLenum textureFormat, uint32_t width, uint32_t height, int index)
+		static void AttachmentColorTexture(uint32_t id, uint32_t samples, GLenum textureFormat, GLenum internalFormat, uint32_t width, uint32_t height, int index)
 		{
 			bool multisample = samples > 1;
 			if(multisample)
@@ -36,7 +36,7 @@ namespace Voxymore::Core {
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -144,12 +144,17 @@ namespace Voxymore::Core {
 				{
 					case FramebufferTextureFormat::RGBA8:
 					{
-						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, m_Specification.Width, m_Specification.Height, i);
+						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
 						break;
 					}
 					case FramebufferTextureFormat::RGBA16:
 					{
-						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA16, m_Specification.Width, m_Specification.Height, i);
+						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA16, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+						break;
+					}
+					case FramebufferTextureFormat::RED_INTEGER:
+					{
+						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 						break;
 					}
 					default:

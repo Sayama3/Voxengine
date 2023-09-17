@@ -16,6 +16,7 @@ namespace Voxymore::Core {
 		// Color
 		RGBA8,
 		RGBA16,
+		RED_INTEGER,
 
 		// Depth/Stencil
 		DEPTH24STENCIL8,
