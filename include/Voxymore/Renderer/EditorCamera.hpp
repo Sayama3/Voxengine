@@ -46,6 +46,9 @@ namespace Voxymore::Core
 		inline void SetViewportHovered(bool viewportHovered) { m_ViewportHovered = viewportHovered;}
 		inline void EnableMovement(bool enable) { m_EnableMovement = enable;}
 		inline bool MovementIsEnable() const { return m_EnableMovement;}
+
+		void SetFocusTarget(const glm::vec3& position);
+		glm::vec3 GetFocusPoint() const { return m_FocalPoint; }
 	private:
 		void UpdateProjection();
 		void UpdateView();

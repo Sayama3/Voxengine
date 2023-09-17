@@ -201,4 +201,9 @@ namespace Voxymore::Core
 	{
 		return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
 	}
+
+	void EditorCamera::SetFocusTarget(const glm::vec3 &position)
+	{
+		m_FocalPoint = position;
+	}
 }// namespace Voxymore::Core
