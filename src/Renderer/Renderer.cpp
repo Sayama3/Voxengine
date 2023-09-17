@@ -50,12 +50,13 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 	}
 
-	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform) {
+	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform, int entityId) {
 		VXM_PROFILE_FUNCTION();
 		//        VXM_CORE_ASSERT(s_Data.CameraBuffer.ViewProjectionMatrix != glm::zero<glm::mat4>(), "A valid View Projection Matrix is required to submit data to the renderer.");
 
 
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		shader->Bind();
@@ -65,13 +66,14 @@ namespace Voxymore::Core {
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
-	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform)
+	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		//		VXM_CORE_ASSERT(s_Data.ViewProjectionMatrix != glm::zero<glm::mat4>(), "A valid View Projection Matrix is required to submit data to the renderer.");
 
 
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		//		material->SetUniformMat4("u_Projection.ViewProjectionMatrix", s_Data.ViewProjectionMatrix);
