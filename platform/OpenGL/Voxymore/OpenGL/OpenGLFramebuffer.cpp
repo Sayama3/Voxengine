@@ -280,7 +280,7 @@ namespace Voxymore::Core {
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
 		auto spec = m_ColorAttachmentSpecifications[index];
 
-		glClearTexImage(index, Utils::TextureTarget(m_Specification.Samples > 1), Utils::GetTextureFormat(spec.TextureFormat), Utils::GetTextureValueType(spec.TextureFormat), valuePtr);
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetTextureFormat(spec.TextureFormat), Utils::GetTextureValueType(spec.TextureFormat), valuePtr);
 	}
 } // Voxymore
 // Core
