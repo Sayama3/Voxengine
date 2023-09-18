@@ -71,7 +71,11 @@ namespace Voxymore::Core {
 
         virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
         virtual uint32_t GetDepthAttachmentRendererID() const = 0;
-		virtual void ClearColorAttachment(uint32_t index, const void* valuePtr) = 0;
+
+		virtual void ClearColorAttachment(uint32_t index, uint8_t value) = 0;
+		virtual void ClearColorAttachment(uint32_t index, uint32_t value) = 0;
+		virtual void ClearColorAttachment(uint32_t index, int value) = 0;
+		virtual void ClearColorAttachment(uint32_t index, float value) = 0;
     };
 
 } // Voxymore

@@ -96,14 +96,14 @@ namespace Voxymore::Core {
 			return 0;
 		}
 
-		static GLenum GetTextureValueType(FramebufferTextureFormat format)
+		static GLenum GetInternalTextureFormat(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{
-				case FramebufferTextureFormat::RGBA8: return GL_FLOAT;
-				case FramebufferTextureFormat::RGBA16: return GL_FLOAT;
-				case FramebufferTextureFormat::RED_INTEGER: return GL_INT;
-				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_FLOAT;
+				case FramebufferTextureFormat::RGBA8: return GL_RGBA;
+				case FramebufferTextureFormat::RGBA16: return GL_RGBA;
+				case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
 			}
 			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
 			return 0;
@@ -157,7 +157,7 @@ namespace Voxymore::Core {
 
 		bool multisample = m_Specification.Samples > 1;
 
-		if(m_ColorAttachmentSpecifications.size())
+		if(!m_ColorAttachmentSpecifications.empty())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
 
@@ -166,29 +166,7 @@ namespace Voxymore::Core {
 			{
 				auto spec = m_ColorAttachmentSpecifications[i];
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
-				switch (spec.TextureFormat)
-				{
-					case FramebufferTextureFormat::RGBA8:
-					{
-						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
-						break;
-					}
-					case FramebufferTextureFormat::RGBA16:
-					{
-						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA16, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
-						break;
-					}
-					case FramebufferTextureFormat::RED_INTEGER:
-					{
-						Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
-						break;
-					}
-					default:
-					{
-						VXM_ASSERT(false, "The Texture Format {0} is not handled for the creation of a color texture.");
-					}
-
-				}
+				Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, Utils::GetTextureFormat(spec.TextureFormat), Utils::GetInternalTextureFormat(spec.TextureFormat), m_Specification.Width, m_Specification.Height, i);
 			}
 		}
 
@@ -196,18 +174,7 @@ namespace Voxymore::Core {
 		{
 			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
 			Utils::BindTexture(multisample, m_DepthAttachment);
-			switch (m_DepthAttachmentSpecification.TextureFormat)
-			{
-				case FramebufferTextureFormat::DEPTH24STENCIL8:
-				{
-					Utils::AttachmentDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
-					break;
-				}
-				default:
-				{
-					VXM_ASSERT(false, "The Texture Format {0} is not handled for the creation of a depth texture.");
-				}
-			}
+			Utils::AttachmentDepthTexture(m_DepthAttachment, m_Specification.Samples, Utils::GetTextureFormat(m_DepthAttachmentSpecification.TextureFormat), Utils::GetInternalTextureFormat(m_DepthAttachmentSpecification.TextureFormat), m_Specification.Width, m_Specification.Height);
 		}
 
 		if(m_ColorAttachments.size() > 1)
@@ -275,12 +242,36 @@ namespace Voxymore::Core {
 		return pixelData;
 	}
 
-	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, const void* valuePtr)
+	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, uint8_t value)
 	{
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
-		auto spec = m_ColorAttachmentSpecifications[index];
+		auto& spec = m_ColorAttachmentSpecifications[index];
 
-		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetTextureFormat(spec.TextureFormat), Utils::GetTextureValueType(spec.TextureFormat), valuePtr);
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetInternalTextureFormat(spec.TextureFormat), GL_UNSIGNED_BYTE, &value);
+	}
+
+	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, uint32_t value)
+	{
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
+		auto& spec = m_ColorAttachmentSpecifications[index];
+
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetInternalTextureFormat(spec.TextureFormat), GL_UNSIGNED_INT, &value);
+	}
+
+	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, int value)
+	{
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
+		auto& spec = m_ColorAttachmentSpecifications[index];
+
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetInternalTextureFormat(spec.TextureFormat), GL_INT, &value);
+	}
+
+	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, float value)
+	{
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
+		auto& spec = m_ColorAttachmentSpecifications[index];
+
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::GetInternalTextureFormat(spec.TextureFormat), GL_FLOAT, &value);
 	}
 } // Voxymore
 // Core
