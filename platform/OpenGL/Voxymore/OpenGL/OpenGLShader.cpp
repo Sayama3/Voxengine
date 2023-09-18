@@ -572,8 +572,9 @@ namespace Voxymore::Core
 
 			if (!cacheValid) {
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.c_str(), options);
-				if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
-					VXM_CORE_ASSERT(false, module.GetErrorMessage());
+				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
+				{
+					VXM_CORE_ASSERT(false, "Shader ({0}) - Pass {1}\n{2}", m_FilePath, Utils::ShaderTypeToString(stage), module.GetErrorMessage());
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
