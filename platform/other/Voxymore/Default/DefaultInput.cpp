@@ -16,7 +16,7 @@ namespace Voxymore::Core {
         return keyState == GLFW_PRESS || keyState == GLFW_REPEAT;
     }
 
-    bool Input::IsMouseButtonPressed(MouseButton button)
+    bool Input::IsMouseButtonPressed(Mouse button)
     {
         VXM_PROFILE_FUNCTION();
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());

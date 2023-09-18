@@ -12,7 +12,7 @@ namespace Voxymore::Core {
     class Input {
     public:
         static bool IsKeyPressed(Key keycode);
-        static bool IsMouseButtonPressed(MouseButton button);
+        static bool IsMouseButtonPressed(Mouse button);
         static float GetMouseX();
         static float GetMouseY();
         static std::pair<float, float> GetMousePosition();

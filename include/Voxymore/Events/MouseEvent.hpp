@@ -6,6 +6,7 @@
 #define VOXYMORE_MOUSEEVENT_HPP
 
 #include "Event.hpp"
+#include "Voxymore/Core/MouseButtonCodes.hpp"
 
 namespace Voxymore::Core {
 
@@ -54,24 +55,26 @@ namespace Voxymore::Core {
     class MouseButtonEvent : public Event
     {
     public:
-        inline int GetMouseButton() const { return m_Button; }
+        inline Mouse GetMouseButton() const { return m_Button; }
 
         EVENT_CLASS_CATEGORY(EventCategory::EventCategoryMouse | EventCategory::EventCategoryInput | EventCategory::EventCategoryMouseButton)
     protected:
-        inline MouseButtonEvent(const int button) : m_Button(button) {}
+        inline MouseButtonEvent(const Mouse button) : m_Button(button) {}
+        inline MouseButtonEvent(const int button) : m_Button(static_cast<Mouse>(button)) {}
 
-        int m_Button;
+        Mouse m_Button;
     };
 
     class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
         inline MouseButtonPressedEvent(const int button) : MouseButtonEvent(button) {}
+        inline MouseButtonPressedEvent(const Mouse button) : MouseButtonEvent(button) {}
 
         inline std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonPressedEvent: " << m_Button;
+            ss << "MouseButtonPressedEvent: " << static_cast<int>(m_Button);
             return ss.str();
         }
 
@@ -82,11 +85,12 @@ namespace Voxymore::Core {
     {
     public:
         inline MouseButtonReleasedEvent(const int button) : MouseButtonEvent(button) {}
+        inline MouseButtonReleasedEvent(const Mouse button) : MouseButtonEvent(button) {}
 
         inline std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonReleasedEvent: " << m_Button;
+            ss << "MouseButtonReleasedEvent: " << static_cast<int>(m_Button);
             return ss.str();
         }
 
