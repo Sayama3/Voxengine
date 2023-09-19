@@ -17,11 +17,17 @@
 #endif
 
 #ifndef __FUNCSIG__
-#ifdef __PRETTY_FUNCTION__
-    #define __FUNCSIG__ __PRETTY_FUNCTION__
-#else
-    #define __FUNCSIG__ __FUNCTION__
+	#ifdef __PRETTY_FUNCTION__
+		#define __FUNCSIG__ __PRETTY_FUNCTION__
+	#else
+		#define __FUNCSIG__ __FUNCTION__
+	#endif
 #endif
+
+#ifdef VXM_USE_SIMPLE_FUNCTION
+	#define VXM_FUNC __FUNCTION__
+#else
+	#define VXM_FUNC __FUNCSIG__
 #endif
 
 #ifndef STB_IMAGE_IMPLEMENTATION
