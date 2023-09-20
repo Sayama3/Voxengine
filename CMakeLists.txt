@@ -81,6 +81,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/UniformBuffer.hpp
         src/Renderer/EditorCamera.cpp
         include/Voxymore/Renderer/EditorCamera.hpp
+        src/Scene/SceneManager.cpp
+        include/Voxymore/Scene/SceneManager.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
