@@ -22,7 +22,7 @@ namespace Voxymore::Core
 		virtual void DeserializeSystem(YAML::Node& componentNode) = 0;
 		virtual void SerializeSystem(YAML::Emitter& Emitter) = 0;
 	public:
-		virtual const std::string& GetName() const = 0;
+		virtual const std::string GetName() const = 0;
 		inline virtual void OnAttachToScene(Scene& scene) {}
 		virtual void Update(Scene& scene, TimeStep ts) = 0;
 		inline virtual void OnDetachFromScene(Scene& scene) {}
@@ -42,7 +42,7 @@ namespace Voxymore::Core
 #define VXM_IMPLEMENT_SYSTEM(SYS) private: \
     static ::Voxymore::Core::Ref<SYS> s_Instance; \
 public:                                    \
-	inline virtual const std::string& GetName() const override { return #SYS; };                                   \
+	inline virtual const std::string GetName() const override { return #SYS; }; \
     inline static ::Voxymore::Core::Ref<SYS> GetInstance() { return s_Instance; }\
 	inline static ::Voxymore::Core::Ref<SYS> CreateSystem() \
 	{ \
