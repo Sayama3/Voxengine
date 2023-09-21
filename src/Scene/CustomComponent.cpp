@@ -52,6 +52,12 @@ void BoatComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEnti
 	emitter << KEYVAL("Speed", boat.m_Speed);
 }
 
+void BoatComponent::OnImGuiRender(Entity sourceEntity)
+{
+	auto& boat = sourceEntity.GetComponent<BoatComponent>();
+	ImGui::DragFloat("Speed", &boat.m_Speed);
+}
+
 std::string BoatComponent::GetName()
 {
 	return "BoatComponent";

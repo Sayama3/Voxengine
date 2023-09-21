@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <imgui.h>
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
@@ -19,6 +20,7 @@ namespace Voxymore::Core
 		bool (*HasComponent)(Entity);
 		void (*SerializeComponent)(YAML::Emitter &/*Emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
 		void (*DeserializeComponent)(YAML::Node& /*componentNode*/, Entity/*targetEntity*/); // TODO: Change for own "deserializer"
+		void (*OnImGuiRender)(Entity/*sourceEntity*/);
 	};
 
 	class ComponentManager
@@ -46,6 +48,7 @@ namespace Voxymore::Core
 			cc.HasComponent = T::HasComponent;
 			cc.SerializeComponent = T::SerializeComponent;
 			cc.DeserializeComponent = T::DeserializeComponent;
+			cc.OnImGuiRender = T::OnImGuiRender;
 			ComponentManager::AddComponent(cc);
 		}
 	};
@@ -55,6 +58,8 @@ namespace Voxymore::Core
 	static bool HasComponent(::Voxymore::Core::Entity e);\
 	static void DeserializeComponent(YAML::Node& componentNode, ::Voxymore::Core::Entity targetEntity); \
 	static void SerializeComponent(YAML::Emitter& Emitter, ::Voxymore::Core::Entity sourceEntity); \
+	static void OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
+	static void DrawComponent(::Voxymore::Core::Entity sourceEntity); \
 	static std::string GetName();
 
 #define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> VXM_COMBINE(s_ComponentCreator, __LINE__)

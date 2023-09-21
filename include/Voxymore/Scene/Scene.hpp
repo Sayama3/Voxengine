@@ -63,7 +63,7 @@ namespace Voxymore::Core
 		entt::registry m_Registry;
 		std::vector<Ref<GameplaySystem>> m_Systems;
 		std::string m_Name;
-	private:
+	public:
 		inline entt::registry& GetRegistry() { return m_Registry; }
 		inline const entt::registry& GetRegistry() const { return m_Registry; }
 	};

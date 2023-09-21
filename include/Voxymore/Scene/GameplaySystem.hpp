@@ -3,12 +3,17 @@
 //
 
 #include <string>
+#include <imgui.h>
 #include <unordered_map>
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Input.hpp"
+#include "Voxymore/Core/KeyCodes.hpp"
+#include "Voxymore/Core/MouseButtonCodes.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Components.hpp"
 
 namespace Voxymore::Core
 {
@@ -21,6 +26,7 @@ namespace Voxymore::Core
 	protected:
 		virtual void DeserializeSystem(YAML::Node& componentNode) = 0;
 		virtual void SerializeSystem(YAML::Emitter& Emitter) = 0;
+		virtual void OnImGuiRender() = 0;
 	public:
 		virtual const std::string GetName() const = 0;
 		inline virtual void OnAttachToScene(Scene& scene) {}
@@ -41,7 +47,7 @@ namespace Voxymore::Core
 
 #define VXM_IMPLEMENT_SYSTEM(SYS) private: \
     static ::Voxymore::Core::Ref<SYS> s_Instance; \
-public:                                    \
+public: \
 	inline virtual const std::string GetName() const override { return #SYS; }; \
     inline static ::Voxymore::Core::Ref<SYS> GetInstance() { return s_Instance; }\
 	inline static ::Voxymore::Core::Ref<SYS> CreateSystem() \
@@ -62,8 +68,15 @@ class CameraControllerSystem : public ::Voxymore::Core::GameplaySystem
 protected:
 	virtual void DeserializeSystem(YAML::Node& componentNode) override;
 	virtual void SerializeSystem(YAML::Emitter& emitter) override;
+	virtual void OnImGuiRender() override;
 public:
 	virtual void Update(::Voxymore::Core::Scene& scene, ::Voxymore::Core::TimeStep ts) override;
 private:
 	float m_Speed = 5.0f;
+	::Voxymore::Core::Key m_ForwardKey = ::Voxymore::Core::Key::W;
+	::Voxymore::Core::Key m_BackwardKey = ::Voxymore::Core::Key::S;
+	::Voxymore::Core::Key m_RightKey = ::Voxymore::Core::Key::D;
+	::Voxymore::Core::Key m_LeftKey = ::Voxymore::Core::Key::A;
+	::Voxymore::Core::Key m_UpKey = ::Voxymore::Core::Key::E;
+	::Voxymore::Core::Key m_DownKey = ::Voxymore::Core::Key::Q;
 };

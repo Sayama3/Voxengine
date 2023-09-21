@@ -9,6 +9,7 @@
 #include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"
+#include "Voxymore/Scene/CustomComponent.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 
 
