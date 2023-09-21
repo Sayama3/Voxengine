@@ -48,12 +48,27 @@ namespace Voxymore::Core
 			return component;
 		}
 
+		template<typename T,  typename... Args>
+		inline T& GetOrAddComponent(Args &&...args)
+		{
+			if(HasComponent<T>())
+			{
+				return GetComponent<T>();
+			}
+			else
+			{
+				return AddComponent<T>(std::forward<Args>(args)...);
+			}
+		}
+
 		template<typename T>
 		inline void RemoveComponent()
 		{
 			VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
 			m_Scene->m_Registry.remove<T>(m_EntityID);
 		}
+
+
 
 		inline operator bool() const { return IsValid(); }
 		inline operator entt::entity() const { return m_EntityID; }

@@ -6,11 +6,7 @@
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/Core.hpp"
-#include <yaml-cpp/yaml.h>
-
-#define KEY(x) YAML::Key << x
-#define VAL(x) YAML::Value << x
-#define KEYVAL(x, y) KEY(x) << VAL(y)
+#include "Voxymore/Core/YamlHelper.hpp"
 
 namespace YAML {
 	template<>

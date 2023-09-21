@@ -19,7 +19,7 @@ namespace Voxymore::Core
 		static Ref<Scene> CreateScene(const std::filesystem::path& filepath);
 
 		static Ref<Scene> GetScene(const std::string& name);
-		static Ref<Scene> DeleteScene(const std::string& name);
+		static void DeleteScene(const std::string& name);
 	private:
 		static std::unordered_map<std::string, Ref<Scene>> m_Scenes;
 	};

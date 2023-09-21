@@ -38,7 +38,7 @@ namespace Voxymore::Core
 		return m_Scenes[name];
 	}
 
-	Ref<Scene> SceneManager::DeleteScene(const std::string &name)
+	void SceneManager::DeleteScene(const std::string &name)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Scenes.contains(name), "The scene {0} don't exist.", name);

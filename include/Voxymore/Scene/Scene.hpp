@@ -54,6 +54,7 @@ namespace Voxymore::Core
 	private:
 		template<typename T>
 		void OnComponentAdded(entt::entity entity, T& component);
+		int FindSystem(Ref<GameplaySystem>& system) const;
 	public:
 		// Helper:
 		Entity GetPrimaryCameraEntity();
