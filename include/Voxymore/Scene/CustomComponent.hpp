@@ -8,7 +8,6 @@
 #include <vector>
 #include <imgui.h>
 #include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 
 // ======== CustomComponent ========
@@ -16,11 +15,17 @@ namespace Voxymore::Core
 {
 	struct ComponentChecker
 	{
+public:
 		std::string ComponentName;
+		uint64_t ComponentHash;
+	
+		const std::string& GetName() const {return ComponentName;}
 		bool (*HasComponent)(Entity);
 		void (*SerializeComponent)(YAML::Emitter &/*Emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
 		void (*DeserializeComponent)(YAML::Node& /*componentNode*/, Entity/*targetEntity*/); // TODO: Change for own "deserializer"
 		void (*OnImGuiRender)(Entity/*sourceEntity*/);
+		void (*AddComponent)(Entity);
+		void (*RemoveComponent)(Entity);
 	};
 
 	class ComponentManager
@@ -41,34 +46,42 @@ namespace Voxymore::Core
 	public:
 		inline ComponentCreator()
 		{
+			VXM_CORE_ASSERT(!s_Created, "The Component {0} has already been created.", typeid(T).name())
 			std::string name = T::GetName();
 			if(ComponentManager::HasComponent(name)) return;
 			ComponentChecker cc;
 			cc.ComponentName = name;
+			cc.ComponentHash = typeid(T).hash_code();
 			cc.HasComponent = T::HasComponent;
+			cc.AddComponent = T::AddComponent;
+			cc.RemoveComponent = T::RemoveComponent;
 			cc.SerializeComponent = T::SerializeComponent;
 			cc.DeserializeComponent = T::DeserializeComponent;
 			cc.OnImGuiRender = T::OnImGuiRender;
 			ComponentManager::AddComponent(cc);
+			s_Created = true;
 		}
 	};
 
 }
-#define VXM_IMPLEMENT_COMPONENT() public:\
-	static bool HasComponent(::Voxymore::Core::Entity e);\
+#define VXM_IMPLEMENT_COMPONENT(COMP) private:\
+	static ::Voxymore::Core::ComponentCreator<COMP> s_ComponentCreator;\
+public:\
+	inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<COMP>();}\
+	inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddComponent<COMP>(); }\
+	inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<COMP>(); }\
 	static void DeserializeComponent(YAML::Node& componentNode, ::Voxymore::Core::Entity targetEntity); \
 	static void SerializeComponent(YAML::Emitter& Emitter, ::Voxymore::Core::Entity sourceEntity); \
 	static void OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
 	static void DrawComponent(::Voxymore::Core::Entity sourceEntity); \
 	static std::string GetName();
 
-#define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> VXM_COMBINE(s_ComponentCreator, __LINE__)
+#define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator;
 
 // ======== BoatComponent ========
 class BoatComponent
 {
-public:
-	VXM_IMPLEMENT_COMPONENT();
+	VXM_IMPLEMENT_COMPONENT(BoatComponent);
 private:
 	float m_Speed = 10.0f;
 };

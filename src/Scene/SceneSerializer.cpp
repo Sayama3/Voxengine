@@ -229,6 +229,7 @@ namespace Voxymore::Core
 					cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<bool>());
 				}
 
+				
 			}
 		}
 		return true;

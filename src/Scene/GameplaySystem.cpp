@@ -3,14 +3,28 @@
 //
 
 #include "Voxymore/Scene/GameplaySystem.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
 
 namespace Voxymore::Core
 {
 	std::unordered_map<std::string, Ref<GameplaySystem>> SystemManager::s_Systems;
+	std::unordered_map<std::string, std::vector<std::string>> SystemManager::s_SystemToScene;
+	std::unordered_map<std::string, bool> SystemManager::s_SystemEnabled;
+
+	Path SystemManager::GetPath(const std::string& name)
+	{
+		return GetPath(name);
+	}
 	void SystemManager::AddSystem(std::string name, Ref<GameplaySystem> system)
 	{
 		VXM_CORE_ASSERT(!s_Systems.contains(name), "The System '{0}' already exist.", name);
 		s_Systems[name] = system;
+		s_SystemToScene[name] = {};
+		s_SystemEnabled[name] = true;
+		if(HasSaveFile(name))
+		{
+			FillSystem(name);
+		}
 	}
 
 	Ref<GameplaySystem> SystemManager::GetSystem(const std::string& name)
@@ -27,6 +41,104 @@ namespace Voxymore::Core
 			names.push_back(kv.first);
 		}
 		return names;
+	}
+	
+	bool SystemManager::HasSaveFile(const std::string& name)
+	{
+		return FileSystem::Exist(GetPath(name));
+	}
+
+	void SystemManager::FillSystem(const std::string& name)
+	{
+		YAML::Node data = FileSystem::ReadFileAsYAML(GetPath(name));
+		YAML::Node systemNode = data[name];
+		if(!systemNode)
+		{
+			return;
+		}
+
+		Ref<GameplaySystem> system = GetSystem(name);
+	
+		s_SystemEnabled[name] = systemNode["Enable"].as<bool>();
+		auto sceneNodes = systemNode["Scenes"];
+		s_SystemToScene[name].clear();
+		if(sceneNodes)
+		{
+			VXM_CORE_ASSERT(sceneNodes.IsSequence(), "The scene node should be a sequence !");
+			if(sceneNodes.IsSequence())
+			{
+				for (auto && sceneNode : sceneNodes)
+				{
+					s_SystemToScene[name].push_back(sceneNode.as<std::string>());
+				}
+			}
+		}
+		system->DeserializeSystem(systemNode);
+	} 
+
+	void SystemManager::WriteSystem(YAML::Emitter& out, const std::string& name)
+	{
+		auto sys = GetSystem(name);
+		out << KEYVAL(name, YAML::BeginMap);
+		out << KEYVAL("Enable", s_SystemEnabled[name]);
+		out << KEYVAL("Scenes", YAML::BeginSeq);
+		for (std::string& sceneName : s_SystemToScene[name])
+		{
+			out << sceneName;
+		}
+		out << YAML::EndSeq;
+		sys->SerializeSystem(out);
+		out << YAML::EndMap;
+	}
+
+	void SystemManager::SaveSystem(const std::string& name)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		WriteSystem(out, name);
+		out << YAML::EndMap;
+		FileSystem::WriteYamlFile(GetPath(name), out);
+	}
+	void SystemManager::LoadSystem(const std::string& name)
+	{
+		if(HasSaveFile(name)) FillSystem(name);
+	}
+	
+	bool SystemManager::SystemIsEnable(const std::string& name)
+	{
+		VXM_CORE_ASSERT(s_SystemEnabled.contains(name), "The system named {0} doesn't exist...");
+		return s_SystemEnabled[name];
+	}
+
+	std::vector<std::string>& SystemManager::GetSystemScenes(const std::string& name)
+	{
+		VXM_CORE_ASSERT(s_SystemToScene.contains(name), "The system named {0} doesn't exist...");
+		return s_SystemToScene[name];
+	}
+
+	
+	void SystemManager::AddSceneToSystem(const std::string& systemName, const std::string& sceneName)
+	{
+		VXM_CORE_ASSERT(s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
+		auto& scenes = s_SystemToScene[systemName];
+		scenes.push_back(sceneName);
+	}
+
+	
+	void SystemManager::AddSceneToSystemIfNotExist(const std::string& systemName, const std::string& sceneName)
+	{
+		VXM_CORE_ASSERT(s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
+		auto& scenes = s_SystemToScene[systemName];
+		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
+		if(containIndex == scenes.end()) scenes.push_back(sceneName);
+	}
+
+	void SystemManager::RemoveSceneFromSystem(const std::string& systemName, const std::string& sceneName)
+	{
+		VXM_CORE_ASSERT(s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
+		auto& scenes = s_SystemToScene[systemName];
+		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
+		if(containIndex != scenes.end()) scenes.erase(containIndex);
 	}
 }
 

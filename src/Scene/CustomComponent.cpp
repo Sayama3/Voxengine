@@ -24,7 +24,7 @@ namespace Voxymore::Core
 	{
 		for (auto& c : s_Components)
 		{
-			if(c.ComponentName == componentName) {
+			if(c.GetName() == componentName) {
 				return true;
 			}
 		}
@@ -37,10 +37,6 @@ using namespace Voxymore::Core;
 
 VXM_CREATE_COMPONENT(BoatComponent);
 
-bool BoatComponent::HasComponent(Entity e)
-{
-	return e.HasComponent<BoatComponent>();
-}
 void BoatComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
 {
 	auto &boat = targetEntity.GetOrAddComponent<BoatComponent>();

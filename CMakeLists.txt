@@ -88,6 +88,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/GameplaySystem.hpp
         src/Scene/GameplaySystem.cpp
         include/Voxymore/Core/YamlHelper.hpp
+        include/Voxymore/Core/FileSystem.hpp
+        src/Core/FileSystem.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
