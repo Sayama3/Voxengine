@@ -2,16 +2,26 @@
 // Created by ianpo on 24/08/2023.
 //
 
+#include <utility>
+
+#include "Voxymore/Debug/Instrumentor.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Scene/Entity.hpp"
+#include "Voxymore/Scene/GameplaySystem.hpp"
+#include "Voxymore/Scene/CustomComponent.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 
 
 namespace Voxymore::Core
 {
-	static uint32_t count = 0;
-	Scene::Scene()
+	static uint32_t entityCount = 0;
+	static uint32_t sceneCount = 0;
+	Scene::Scene() : m_Name("NoName")
+	{
+	  m_Name.append(std::to_string(sceneCount++));
+	}
+	Scene::Scene(std::string name) : m_Name(std::move(name))
 	{
 	}
 
@@ -21,6 +31,7 @@ namespace Voxymore::Core
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
+		VXM_PROFILE_FUNCTION();
 		Renderer::BeginScene(camera);
 
 		auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
@@ -34,8 +45,19 @@ namespace Voxymore::Core
 
 	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
+		VXM_PROFILE_FUNCTION();
+
 		// TODO: make it happen only when the scene play !
 		{
+			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
+			for (Ref<GameplaySystem>& system : m_Systems)
+			{
+				system->Update(*this, ts);
+			}
+		}
+
+		{
+			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
 			m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
 		  	{
 			 	if(!nsc.IsValid())
@@ -83,7 +105,7 @@ namespace Voxymore::Core
 
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = name.empty() ? "SceneEntity_" +std::to_string(count++) : name;
+		tag.Tag = name.empty() ? "SceneEntity_" +std::to_string(entityCount++) : name;
 
 		return entity;
 	}
@@ -108,6 +130,7 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
 		m_Registry.destroy(entity);
 	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto cameraView = m_Registry.view<CameraComponent>();
@@ -120,6 +143,32 @@ namespace Voxymore::Core
 			}
 		}
 		return Entity();
+	}
+
+	void Scene::AddSystem(Ref<GameplaySystem>& system)
+	{
+		system->OnAttachToScene(*this);
+		m_Systems.push_back(system);
+	}
+
+	void Scene::RemoveSystem(Ref<GameplaySystem>& system)
+	{
+		int systemIndex = FindSystem(system);
+		VXM_CORE_ASSERT(systemIndex >= 0, "The system isn't part of the Scene.");
+		system->OnDetachFromScene(*this);
+		m_Systems.erase(m_Systems.begin() + systemIndex);
+	}
+
+	int Scene::FindSystem(Ref<GameplaySystem> &system) const
+	{
+		for (int i = 0; i < m_Systems.size(); ++i)
+		{
+			if(m_Systems[i]->GetName() == system->GetName())
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	template<typename T>

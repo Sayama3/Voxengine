@@ -67,4 +67,8 @@
     #define VXM_ASSERT(condition, ...)
 #endif
 
+#ifndef BIT
+#define BIT(X) (1 << X)
+#endif
+
 #endif //VOXYMORE_MACROS_HPP

@@ -6,11 +6,8 @@
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Components.hpp"
 #include "Voxymore/Core/Core.hpp"
-#include <yaml-cpp/yaml.h>
-
-#define KEY(x) YAML::Key << x
-#define VAL(x) YAML::Value << x
-#define KEYVAL(x, y) KEY(x) << VAL(y)
+#include "Voxymore/Core/YamlHelper.hpp"
+#include "Voxymore/Scene/CustomComponent.hpp"
 
 namespace YAML {
 	template<>
@@ -233,6 +230,15 @@ namespace Voxymore::Core
 					cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<bool>());
 				}
 
+				for (const ComponentChecker& cc : ComponentManager::GetComponents())
+				{
+					YAML::Node yamlcc = yamlEntity[cc.ComponentName];
+					if(yamlcc)
+					{
+						cc.AddComponent(entity);
+						cc.DeserializeComponent(yamlcc, entity);
+					}
+				}
 			}
 		}
 		return true;
@@ -305,8 +311,18 @@ namespace Voxymore::Core
 			out << YAML::EndMap; // CameraComponent
 		}
 
-		//TODO: serialize the MeshComponent.
 		//TODO: serialize the NativeScriptComponent.
+		//TODO: serialize the MeshComponent.
+
+		for (const ComponentChecker& cc : ComponentManager::GetComponents())
+		{
+			if(cc.HasComponent(entity))
+			{
+				out << KEYVAL(cc.ComponentName, YAML::BeginMap);
+				cc.SerializeComponent(out, entity);
+				out << YAML::EndMap;
+			}
+		}
 
 		out << YAML::EndMap; // Entity
 	}

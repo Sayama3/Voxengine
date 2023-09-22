@@ -22,4 +22,7 @@ namespace Voxymore::Core {
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
+
+	template<typename T>
+	using Weak = std::weak_ptr<T>;
 }
