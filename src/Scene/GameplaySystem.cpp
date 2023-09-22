@@ -103,13 +103,20 @@ namespace Voxymore::Core
 	}
 	void SystemManager::LoadSystem(const std::string& name)
 	{
+		VXM_CORE_ASSERT(s_Systems.contains(name), "The system named {0} doesn't exist...");
 		if(HasSaveFile(name)) FillSystem(name);
 	}
 	
-	bool SystemManager::SystemIsEnable(const std::string& name)
+	bool SystemManager::IsActive(const std::string& name)
 	{
 		VXM_CORE_ASSERT(s_SystemEnabled.contains(name), "The system named {0} doesn't exist...");
 		return s_SystemEnabled[name];
+	}
+
+	void SystemManager::SetActive(const std::string &systemName, bool enable)
+	{
+		VXM_CORE_ASSERT(s_SystemEnabled.contains(systemName), "The system named {0} doesn't exist...");
+		s_SystemEnabled[systemName] = enable;
 	}
 
 	std::vector<std::string>& SystemManager::GetSystemScenes(const std::string& name)

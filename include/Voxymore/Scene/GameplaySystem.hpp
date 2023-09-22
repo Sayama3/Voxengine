@@ -52,7 +52,8 @@ namespace Voxymore::Core
 		static void AddSystem(std::string name, Ref<GameplaySystem> system);
 		static void SaveSystem(const std::string& name);
 		static void LoadSystem(const std::string& name);
-		static bool SystemIsEnable(const std::string& name);
+		static bool IsActive(const std::string& name);
+		static void SetActive(const std::string& systemName, bool enable);
 
 		static void AddSceneToSystem(const std::string& systemName, const std::string& sceneName);
 		static void AddSceneToSystemIfNotExist(const std::string& systemName, const std::string& sceneName);
