@@ -16,31 +16,31 @@ namespace Voxymore::Core
             
             case FileSource::EditorAsset:
                 {
-                    folder = "EditorAsset/";
+                    folder = "EditorAssets/";
                     break;
                 }
             
             case FileSource::Asset:
                 {
-                    folder = "Asset/";
+                    folder = "Assets/";
                     break;
                 }
             
             case FileSource::EditorShader:
                 {
-                    folder = "EditorShader/";
+                    folder = "EditorShaders/";
                     break;
                 }
             
             case FileSource::Shader:
                 {
-                    folder = "Shader/";
+                    folder = "Shaders/";
                     break;
                 }
             
             case FileSource::System:
                 {
-                    folder = "System/";
+                    folder = "Systems/";
                     break;
                 }
             default:
