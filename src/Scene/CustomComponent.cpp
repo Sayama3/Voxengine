@@ -24,7 +24,7 @@ namespace Voxymore::Core
 	{
 		for (auto& c : s_Components)
 		{
-			if(c.GetName() == componentName) {
+			if(c.ComponentName == componentName) {
 				return true;
 			}
 		}

@@ -18,8 +18,7 @@ namespace Voxymore::Core
 public:
 		std::string ComponentName;
 		uint64_t ComponentHash;
-	
-		const std::string& GetName() const {return ComponentName;}
+
 		bool (*HasComponent)(Entity);
 		void (*SerializeComponent)(YAML::Emitter &/*Emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
 		void (*DeserializeComponent)(YAML::Node& /*componentNode*/, Entity/*targetEntity*/); // TODO: Change for own "deserializer"

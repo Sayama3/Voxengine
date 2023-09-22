@@ -2,6 +2,8 @@
 // Created by ianpo on 21/09/2023.
 //
 
+#include <utility>
+
 #include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 
@@ -13,12 +15,12 @@ namespace Voxymore::Core
 
 	Path SystemManager::GetPath(const std::string& name)
 	{
-		return GetPath(name);
+		return {FileSource::System, name};
 	}
 	void SystemManager::AddSystem(std::string name, Ref<GameplaySystem> system)
 	{
 		VXM_CORE_ASSERT(!s_Systems.contains(name), "The System '{0}' already exist.", name);
-		s_Systems[name] = system;
+		s_Systems[name] = std::move(system);
 		s_SystemToScene[name] = {};
 		s_SystemEnabled[name] = true;
 		if(HasSaveFile(name))
