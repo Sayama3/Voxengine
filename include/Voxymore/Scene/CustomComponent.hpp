@@ -75,7 +75,11 @@ public:\
 	static void DrawComponent(::Voxymore::Core::Entity sourceEntity); \
 	static std::string GetName();
 
-#define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator;
+#define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \
+template<> \
+void ::Voxymore::Core::Scene::OnComponentAdded<COMP>(entt::entity entity, COMP& component){} \
+template<> \
+bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
 
 // ======== BoatComponent ========
 class BoatComponent

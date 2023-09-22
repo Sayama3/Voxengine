@@ -31,6 +31,8 @@ namespace Voxymore::Core
 		return false;
 	}
 
+	template<typename T>
+	bool ComponentCreator<T>::s_Created = false;
 }
 // ======== BoatComponent ========
 using namespace Voxymore::Core;
