@@ -43,6 +43,12 @@ namespace Voxymore::Core
                     folder = "Systems/";
                     break;
                 }
+
+            case FileSource::Scene:
+                {
+                    folder = "Scenes/";
+                    break;
+                }
             default:
                 break;
             }

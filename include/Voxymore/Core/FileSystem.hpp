@@ -15,6 +15,7 @@ namespace Voxymore::Core
         EditorShader,
         Shader,
         System,
+        Scene,
     };
 
     enum class FilePermission
