@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 #include <filesystem>
 
@@ -31,6 +31,7 @@ namespace Voxymore::Core
         FileSource Source = FileSource::None;
         std::filesystem::path Path;
         std::filesystem::path GetFullPath() const;
+		inline bool empty() const {return Path.empty() || Source == FileSource::None;}
     };
 
     class FileSystem

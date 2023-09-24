@@ -24,7 +24,7 @@ namespace Voxymore::Core{
         return nullptr;
     }
 
-    Ref<Shader> Shader::Create(const std::string& path)
+    Ref<Shader> Shader::Create(const Path& path)
     {
         switch (Renderer::GetAPI()) {
 
@@ -40,7 +40,7 @@ namespace Voxymore::Core{
         return nullptr;
     }
 
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& path)
+    Ref<Shader> Shader::Create(const std::string& name, const Path& path)
     {
         switch (Renderer::GetAPI()) {
 
@@ -67,14 +67,14 @@ namespace Voxymore::Core{
         m_Shaders[name] = shader;
     }
 
-    Ref<Shader> ShaderLibrary::Load(const std::string& path)
+    Ref<Shader> ShaderLibrary::Load(const Path& path)
     {
         auto shader = Shader::Create(path);
         Add(shader);
         return m_Shaders[shader->GetName()];
     }
 
-    Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& path)
+    Ref<Shader> ShaderLibrary::Load(const std::string& name, const Path& path)
     {
         auto shader = Shader::Create(name, path);
         Add(name, shader);

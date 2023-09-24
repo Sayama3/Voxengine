@@ -17,6 +17,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
 #endif
 
+#include "Voxymore/Core/FileSystem.hpp"
 #include <imgui.h>
 
 namespace Voxymore::Core {
@@ -54,6 +55,7 @@ namespace Voxymore::Core {
         inline bool GetBlockEvents() const {return m_BlockEvents;}
 
 		void AddFont(const std::string& path, float size, FontType fontType, bool isDefault = false);
+		inline void AddFont(const Path& path, float size, FontType fontType, bool isDefault = false) { AddFont(path.GetFullPath().string(), size, fontType, isDefault); }
 		ImFont* GetFont(FontType fontType);
 		void PushFont(FontType fontType);
 		void SetDarkThemeColors();

@@ -12,8 +12,8 @@ namespace Voxymore::Core {
     // TODO: Analyse shaders to get the different uniform inside.
     class OpenGLShader : public Shader {
     public:
-        OpenGLShader(const std::string& name, const std::string& path);
-        OpenGLShader(const std::string& path);
+        OpenGLShader(const std::string& name, const Path& path);
+        OpenGLShader(const Path& path);
         OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
 
@@ -62,7 +62,7 @@ namespace Voxymore::Core {
 
 		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
     private:
-		std::string m_FilePath;
+		Path m_FilePath;
         std::string m_Name;
         unsigned int m_RendererID;
     };

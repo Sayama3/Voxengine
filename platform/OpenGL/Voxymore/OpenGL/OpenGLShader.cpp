@@ -427,7 +427,7 @@ namespace Voxymore::Core
 		}
 	}// namespace Utils
 
-	OpenGLShader::OpenGLShader(const std::string &name, const std::string &path)
+	OpenGLShader::OpenGLShader(const std::string &name, const Path &path)
 		: m_FilePath(path)
 		, m_Name(name)
 	{
@@ -442,7 +442,7 @@ namespace Voxymore::Core
 		CreateProgram();
 	}
 
-	OpenGLShader::OpenGLShader(const std::string &path)
+	OpenGLShader::OpenGLShader(const Path &path)
 		: m_FilePath(path)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -616,7 +616,7 @@ namespace Voxymore::Core
 		for (auto &&[stage, spirv]: m_VulkanSPIRV) {
 			std::string filename = m_Name;
 			if (!m_FilePath.empty()) {
-				std::filesystem::path shaderFilePath = m_FilePath;
+				std::filesystem::path shaderFilePath = m_FilePath.GetFullPath();
 				filename = shaderFilePath.filename().string();
 			}
 			bool hashChanged = m_HashesChanged[stage];
@@ -647,7 +647,7 @@ namespace Voxymore::Core
 				spirv_cross::CompilerGLSL compilerGlsl(spirv);
 				m_OpenGLSourceCode[stage] = compilerGlsl.compile();
 				auto &source = m_OpenGLSourceCode[stage];
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.c_str());
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.GetFullPath().c_str());
 
 				VXM_CORE_ASSERT(module.GetCompilationStatus() == shaderc_compilation_status_success, module.GetErrorMessage());
 

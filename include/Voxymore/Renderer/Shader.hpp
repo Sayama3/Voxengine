@@ -6,6 +6,7 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/SystemHelper.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/Math.hpp"
 #include <unordered_map>
 
@@ -169,8 +170,8 @@ namespace Voxymore::Core {
 
         virtual const std::string& GetName() const = 0;
 
-        static Ref<Shader> Create(const std::string& path);
-        static Ref<Shader> Create(const std::string& name, const std::string& path);
+        static Ref<Shader> Create(const Path& path);
+        static Ref<Shader> Create(const std::string& name, const Path& path);
         static Ref<Shader> Create(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
 
 //        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
