@@ -205,8 +205,8 @@ namespace Voxymore::Core {
     public:
         void Add(const Ref<Shader>& shader);
         void Add(const std::string& name, const Ref<Shader>& shader);
-        Ref<Shader> Load(const std::string& path);
-        Ref<Shader> Load(const std::string& name, const std::string& path);
+        Ref<Shader> Load(const Path& path);
+        Ref<Shader> Load(const std::string& name, const Path& path);
         Ref<Shader> Get(const std::string& name);
         bool Exists(const std::string& name) const;
     private:

@@ -48,7 +48,7 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) override;
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) override;
 	private:
-        std::unordered_map<ShaderType, std::string> PreProcess(const std::string& path);
+        std::unordered_map<ShaderType, std::string> PreProcess(const Path& path);
 
 		void CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string>& shaders);
 		void CompileOrGetOpenGLBinaries();

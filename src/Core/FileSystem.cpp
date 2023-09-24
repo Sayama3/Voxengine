@@ -60,7 +60,8 @@ namespace Voxymore::Core
             std::ifstream ifstream(GetPath(path));
             return ifstream;
         }
-        std::stringstream FileSystem::ReadFileAsString(const Path& path)
+
+        std::stringstream FileSystem::ReadFileAsStringStream(const Path& path)
         {
 		    std::stringstream  stringstream;
             std::ifstream ifstream(GetPath(path));
@@ -84,23 +85,41 @@ namespace Voxymore::Core
             data = YAML::Load(stringstream.str());
             return data;
         }
-        // bool FileSystem::WriteFile(const Path& path, const std::string& content)
+        // bool FileSystem::WriteFile(const path& path, const std::string& content)
         // {
         // }
-        // bool FileSystem::WriteFile(const Path& path, std::vector<uint8_t> content)
+        // bool FileSystem::WriteFile(const path& path, std::vector<uint8_t> content)
         // {
         // }
         std::filesystem::path FileSystem::GetPath(const Path& path)
         {
-            return GetRootPath(path.Source) / path.Path;
+            return GetRootPath(path.source) / path.path;
         }
         
         bool FileSystem::Exist(const Path& path)
         {
             return std::filesystem::exists(GetPath(path));
         }
+		std::string FileSystem::ReadFileAsString(const Path &path)
+		{
+			std::string result;
+			std::ifstream fileStream(GetPath(path), std::ios::in | std::ios::binary);
+			if(fileStream)
+			{
+				fileStream.seekg(0, std::ios::end);
+				result.resize(fileStream.tellg());
+				fileStream.seekg(0, std::ios::beg);
+				fileStream.read(result.data(), result.size());
+				fileStream.close();
+			}
+			else
+			{
+				VXM_CORE_ERROR("Could not open file '{0}'.", path.GetFullPath().string());
+			}
+			return result;
+		}
 
-        std::filesystem::path Path::GetFullPath() const
+		std::filesystem::path Path::GetFullPath() const
         {
             return FileSystem::GetPath(*this);
         }

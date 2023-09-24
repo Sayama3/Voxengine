@@ -9,12 +9,14 @@
 #define BIT(X) (1 << X)
 #endif
 
-#include "Core.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
 
 namespace Voxymore::Core {
     class SystemHelper {
     public:
-        inline static std::string ReadFile(const std::string &path) {
+        inline static std::string ReadFile(const Path &path) { return ReadFile(path.GetFullPath()); }
+        inline static std::string ReadFile(const std::filesystem::path &path) {
             VXM_PROFILE_FUNCTION();
             std::string result;
             std::ifstream fileStream(path, std::ios::in | std::ios::binary);
@@ -28,7 +30,7 @@ namespace Voxymore::Core {
             }
             else
             {
-                VXM_CORE_ERROR("Could not open file '{0}'.", path);
+                VXM_CORE_ERROR("Could not open file '{0}'.", path.string());
             }
             return result;
         }
