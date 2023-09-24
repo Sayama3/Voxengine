@@ -8,21 +8,27 @@ namespace Voxymore::Core
 {
 	// ======== CustomComponent ========
 
-	std::vector<ComponentChecker> ComponentManager::s_Components;
+//	std::vector<ComponentChecker> ComponentManager::s_Components;
+	ComponentManager* ComponentManager::s_ComponentManager = nullptr;
+	ComponentManager& ComponentManager::GetInstance()
+	{
+		if(s_ComponentManager == nullptr) s_ComponentManager = new ComponentManager();
+		return *s_ComponentManager;
+	}
 
 	void ComponentManager::AddComponent(const ComponentChecker &component)
 	{
-		s_Components.push_back(component);
+		GetInstance().s_Components.push_back(component);
 	}
 
 	const std::vector<ComponentChecker> &ComponentManager::GetComponents()
 	{
-		return s_Components;
+		return GetInstance().s_Components;
 	}
 
 	bool ComponentManager::HasComponent(const std::string &componentName)
 	{
-		for (auto& c : s_Components)
+		for (auto& c : GetInstance().s_Components)
 		{
 			if(c.ComponentName == componentName) {
 				return true;
@@ -44,6 +50,7 @@ void BoatComponent::DeserializeComponent(YAML::Node &componentNode, Entity targe
 	auto &boat = targetEntity.GetOrAddComponent<BoatComponent>();
 	boat.m_Speed = componentNode["Speed"].as<float>();
 }
+
 void BoatComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
 {
 	auto& boat = sourceEntity.GetComponent<BoatComponent>();
@@ -54,9 +61,4 @@ void BoatComponent::OnImGuiRender(Entity sourceEntity)
 {
 	auto& boat = sourceEntity.GetComponent<BoatComponent>();
 	ImGui::DragFloat("Speed", &boat.m_Speed);
-}
-
-std::string BoatComponent::GetName()
-{
-	return "BoatComponent";
 }

@@ -40,11 +40,13 @@ namespace Voxymore::Core
 	class SystemManager
 	{
 	private:
-		static std::unordered_map<std::string, Ref<GameplaySystem>> s_Systems;
-		static std::unordered_map<std::string, std::vector<std::string>> s_SystemToScene;
-		static std::unordered_map<std::string, bool> s_SystemEnabled;
+		std::unordered_map<std::string, Ref<GameplaySystem>> s_Systems;
+		std::unordered_map<std::string, std::vector<std::string>> s_SystemToScene;
+		std::unordered_map<std::string, bool> s_SystemEnabled;
+		static SystemManager* s_SystemManager;
+		static SystemManager& GetInstance();
 	private:
-		static 	void WriteSystem(YAML::Emitter& out, const std::string& name);
+		static void WriteSystem(YAML::Emitter& out, const std::string& name);
 		static bool HasSaveFile(const std::string& name);
 		static void FillSystem(const std::string& name); 
 		static Path GetPath(const std::string& name);

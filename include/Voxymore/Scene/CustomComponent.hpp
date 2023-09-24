@@ -30,7 +30,9 @@ public:
 	class ComponentManager
 	{
 	private:
-		static std::vector<ComponentChecker> s_Components;
+		std::vector<ComponentChecker> s_Components;
+		static ComponentManager* s_ComponentManager;
+		static ComponentManager& GetInstance();
 	public:
 		static void AddComponent(const ComponentChecker& component);
 		static bool HasComponent(const std::string&componentName);
@@ -73,7 +75,7 @@ public:\
 	static void SerializeComponent(YAML::Emitter& Emitter, ::Voxymore::Core::Entity sourceEntity); \
 	static void OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
 	static void DrawComponent(::Voxymore::Core::Entity sourceEntity); \
-	static std::string GetName();
+	inline static std::string GetName() { return #COMP; }
 
 #define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \
 template<> \
