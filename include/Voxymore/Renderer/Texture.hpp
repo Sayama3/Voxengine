@@ -6,6 +6,7 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
 
 namespace Voxymore::Core {
 
@@ -20,7 +21,7 @@ namespace Voxymore::Core {
 
     class Texture2D : public Texture {
     public:
-        static Ref<Texture2D> Create(const std::string& path);
+        static Ref<Texture2D> Create(const Path& path);
     };
 
 } // Core

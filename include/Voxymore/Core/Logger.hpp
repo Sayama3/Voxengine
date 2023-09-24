@@ -10,6 +10,7 @@
 #endif
 
 #include <memory>
+#include <filesystem>
 #include "Voxymore/Core/Macros.hpp"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -26,8 +27,9 @@ namespace Voxymore::Core {
         static std::shared_ptr<spdlog::logger> s_CoreLogger;
         static std::shared_ptr<spdlog::logger> s_ClientLogger;
     };
-
 }
+
+
 
 #ifdef VXM_DEBUG
 //  spdlog::source_loc(__FILE__, __LINE__, __FUNCTION__ )

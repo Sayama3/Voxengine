@@ -10,7 +10,7 @@
 
 namespace Voxymore {
     namespace Core {
-        Ref<Texture2D> Core::Texture2D::Create(const std::string &path) {
+        Ref<Texture2D> Core::Texture2D::Create(const Path& path) {
 
             switch (Renderer::GetAPI()) {
 

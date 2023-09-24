@@ -13,14 +13,14 @@
 namespace Voxymore {
     namespace Core {
 
-        OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path)
+        OpenGLTexture2D::OpenGLTexture2D(const Path& path) : m_Path(path)
         {
             VXM_PROFILE_FUNCTION();
 
             stbi_set_flip_vertically_on_load(true);
             int width, height, channels;
-            stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-            VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.",path, stbi_failure_reason());
+            stbi_uc* data = stbi_load(path.GetFullPath().string().c_str(), &width, &height, &channels, 0);
+            VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.",path.GetFullPath().string(), stbi_failure_reason());
             m_Width = width;
             m_Height = height;
             m_Channels = channels;
