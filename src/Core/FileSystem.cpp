@@ -1,3 +1,4 @@
+#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 
 namespace Voxymore::Core
