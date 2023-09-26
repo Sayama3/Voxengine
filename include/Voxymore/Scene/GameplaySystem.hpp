@@ -86,21 +86,21 @@ public: \
 
 
 // ======== CameraControllerSystem ========
-class CameraControllerSystem : public ::Voxymore::Core::GameplaySystem
-{
-	VXM_IMPLEMENT_SYSTEM(CameraControllerSystem);
-protected:
-	virtual void DeserializeSystem(YAML::Node& componentNode) override;
-	virtual void SerializeSystem(YAML::Emitter& emitter) override;
-public:
-	virtual void OnImGuiRender() override;
-	virtual void Update(::Voxymore::Core::Scene& scene, ::Voxymore::Core::TimeStep ts) override;
-private:
-	float m_Speed = 5.0f;
-	::Voxymore::Core::Key m_ForwardKey = ::Voxymore::Core::Key::W;
-	::Voxymore::Core::Key m_BackwardKey = ::Voxymore::Core::Key::S;
-	::Voxymore::Core::Key m_RightKey = ::Voxymore::Core::Key::D;
-	::Voxymore::Core::Key m_LeftKey = ::Voxymore::Core::Key::A;
-	::Voxymore::Core::Key m_UpKey = ::Voxymore::Core::Key::E;
-	::Voxymore::Core::Key m_DownKey = ::Voxymore::Core::Key::Q;
-};
+//class CameraControllerSystem : public ::Voxymore::Core::GameplaySystem
+//{
+//	VXM_IMPLEMENT_SYSTEM(CameraControllerSystem);
+//protected:
+//	virtual void DeserializeSystem(YAML::Node& componentNode) override;
+//	virtual void SerializeSystem(YAML::Emitter& emitter) override;
+//public:
+//	virtual void OnImGuiRender() override;
+//	virtual void Update(::Voxymore::Core::Scene& scene, ::Voxymore::Core::TimeStep ts) override;
+//private:
+//	float m_Speed = 5.0f;
+//	::Voxymore::Core::Key m_ForwardKey = ::Voxymore::Core::Key::W;
+//	::Voxymore::Core::Key m_BackwardKey = ::Voxymore::Core::Key::S;
+//	::Voxymore::Core::Key m_RightKey = ::Voxymore::Core::Key::D;
+//	::Voxymore::Core::Key m_LeftKey = ::Voxymore::Core::Key::A;
+//	::Voxymore::Core::Key m_UpKey = ::Voxymore::Core::Key::E;
+//	::Voxymore::Core::Key m_DownKey = ::Voxymore::Core::Key::Q;
+//};

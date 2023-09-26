@@ -40,25 +40,25 @@ namespace Voxymore::Core
 	template<typename T>
 	bool ComponentCreator<T>::s_Created = false;
 }
-// ======== BoatComponent ========
-using namespace Voxymore::Core;
-
-VXM_CREATE_COMPONENT(BoatComponent);
-
-void BoatComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
-{
-	auto &boat = targetEntity.GetOrAddComponent<BoatComponent>();
-	boat.m_Speed = componentNode["Speed"].as<float>();
-}
-
-void BoatComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
-{
-	auto& boat = sourceEntity.GetComponent<BoatComponent>();
-	emitter << KEYVAL("Speed", boat.m_Speed);
-}
-
-void BoatComponent::OnImGuiRender(Entity sourceEntity)
-{
-	auto& boat = sourceEntity.GetComponent<BoatComponent>();
-	ImGui::DragFloat("Speed", &boat.m_Speed);
-}
+//// ======== BoatComponent ========
+//using namespace Voxymore::Core;
+//
+//VXM_CREATE_COMPONENT(BoatComponent);
+//
+//void BoatComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
+//{
+//	auto &boat = targetEntity.GetOrAddComponent<BoatComponent>();
+//	boat.m_Speed = componentNode["Speed"].as<float>();
+//}
+//
+//void BoatComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
+//{
+//	auto& boat = sourceEntity.GetComponent<BoatComponent>();
+//	emitter << KEYVAL("Speed", boat.m_Speed);
+//}
+//
+//void BoatComponent::OnImGuiRender(Entity sourceEntity)
+//{
+//	auto& boat = sourceEntity.GetComponent<BoatComponent>();
+//	ImGui::DragFloat("Speed", &boat.m_Speed);
+//}

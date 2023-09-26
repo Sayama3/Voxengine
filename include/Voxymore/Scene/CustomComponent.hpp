@@ -83,10 +83,10 @@ void ::Voxymore::Core::Scene::OnComponentAdded<COMP>(entt::entity entity, COMP& 
 template<> \
 bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
 
-// ======== BoatComponent ========
-class BoatComponent
-{
-	VXM_IMPLEMENT_COMPONENT(BoatComponent);
-private:
-	float m_Speed = 10.0f;
-};
+//// ======== BoatComponent ========
+//class BoatComponent
+//{
+//	VXM_IMPLEMENT_COMPONENT(BoatComponent);
+//private:
+//	float m_Speed = 10.0f;
+//};
