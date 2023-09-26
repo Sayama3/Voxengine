@@ -146,32 +146,6 @@ namespace Voxymore::Core
 		return Entity();
 	}
 
-	void Scene::AddSystem(Ref<GameplaySystem>& system)
-	{
-		system->OnAttachToScene(*this);
-		m_Systems.push_back(system);
-	}
-
-	void Scene::RemoveSystem(Ref<GameplaySystem>& system)
-	{
-		int systemIndex = FindSystem(system);
-		VXM_CORE_ASSERT(systemIndex >= 0, "The system isn't part of the Scene.");
-		system->OnDetachFromScene(*this);
-		m_Systems.erase(m_Systems.begin() + systemIndex);
-	}
-
-	int Scene::FindSystem(Ref<GameplaySystem> &system) const
-	{
-		for (int i = 0; i < m_Systems.size(); ++i)
-		{
-			if(m_Systems[i]->GetName() == system->GetName())
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-
 	template<typename T>
 	void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
 	{

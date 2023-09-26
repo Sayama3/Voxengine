@@ -46,15 +46,11 @@ namespace Voxymore::Core
 		void OnUpdateRuntime(TimeStep ts);
 		void SetViewportSize(uint32_t width, uint32_t height);
 
-		void AddSystem(Ref<GameplaySystem>& system);
-		void RemoveSystem(Ref<GameplaySystem>& system);
-
 		inline const std::string& GetName() const {return m_Name;}
 		inline void SetName(const std::string& name) {m_Name = name;}
 	private:
 		template<typename T>
 		void OnComponentAdded(entt::entity entity, T& component);
-		int FindSystem(Ref<GameplaySystem>& system) const;
 	public:
 		// Helper:
 		Entity GetPrimaryCameraEntity();
