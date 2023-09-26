@@ -53,7 +53,7 @@ namespace Voxymore::Core
 			auto systems = SystemManager::GetSystems(GetName());
 			for (Ref<GameplaySystem>& system : systems)
 			{
-				system->Update(*this, ts);
+				if(SystemManager::IsActive(system->GetName())) system->Update(*this, ts);
 			}
 		}
 
