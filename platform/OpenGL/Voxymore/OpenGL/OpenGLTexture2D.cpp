@@ -19,8 +19,10 @@ namespace Voxymore {
 
             stbi_set_flip_vertically_on_load(true);
             int width, height, channels;
-            stbi_uc* data = stbi_load(path.GetFullPath().string().c_str(), &width, &height, &channels, 0);
-            VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.",path.GetFullPath().string(), stbi_failure_reason());
+			std::string strPath = path.GetFullPath().string();
+			VXM_CORE_ASSERT(std::filesystem::exists(path.GetFullPath()), "The file {0} do not exist...", strPath);
+            stbi_uc* data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
+            VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
             m_Width = width;
             m_Height = height;
             m_Channels = channels;
