@@ -2,6 +2,8 @@
 // Created by ianpo on 21/09/2023.
 //
 
+#pragma once
+
 #include <string>
 #include <imgui.h>
 #include <unordered_map>
