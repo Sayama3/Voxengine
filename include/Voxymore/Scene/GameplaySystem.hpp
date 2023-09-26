@@ -65,6 +65,7 @@ namespace Voxymore::Core
 
 		static std::vector<std::string>& GetSystemScenes(const std::string& name);
 		static Ref<GameplaySystem> GetSystem(const std::string& name);
+		static std::vector<Ref<GameplaySystem>> GetSystems(const std::string& sceneName);
 		static std::vector<std::string> GetSystemsName();
 	};
 }

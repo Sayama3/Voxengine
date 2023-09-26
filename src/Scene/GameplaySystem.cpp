@@ -153,6 +153,22 @@ namespace Voxymore::Core
 		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
 		if(containIndex != scenes.end()) scenes.erase(containIndex);
 	}
+
+	std::vector<Ref<GameplaySystem>> SystemManager::GetSystems(const std::string &sceneName)
+	{
+		std::vector<Ref<GameplaySystem>> systems;
+		systems.reserve(GetInstance().s_Systems.size());
+		for (auto&& [systemName, system] : GetInstance().s_Systems)
+		{
+			auto& scenes = GetInstance().s_SystemToScene[systemName];
+			auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
+			if(containIndex != scenes.end())
+			{
+				systems.push_back(system);
+			}
+		}
+		return systems;
+	}
 }
 
 //// ======== CameraControllerSystem ========

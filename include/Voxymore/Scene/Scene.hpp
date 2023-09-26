@@ -61,7 +61,6 @@ namespace Voxymore::Core
 	private:
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;
-		std::vector<Ref<GameplaySystem>> m_Systems;
 		std::string m_Name;
 	public:
 		inline entt::registry& GetRegistry() { return m_Registry; }
