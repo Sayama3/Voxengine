@@ -90,6 +90,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/YamlHelper.hpp
         include/Voxymore/Core/FileSystem.hpp
         src/Core/FileSystem.cpp
+        src/Renderer/Mesh.cpp
+        include/Voxymore/Renderer/Mesh.hpp
+        src/Renderer/Model.cpp
+        include/Voxymore/Renderer/Model.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -120,7 +124,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp fastgltf::fastgltf)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
