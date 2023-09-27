@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/ImGuizmo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/entt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/fastgltf" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/glfw" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/glm" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/imgui" vcs="Git" />
