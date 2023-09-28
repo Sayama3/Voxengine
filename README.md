@@ -4,9 +4,6 @@
  
 The core engine of the Voxymore Game Engine.
 
-# Important
-Currently only compatible with Windows and Linux. No MacOS support.
-
 # Requirement
 
 You **need** to have the [Vulkan SDK]() installed.
