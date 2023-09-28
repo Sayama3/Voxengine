@@ -20,3 +20,6 @@
 [submodule "lib/ImGuizmo"]
 	path = lib/ImGuizmo
 	url = https://github.com/Sayama3/ImGuizmo
+[submodule "lib/tinygltf"]
+	path = lib/tinygltf
+	url = https://github.com/syoyo/tinygltf

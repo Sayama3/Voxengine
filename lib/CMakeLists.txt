@@ -22,4 +22,6 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
-#add_subdirectory(vulkan)
+#set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF)
+#set(TINYGLTF_INSTALL OFF)
+add_subdirectory(tinygltf)
