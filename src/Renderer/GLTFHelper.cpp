@@ -36,5 +36,78 @@ namespace Voxymore
 			}
 			return matrix;
 		}
+		int GLTFHelper::GetComponentCount(GLTF::AccessorType accessorType)
+		{
+			int count = -1;
+			switch (accessorType)
+			{
+				case GLTF::AccessorType::SCALAR: {count = 1; break;}
+				case GLTF::AccessorType::VEC2: {count = 2; break;}
+				case GLTF::AccessorType::VEC3: {count = 3; break;}
+				case GLTF::AccessorType::VEC4: {count = 4; break;}
+				case GLTF::AccessorType::MAT2: {count = 4; break;}
+				case GLTF::AccessorType::MAT3: {count = 9; break;}
+				case GLTF::AccessorType::MAT4: {count = 16; break;}
+				default: { VXM_CORE_ASSERT(false, "Accessor type '{0}' is unknown.", (int)accessorType); break; }
+			}
+			return count;
+		}
+		GLTF::AccessorType GLTFHelper::GetAccessorType(const std::string &accessorType)
+		{
+			GLTF::AccessorType accessor;
+			if(accessorType == "SCALAR") accessor = GLTF::AccessorType::SCALAR;
+			else if(accessorType == "VEC2") accessor = GLTF::AccessorType::VEC2;
+			else if(accessorType == "VEC3") accessor = GLTF::AccessorType::VEC3;
+			else if(accessorType == "VEC4") accessor = GLTF::AccessorType::VEC4;
+			else if(accessorType == "MAT2") accessor = GLTF::AccessorType::MAT2;
+			else if(accessorType == "MAT3") accessor = GLTF::AccessorType::MAT3;
+			else if(accessorType == "MAT4") accessor = GLTF::AccessorType::MAT4;
+			else { VXM_CORE_ASSERT(false, "Accessor type '{0}' is unknown.", accessorType); }
+			return accessor;
+		}
+
+		bool GLTFHelper::NodeHasMesh(const tinygltf::Node &node)
+		{
+			return node.mesh > -1;
+		}
+
+		tinygltf::Mesh& GLTFHelper::GetMesh(tinygltf::Model &model, const tinygltf::Node &node)
+		{
+			VXM_CORE_ASSERT(NodeHasMesh(node), "The node {0} must have a mesh.", node.name);
+			return model.meshes[node.mesh];
+		}
+		bool GLTFHelper::PrimitiveHasAttribute(const tinygltf::Primitive &primitive, GLTF::PrimitiveAttribute attribute, int index)
+		{
+			std::string name = GetPrimitiveAttributeString(attribute, index);
+			return primitive.attributes.contains(name);
+		}
+		std::string GLTFHelper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index)
+		{
+			std::string name;
+			switch (attribute)
+			{
+				case GLTF::PrimitiveAttribute::POSITION: name = "POSITION"; break;
+				case GLTF::PrimitiveAttribute::NORMAL: name = "NORMAL"; break;
+				case GLTF::PrimitiveAttribute::TANGENT: name = "TANGENT"; break;
+				case GLTF::PrimitiveAttribute::TEXCOORD: name = "TEXCOORD_" + std::to_string(index); break;
+				case GLTF::PrimitiveAttribute::COLOR: name = "COLOR_" + std::to_string(index); break;
+				case GLTF::PrimitiveAttribute::JOINTS: name = "JOINTS_" + std::to_string(index); break;
+				case GLTF::PrimitiveAttribute::WEIGHT: name = "WEIGHT_" + std::to_string(index); break;
+			}
+			return name;
+		}
+		GLTF::AccessorType GLTFHelper::GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute)
+		{
+			switch (attribute)
+			{
+				case GLTF::PrimitiveAttribute::POSITION: return GLTF::AccessorType::VEC3;
+				case GLTF::PrimitiveAttribute::NORMAL: return GLTF::AccessorType::VEC3;
+				case GLTF::PrimitiveAttribute::TANGENT: return GLTF::AccessorType::VEC4;
+				case GLTF::PrimitiveAttribute::TEXCOORD: return GLTF::AccessorType::VEC2;
+				case GLTF::PrimitiveAttribute::COLOR: return static_cast<GLTF::AccessorType>(GLTF::AccessorType::VEC3 | GLTF::AccessorType::VEC4);
+				case GLTF::PrimitiveAttribute::JOINTS: return GLTF::AccessorType::VEC4;
+				case GLTF::PrimitiveAttribute::WEIGHT: return GLTF::AccessorType::VEC4;
+			}
+		}
 	}// namespace Core
 }// namespace Voxymore

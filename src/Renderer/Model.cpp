@@ -6,34 +6,14 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Math.hpp"
 
+// PRIVATE USE ONLY
+#include "GLTFHelper.hpp"
 #include <tiny_gltf.h>
 
 namespace Voxymore::Core
 {
 	namespace Utils
 	{
-		glm::mat4 GetMatrix(const tinygltf::Node& node)
-		{
-			glm::mat4 matrix(1.0f);
-			if(!node.matrix.empty())
-			{
-				for (int x = 0; x < 4; ++x) {
-					for (int y = 0; y < 4; ++y) {
-						matrix[x][y] = node.matrix[x + (y*4)];
-					}
-				}
-			}
-			else
-			{
-				glm::vec3 pos = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
-				glm::quat rot = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
-				glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
-				Math::TRS(matrix, pos, rot, scale);
-			}
-			return matrix;
-		}
-
-
 		bool IsValid(int value) {return value > -1;}
 	}
 
@@ -68,14 +48,18 @@ namespace Voxymore::Core
 			for (auto nodeIndex : scene.nodes) {
 				auto& node = model.nodes[nodeIndex];
 				VXM_CORE_INFO("Iterating on the node {0}", node.name);
-				glm::mat4 matrix = Utils::GetMatrix(node);
-				if(Utils::IsValid(node.mesh))
+				glm::mat4 matrix = GLTFHelper::GetMatrix(node);
+				if(GLTFHelper::NodeHasMesh(node))
 				{
-					auto& mesh = model.meshes[node.mesh];
+					tinygltf::Mesh& mesh = GLTFHelper::GetMesh(model, node);
 					VXM_CORE_INFO("Iterating on the mesh {0}", mesh.name);
-					for(auto& primitive : mesh.primitives)
+					for(tinygltf::Primitive& primitive : mesh.primitives)
 					{
-						const tinygltf::Accessor& accessor = model.accessors[primitive.attributes["POSITION"]];
+						//TODO: fetch the primitives.
+
+						std::string attributeName = GLTFHelper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::POSITION);
+						const tinygltf::Accessor& accessor = model.accessors[primitive.attributes[attributeName]];
+
 						const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 
 						// cast to float type read only. Use accessor and bufview byte offsets to determine where position data
