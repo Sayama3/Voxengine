@@ -109,5 +109,31 @@ namespace Voxymore
 				case GLTF::PrimitiveAttribute::WEIGHT: return GLTF::AccessorType::VEC4;
 			}
 		}
+		int GLTFHelper::GetComponentByteCount(GLTF::ComponentType componentType)
+		{
+			switch (componentType) {
+				case GLTF::SignedByte: return 1;
+				case GLTF::UnsignedByte: return 1;
+				case GLTF::SignedShort: return 2;
+				case GLTF::UnsignedShort: return 2;
+				// case GLTF::SignedInt: return 4; // Deprecated ?
+				case GLTF::UnsignedInt: return 4;
+				case GLTF::Float: return 4;
+				default: return 0;
+			}
+		}
+		GLTF::PrimitiveAttribute GLTFHelper::GetPrimitiveAttribute(const std::string &attributeStr)
+		{
+			if(attributeStr == "POSITION") return GLTF::PrimitiveAttribute::POSITION;
+			else if(attributeStr == "NORMAL") return GLTF::PrimitiveAttribute::NORMAL;
+			else if(attributeStr == "TANGENT") return GLTF::PrimitiveAttribute::TANGENT;
+			else if(attributeStr.starts_with("TEXCOORD")) return GLTF::PrimitiveAttribute::TEXCOORD;
+			else if(attributeStr.starts_with("COLOR")) return GLTF::PrimitiveAttribute::COLOR;
+			else if(attributeStr.starts_with("JOINTS")) return GLTF::PrimitiveAttribute::JOINTS;
+			else if(attributeStr.starts_with("WEIGHT")) return GLTF::PrimitiveAttribute::WEIGHT;
+
+			VXM_CORE_ASSERT(false, "The attribute '{0}' is not handled.", attributeStr);
+			return (GLTF::PrimitiveAttribute)-1;
+		}
 	}// namespace Core
 }// namespace Voxymore
