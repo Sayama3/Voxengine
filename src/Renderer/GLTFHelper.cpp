@@ -4,11 +4,18 @@
 
 // Define these only in *one* .cc file.
 #define TINYGLTF_IMPLEMENTATION
+
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 
-#include <tiny_gltf.h>
 #include "GLTFHelper.hpp"
 #include "Voxymore/Core/Logger.hpp"
 
@@ -64,6 +71,23 @@ namespace Voxymore
 			else if(accessorType == "MAT4") accessor = GLTF::AccessorType::MAT4;
 			else { VXM_CORE_ASSERT(false, "Accessor type '{0}' is unknown.", accessorType); }
 			return accessor;
+		}
+
+		
+		ShaderDataType GLTFHelper::GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount)
+		{
+			switch (accessor)
+			{
+				case GLTF::POSITION: return ShaderDataType::Float3;
+				case GLTF::NORMAL: return ShaderDataType::Float3;
+				case GLTF::TANGENT: return ShaderDataType::Float4;
+				case GLTF::TEXCOORD: return ShaderDataType::Float2;
+				case GLTF::COLOR: return colorCount == 4 ? ShaderDataType::Float4 : ShaderDataType::Float3;
+				case GLTF::JOINTS: return ShaderDataType::Float3;
+				case GLTF::WEIGHT: return ShaderDataType::Float3;
+			}
+
+			return ShaderDataType::None;
 		}
 
 		bool GLTFHelper::NodeHasMesh(const tinygltf::Node &node)

@@ -8,6 +8,7 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
+#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/UniformBuffer.hpp"
@@ -18,20 +19,39 @@
 #define EXTENSION_GLB "glb"
 
 #include "Voxymore/Renderer/Mesh.hpp"
+#include <vector>
 
 namespace Voxymore::Core
 {
+	struct Node
+	{
+public:
+		Node() = default;
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : Mesh(mesh) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, std::vector<int> children) : Mesh(mesh), Children(children) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, std::vector<int> children, const glm::mat4& transform) : Mesh(mesh), Children(children), Transform(transform) {}
+public:
+		Ref<Mesh> Mesh;
+		std::vector<int> Children;
+		glm::mat4 Transform = glm::mat4(1.0f);
+		inline bool HasMesh() const { return Mesh != nullptr;}
+	};
 
 	class Model
 	{
 	private:
-		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
-		std::vector<Ref<IndexBuffer>> m_IndexBuffers;
 		std::vector<Ref<Mesh>> m_Meshes;
+		std::vector<Node> m_Nodes;
+		std::vector<std::vector<int>> m_Scenes;
 	private:
 		Model(const std::filesystem::path& path);
+		Node& GetNode(int index);
 	public:
 		static Ref<Model> CreateModel(const Path& path);
+		void Bind() const;
+		void Unbind() const;
+		void Draw(const glm::mat4& transform = glm::mat4(1.0f)) const;
+
 	};
 
 } // namespace Voxymore::Core

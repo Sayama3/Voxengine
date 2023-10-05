@@ -8,6 +8,19 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+
+#include <vendor/stb_image.h>
 #include <tiny_gltf.h>
 
 namespace Voxymore::Core
@@ -23,8 +36,8 @@ namespace Voxymore::Core
 			COLOR,
 			JOINTS,
 			WEIGHT,
-			COUNT,
 		};
+		static const size_t PrimitiveAttributeCount = 7;
 
 		enum AccessorType : int
 		{
@@ -79,7 +92,9 @@ namespace Voxymore::Core
 		static GLTF::AccessorType GetAccessorType(const std::string& accessorType);
 		static int GetComponentCount(GLTF::AccessorType accessorType);
 		static int GetComponentByteCount(GLTF::ComponentType componentType);
+		static ShaderDataType GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount = 4);
 		static glm::mat4 GetMatrix(const tinygltf::Node& node);
+
 		static bool NodeHasMesh(const tinygltf::Node& node);
 		static tinygltf::Mesh &GetMesh(tinygltf::Model &model, const tinygltf::Node &node);
 		static bool PrimitiveHasAttribute(const tinygltf::Primitive& primitive, GLTF::PrimitiveAttribute attribute, int index = 0);

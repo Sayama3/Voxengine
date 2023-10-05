@@ -14,20 +14,23 @@
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include <optional>
+#include <vector>
 
 namespace Voxymore::Core
 {
 	class Model;
+
+
 	class Mesh
 	{
 		friend class Model;
 	private:
-		Ref<VertexBuffer> m_VertexBuffer;
-		Ref<IndexBuffer> m_IndexBuffer;
-		Ref<VertexArray> m_VertexArray;
-		std::optional<Ref<Material>> m_Material;
-		Ref<Shader> m_Shader;
+		std::vector<Ref<VertexArray>> m_VertexArrays;
 	public:
+		Mesh() = default;
+		void Bind() const;
+		void Unbind() const;
+		void Draw(const glm::mat4& transform = glm::mat4(1.0f)) const;
 	};
 
 } // namespace Voxymore::Core
