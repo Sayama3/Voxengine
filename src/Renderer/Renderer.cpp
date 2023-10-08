@@ -82,6 +82,50 @@ namespace Voxymore::Core {
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
+	
+	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.EntityId = entityId;
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+
+		mesh->Bind();
+
+		//TODO: Bind associated Material/Texture/Shaders/etc...
+		for (const auto& va : mesh->GetVertexArrays())
+		{
+			RenderCommand::DrawIndexed(va);
+		}
+	}
+
+	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		for (int nodeIndex : model->GetDefaultScene())
+		{
+			Submit(model, model->GetNode(nodeIndex), transform, entityId);
+		}
+	}
+
+	void Renderer::Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		glm::mat4 currentTransform = transform * node.Transform;
+		if(node.HasMesh())
+		{		
+			Submit(node.Mesh, currentTransform, entityId);
+		}
+
+		if(!node.HasChildren())
+		{
+			for(const int i : node.Children)
+			{
+				Submit(model, model->GetNode(i), currentTransform, entityId);
+			}
+		}
+	}
+
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{

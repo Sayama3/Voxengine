@@ -9,7 +9,8 @@
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Scene/CustomComponent.hpp"
 
-namespace YAML {
+namespace YAML
+{
 	template<>
 	struct convert<glm::vec2>
 	{

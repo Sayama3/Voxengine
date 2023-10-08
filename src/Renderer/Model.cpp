@@ -51,6 +51,7 @@ namespace Voxymore::Core
 		for (auto& mesh : model.meshes)
 		{
 			Ref<Mesh> m = CreateRef<Mesh>();
+			// TODO: set the shader (or material ?) of the shader.
 			m->m_VertexArrays.reserve(mesh.primitives.size());
 			for (auto& primitive : mesh.primitives)
 			{
@@ -102,21 +103,20 @@ namespace Voxymore::Core
 		}
 	}
 
-	Node& Model::GetNode(int index)
+//	Node& Model::GetNode(int index)
+//	{
+//		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
+//		return m_Nodes[index];
+//	}
+
+	const Node& Model::GetNode(int index) const 
 	{
 		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
 		return m_Nodes[index];
 	}
-
-	void Model::Bind() const
+	const std::vector<int> &Model::GetDefaultScene() const
 	{
-	}
-
-	void Model::Unbind() const
-	{
-	}
-
-	void Model::Draw(const glm::mat4 &transform) const
-	{
+		VXM_CORE_ASSERT(!m_Scenes.empty(), "No scene on the model...");
+		return  m_Scenes[m_DefaultScene];
 	}
 } // namespace Voxymore::Core

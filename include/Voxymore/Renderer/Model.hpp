@@ -35,6 +35,7 @@ public:
 		std::vector<int> Children;
 		glm::mat4 Transform = glm::mat4(1.0f);
 		inline bool HasMesh() const { return Mesh != nullptr;}
+		inline bool HasChildren() const { return !Children.empty();}
 	};
 
 	class Model
@@ -43,15 +44,15 @@ public:
 		std::vector<Ref<Mesh>> m_Meshes;
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
+		int m_DefaultScene = 0;
 	private:
 		Model(const std::filesystem::path& path);
-		Node& GetNode(int index);
 	public:
 		static Ref<Model> CreateModel(const Path& path);
-		void Bind() const;
-		void Unbind() const;
-		void Draw(const glm::mat4& transform = glm::mat4(1.0f)) const;
-
+		const Node& GetNode(int index) const;
+		const std::vector<int>& GetDefaultScene() const;
+	private:
+//		Node& GetNode(int index);
 	};
 
 } // namespace Voxymore::Core

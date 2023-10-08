@@ -132,6 +132,8 @@ namespace Voxymore
 				case GLTF::PrimitiveAttribute::JOINTS: return GLTF::AccessorType::VEC4;
 				case GLTF::PrimitiveAttribute::WEIGHT: return GLTF::AccessorType::VEC4;
 			}
+			VXM_CORE_ASSERT(false, "the attribute {0} is not valid.", attribute);
+			return (GLTF::AccessorType)-1;
 		}
 		int GLTFHelper::GetComponentByteCount(GLTF::ComponentType componentType)
 		{

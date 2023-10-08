@@ -13,6 +13,7 @@ namespace Voxymore::Core
 		{
 			va->Bind();
 		}
+		if(m_Shader) m_Shader.value()->Bind();
 	}
 
 	void Mesh::Unbind() const
@@ -21,9 +22,6 @@ namespace Voxymore::Core
 		{
 			va->Unbind();
 		}
-	}
-
-	void Mesh::Draw(const glm::mat4& transform) const
-	{
+		if(m_Shader) m_Shader.value()->Unbind();
 	}
 } // namespace Voxymore::Core
