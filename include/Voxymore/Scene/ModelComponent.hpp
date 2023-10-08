@@ -14,7 +14,8 @@ namespace Voxymore::Core
     public:
         inline const Path& GetPath() const {return m_Path;}
         inline const std::filesystem::path& GetLocalPath() const {return m_Path.path;}
-        inline void SetPath(std::filesystem::path p) {m_Path.path = std::move(p);}
+		inline void SetPath(const std::filesystem::path& p) {m_Path.path = p;}
+		inline void SetPath(const Path& p) {m_Path = p;}
         inline const Ref<Model>& GetModel() const {return m_Model;}
         void LoadModel();
     private:
