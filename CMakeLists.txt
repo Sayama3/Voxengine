@@ -98,7 +98,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Renderer/Model.cpp
         include/Voxymore/Scene/ModelComponent.hpp
         src/Scene/ModelComponent.cpp
-        src/Core/GLTFImplementation.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
