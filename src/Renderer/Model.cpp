@@ -20,11 +20,12 @@ namespace Voxymore::Core
 
 	Ref<Model> Model::CreateModel(const Path &path)
 	{
-		return CreateRef<Model>(path.GetFullPath());
+		return CreateRef<Model>(path);
 	}
 
-	Model::Model(const std::filesystem::path &path)
+	Model::Model(const Path &p) : m_Path(p)
 	{
+		auto path = p.GetFullPath();
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;

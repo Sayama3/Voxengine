@@ -45,9 +45,9 @@ public:
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
 		int m_DefaultScene = 0;
-	private:
-		Model(const std::filesystem::path& path);
+		Path m_Path;
 	public:
+		Model(const Path& path);
 		static Ref<Model> CreateModel(const Path& path);
 		const Node& GetNode(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
