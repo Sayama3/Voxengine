@@ -5,17 +5,16 @@
 // Define these only in *one* .cc file.
 #define TINYGLTF_IMPLEMENTATION
 
-#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
-#endif
+
 #define TINYGLTF_NO_INCLUDE_STB_IMAGE
 
-#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
 
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 
+#include <vendor/stb_image.h>
+#include <tiny_gltf.h>
 #include "GLTFHelper.hpp"
 #include "Voxymore/Core/Logger.hpp"
 

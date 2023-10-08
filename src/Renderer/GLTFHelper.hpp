@@ -10,16 +10,6 @@
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
-
-#define TINYGLTF_NO_INCLUDE_STB_IMAGE
-
-#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#endif
-
 #include <vendor/stb_image.h>
 #include <tiny_gltf.h>
 

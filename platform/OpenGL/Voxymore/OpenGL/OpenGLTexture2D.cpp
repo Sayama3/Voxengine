@@ -4,9 +4,6 @@
 
 #include "OpenGLTexture2D.hpp"
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
 #include "vendor/stb_image.h"
 #include "glad/glad.h"
 
