@@ -92,6 +92,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Core/FileSystem.cpp
         src/Renderer/GLTFHelper.hpp
         src/Renderer/GLTFHelper.cpp
+        include/Voxymore/Renderer/Model.hpp
+        src/Renderer/Model.cpp
         include/Voxymore/Scene/ModelComponent.hpp
         src/Scene/ModelComponent.cpp
 )
