@@ -90,8 +90,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/YamlHelper.hpp
         include/Voxymore/Core/FileSystem.hpp
         src/Core/FileSystem.cpp
-        src/Renderer/GLTFHelper.cpp
         src/Renderer/GLTFHelper.hpp
+        src/Renderer/GLTFHelper.cpp
+        include/Voxymore/Scene/ModelComponent.hpp
+        src/Scene/ModelComponent.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
