@@ -123,34 +123,8 @@ namespace Voxymore::Core
 	{
 		return FileSystem::GetPath(*this);
 	}
-} // namespace Voxymore::Core
 
-
-namespace YAML
-{
-	template<>
-	struct convert<::Voxymore::Core::Path> {
-		inline static Node encode(::Voxymore::Core::Path &path)
-		{
-			Node node;
-			node["Source"] = static_cast<int>(path.source);
-			node["Path"] = path.path.string();
-			return node;
-		}
-
-		inline static bool decode(const Node &node, ::Voxymore::Core::Path &rhs)
-		{
-			if (!node.IsMap() || node.size() != 2) return false;
-			rhs.source = static_cast<::Voxymore::Core::FileSource>(node["Source"].as<int>());
-			rhs.path = node["Path"].as<std::string>();
-			return true;
-		}
-	};
-}
-
-namespace Voxymore::Core
-{
-	inline YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
+	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginMap;
@@ -159,4 +133,27 @@ namespace Voxymore::Core
 		out << YAML::EndMap;
 		return out;
 	}
-}
+} // namespace Voxymore::Core
+
+
+//namespace YAML
+//{
+//	template<>
+//	struct convert<::Voxymore::Core::Path> {
+//		static Node encode(::Voxymore::Core::Path &path)
+//		{
+//			Node node;
+//			node["Source"] = static_cast<int>(path.source);
+//			node["Path"] = path.path.string();
+//			return node;
+//		}
+//
+//		static bool decode(const Node &node, ::Voxymore::Core::Path &rhs)
+//		{
+//			if (!node.IsMap() || node.size() != 2) return false;
+//			rhs.source = static_cast<::Voxymore::Core::FileSource>(node["Source"].as<int>());
+//			rhs.path = node["Path"].as<std::string>();
+//			return true;
+//		}
+//	};
+//}

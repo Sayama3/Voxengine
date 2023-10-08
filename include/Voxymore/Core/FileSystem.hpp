@@ -59,3 +59,25 @@ namespace Voxymore::Core
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p);
 } // namespace Voxymore::Core
+
+namespace YAML
+{
+	template<>
+	struct convert<::Voxymore::Core::Path> {
+		inline static Node encode(::Voxymore::Core::Path &path)
+		{
+			Node node;
+			node["Source"] = static_cast<int>(path.source);
+			node["Path"] = path.path.string();
+			return node;
+		}
+
+		inline static bool decode(const Node &node, ::Voxymore::Core::Path &rhs)
+		{
+			if (!node.IsMap() || node.size() != 2) return false;
+			rhs.source = static_cast<::Voxymore::Core::FileSource>(node["Source"].as<int>());
+			rhs.path = node["Path"].as<std::string>();
+			return true;
+		}
+	};
+}
