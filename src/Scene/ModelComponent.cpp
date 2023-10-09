@@ -1,5 +1,6 @@
 #include "Voxymore/Scene/ModelComponent.hpp"
-#include <misc/cpp/imgui_stdlib.h>
+#include <cstring>
+#include <cmath>
 
 // ======== ModelComponent ========
 namespace Voxymore::Core
@@ -22,7 +23,6 @@ namespace Voxymore::Core
     {
     	auto& model = sourceEntity.GetComponent<ModelComponent>();
 		auto& p = model.m_Path;
-		std::string pStr = p.path.string();
 
 		std::vector<std::string> PossibleFileSources = GetFileSourceNames();
 		int currentSourceIndex = static_cast<int>(p.source); // Here we store our selection data as an index.
@@ -44,9 +44,16 @@ namespace Voxymore::Core
 			ImGui::EndCombo();
 		}
 
-		if(ImGui::InputText("Path", &pStr))
+		//TODO: use the cpp style ImGui InputText
+		const std::string pathStr = p.path.string();
+		const int BufferSize = 1024;
+		char path[BufferSize];
+		int fillSize = std::min(static_cast<int>(pathStr.size()), (BufferSize-1));
+		std::memcpy(path, pathStr.c_str(), fillSize);
+		std::memset(path+fillSize, 0, sizeof(path)-fillSize);
+		if(ImGui::InputText("Path", path, BufferSize))
 		{
-			p.path = pStr;
+			p.path = path;
 		}
     }
 
