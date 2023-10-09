@@ -18,8 +18,10 @@ namespace Voxymore::Core
 		inline void SetPath(const Path& p) {m_Path = p;}
         inline const Ref<Model>& GetModel() const {return m_Model;}
         void LoadModel();
+		inline bool IsLoaded() const { return m_IsLoaded; }
     private:
     	Path m_Path;
         Ref<Model> m_Model;
+		bool m_IsLoaded = false;
     };
 }

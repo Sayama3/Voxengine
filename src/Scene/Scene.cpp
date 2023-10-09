@@ -5,12 +5,13 @@
 #include <utility>
 
 #include "Voxymore/Debug/Instrumentor.hpp"
-#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Components.hpp"
+#include "Voxymore/Scene/CustomComponent.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"
-#include "Voxymore/Scene/CustomComponent.hpp"
-#include "Voxymore/Renderer/Renderer.hpp"
+#include "Voxymore/Scene/ModelComponent.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 
 
 namespace Voxymore::Core
@@ -19,7 +20,7 @@ namespace Voxymore::Core
 	static uint32_t sceneCount = 0;
 	Scene::Scene() : m_Name("NoName")
 	{
-	  m_Name.append(std::to_string(sceneCount++));
+		m_Name.append(std::to_string(sceneCount++));
 	}
 	Scene::Scene(std::string name) : m_Name(std::move(name))
 	{
@@ -32,12 +33,33 @@ namespace Voxymore::Core
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
 		VXM_PROFILE_FUNCTION();
+
+		{
+			auto models = m_Registry.view<ModelComponent>();
+			for (entt::entity entity : models)
+			{
+				auto& model = models.get<ModelComponent>(entity);
+				if(!model.IsLoaded()) model.LoadModel();
+			}
+		}
+
 		Renderer::BeginScene(camera);
 
-		auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
-		for (entt::entity entity : meshesView) {
-			auto [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-			Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+
+		{
+			auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
+			for (auto entity: meshesView) {
+				auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
+				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+			}
+		}
+
+		{
+			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+			for (auto entity: modelsView) {
+				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+				Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+			}
 		}
 
 		Renderer::EndScene();
@@ -46,6 +68,15 @@ namespace Voxymore::Core
 	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
+
+		{
+			auto models = m_Registry.view<ModelComponent>();
+			for (entt::entity entity : models)
+			{
+				auto& model = models.get<ModelComponent>(entity);
+				if(!model.IsLoaded()) model.LoadModel();
+			}
+		}
 
 		// TODO: make it happen only when the scene play !
 		{
@@ -60,15 +91,15 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
 			m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
-		  	{
-			 	if(!nsc.IsValid())
-				{
-					nsc.CreateInstance();
-					nsc.Instance->m_Entity = Entity{entity, this};
-					nsc.Instance->OnCreate();
-			 	}
-				nsc.Instance->OnUpdate(ts);
-		  	});
+														  {
+															if(!nsc.IsValid())
+															{
+																nsc.CreateInstance();
+																nsc.Instance->m_Entity = Entity{entity, this};
+																nsc.Instance->OnCreate();
+															}
+															nsc.Instance->OnUpdate(ts);
+														  });
 		}
 
 		Camera* mainCamera = nullptr;
@@ -90,10 +121,20 @@ namespace Voxymore::Core
 		{
 			Renderer::BeginScene(*mainCamera, cameraTransform);
 
-			auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
-			for (auto entity: meshesView) {
-				auto [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+			{
+				auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
+				for (auto entity: meshesView) {
+					auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
+					Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
+
+			{
+				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+				for (auto entity: modelsView) {
+					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				}
 			}
 
 			Renderer::EndScene();

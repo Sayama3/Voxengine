@@ -18,6 +18,19 @@ namespace Voxymore::Core
 		Scene,
 	};
 
+	inline std::vector<std::string> GetFileSourceNames()
+	{
+		return {
+			"None",
+			"EditorAsset",
+			"Asset",
+			"EditorShader",
+			"Shader",
+			"System",
+			"Scene",
+		};
+	}
+
 	enum class FilePermission
 	{
 		None = 0,
