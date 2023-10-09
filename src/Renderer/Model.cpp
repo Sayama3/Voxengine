@@ -26,6 +26,7 @@ namespace Voxymore::Core
 	Model::Model(const Path &p) : m_Path(p)
 	{
 		auto path = p.GetFullPath();
+		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;
@@ -104,13 +105,13 @@ namespace Voxymore::Core
 		}
 	}
 
-//	Node& Model::GetNode(int index)
-//	{
-//		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
-//		return m_Nodes[index];
-//	}
+	//	Node& Model::GetNode(int index)
+	//	{
+	//		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
+	//		return m_Nodes[index];
+	//	}
 
-	const Node& Model::GetNode(int index) const 
+	const Node& Model::GetNode(int index) const
 	{
 		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
 		return m_Nodes[index];

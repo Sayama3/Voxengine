@@ -15,8 +15,8 @@
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 
-#define EXTENSION_GLTF "gltf"
-#define EXTENSION_GLB "glb"
+#define EXTENSION_GLTF ".gltf"
+#define EXTENSION_GLB ".glb"
 
 #include "Voxymore/Renderer/Mesh.hpp"
 #include <vector>
@@ -25,12 +25,12 @@ namespace Voxymore::Core
 {
 	struct Node
 	{
-public:
+	public:
 		Node() = default;
 		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : Mesh(mesh) {}
 		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, std::vector<int> children) : Mesh(mesh), Children(children) {}
 		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, std::vector<int> children, const glm::mat4& transform) : Mesh(mesh), Children(children), Transform(transform) {}
-public:
+	public:
 		Ref<Mesh> Mesh;
 		std::vector<int> Children;
 		glm::mat4 Transform = glm::mat4(1.0f);
@@ -52,7 +52,7 @@ public:
 		const Node& GetNode(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
 	private:
-//		Node& GetNode(int index);
+		//		Node& GetNode(int index);
 	};
 
 } // namespace Voxymore::Core
