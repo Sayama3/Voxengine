@@ -58,7 +58,7 @@ namespace Voxymore::Core
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
 			for (auto entity: modelsView) {
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-				Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
 			}
 		}
 
@@ -133,7 +133,7 @@ namespace Voxymore::Core
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
 				for (auto entity: modelsView) {
 					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+					if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
 				}
 			}
 
