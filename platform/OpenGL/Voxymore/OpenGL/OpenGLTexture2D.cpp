@@ -4,7 +4,7 @@
 
 #include "OpenGLTexture2D.hpp"
 
-#include "vendor/stb_image.h"
+#include <stb_image.h>
 #include "glad/glad.h"
 
 namespace Voxymore {

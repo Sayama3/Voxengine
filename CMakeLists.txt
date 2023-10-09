@@ -21,7 +21,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/EntryPoint.hpp
         include/Voxymore/Core/Logger.hpp
         include/Voxymore/Core/Math.hpp
-        include/vendor/stb_image.h
+        vendor/stb_image.h
         include/Voxymore/Core/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp
         include/Voxymore/Events/KeyEvent.hpp
@@ -125,11 +125,16 @@ set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+
+target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vendor>"
+        "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp)
-target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw tinygltf)
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 

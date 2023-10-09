@@ -22,11 +22,3 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
-set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF)
-set(TINYGLTF_BUILD_GL_EXAMPLES OFF)
-set(TINYGLTF_BUILD_VALIDATOR_EXAMPLE OFF)
-set(TINYGLTF_BUILD_BUILDER_EXAMPLE OFF)
-set(TINYGLTF_HEADER_ONLY ON)
-set(TINYGLTF_INSTALL OFF)
-
-add_subdirectory(tinygltf)

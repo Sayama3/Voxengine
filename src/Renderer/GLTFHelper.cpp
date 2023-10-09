@@ -7,13 +7,11 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#define TINYGLTF_NO_INCLUDE_STB_IMAGE
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 
-#include <vendor/stb_image.h>
+#include <stb_image.h>
 #include <tiny_gltf.h>
 #include "GLTFHelper.hpp"
 #include "Voxymore/Core/Logger.hpp"
