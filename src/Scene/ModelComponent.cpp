@@ -64,4 +64,6 @@ namespace Voxymore::Core
 		m_Model = Model::CreateModel(m_Path);
 		m_IsLoaded = true;
 	}
+
+	//TODO: implement on ModelComponent change (i.e. change model when user choose to change the model)
 }
