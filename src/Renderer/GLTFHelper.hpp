@@ -10,7 +10,6 @@
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
-#include <stb_image.h>
 #include <tiny_gltf.h>
 
 namespace Voxymore::Core
