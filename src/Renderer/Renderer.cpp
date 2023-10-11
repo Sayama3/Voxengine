@@ -82,7 +82,7 @@ namespace Voxymore::Core {
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
-	
+
 	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -93,9 +93,9 @@ namespace Voxymore::Core {
 		mesh->Bind();
 
 		//TODO: Bind associated Material/Texture/Shaders/etc...
-		for (const auto& va : mesh->GetVertexArrays())
+		for (const auto& sm : mesh->GetSubMeshes())
 		{
-			RenderCommand::DrawIndexed(va);
+			RenderCommand::DrawIndexed(sm.GetVertexArray());
 		}
 	}
 
@@ -113,7 +113,7 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		glm::mat4 currentTransform = transform * node.Transform;
 		if(node.HasMesh())
-		{		
+		{
 			Submit(node.Mesh, currentTransform, entityId);
 		}
 

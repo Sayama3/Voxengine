@@ -69,26 +69,28 @@ namespace Voxymore::Core
 			TRIANGLE_STRIP = 5,
 			TRIANGLE_FAN = 6,
 		};
+
+		class Helper
+		{
+		private:
+		public:
+			static std::string GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index = 0);
+			static GLTF::AccessorType GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute);
+			static GLTF::AccessorType GetAccessorType(const std::string& accessorType);
+			static int GetComponentCount(GLTF::AccessorType accessorType);
+			static int GetComponentByteCount(GLTF::ComponentType componentType);
+			static ShaderDataType GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount = 4);
+			static glm::mat4 GetMatrix(const tinygltf::Node& node);
+
+			static bool NodeHasMesh(const tinygltf::Node& node);
+			static tinygltf::Mesh &GetMesh(tinygltf::Model &model, const tinygltf::Node &node);
+			static bool PrimitiveHasAttribute(const tinygltf::Primitive& primitive, GLTF::PrimitiveAttribute attribute, int index = 0);
+			static GLTF::PrimitiveAttribute GetPrimitiveAttribute(const std::string &attributeStr);
+		};
 	}
 
 
-	class GLTFHelper
-	{
-	private:
-	public:
-		static std::string GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index = 0);
-		static GLTF::AccessorType GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute);
-		static GLTF::AccessorType GetAccessorType(const std::string& accessorType);
-		static int GetComponentCount(GLTF::AccessorType accessorType);
-		static int GetComponentByteCount(GLTF::ComponentType componentType);
-		static ShaderDataType GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount = 4);
-		static glm::mat4 GetMatrix(const tinygltf::Node& node);
 
-		static bool NodeHasMesh(const tinygltf::Node& node);
-		static tinygltf::Mesh &GetMesh(tinygltf::Model &model, const tinygltf::Node &node);
-		static bool PrimitiveHasAttribute(const tinygltf::Primitive& primitive, GLTF::PrimitiveAttribute attribute, int index = 0);
-		static GLTF::PrimitiveAttribute GetPrimitiveAttribute(const std::string &attributeStr);
-	};
 
 } // namespace Voxymore::Core
 

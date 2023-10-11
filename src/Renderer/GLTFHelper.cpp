@@ -5,11 +5,11 @@
 #include "GLTFHelper.hpp"
 #include "Voxymore/Core/Logger.hpp"
 
-namespace Voxymore
+namespace Voxymore::Core
 {
-	namespace Core
+	namespace GLTF
 	{
-		glm::mat4 GLTFHelper::GetMatrix(const tinygltf::Node& node)
+		glm::mat4 Helper::GetMatrix(const tinygltf::Node& node)
 		{
 			glm::mat4 matrix(1.0f);
 			if(!node.matrix.empty())
@@ -29,7 +29,7 @@ namespace Voxymore
 			}
 			return matrix;
 		}
-		int GLTFHelper::GetComponentCount(GLTF::AccessorType accessorType)
+		int Helper::GetComponentCount(GLTF::AccessorType accessorType)
 		{
 			int count = -1;
 			switch (accessorType)
@@ -45,7 +45,7 @@ namespace Voxymore
 			}
 			return count;
 		}
-		GLTF::AccessorType GLTFHelper::GetAccessorType(const std::string &accessorType)
+		GLTF::AccessorType Helper::GetAccessorType(const std::string &accessorType)
 		{
 			GLTF::AccessorType accessor;
 			if(accessorType == "SCALAR") accessor = GLTF::AccessorType::SCALAR;
@@ -60,7 +60,7 @@ namespace Voxymore
 		}
 
 		
-		ShaderDataType GLTFHelper::GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount)
+		ShaderDataType Helper::GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount)
 		{
 			switch (accessor)
 			{
@@ -76,22 +76,22 @@ namespace Voxymore
 			return ShaderDataType::None;
 		}
 
-		bool GLTFHelper::NodeHasMesh(const tinygltf::Node &node)
+		bool Helper::NodeHasMesh(const tinygltf::Node &node)
 		{
 			return node.mesh > -1;
 		}
 
-		tinygltf::Mesh& GLTFHelper::GetMesh(tinygltf::Model &model, const tinygltf::Node &node)
+		tinygltf::Mesh&Helper::GetMesh(tinygltf::Model &model, const tinygltf::Node &node)
 		{
 			VXM_CORE_ASSERT(NodeHasMesh(node), "The node {0} must have a mesh.", node.name);
 			return model.meshes[node.mesh];
 		}
-		bool GLTFHelper::PrimitiveHasAttribute(const tinygltf::Primitive &primitive, GLTF::PrimitiveAttribute attribute, int index)
+		bool Helper::PrimitiveHasAttribute(const tinygltf::Primitive &primitive, GLTF::PrimitiveAttribute attribute, int index)
 		{
 			std::string name = GetPrimitiveAttributeString(attribute, index);
 			return primitive.attributes.contains(name);
 		}
-		std::string GLTFHelper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index)
+		std::string Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index)
 		{
 			std::string name;
 			switch (attribute)
@@ -106,7 +106,7 @@ namespace Voxymore
 			}
 			return name;
 		}
-		GLTF::AccessorType GLTFHelper::GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute)
+		GLTF::AccessorType Helper::GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute)
 		{
 			switch (attribute)
 			{
@@ -121,7 +121,7 @@ namespace Voxymore
 			VXM_CORE_ASSERT(false, "the attribute {0} is not valid.", attribute);
 			return (GLTF::AccessorType)-1;
 		}
-		int GLTFHelper::GetComponentByteCount(GLTF::ComponentType componentType)
+		int Helper::GetComponentByteCount(GLTF::ComponentType componentType)
 		{
 			switch (componentType) {
 				case GLTF::SignedByte: return 1;
@@ -134,7 +134,7 @@ namespace Voxymore
 				default: return 0;
 			}
 		}
-		GLTF::PrimitiveAttribute GLTFHelper::GetPrimitiveAttribute(const std::string &attributeStr)
+		GLTF::PrimitiveAttribute Helper::GetPrimitiveAttribute(const std::string &attributeStr)
 		{
 			if(attributeStr == "POSITION") return GLTF::PrimitiveAttribute::POSITION;
 			else if(attributeStr == "NORMAL") return GLTF::PrimitiveAttribute::NORMAL;

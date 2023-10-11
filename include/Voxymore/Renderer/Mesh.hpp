@@ -22,16 +22,40 @@ namespace Voxymore::Core
 	//TODO: create an API to be able to create Mesh from the client side.
 	class Mesh
 	{
-		friend class Model;
 	private:
-		std::vector<Ref<VertexArray>> m_VertexArrays;
+		friend class Model;
+	public:
+		struct SubMesh
+		{
+			SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<uint32_t >& indexes);
+			~SubMesh();
+			inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
+		private:
+			Ref<VertexArray> m_VertexArray;
+			Ref<VertexBuffer> m_VertexBuffer;
+			Ref<IndexBuffer> m_IndexBuffer;
+			BufferLayout m_BufferLayout;
+
+			//TODO: Remove the vectors
+			std::vector<glm::vec3> Positions;
+			std::vector<glm::vec3> Normals;
+			std::vector<glm::vec2> Texcoords;
+			std::vector<uint32_t > Indexes;
+			const size_t VerticeCount;
+			const size_t VerticeFloatCount;
+			const size_t BufferSize;
+			float* data;
+		};
+	private:
+		std::vector<SubMesh> m_SubMeshes;
 		std::optional<Ref<Shader>> m_Shader;
 	public:
 		Mesh() = default;
 		void Bind() const;
 		void Unbind() const;
-		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }
-		// inline const Ref<Material>& GetMaterial() const {return m_Material;}
+//		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }
+		inline const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
+		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<uint32_t >& indexes);
 	};
 
 } // namespace Voxymore::Core

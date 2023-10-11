@@ -54,40 +54,85 @@ namespace Voxymore::Core
 		{
 			Ref<Mesh> m = CreateRef<Mesh>();
 			// TODO: set the shader (or material ?) of the shader.
-			m->m_VertexArrays.reserve(mesh.primitives.size());
+			m->m_SubMeshes.reserve(mesh.primitives.size());
 			for (auto& primitive : mesh.primitives)
 			{
-				//TODO: Add other render mode.
+				//TODO: Optimize this to be able to add the rest of the possible attributes. (at least multiple tex coords);
+				//TODO2: Add other render mode.
 				VXM_CORE_ASSERT(primitive.mode == GLTF::MeshRenderMode::TRIANGLES, "The Render Mode {0} cannot be used for the moment.", primitive.mode);
 				VXM_CORE_ASSERT(primitive.indices > 0, "The indices are currently required to load a 3d model.");
 
-				//std::unordered_map<GLTF::PrimitiveAttribute, std::vector<uint8_t>>;
-				Ref<VertexArray> va = VertexArray::Create();
-				std::vector<Ref<VertexBuffer>> vbs;
-				vbs.reserve(primitive.attributes.size());
-				for (auto&&[name, value] : primitive.attributes)
+				std::string positionAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::POSITION);
+				std::string normalAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::NORMAL);
+				std::string texcoordAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::TEXCOORD);
+
+				VXM_CORE_ASSERT(primitive.attributes.contains(positionAttribute), "A primitive must possess Positions.");
+				VXM_CORE_ASSERT(primitive.attributes.contains(normalAttribute), "A primitive must possess Normals.");
+				VXM_CORE_ASSERT(primitive.attributes.contains(texcoordAttribute), "A primitive must possess Texcoords.");
+
+				//Safeguards
+				VXM_CORE_ASSERT(sizeof(glm::vec3) == sizeof(float) * 3, "glm::vec3 is not equal to 3 floats...");
+				VXM_CORE_ASSERT(sizeof(glm::vec2) == sizeof(float) * 2, "glm::vec2 is not equal to 2 floats...");
+
+				std::vector<glm::vec3> positions;
+				std::vector<glm::vec3> normal;
+				std::vector<glm::vec2> texcoords;
+				std::vector<uint32_t> index;
+
+				// Position Buffer
 				{
+					size_t sizeofValue = sizeof(glm::vec3);
+					int value = primitive.attributes[positionAttribute];
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
-
-					GLTF::PrimitiveAttribute attribute = GLTFHelper::GetPrimitiveAttribute(name);
-					Ref<VertexBuffer> vb = VertexBuffer::Create(bufferView.byteLength, static_cast<void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					BufferLayout bl = {{GLTFHelper::GetShaderDataType(attribute), name}};
-					vb->SetLayout(bl);
-					vbs.push_back(vb);
-					va->AddVertexBuffer(vb);
+					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					positions.insert(positions.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
 				}
 
+				// Normal Buffer
 				{
-					auto& accessor = model.accessors[primitive.indices];
+					size_t sizeofValue = sizeof(glm::vec3);
+					int value = primitive.attributes[normalAttribute];
+					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
-					Ref<IndexBuffer> ib = IndexBuffer::Create(bufferView.byteLength / sizeof(uint32_t), static_cast<uint32_t*>(static_cast<void*>(&buffer.data.at(0) + bufferView.byteOffset)));
-					va->SetIndexBuffer(ib);
+					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					normal.insert(normal.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
 				}
 
-				m->m_VertexArrays.push_back(va);
+				// Normal Buffer
+				{
+					size_t sizeofValue = sizeof(glm::vec2);
+					int value = primitive.attributes[normalAttribute];
+					auto& accessor = model.accessors[value];
+					auto& bufferView = model.bufferViews[accessor.bufferView];
+					auto& buffer = model.buffers[bufferView.buffer];
+					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+					const auto*bufferPtr = static_cast<const glm::vec2*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					texcoords.insert(texcoords.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+				}
+
+				// Index Buffer
+				{
+					size_t sizeofValue = sizeof(uint32_t);
+					int value = primitive.attributes[normalAttribute];
+					auto& accessor = model.accessors[value];
+					auto& bufferView = model.bufferViews[accessor.bufferView];
+					auto& buffer = model.buffers[bufferView.buffer];
+					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+					const auto*bufferPtr = static_cast<const uint32_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+				}
+
+				VXM_CORE_ASSERT(positions.size() == normal.size() == texcoords.size() == index.size(), "The vertexe count are not the sames...");
+				m->AddSubMesh(positions, normal, texcoords, index);
 			}
 			m_Meshes.push_back(m);
 		}
@@ -95,7 +140,7 @@ namespace Voxymore::Core
 		m_Nodes.reserve(model.nodes.size());
 		for(auto& node : model.nodes)
 		{
-			m_Nodes.emplace_back(node.mesh > -1 ? m_Meshes[node.mesh] : nullptr, node.children, GLTFHelper::GetMatrix(node));
+			m_Nodes.emplace_back(node.mesh > -1 ? m_Meshes[node.mesh] : nullptr, node.children, GLTF::Helper::GetMatrix(node));
 		}
 
 		m_Scenes.reserve(model.scenes.size());
