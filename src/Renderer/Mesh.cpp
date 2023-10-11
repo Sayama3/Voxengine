@@ -35,7 +35,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		data = new float[BufferSize];
 
-		VXM_CORE_ASSERT(positions.size() == normals.size() == texcoords.size(), "All the vectors should do the same size !");
+		VXM_CORE_ASSERT(positions.size() == normals.size() && normals.size() == texcoords.size(), "All the vectors should do the same size !");
 		m_VertexArray = VertexArray::Create();
 
 		for (int i = 0; i < VerticeCount; ++i) {

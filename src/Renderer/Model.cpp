@@ -76,7 +76,7 @@ namespace Voxymore::Core
 				VXM_CORE_ASSERT(sizeof(glm::vec2) == sizeof(float) * 2, "glm::vec2 is not equal to 2 floats...");
 
 				std::vector<glm::vec3> positions;
-				std::vector<glm::vec3> normal;
+				std::vector<glm::vec3> normals;
 				std::vector<glm::vec2> texcoords;
 				std::vector<uint32_t> index;
 
@@ -107,7 +107,7 @@ namespace Voxymore::Core
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					normal.insert(normal.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+					normals.insert(normals.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
 				}
 
 				// Texcoord Buffer
@@ -176,8 +176,8 @@ namespace Voxymore::Core
 					}
 				}
 
-				VXM_CORE_ASSERT(positions.size() == normal.size() == texcoords.size(), "The vertexe count are not the sames...");
-				m->AddSubMesh(positions, normal, texcoords, index);
+				VXM_CORE_ASSERT(positions.size() == normals.size() && normals.size() == texcoords.size(), "The vertexe count are not the sames...");
+				m->AddSubMesh(positions, normals, texcoords, index);
 			}
 			m_Meshes.push_back(m);
 		}
