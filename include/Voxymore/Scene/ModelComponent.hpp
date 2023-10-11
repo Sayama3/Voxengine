@@ -12,15 +12,16 @@ namespace Voxymore::Core
     {
     	VXM_IMPLEMENT_COMPONENT(ModelComponent);
     public:
-        inline const Path& GetPath() const {return m_Path;}
-        inline const std::filesystem::path& GetLocalPath() const {return m_Path.path;}
-		inline void SetPath(const std::filesystem::path& p) {m_Path.path = p;}
-		inline void SetPath(const Path& p) {m_Path = p;}
+        inline const Path& GetPath() const {return m_ModelPath;}
+        inline const std::filesystem::path& GetLocalPath() const {return m_ModelPath.path;}
+		inline void SetPath(const std::filesystem::path& p) { m_ModelPath.path = p;}
+		inline void SetPath(const Path& p) { m_ModelPath = p;}
         inline const Ref<Model>& GetModel() const {return m_Model;}
         void LoadModel();
 		inline bool IsLoaded() const { return m_IsLoaded; }
     private:
-    	Path m_Path;
+    	Path m_ModelPath;
+		std::string m_ShaderName;
         Ref<Model> m_Model;
 		bool m_IsLoaded = false;
     };

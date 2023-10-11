@@ -44,11 +44,13 @@ namespace Voxymore::Core
 		std::vector<Ref<Mesh>> m_Meshes;
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
+		Ref<Shader> m_Shader;
 		int m_DefaultScene = 0;
 		Path m_Path;
 	public:
-		Model(const Path& path);
-		static Ref<Model> CreateModel(const Path& path);
+		Model(const Path& path, Ref<Shader> shader);
+		~Model();
+		static Ref<Model> CreateModel(const Path& path, Ref<Shader> shader);
 		const Node& GetNode(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
 	private:

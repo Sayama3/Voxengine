@@ -10,6 +10,7 @@
 #include "GLTFHelper.hpp"
 #include <tiny_gltf.h>
 #include <unordered_map>
+#include <utility>
 
 namespace Voxymore::Core
 {
@@ -18,12 +19,12 @@ namespace Voxymore::Core
 		bool IsValid(int value) {return value > -1;}
 	}
 
-	Ref<Model> Model::CreateModel(const Path &path)
+	Ref<Model> Model::CreateModel(const Path &path, Ref<Shader> shader)
 	{
-		return CreateRef<Model>(path);
+		return CreateRef<Model>(path, shader);
 	}
 
-	Model::Model(const Path &p) : m_Path(p)
+	Model::Model(const Path &p, Ref<Shader> shader) : m_Path(p), m_Shader(std::move(shader))
 	{
 		VXM_PROFILE_FUNCTION();
 		auto path = p.GetFullPath();
@@ -53,7 +54,7 @@ namespace Voxymore::Core
 		m_Meshes.reserve(model.meshes.size());
 		for (auto& mesh : model.meshes)
 		{
-			Ref<Mesh> m = CreateRef<Mesh>();
+			Ref<Mesh> m = CreateRef<Mesh>(m_Shader);
 			// TODO: set the shader (or material ?) of the shader.
 			m->m_SubMeshes.reserve(mesh.primitives.size());
 			for (auto& primitive : mesh.primitives)
@@ -193,6 +194,10 @@ namespace Voxymore::Core
 		{
 			m_Scenes.push_back(scene.nodes);
 		}
+	}
+
+	Model::~Model()
+	{
 	}
 
 	const Node& Model::GetNode(int index) const

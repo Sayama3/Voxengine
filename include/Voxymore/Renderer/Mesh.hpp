@@ -51,9 +51,10 @@ namespace Voxymore::Core
 		std::optional<Ref<Shader>> m_Shader;
 	public:
 		Mesh() = default;
+		inline Mesh(Ref<Shader>& shader) {m_Shader = shader;}
 		void Bind() const;
 		void Unbind() const;
-//		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }
+		//		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }
 		inline const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
 		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<uint32_t >& indexes);
 	};
