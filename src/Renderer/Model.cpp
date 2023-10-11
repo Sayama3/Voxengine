@@ -25,6 +25,7 @@ namespace Voxymore::Core
 
 	Model::Model(const Path &p) : m_Path(p)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto path = p.GetFullPath();
 		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
 		tinygltf::Model model;
@@ -81,11 +82,13 @@ namespace Voxymore::Core
 
 				// Position Buffer
 				{
+					VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
 					size_t sizeofValue = sizeof(glm::vec3);
 					int value = primitive.attributes[positionAttribute];
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
+					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
@@ -94,24 +97,28 @@ namespace Voxymore::Core
 
 				// Normal Buffer
 				{
+					VXM_PROFILE_SCOPE("Model::Model -> Create Normal Buffer");
 					size_t sizeofValue = sizeof(glm::vec3);
 					int value = primitive.attributes[normalAttribute];
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
+					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
 					normal.insert(normal.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
 				}
 
-				// Normal Buffer
+				// Texcoord Buffer
 				{
+					VXM_PROFILE_SCOPE("Model::Model -> Create Texcoord Buffer");
 					size_t sizeofValue = sizeof(glm::vec2);
-					int value = primitive.attributes[normalAttribute];
+					int value = primitive.attributes[texcoordAttribute];
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
+					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec2*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
@@ -120,18 +127,56 @@ namespace Voxymore::Core
 
 				// Index Buffer
 				{
-					size_t sizeofValue = sizeof(uint32_t);
-					int value = primitive.attributes[normalAttribute];
+					VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer");
+					int value = primitive.indices;
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
-					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-					const auto*bufferPtr = static_cast<const uint32_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+					switch((GLTF::ComponentType)accessor.componentType)
+					{
+						case GLTF::ComponentType::UnsignedByte:
+						{
+							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedByte");
+							size_t sizeofValue = sizeof(uint8_t);
+							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+							const auto*bufferPtr = static_cast<const uint8_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+							index.resize(bufferItemsCount);
+							for (int i = 0; i < bufferItemsCount; ++i)
+							{
+								index[i] = bufferPtr[i];
+							}
+							break;
+						}
+						case GLTF::ComponentType::UnsignedShort:
+						{
+							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedShort");
+							size_t sizeofValue = sizeof(uint16_t);
+							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+							const auto*bufferPtr = static_cast<const uint16_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+							index.resize(bufferItemsCount);
+							for (int i = 0; i < bufferItemsCount; ++i)
+							{
+								index[i] = bufferPtr[i];
+							}
+							break;
+						}
+						case GLTF::ComponentType::UnsignedInt:
+						{
+							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedInt");
+							size_t sizeofValue = sizeof(uint32_t);
+							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+							const auto*bufferPtr = static_cast<const uint32_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+							index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+							break;
+						}
+						default: VXM_CORE_ASSERT(false, "The component type {0} is not supported for an index buffer.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
+					}
 				}
 
-				VXM_CORE_ASSERT(positions.size() == normal.size() == texcoords.size() == index.size(), "The vertexe count are not the sames...");
+				VXM_CORE_ASSERT(positions.size() == normal.size() == texcoords.size(), "The vertexe count are not the sames...");
 				m->AddSubMesh(positions, normal, texcoords, index);
 			}
 			m_Meshes.push_back(m);
@@ -149,12 +194,6 @@ namespace Voxymore::Core
 			m_Scenes.push_back(scene.nodes);
 		}
 	}
-
-	//	Node& Model::GetNode(int index)
-	//	{
-	//		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
-	//		return m_Nodes[index];
-	//	}
 
 	const Node& Model::GetNode(int index) const
 	{

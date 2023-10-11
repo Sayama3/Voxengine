@@ -79,6 +79,8 @@ namespace Voxymore::Core
 			static GLTF::AccessorType GetAccessorType(const std::string& accessorType);
 			static int GetComponentCount(GLTF::AccessorType accessorType);
 			static int GetComponentByteCount(GLTF::ComponentType componentType);
+
+			static std::string ComponentTypeToString(ComponentType componentType);
 			static ShaderDataType GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount = 4);
 			static glm::mat4 GetMatrix(const tinygltf::Node& node);
 

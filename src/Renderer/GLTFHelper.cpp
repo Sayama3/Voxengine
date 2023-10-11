@@ -106,6 +106,22 @@ namespace Voxymore::Core
 			}
 			return name;
 		}
+
+		std::string Helper::ComponentTypeToString(ComponentType componentType)
+		{
+			switch (componentType)
+			{
+				case ComponentType::SignedByte: return "SignedByte";
+				case ComponentType::UnsignedByte: return "UnsignedByte";
+				case ComponentType::SignedShort: return "SignedShort";
+				case ComponentType::UnsignedShort: return "UnsignedShort";
+					//                case ComponentType::SignedInt: return "SignedInt";
+				case ComponentType::UnsignedInt: return "UnsignedInt";
+				case ComponentType::Float: return "Float";
+			}
+			return "Unknown";
+		}
+
 		GLTF::AccessorType Helper::GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute)
 		{
 			switch (attribute)
