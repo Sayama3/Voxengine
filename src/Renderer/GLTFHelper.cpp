@@ -20,11 +20,14 @@ namespace Voxymore::Core
 					}
 				}
 			}
-			else
+			else if(node.translation.size() == 3 || node.rotation.size() == 4 || node.scale.size() == 3)
 			{
-				glm::vec3 pos = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
-				glm::quat rot = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
-				glm::vec3 scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+				glm::vec3 pos;
+				if(node.translation.size() == 3) pos = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
+				glm::quat rot;
+				if(node.rotation.size() == 4) rot = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+				glm::vec3 scale;
+				if(node.scale.size() == 3) scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
 				Math::TRS(matrix, pos, rot, scale);
 			}
 			return matrix;
@@ -38,9 +41,9 @@ namespace Voxymore::Core
 				case GLTF::AccessorType::VEC2: {count = 2; break;}
 				case GLTF::AccessorType::VEC3: {count = 3; break;}
 				case GLTF::AccessorType::VEC4: {count = 4; break;}
-				case GLTF::AccessorType::MAT2: {count = 4; break;}
-				case GLTF::AccessorType::MAT3: {count = 9; break;}
-				case GLTF::AccessorType::MAT4: {count = 16; break;}
+				case GLTF::AccessorType::MAT2: {count = 2*2; break;}
+				case GLTF::AccessorType::MAT3: {count = 3*3; break;}
+				case GLTF::AccessorType::MAT4: {count = 4*4; break;}
 				default: { VXM_CORE_ASSERT(false, "Accessor type '{0}' is unknown.", (int)accessorType); break; }
 			}
 			return count;
@@ -59,7 +62,7 @@ namespace Voxymore::Core
 			return accessor;
 		}
 
-		
+
 		ShaderDataType Helper::GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount)
 		{
 			switch (accessor)
@@ -144,7 +147,7 @@ namespace Voxymore::Core
 				case GLTF::UnsignedByte: return 1;
 				case GLTF::SignedShort: return 2;
 				case GLTF::UnsignedShort: return 2;
-				// case GLTF::SignedInt: return 4; // Deprecated ?
+					// case GLTF::SignedInt: return 4; // Deprecated ?
 				case GLTF::UnsignedInt: return 4;
 				case GLTF::Float: return 4;
 				default: return 0;

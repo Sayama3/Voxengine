@@ -186,10 +186,14 @@ namespace Voxymore::Core
 		m_Nodes.reserve(model.nodes.size());
 		for(auto& node : model.nodes)
 		{
-			m_Nodes.emplace_back(node.mesh > -1 ? m_Meshes[node.mesh] : nullptr, node.children, GLTF::Helper::GetMatrix(node));
+			glm::mat4 matrix = GLTF::Helper::GetMatrix(node);
+			std::vector<int> children = node.children;
+			if(node.mesh > -1) m_Nodes.push_back(Node(m_Meshes[node.mesh], children, matrix));
+			else m_Nodes.push_back(Node(children, matrix));
 		}
 
 		m_Scenes.reserve(model.scenes.size());
+
 		for (auto& scene : model.scenes)
 		{
 			m_Scenes.push_back(scene.nodes);

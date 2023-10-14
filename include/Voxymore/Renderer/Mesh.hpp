@@ -44,14 +44,14 @@ namespace Voxymore::Core
 			const size_t VerticeCount;
 			const size_t VerticeFloatCount;
 			const size_t BufferSize;
-			float* data;
+			float* VertexData;
 		};
 	private:
 		std::vector<SubMesh> m_SubMeshes;
 		std::optional<Ref<Shader>> m_Shader;
 	public:
 		Mesh() = default;
-		inline Mesh(Ref<Shader>& shader) {m_Shader = shader;}
+		inline Mesh(const Ref<Shader>& shader) : m_Shader(shader) {}
 		void Bind() const;
 		void Unbind() const;
 		//		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }

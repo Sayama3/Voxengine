@@ -114,7 +114,7 @@ namespace Voxymore::Core {
 		glm::mat4 currentTransform = transform * node.Transform;
 		if(node.HasMesh())
 		{
-			Submit(node.Mesh, currentTransform, entityId);
+			Submit(node.GetMesh(), currentTransform, entityId);
 		}
 
 		if(!node.HasChildren())
