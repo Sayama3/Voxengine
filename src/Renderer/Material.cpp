@@ -4,266 +4,410 @@
 
 #include "Voxymore/Renderer/Material.hpp"
 
+#define SerializeSerializable(Emitter, Param) Emitter << KEYVAL(#Param, YAML::BeginMap); \
+Param.Serialize(Emitter); \
+Emitter << YAML::EndMap
+
+#define SerializeSerializableIf(Condition, Emitter, Param) if(Condition) {SerializeSerializable(Emitter, Param);}
+
+#define DeserializeSerializableIf(Condition, node, Param) auto VXM_COMBINE(Param, Node) = node[#Param]; \
+Condition = VXM_COMBINE(Param, Node).IsDefined(); \
+if(Condition) Param.Deserialize(VXM_COMBINE(Param, Node))
+
+#define DeserializeSerializable(node, Param) auto VXM_COMBINE(Param, Node) = node[#Param]; \
+Param.Deserialize(VXM_COMBINE(Param, Node))
+
+namespace YAML
+{
+	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if(!node.IsSequence() || node.size() != 2) return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+	template<>
+	struct convert<glm::vec3>
+	{
+		static Node encode(const glm::vec3& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
+		}
+		static bool decode(const Node& node, glm::vec3& rhs)
+		{
+			if(!node.IsSequence() || node.size() != 3) return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
+	template<>
+	struct convert<glm::vec4>
+	{
+		static Node encode(const glm::vec4& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			return node;
+		}
+		static bool decode(const Node& node, glm::vec4& rhs)
+		{
+			if(!node.IsSequence() || node.size() != 4) return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+	template<>
+	struct convert<glm::quat>
+	{
+		static Node encode(const glm::quat& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			return node;
+		}
+		static bool decode(const Node& node, glm::quat& rhs)
+		{
+			if(!node.IsSequence() || node.size() != 4) return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+}
 
 namespace Voxymore::Core {
+//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec2& v)
+//	{
+//		out << YAML::Flow;
+//		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+//		return out;
+//	}
+//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec3& v)
+//	{
+//		out << YAML::Flow;
+//		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
+//		return out;
+//	}
+//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec4& v)
+//	{
+//		out << YAML::Flow;
+//		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+//		return out;
+//	}
+//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::quat& v)
+//	{
+//		out << YAML::Flow;
+//		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+//		return out;
+//	}
 
-	Material::Material(Ref<Shader> &shader) : m_Shader(shader), m_Uniforms()
+	void MaterialParameters::Deserialize(YAML::Node &node)
 	{
-		VXM_PROFILE_FUNCTION();
-		//        m_Uniforms.reserve(m_Shader->GetUniforms().size());
-		//        for (std::pair<std::string, UniformDescription>&& uniform : m_Shader->GetUniforms()) {
-		//            m_Uniforms[uniform.first] = MaterialValue(uniform.second.Type);
-		//        }
-	}
+		DeserializeSerializable(node, PbrMetallicRoughness);
+		DeserializeSerializableIf(HasNormalTexture, node, NormalTexture);
+		DeserializeSerializableIf(HasOcclusionTexture, node, OcclusionTexture);
+		DeserializeSerializableIf(HasEmissiveTexture, node, EmissiveTexture);
 
-	void Material::SetUniformInt(const std::string& name, int value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Int) m_Uniforms[name] = MaterialValue(ShaderDataType::Int);
-		m_Uniforms[name].SetValue(value);
-	}
-
-	void Material::SetUniformInt2(const std::string& name, const glm::ivec2& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(m_Uniforms[name].GetType() != ShaderDataType::Int2) m_Uniforms[name] = MaterialValue(ShaderDataType::Int2);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformInt3(const std::string& name, const glm::ivec3& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(m_Uniforms[name].GetType() != ShaderDataType::Int3) m_Uniforms[name] = MaterialValue(ShaderDataType::Int3);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformInt4(const std::string& name, const glm::ivec4& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(m_Uniforms[name].GetType() != ShaderDataType::Int4) m_Uniforms[name] = MaterialValue(ShaderDataType::Int4);
-		m_Uniforms[name].SetValue(value);
-	}
-
-	void Material::SetUniformFloat(const std::string& name, float value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Float) m_Uniforms[name] = MaterialValue(ShaderDataType::Float);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformFloat2(const std::string& name, const glm::vec2& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Float2) m_Uniforms[name] = MaterialValue(ShaderDataType::Float2);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformFloat3(const std::string& name, const glm::vec3& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//        VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Float3) m_Uniforms[name] = MaterialValue(ShaderDataType::Float3);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformFloat4(const std::string& name, const glm::vec4& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Float4) m_Uniforms[name] = MaterialValue(ShaderDataType::Float4);
-		m_Uniforms[name].SetValue(value);
-	}
-	void Material::SetUniformMat2(const std::string& name, const glm::mat2& value)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(m_Uniforms[name].GetType() != ShaderDataType::Mat2) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat2);
-		m_Uniforms[name].SetValue(value);
+		EmissiveFactor = node["EmissiveFactor"].as<glm::vec3>();
+		AlphaMode = (::Voxymore::Core::AlphaMode)node["AlphaMode"].as<int>();
+		AlphaCutoff = node["AlphaCutoff"].as<float>();
+		DoubleSided = node["DoubleSided"].as<bool>();
 	}
 
-	void Material::SetUniformMat3(const std::string& name, const glm::mat3& value)
+	void MaterialParameters::Serialize(YAML::Emitter &emitter) const
 	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Mat3) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat3);
-		m_Uniforms[name].SetValue(value);
+		SerializeSerializable(emitter, PbrMetallicRoughness);
+		SerializeSerializableIf(HasNormalTexture, emitter, NormalTexture);
+		SerializeSerializableIf(HasOcclusionTexture, emitter, OcclusionTexture);
+		SerializeSerializableIf(HasEmissiveTexture, emitter, EmissiveTexture);
+
+		emitter << KEYVAL("EmissiveFactor", EmissiveFactor);
+		emitter << KEYVAL("AlphaMode", AlphaMode);
+		emitter << KEYVAL("AlphaCutoff", AlphaCutoff);
+		emitter << KEYVAL("DoubleSided", DoubleSided);
 	}
-	void Material::SetUniformMat4(const std::string& name, const glm::mat4& value)
+
+	void MaterialParameters::SetAlphaMode(const std::string &alphaMode)
+	{
+		if(alphaMode == "OPAQUE") { AlphaMode = AlphaMode::Opaque; }
+		else if(alphaMode == "MASK") { AlphaMode = AlphaMode::Mask; }
+		else if(alphaMode == "BLEND") { AlphaMode = AlphaMode::Blend; }
+		else { VXM_CORE_WARNING("The alpha mode '{0}' is unknown.", alphaMode); }
+	}
+
+	void MetallicRoughtness::Serialize(YAML::Emitter &emitter) const
+	{
+		emitter << KEYVAL("BaseColorFactor", BaseColorFactor);
+		SerializeSerializableIf(HasBaseColorTexture, emitter, BaseColorTexture);
+		emitter << KEYVAL("MetallicFactor", MetallicFactor);
+		emitter << KEYVAL("RoughnessFactor", RoughnessFactor);
+		SerializeSerializableIf(HasMetallicRoughnessTexture, emitter, MetallicRoughnessTexture);
+	}
+
+	void MetallicRoughtness::Deserialize(YAML::Node &node)
+	{
+		BaseColorFactor = node["BaseColorFactor"].as<glm::vec4>();
+		DeserializeSerializableIf(HasBaseColorTexture, node, BaseColorTexture);
+		MetallicFactor = node["MetallicFactor"].as<float>();
+		RoughnessFactor = node["RoughnessFactor"].as<float>();
+		DeserializeSerializableIf(HasMetallicRoughnessTexture, node, MetallicRoughnessTexture);
+	}
+
+	void TextureInfo::Serialize(YAML::Emitter &emitter) const
+	{
+		emitter << KEYVAL("Index", Index);
+		emitter << KEYVAL("TexCoord", TexCoord);
+	}
+
+	void TextureInfo::Deserialize(YAML::Node &node)
+	{
+		Index = node["Index"].as<int>();
+		TexCoord = node["TexCoord"].as<int>();
+	}
+
+	void NormalTextureInfo::Serialize(YAML::Emitter &emitter) const
+	{
+		emitter << KEYVAL("Index", Index);
+		emitter << KEYVAL("TexCoord", TexCoord);
+		emitter << KEYVAL("Scale", Scale);
+	}
+
+	void NormalTextureInfo::Deserialize(YAML::Node &node)
+	{
+		Index = node["Index"].as<int>();
+		TexCoord = node["TexCoord"].as<int>();
+		Scale = node["Scale"].as<float>();
+	}
+
+	void OcclusionTextureInfo::Serialize(YAML::Emitter &emitter) const
+	{
+		emitter << KEYVAL("Index", Index);
+		emitter << KEYVAL("TexCoord", TexCoord);
+		emitter << KEYVAL("Strength", Strength);
+	}
+
+	void OcclusionTextureInfo::Deserialize(YAML::Node &node)
+	{
+		Index = node["Index"].as<int>();
+		TexCoord = node["TexCoord"].as<int>();
+		Strength = node["Strength"].as<float>();
+	}
+
+	Material::Material(uint32_t binding)
+	{
+		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+	}
+
+	Material::Material(const std::string &shaderName, uint32_t binding) : m_ShaderName(shaderName)
 	{
 		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform '{0}' doesn't exist.", name);
-		if(m_Uniforms[name].GetType() != ShaderDataType::Mat4) m_Uniforms[name] = MaterialValue(ShaderDataType::Mat4);
-		m_Uniforms[name].SetValue(value);
+		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+		LoadShader();
+	}
+
+	Material::Material(const std::string& shaderName, const MaterialParameters& parameters, uint32_t binding) : m_ShaderName(shaderName), m_Parameters(parameters)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+		LoadShader();
+	}
+
+	Material::Material(const Ref<Shader> &shader, uint32_t binding) : m_ShaderName(shader->GetName()), m_Shader(shader)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+	}
+
+	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters, uint32_t binding) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
 	}
 
 	Material::~Material()
 	{
-		VXM_PROFILE_FUNCTION();
 	}
 
-	void Material::Bind() const {
-		VXM_PROFILE_FUNCTION();
+	void Material::Bind() const
+	{
+		m_UniformBuffer->SetData(&m_Parameters, sizeof(MaterialParameters));
+//		for (uint32_t i = 0; i < m_Textures.size(); ++i)
+//		{
+//			if(m_Textures[i] != nullptr) LoadTexture(i);
+//		}
 		m_Shader->Bind();
-		for (auto&& kp : m_Uniforms)
-		{
-			switch (kp.second.GetType())
-			{
-				case ShaderDataType::Float: m_Shader->SetUniformFloat(kp.first, *(float*)kp.second.GetValue());
-				case ShaderDataType::Float2: m_Shader->SetUniformFloat2(kp.first, *(glm::vec2*)kp.second.GetValue());
-				case ShaderDataType::Float3: m_Shader->SetUniformFloat3(kp.first, *(glm::vec3*)kp.second.GetValue());
-				case ShaderDataType::Float4: m_Shader->SetUniformFloat4(kp.first, *(glm::vec4*)kp.second.GetValue());
-				case ShaderDataType::Mat2: m_Shader->SetUniformMat2(kp.first, *(glm::mat2*)kp.second.GetValue());
-				case ShaderDataType::Mat3: m_Shader->SetUniformMat3(kp.first, *(glm::mat3*)kp.second.GetValue());
-				case ShaderDataType::Mat4: m_Shader->SetUniformMat4(kp.first, *(glm::mat4*)kp.second.GetValue());
-				case ShaderDataType::Int: m_Shader->SetUniformInt(kp.first, *(int*)kp.second.GetValue());
-				case ShaderDataType::Int2: m_Shader->SetUniformInt2(kp.first, *(glm::ivec2*)kp.second.GetValue());
-				case ShaderDataType::Int3: m_Shader->SetUniformInt3(kp.first, *(glm::ivec3*)kp.second.GetValue());
-				case ShaderDataType::Int4: m_Shader->SetUniformInt4(kp.first, *(glm::ivec4*)kp.second.GetValue());
-				case ShaderDataType::Bool: m_Shader->SetUniformBool(kp.first, *(bool*)kp.second.GetValue());
-				case ShaderDataType::Bool2: m_Shader->SetUniformBool2(kp.first, *(glm::bvec2*)kp.second.GetValue());
-				case ShaderDataType::Bool3: m_Shader->SetUniformBool3(kp.first, *(glm::bvec3*)kp.second.GetValue());
-				case ShaderDataType::Bool4: m_Shader->SetUniformBool4(kp.first, *(glm::bvec4*)kp.second.GetValue());
-				case ShaderDataType::Sampler1D: m_Shader->SetUniformSampler1D(kp.first, *(uint32_t*)kp.second.GetValue());
-				case ShaderDataType::Sampler2D: m_Shader->SetUniformSampler2D(kp.first, *(uint32_t*)kp.second.GetValue());
-				case ShaderDataType::Sampler3D: m_Shader->SetUniformSampler3D(kp.first, *(uint32_t*)kp.second.GetValue());
-			}
-
-		}
 	}
-	void Material::Unbind() const {
-		VXM_PROFILE_FUNCTION();
+
+	void Material::Unbind() const
+	{
 		m_Shader->Unbind();
 	}
 
-
-	MaterialValue::MaterialValue(ShaderDataType dataType) : DataType(dataType), ValuePtr(nullptr) {
-		VXM_PROFILE_FUNCTION();
-		CreateValue();
+	void Material::ChangeShader(const std::string &shaderName)
+	{
+		ResetShader();
+		m_ShaderName = shaderName;
+		LoadShader();
 	}
 
-	MaterialValue::MaterialValue(const MaterialValue & other) : DataType(other.DataType), ValuePtr(nullptr) {
-		VXM_PROFILE_FUNCTION();
-		CreateValue();
-		SetValue(other.GetValue(), other.GetSize());
+//	void Material::LoadTexture(uint32_t index) const
+//	{
+//		VXM_CORE_ASSERT(index >= 0 && index < m_Textures.size(), "The index {0} is not between [0, {1}[", index, m_Textures.size());
+//		VXM_CORE_ASSERT(m_Textures[index] != nullptr, "The texture {0} doesn't exist.", index);
+//
+//		m_Textures[index]->Bind(index);
+//	}
+
+	const std::string &Material::GetMaterialName() const
+	{
+		return m_MaterialName;
 	}
 
-	MaterialValue::MaterialValue() : DataType(ShaderDataType::None), ValuePtr(nullptr) {
-		VXM_PROFILE_FUNCTION();
+	const std::string &Material::GetShaderName() const
+	{
+		return m_ShaderName;
 	}
 
-	MaterialValue::~MaterialValue() {
-		VXM_PROFILE_FUNCTION();
-		DeleteValue();
+	void Material::Serialize(YAML::Emitter &emitter) const
+	{
+		emitter << KEYVAL("MaterialName", m_MaterialName);
+		emitter << KEYVAL("ShaderName", m_ShaderName);
+		emitter << KEYVAL("Parameters", YAML::BeginMap);
+		m_Parameters.Serialize(emitter);
+		emitter << YAML::EndMap;
+//		emitter << KEYVAL("Textures", YAML::BeginMap);
+//		for (int i = 0; i < m_TexturesPath.size(); ++i) {
+//			if(m_TexturesPath[i].has_value()) emitter << KEYVAL(i, m_TexturesPath[i].value());
+//		}
+//		emitter << YAML::EndMap;
+	}
+	void Material::Deserialize(YAML::Node &node)
+	{
+		m_MaterialName = node["MaterialName"].as<std::string>();
+		m_ShaderName = node["ShaderName"].as<std::string>();
+		auto ParameterNode = node["Parameters"];
+		m_Parameters.Deserialize(ParameterNode);
+//		auto TextureNode = node["Textures"];
+//		if(TextureNode.IsDefined())
+//		{
+//			for (int i = 0; i < m_TexturesPath.size(); ++i)
+//			{
+//				if(TextureNode[i].IsDefined())
+//				{
+//					m_TexturesPath[i] = TextureNode[i].as<Path>();
+//				}
+//				else
+//				{
+//					m_TexturesPath[i] = {};
+//				}
+//			}
+//		}
+//		else
+//		{
+//			for (auto &tex: m_TexturesPath) tex = {};
+//		}
+		LoadShader();
 	}
 
-	void MaterialValue::DeleteValue() {
-		VXM_PROFILE_FUNCTION();
-		if(ValuePtr == nullptr) return;
+	MaterialLibrary* MaterialLibrary::s_Instance = nullptr;
+	MaterialLibrary& MaterialLibrary::GetInstance()
+	{
+		if(s_Instance == nullptr) s_Instance = new Voxymore::Core::MaterialLibrary();
+		return *s_Instance;
+	}
 
-		switch (DataType) {
-			case ShaderDataType::Float: delete (float*)ValuePtr; break;
-			case ShaderDataType::Float2: delete (glm::vec2*)ValuePtr; break;
-			case ShaderDataType::Float3: delete (glm::vec3*)ValuePtr; break;
-			case ShaderDataType::Float4: delete (glm::vec4*)ValuePtr; break;
-			case ShaderDataType::Mat2: delete (glm::mat2*)ValuePtr; break;
-			case ShaderDataType::Mat3: delete (glm::mat3*)ValuePtr; break;
-			case ShaderDataType::Mat4: delete (glm::mat4*)ValuePtr; break;
-			case ShaderDataType::Int: delete (int*)ValuePtr; break;
-			case ShaderDataType::Int2: delete (glm::ivec2*)ValuePtr; break;
-			case ShaderDataType::Int3: delete (glm::ivec3*)ValuePtr; break;
-			case ShaderDataType::Int4: delete (glm::ivec4*)ValuePtr; break;
-			case ShaderDataType::Bool: delete (bool*)ValuePtr; break;
-			case ShaderDataType::Bool2: delete (glm::bvec2*)ValuePtr; break;
-			case ShaderDataType::Bool3: delete (glm::bvec3*)ValuePtr; break;
-			case ShaderDataType::Bool4: delete (glm::bvec4*)ValuePtr; break;
-			case ShaderDataType::Sampler1D: delete (uint32_t*)ValuePtr; break;
-			case ShaderDataType::Sampler2D: delete (uint32_t*)ValuePtr; break;
-			case ShaderDataType::Sampler3D: delete (uint32_t*)ValuePtr; break;
-			default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
+	void MaterialLibrary::Add(const Ref<Material>& material)
+	{
+		m_Materials[material->GetMaterialName()] = material;
+	}
+
+	void MaterialLibrary::Add(const std::string& name, const Ref<Material>& material)
+	{
+		m_Materials[name] = material;
+	}
+
+	Ref<Material> MaterialLibrary::Get(const std::string& name)
+	{
+		VXM_CORE_ASSERT(Exists(name), "The material '{0}' doesn't exist.", name);
+		return m_Materials[name];
+	}
+
+	bool MaterialLibrary::Exists(const std::string& name) const
+	{
+		return m_Materials.contains(name);
+	}
+	void MaterialLibrary::Deserialize(YAML::Node &node)
+	{
+		m_Materials.clear();
+		for(YAML::iterator it = node.begin(); it != node.end(); ++it)
+		{
+			std::string name = it->first.as<std::string>();
+			Ref<Material> material = CreateRef<Material>();
+			material->Deserialize(it->second);
+			m_Materials[name] = material;
 		}
-
 	}
-
-	void MaterialValue::CreateValue() {
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(DataType != ShaderDataType::None, "The DataType must be a valid type.");
-		switch (DataType) {
-			case ShaderDataType::Float: ValuePtr = new float(); break;
-			case ShaderDataType::Float2: ValuePtr = new glm::vec2(); break;
-			case ShaderDataType::Float3: ValuePtr = new glm::vec3(); break;
-			case ShaderDataType::Float4: ValuePtr = new glm::vec4(); break;
-			case ShaderDataType::Mat2: ValuePtr = new glm::mat2(); break;
-			case ShaderDataType::Mat3: ValuePtr = new glm::mat3(); break;
-			case ShaderDataType::Mat4: ValuePtr = new glm::mat4(); break;
-			case ShaderDataType::Int: ValuePtr = new int(); break;
-			case ShaderDataType::Int2: ValuePtr = new glm::ivec2(); break;
-			case ShaderDataType::Int3: ValuePtr = new glm::ivec3(); break;
-			case ShaderDataType::Int4: ValuePtr = new glm::ivec4(); break;
-			case ShaderDataType::Bool: ValuePtr = new bool(); break;
-			case ShaderDataType::Bool2: ValuePtr = new glm::bvec2(); break;
-			case ShaderDataType::Bool3: ValuePtr = new glm::bvec3(); break;
-			case ShaderDataType::Bool4: ValuePtr = new glm::bvec4(); break;
-			case ShaderDataType::Sampler1D: ValuePtr = new uint32_t(); break;
-			case ShaderDataType::Sampler2D: ValuePtr = new uint32_t(); break;
-			case ShaderDataType::Sampler3D: ValuePtr = new uint32_t(); break;
-			default: {VXM_CORE_ASSERT(false, "Couldn't delete the type '{0}'.", ShaderDataTypeToString(DataType));} break;
+	void MaterialLibrary::Serialize(YAML::Emitter &emitter) const
+	{
+		for (auto&& [name, material]: m_Materials)
+		{
+			emitter << KEYVAL(name, YAML::BeginMap);
+			material->Serialize(emitter);
+			emitter << YAML::EndMap;
 		}
 	}
-
-	MaterialValue& MaterialValue::operator= (const MaterialValue& other)
+	Ref<Material> MaterialLibrary::GetOrCreate(const std::string &materialName, const std::string &shaderName)
 	{
-		VXM_PROFILE_FUNCTION();
-		this->DeleteValue();
-		this->DataType = other.DataType;
-		this->CreateValue();
-		this->SetValue(other.GetValue(), other.GetSize());
-		return *this;
-	};
-
-	template<typename T>
-	void MaterialValue::SetValue(const T &value) {
-		VXM_PROFILE_FUNCTION();
-		SetValue(&value, sizeof(T));
-	}
-
-	void MaterialValue::SetValue(const void* value, uint32_t size)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(size == GetShaderDataTypeSize(DataType), "The size is different than the one in the struct.");
-		switch (DataType) {
-			case ShaderDataType::Float: *(float*)ValuePtr = *(float*)value; break;
-			case ShaderDataType::Float2: *(glm::vec2*)ValuePtr = *(glm::vec2*)value; break;
-			case ShaderDataType::Float3: *(glm::vec3*)ValuePtr = *(glm::vec3*)value; break;
-			case ShaderDataType::Float4: *(glm::vec4*)ValuePtr = *(glm::vec4*)value; break;
-			case ShaderDataType::Mat2: *(glm::mat2*)ValuePtr = *(glm::mat2*)value; break;
-			case ShaderDataType::Mat3: *(glm::mat3*)ValuePtr = *(glm::mat3*)value; break;
-			case ShaderDataType::Mat4: *(glm::mat4*)ValuePtr = *(glm::mat4*)value; break;
-			case ShaderDataType::Int: *(int*)ValuePtr = *(int*)value; break;
-			case ShaderDataType::Int2: *(glm::ivec2*)ValuePtr = *(glm::ivec2*)value; break;
-			case ShaderDataType::Int3: *(glm::ivec3*)ValuePtr = *(glm::ivec3*)value; break;
-			case ShaderDataType::Int4: *(glm::ivec4*)ValuePtr = *(glm::ivec4*)value; break;
-			case ShaderDataType::Bool: *(bool*)ValuePtr = *(bool*)value; break;
-			case ShaderDataType::Bool2: *(glm::bvec2*)ValuePtr = *(glm::bvec2*)value; break;
-			case ShaderDataType::Bool3: *(glm::bvec3*)ValuePtr = *(glm::bvec3*)value; break;
-			case ShaderDataType::Bool4: *(glm::bvec4*)ValuePtr = *(glm::bvec4*)value; break;
-			case ShaderDataType::Sampler1D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
-			case ShaderDataType::Sampler2D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
-			case ShaderDataType::Sampler3D: *(uint32_t*)ValuePtr = *(uint32_t*)value; break;
-			default: {VXM_CORE_ASSERT(false, "Couldn't assign the type '{0}'.", ShaderDataTypeToString(DataType));} break;
+		if(!Exists(materialName))
+		{
+			m_Materials[materialName] = CreateRef<Material>(shaderName);
+			m_Materials[materialName]->SetMaterialName(materialName);
 		}
-
+		return m_Materials[materialName];
 	}
 
-	const void* MaterialValue::GetValue() const
+	void Material::SetMaterialName(const std::string &name)
 	{
-		return ValuePtr;
+		m_MaterialName = name;
 	}
 
-	uint32_t MaterialValue::GetSize() const
+	void Material::ResetShader()
 	{
-		return GetShaderDataTypeSize(DataType);
+		m_Shader = nullptr;
 	}
 
-	ShaderDataType MaterialValue::GetType() const
+	void Material::LoadShader()
 	{
-		return DataType;
+		VXM_CORE_ASSERT(ShaderLibrary::GetInstance().Exists(m_ShaderName), "The shader {0} doesn't exist...", m_ShaderName);
+		m_Shader = ShaderLibrary::GetInstance().Get(m_ShaderName);
 	}
 
 } // Voxymore

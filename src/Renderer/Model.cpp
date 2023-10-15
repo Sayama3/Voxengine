@@ -14,12 +14,7 @@
 
 namespace Voxymore::Core
 {
-	namespace Utils
-	{
-		bool IsValid(int value) {return value > -1;}
-	}
-
-	Ref<Model> Model::CreateModel(const Path &path, Ref<Shader> shader)
+	Ref<Model> Model::CreateModel(const Path &path, const Ref<Shader>& shader)
 	{
 		return CreateRef<Model>(path, shader);
 	}
@@ -88,7 +83,7 @@ namespace Voxymore::Core
 	glm::vec4 Convertu32Vec3ToVec4(const glm::u32vec3& v) {return glm::vec4(glm::vec3(v) / 4294967295.0f, 1.0f);}
 	glm::vec4 ConvertVec3ToVec4(const glm::vec3& v) {return glm::vec4(v, 1.0f);}
 
-	Model::Model(const Path &p, Ref<Shader> shader) : m_Path(p), m_Shader(std::move(shader))
+	Model::Model(const Path &p, const Ref<Shader>& shader) : m_Path(p), m_Shader(shader)
 	{
 		VXM_PROFILE_FUNCTION();
 		auto path = p.GetFullPath();
@@ -118,8 +113,8 @@ namespace Voxymore::Core
 		m_Meshes.reserve(model.meshes.size());
 		for (auto& mesh : model.meshes)
 		{
-			Ref<Mesh> m = CreateRef<Mesh>(m_Shader);
-			// TODO: set the shader (or material ?) of the shader.
+			Ref<Mesh> m = CreateRef<Mesh>();
+
 			m->m_SubMeshes.reserve(mesh.primitives.size());
 			for (auto& primitive : mesh.primitives)
 			{
@@ -249,7 +244,81 @@ namespace Voxymore::Core
 					}
 				}
 
-				m->AddSubMesh(positions, normals, texcoords, colors, index);
+				Ref<Material> material;
+
+				// Materials
+				{
+					if(primitive.material > -1)
+					{
+						tinygltf::Material mat = model.materials[primitive.material];
+						if(!MaterialLibrary::GetInstance().Exists(mat.name))
+						{
+							MaterialParameters materialParams;
+
+							// PbrMetallicRoughness
+							materialParams.PbrMetallicRoughness.BaseColorFactor = glm::vec4(mat.pbrMetallicRoughness.baseColorFactor[0], mat.pbrMetallicRoughness.baseColorFactor[1], mat.pbrMetallicRoughness.baseColorFactor[2], mat.pbrMetallicRoughness.baseColorFactor[3]);
+							materialParams.PbrMetallicRoughness.HasBaseColorTexture = mat.pbrMetallicRoughness.baseColorTexture.index > -1;
+							if(materialParams.PbrMetallicRoughness.HasBaseColorTexture)
+							{
+								materialParams.PbrMetallicRoughness.BaseColorTexture.Index = mat.pbrMetallicRoughness.baseColorTexture.index;
+								materialParams.PbrMetallicRoughness.BaseColorTexture.TexCoord = mat.pbrMetallicRoughness.baseColorTexture.texCoord;
+							}
+							materialParams.PbrMetallicRoughness.MetallicFactor = mat.pbrMetallicRoughness.metallicFactor;
+							materialParams.PbrMetallicRoughness.RoughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
+							materialParams.PbrMetallicRoughness.HasMetallicRoughnessTexture = mat.pbrMetallicRoughness.metallicRoughnessTexture.index > -1;
+							if(materialParams.PbrMetallicRoughness.HasMetallicRoughnessTexture)
+							{
+								materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.Index = mat.pbrMetallicRoughness.metallicRoughnessTexture.index;
+								materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.TexCoord = mat.pbrMetallicRoughness.metallicRoughnessTexture.texCoord;
+							}
+
+							// Normal Texture
+							materialParams.HasNormalTexture = mat.normalTexture.index > -1;
+							if(materialParams.HasNormalTexture)
+							{
+								materialParams.NormalTexture.Index = mat.normalTexture.index;
+								materialParams.NormalTexture.TexCoord = mat.normalTexture.texCoord;
+								materialParams.NormalTexture.Scale = mat.normalTexture.scale;
+							}
+
+							// Occlusion Texture
+							materialParams.HasOcclusionTexture = mat.occlusionTexture.index > -1;
+							if(materialParams.HasOcclusionTexture)
+							{
+								materialParams.OcclusionTexture.Index = mat.occlusionTexture.index;
+								materialParams.OcclusionTexture.TexCoord = mat.occlusionTexture.texCoord;
+								materialParams.OcclusionTexture.Strength = mat.occlusionTexture.strength;
+							}
+
+							// Emissive Texture
+							materialParams.HasEmissiveTexture = mat.occlusionTexture.index > -1;
+							if(materialParams.HasEmissiveTexture)
+							{
+								materialParams.EmissiveTexture.Index = mat.occlusionTexture.index;
+								materialParams.EmissiveTexture.TexCoord = mat.occlusionTexture.texCoord;
+							}
+
+							// classical parameters
+							materialParams.EmissiveFactor = {mat.emissiveFactor[0], mat.emissiveFactor[1], mat.emissiveFactor[2]};
+							materialParams.SetAlphaMode(mat.alphaMode);
+							materialParams.AlphaCutoff = mat.alphaCutoff;
+							materialParams.DoubleSided = mat.doubleSided;
+
+							material = CreateRef<Material>(m_Shader, materialParams);
+							material->SetMaterialName(mat.name);
+						}
+						else
+						{
+							material = MaterialLibrary::GetInstance().Get(mat.name);
+						}
+					}
+					else
+					{
+						material = MaterialLibrary::GetInstance().GetOrCreate("Default", m_Shader->GetName());
+					}
+				}
+
+				m->AddSubMesh(positions, normals, texcoords, colors, index, material);
 			}
 			m_Meshes.push_back(m);
 		}
@@ -261,6 +330,48 @@ namespace Voxymore::Core
 			std::vector<int> children = node.children;
 			if(node.mesh > -1) m_Nodes.push_back(Node(m_Meshes[node.mesh], children, matrix));
 			else m_Nodes.push_back(Node(children, matrix));
+		}
+
+		m_Textures.reserve(model.textures.size());
+		for (auto& texture : model.textures)
+		{
+			//TODO: remove the assert and leave a blank or magenta texture by default.
+			VXM_CORE_ASSERT(texture.source > -1, "No texture associated.");
+			auto& image = model.images[texture.source];
+			if(image.bufferView > -1)
+			{
+				VXM_CORE_ASSERT(image.width > -1 && image.height > -1 && image.component > -1, "Cannot handle image if we don't have the size or the bits of each pixels.");
+				int width = image.width;
+				int height = image.height;
+				int channels = image.component;
+
+				auto&bufferView = model.bufferViews[image.bufferView];
+				auto& buffer = model.buffers[bufferView.buffer];
+				if(image.bits == 8)
+				{
+					VXM_CORE_ASSERT(bufferView.byteLength>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
+					const auto*bufferPtr = static_cast<const uint8_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
+				}
+				else if(image.bits == 16)
+				{
+					VXM_CORE_ASSERT(bufferView.byteLength>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
+					const auto*bufferPtr = static_cast<const uint16_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
+				}
+				else
+				{
+					VXM_CORE_ASSERT(false, "The pixel type {0} is not handled.", image.pixel_type);
+				}
+			}
+			else
+			{
+				VXM_CORE_ASSERT(!image.uri.empty(), "The image don't have any way to be fetch.");
+				VXM_CORE_ASSERT(!image.uri.starts_with("http"), "The engine cannot fetch the image from the internet for now.");
+				VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif", "Cannot handle the image type {0}.", image.mimeType);
+				auto parentFolder = p.GetFullPath().parent_path();
+				m_Textures.push_back(Texture2D::Create(parentFolder / image.uri));
+			}
 		}
 
 		m_Scenes.reserve(model.scenes.size());
@@ -284,5 +395,18 @@ namespace Voxymore::Core
 	{
 		VXM_CORE_ASSERT(!m_Scenes.empty(), "No scene on the model...");
 		return  m_Scenes[m_DefaultScene];
+	}
+
+	void Model::Bind()
+	{
+		m_Shader->Bind();
+		for (int i = 0; i < m_Textures.size(); ++i)
+		{
+			m_Textures[i]->Bind(i);
+		}
+	}
+	void Model::Unbind()
+	{
+		m_Shader->Unbind();
 	}
 } // namespace Voxymore::Core

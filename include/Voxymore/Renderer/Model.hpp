@@ -19,6 +19,7 @@
 #define EXTENSION_GLB ".glb"
 
 #include "Voxymore/Renderer/Mesh.hpp"
+#include "Voxymore/Renderer/Texture.hpp"
 #include <vector>
 
 namespace Voxymore::Core
@@ -48,15 +49,20 @@ namespace Voxymore::Core
 		std::vector<Ref<Mesh>> m_Meshes;
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
+		std::vector<Ref<Texture2D>> m_Textures;
 		Ref<Shader> m_Shader;
+
 		int m_DefaultScene = 0;
 		Path m_Path;
 	public:
-		Model(const Path& path, Ref<Shader> shader);
+		Model(const Path& path, const Ref<Shader>& shader);
 		~Model();
-		static Ref<Model> CreateModel(const Path& path, Ref<Shader> shader);
+		static Ref<Model> CreateModel(const Path& path, const Ref<Shader>& shader);
 		const Node& GetNode(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
+
+		void Bind();
+		void Unbind();
 	private:
 		//		Node& GetNode(int index);
 	};

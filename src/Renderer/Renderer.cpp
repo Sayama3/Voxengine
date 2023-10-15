@@ -90,8 +90,6 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		mesh->Bind();
-
 		//TODO: Bind associated Material/Texture/Shaders/etc...
 		for (const auto& sm : mesh->GetSubMeshes())
 		{
@@ -103,6 +101,7 @@ namespace Voxymore::Core {
 	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
+		model->Bind();
 		for (int nodeIndex : model->GetDefaultScene())
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);

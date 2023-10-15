@@ -99,6 +99,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/ModelComponent.hpp
         src/Scene/ModelComponent.cpp
         src/ThirdPartiesImplementor.cpp
+        include/Voxymore/Core/Serializable.hpp
+        src/Core/YamlHelper.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
