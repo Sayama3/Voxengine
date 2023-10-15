@@ -27,9 +27,12 @@ namespace Voxymore::Core
 	public:
 		struct SubMesh
 		{
+		public:
 			SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
 			~SubMesh();
 			inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
+			void Bind() const;
+			void Unbind() const;
 		private:
 			Ref<VertexArray> m_VertexArray;
 			Ref<VertexBuffer> m_VertexBuffer;

@@ -18,10 +18,6 @@ namespace Voxymore::Core
 
 	void Mesh::Unbind() const
 	{
-		for (auto& sm : m_SubMeshes)
-		{
-			sm.GetVertexArray()->Unbind();
-		}
 		if(m_Shader.has_value()) m_Shader.value()->Unbind();
 	}
 
@@ -62,5 +58,17 @@ namespace Voxymore::Core
 	Mesh::SubMesh::~SubMesh()
 	{
 		delete[] VertexData;
+	}
+
+	void Mesh::SubMesh::Bind() const
+	{
+		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
+		m_VertexArray->Bind();
+	}
+
+	void Mesh::SubMesh::Unbind() const
+	{
+		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
+		m_VertexArray->Unbind();
 	}
 } // namespace Voxymore::Core

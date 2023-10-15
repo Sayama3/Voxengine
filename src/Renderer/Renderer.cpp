@@ -95,6 +95,7 @@ namespace Voxymore::Core {
 		//TODO: Bind associated Material/Texture/Shaders/etc...
 		for (const auto& sm : mesh->GetSubMeshes())
 		{
+			sm.Bind();
 			RenderCommand::DrawIndexed(sm.GetVertexArray());
 		}
 	}
