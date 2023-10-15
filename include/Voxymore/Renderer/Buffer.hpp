@@ -84,6 +84,6 @@ namespace Voxymore::Core {
 
         virtual uint32_t GetCount() const = 0;
 
-        static Ref<IndexBuffer> Create(uint32_t count, uint32_t* indices);
+        static Ref<IndexBuffer> Create(uint32_t count, const uint32_t* indices);
     };
 }

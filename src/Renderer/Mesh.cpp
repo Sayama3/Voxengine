@@ -30,7 +30,7 @@ namespace Voxymore::Core
 		m_SubMeshes.emplace_back(positions, normals, texcoords, colors, indexes);
 	}
 
-	Mesh::SubMesh::SubMesh(const std::vector<glm::vec3> &positions, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t> &indexes) : Indexes(indexes), VerticeCount(positions.size()), VerticeFloatCount(3 + 3 + 2 + 4), BufferSize(VerticeCount * VerticeFloatCount), VertexData(new float[BufferSize])
+	Mesh::SubMesh::SubMesh(const std::vector<glm::vec3> &positions, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t> &indexes) : VerticeCount(positions.size()), VerticeFloatCount(3 + 3 + 2 + 4), BufferSize(VerticeCount * VerticeFloatCount), VertexData(new float[BufferSize])
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(positions.size() == normals.size() && normals.size() == texcoords.size() && texcoords.size() == colors.size(), "All vertex elements should have the same size.");
@@ -53,7 +53,7 @@ namespace Voxymore::Core
 		m_VertexBuffer = VertexBuffer::Create(BufferSize * sizeof(float), VertexData);
 		m_VertexBuffer->SetLayout(m_BufferLayout);
 
-		m_IndexBuffer = IndexBuffer::Create(Indexes.size(), Indexes.data());
+		m_IndexBuffer = IndexBuffer::Create(indexes.size(), indexes.data());
 
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);

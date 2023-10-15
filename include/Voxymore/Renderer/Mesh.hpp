@@ -36,8 +36,6 @@ namespace Voxymore::Core
 			Ref<IndexBuffer> m_IndexBuffer;
 			BufferLayout m_BufferLayout;
 
-			//TODO: Remove the vectors
-			std::vector<uint32_t > Indexes;
 			const size_t VerticeCount;
 			const size_t VerticeFloatCount;
 			const size_t BufferSize;

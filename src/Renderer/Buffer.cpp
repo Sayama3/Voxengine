@@ -27,7 +27,7 @@ namespace Voxymore::Core {
         return nullptr;
     }
 
-    Ref<IndexBuffer> Voxymore::Core::IndexBuffer::Create(uint32_t size, uint32_t *indices)
+    Ref<IndexBuffer> Voxymore::Core::IndexBuffer::Create(uint32_t size, const uint32_t* indices)
     {
         switch (Renderer::GetAPI())
         {
