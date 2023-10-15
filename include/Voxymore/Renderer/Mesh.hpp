@@ -27,7 +27,7 @@ namespace Voxymore::Core
 	public:
 		struct SubMesh
 		{
-			SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<uint32_t >& indexes);
+			SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
 			~SubMesh();
 			inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		private:
@@ -37,9 +37,6 @@ namespace Voxymore::Core
 			BufferLayout m_BufferLayout;
 
 			//TODO: Remove the vectors
-			std::vector<glm::vec3> Positions;
-			std::vector<glm::vec3> Normals;
-			std::vector<glm::vec2> Texcoords;
 			std::vector<uint32_t > Indexes;
 			const size_t VerticeCount;
 			const size_t VerticeFloatCount;
@@ -56,7 +53,7 @@ namespace Voxymore::Core
 		void Unbind() const;
 		//		inline const std::vector<Ref<VertexArray>>& GetVertexArrays() const { return m_VertexArrays; }
 		inline const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
-		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<uint32_t >& indexes);
+		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
 	};
 
 } // namespace Voxymore::Core
