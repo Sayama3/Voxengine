@@ -93,7 +93,7 @@ namespace Voxymore::Core
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					positions.insert(positions.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+					positions.insert(positions.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
 				}
 
 				// Normal Buffer
@@ -108,7 +108,7 @@ namespace Voxymore::Core
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					normals.insert(normals.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+					normals.insert(normals.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
 				}
 
 				// Texcoord Buffer
@@ -123,7 +123,7 @@ namespace Voxymore::Core
 					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 					const auto*bufferPtr = static_cast<const glm::vec2*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					texcoords.insert(texcoords.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+					texcoords.insert(texcoords.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
 				}
 
 				// Index Buffer
@@ -170,7 +170,7 @@ namespace Voxymore::Core
 							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
 							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 							const auto*bufferPtr = static_cast<const uint32_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-							index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount - 1]);
+							index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
 							break;
 						}
 						default: VXM_CORE_ASSERT(false, "The component type {0} is not supported for an index buffer.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));

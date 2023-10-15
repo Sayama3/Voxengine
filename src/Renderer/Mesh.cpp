@@ -37,9 +37,9 @@ namespace Voxymore::Core
 		m_VertexArray = VertexArray::Create();
 
 		for (int i = 0; i < VerticeCount; ++i) {
-			(glm::vec3) VertexData[(i * VerticeFloatCount)] = Positions[i];
-			(glm::vec3) VertexData[(i * VerticeFloatCount) + 3] = Normals[i];
-			(glm::vec2) VertexData[(i * VerticeFloatCount) + 3 + 2] = Texcoords[i];
+			std::memcpy(&VertexData[(i * VerticeFloatCount)], &Positions[i], 3 * (sizeof(float)));
+			std::memcpy(&VertexData[(i * VerticeFloatCount) + 3], &Normals[i], 3 * (sizeof(float)));
+			std::memcpy(&VertexData[(i * VerticeFloatCount) + 3 + 3], &Texcoords[i], 3 * (sizeof(float)));
 		}
 
 		m_BufferLayout = {
