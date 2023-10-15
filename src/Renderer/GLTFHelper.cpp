@@ -115,6 +115,21 @@ namespace Voxymore::Core
 			return name;
 		}
 
+
+		std::string Helper::AccessorTypeToString(AccessorType accessorType)
+		{
+			switch(accessorType)
+			{
+				case AccessorType::SCALAR: return "SCALAR";
+				case AccessorType::VEC2: return "VEC2";
+				case AccessorType::VEC3: return "VEC3";
+				case AccessorType::VEC4: return "VEC4";
+				case AccessorType::MAT2: return "MAT2";
+				case AccessorType::MAT3: return "MAT3";
+				case AccessorType::MAT4: return "MAT4";
+			}
+			return "Unknown";
+		}
 		std::string Helper::ComponentTypeToString(ComponentType componentType)
 		{
 			switch (componentType)

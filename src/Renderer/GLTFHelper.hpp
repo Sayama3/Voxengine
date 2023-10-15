@@ -30,13 +30,13 @@ namespace Voxymore::Core
 
 		enum AccessorType : int
 		{
-			SCALAR = 1 << 0,
-			VEC2 = 1 << 1,
-			VEC3 = 1 << 2,
-			VEC4 = 1 << 3,
-			MAT2 = 1 << 4,
-			MAT3 = 1 << 5,
-			MAT4 = 1 << 6,
+			SCALAR = TINYGLTF_TYPE_SCALAR,
+			VEC2 = TINYGLTF_TYPE_VEC2,
+			VEC3 = TINYGLTF_TYPE_VEC3,
+			VEC4 = TINYGLTF_TYPE_VEC4,
+			MAT2 = TINYGLTF_TYPE_MAT2,
+			MAT3 = TINYGLTF_TYPE_MAT3,
+			MAT4 = TINYGLTF_TYPE_MAT4,
 		};
 
 		// Values from gltf specification.
@@ -83,6 +83,8 @@ namespace Voxymore::Core
 			static std::string ComponentTypeToString(ComponentType componentType);
 			static ShaderDataType GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount = 4);
 			static glm::mat4 GetMatrix(const tinygltf::Node& node);
+
+			static std::string AccessorTypeToString(AccessorType accessorType);
 
 			static bool NodeHasMesh(const tinygltf::Node& node);
 			static tinygltf::Mesh &GetMesh(tinygltf::Model &model, const tinygltf::Node &node);
