@@ -22,11 +22,16 @@ namespace Voxymore::Core
 			}
 			else if(node.translation.size() == 3 || node.rotation.size() == 4 || node.scale.size() == 3)
 			{
-				glm::vec3 pos;
+				glm::vec3 pos(0.0f);
 				if(node.translation.size() == 3) pos = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
-				glm::quat rot;
-				if(node.rotation.size() == 4) rot = glm::quat(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
-				glm::vec3 scale;
+				glm::quat rot = glm::identity<glm::quat>();
+				if(node.rotation.size() == 4) {
+					rot.x = node.rotation[0];
+					rot.y = node.rotation[1];
+					rot.z = node.rotation[2];
+					rot.w = node.rotation[3];
+				}
+				glm::vec3 scale(1.0f);
 				if(node.scale.size() == 3) scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
 				Math::TRS(matrix, pos, rot, scale);
 			}
