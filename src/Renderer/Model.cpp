@@ -341,22 +341,20 @@ namespace Voxymore::Core
 			if(image.bufferView > -1)
 			{
 				VXM_CORE_ASSERT(image.width > -1 && image.height > -1 && image.component > -1, "Cannot handle image if we don't have the size or the bits of each pixels.");
+				VXM_CORE_ASSERT(image.image.size() != 0, "Cannot handle the current image...");
 				int width = image.width;
 				int height = image.height;
 				int channels = image.component;
-
-				auto&bufferView = model.bufferViews[image.bufferView];
-				auto& buffer = model.buffers[bufferView.buffer];
 				if(image.bits == 8)
 				{
-					VXM_CORE_ASSERT(bufferView.byteLength>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
-					const auto*bufferPtr = static_cast<const uint8_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					VXM_CORE_ASSERT(image.image.size()>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
+					const auto*bufferPtr = static_cast<const uint8_t*>(image.image.data());
 					m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
 				}
 				else if(image.bits == 16)
 				{
-					VXM_CORE_ASSERT(bufferView.byteLength>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
-					const auto*bufferPtr = static_cast<const uint16_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+					VXM_CORE_ASSERT(image.image.size()>= width * height * channels * (image.bits/8), "The buffer is not long enought...");
+					const auto*bufferPtr = static_cast<const uint16_t*>(static_cast<const void*>(image.image.data()));
 					m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
 				}
 				else
