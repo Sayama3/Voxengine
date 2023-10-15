@@ -137,6 +137,8 @@ namespace Voxymore::Core {
 			case ShaderDataType::Sampler2D: return 1;
 			case ShaderDataType::Sampler3D: return 1;
 		}
+		VXM_CORE_ASSERT(false, "The type {0} is unknown...", (int)type);
+		return 0;
 	}
 
     enum class ShaderType : int {
