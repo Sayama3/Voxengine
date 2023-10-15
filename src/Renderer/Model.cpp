@@ -24,6 +24,70 @@ namespace Voxymore::Core
 		return CreateRef<Model>(path, shader);
 	}
 
+	template<typename ValueT, typename BufferT, GLTF::ComponentType ct, GLTF::AccessorType at>
+	void FillBuffer(std::vector<ValueT>& values, ValueT MaxValueBuffer, const std::string& attribute, tinygltf::Model& model, tinygltf::Primitive& primitive)
+	{
+		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
+		size_t sizeofValue = sizeof(ValueT);
+		size_t sizeofBuffer = sizeof(BufferT);
+		int value = primitive.attributes[attribute];
+		auto& accessor = model.accessors[value];
+		auto& bufferView = model.bufferViews[accessor.bufferView];
+		auto& buffer = model.buffers[bufferView.buffer];
+		VXM_CORE_ASSERT(accessor.componentType == ct, "The component type should be {0} and it is {1}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)ct), GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
+		VXM_CORE_ASSERT(accessor.type == at, "The component type should be {0} and it is {1}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)at), GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
+		VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofBuffer, "byteLength {0} is not long enought {1}.", bufferView.byteLength, accessor.count * sizeofValue);
+		size_t bufferItemsCount = bufferView.byteLength / sizeofBuffer;
+		const auto*bufferPtr = static_cast<const BufferT*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+		values.resize(bufferItemsCount);
+		for (int i = 0; i < bufferItemsCount; ++i) {
+			values[i] = static_cast<ValueT>(bufferPtr[i]) / MaxValueBuffer;
+		}
+	}
+
+	template<typename ValueT, typename BufferT, GLTF::ComponentType ct, GLTF::AccessorType at, typename ConvertT>
+	void FillAndConvertBuffer(std::vector<ValueT>& values, const std::string& attribute, tinygltf::Model& model, tinygltf::Primitive& primitive, ConvertT converter)
+	{
+		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
+		size_t sizeofValue = sizeof(ValueT);
+		size_t sizeofBuffer = sizeof(BufferT);
+		int value = primitive.attributes[attribute];
+		auto& accessor = model.accessors[value];
+		auto& bufferView = model.bufferViews[accessor.bufferView];
+		auto& buffer = model.buffers[bufferView.buffer];
+		VXM_CORE_ASSERT(accessor.componentType == ct, "The component type should be {0} and it is {1}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)ct), GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
+		VXM_CORE_ASSERT(accessor.type == at, "The component type should be {0} and it is {1}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)at), GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
+		VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofBuffer, "byteLength {0} is not long enought {1}.", bufferView.byteLength, accessor.count * sizeofValue);
+		size_t bufferItemsCount = bufferView.byteLength / sizeofBuffer;
+		const auto*bufferPtr = static_cast<const BufferT*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+		values.resize(bufferItemsCount);
+		for (int i = 0; i < bufferItemsCount; ++i) {
+			values[i] = converter(bufferPtr[i]);
+		}
+	}
+
+	template<typename T, GLTF::ComponentType ct, GLTF::AccessorType at>
+	void InsertBuffer(std::vector<T>& values, const std::string& attribute, tinygltf::Model& model, tinygltf::Primitive& primitive)
+	{
+		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
+		size_t sizeofValue = sizeof(T);
+		int value = primitive.attributes[attribute];
+		auto& accessor = model.accessors[value];
+		auto& bufferView = model.bufferViews[accessor.bufferView];
+		auto& buffer = model.buffers[bufferView.buffer];
+		VXM_CORE_ASSERT(accessor.componentType == ct, "The component type should be {0} and it is {1}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)ct), GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
+		VXM_CORE_ASSERT(accessor.type == at, "The component type should be {0} and it is {1}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)at), GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
+		VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofValue, "byteLength '{0}' is not long enought.", bufferView.byteLength);
+		size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
+		const auto*bufferPtr = static_cast<const T*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
+		values.insert(values.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
+	}
+
+	glm::vec4 Convertu8Vec3ToVec4(const glm::u8vec3& v) {return glm::vec4(glm::vec3(v) / 255.0f, 1.0f);}
+	glm::vec4 Convertu16Vec3ToVec4(const glm::u16vec3& v) {return glm::vec4(glm::vec3(v) / 65535.0f, 1.0f);}
+	glm::vec4 Convertu32Vec3ToVec4(const glm::u32vec3& v) {return glm::vec4(glm::vec3(v) / 4294967295.0f, 1.0f);}
+	glm::vec4 ConvertVec3ToVec4(const glm::vec3& v) {return glm::vec4(v, 1.0f);}
+
 	Model::Model(const Path &p, Ref<Shader> shader) : m_Path(p), m_Shader(std::move(shader))
 	{
 		VXM_PROFILE_FUNCTION();
@@ -83,82 +147,47 @@ namespace Voxymore::Core
 				std::vector<glm::vec4> colors;
 				std::vector<uint32_t> index;
 
-				// Position Buffer
-				{
-					VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
-					size_t sizeofValue = sizeof(glm::vec3);
-					int value = primitive.attributes[positionAttribute];
-					auto& accessor = model.accessors[value];
-					auto& bufferView = model.bufferViews[accessor.bufferView];
-					auto& buffer = model.buffers[bufferView.buffer];
-					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
-					VXM_CORE_ASSERT(accessor.type == GLTF::AccessorType::VEC3, "The component type should be Vec3 and it is {0}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
-					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					positions.insert(positions.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
-				}
+				InsertBuffer<glm::vec3, GLTF::ComponentType::Float, GLTF::AccessorType::VEC3>(positions, positionAttribute, model, primitive);
 
-				// Normal Buffer
-				{
-					VXM_PROFILE_SCOPE("Model::Model -> Create Normal Buffer");
-					size_t sizeofValue = sizeof(glm::vec3);
-					int value = primitive.attributes[normalAttribute];
-					auto& accessor = model.accessors[value];
-					auto& bufferView = model.bufferViews[accessor.bufferView];
-					auto& buffer = model.buffers[bufferView.buffer];
-					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
-					VXM_CORE_ASSERT(accessor.type == GLTF::AccessorType::VEC3, "The component type should be Vec3 and it is {0}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
-					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-					const auto*bufferPtr = static_cast<const glm::vec3*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					normals.insert(normals.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
-				}
+				InsertBuffer<glm::vec3, GLTF::ComponentType::Float, GLTF::AccessorType::VEC3>(normals, normalAttribute, model, primitive);
 
-				// Texcoord Buffer
-				{
-					VXM_PROFILE_SCOPE("Model::Model -> Create Texcoord Buffer");
-					size_t sizeofValue = sizeof(glm::vec2);
-					int value = primitive.attributes[texcoordAttribute];
-					auto& accessor = model.accessors[value];
-					auto& bufferView = model.bufferViews[accessor.bufferView];
-					auto& buffer = model.buffers[bufferView.buffer];
-					VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType)accessor.componentType));
-					VXM_CORE_ASSERT(accessor.type == GLTF::AccessorType::VEC2, "The component type should be Vec2 and it is {0}.", GLTF::Helper::AccessorTypeToString((GLTF::AccessorType)accessor.type));
-					VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-					size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-					const auto*bufferPtr = static_cast<const glm::vec2*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
-					texcoords.insert(texcoords.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
-				}
+				InsertBuffer<glm::vec2, GLTF::ComponentType::Float, GLTF::AccessorType::VEC2>(texcoords, texcoordAttribute, model, primitive);
 
 				if(primitive.attributes.contains(colorAttribute))
 				{
 					VXM_PROFILE_SCOPE("Model::Model -> Create Color Buffer");
-					int value = primitive.attributes[texcoordAttribute];
+					int value = primitive.attributes[colorAttribute];
 					auto& accessor = model.accessors[value];
 					auto& bufferView = model.bufferViews[accessor.bufferView];
 					auto& buffer = model.buffers[bufferView.buffer];
-					if(accessor.type == GLTF::AccessorType::VEC4)
+					if(accessor.type == GLTF::AccessorType::VEC4 && accessor.componentType == GLTF::ComponentType::Float)
 					{
-						size_t sizeofValue = sizeof(glm::vec4);
-						VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString( (GLTF::ComponentType) accessor.componentType));
-						VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-						size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-						const auto *bufferPtr = static_cast<const glm::vec4 *>(static_cast<const void *>(&buffer.data.at(0) + bufferView.byteOffset));
-						colors.insert(colors.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
+						InsertBuffer<glm::vec4, GLTF::ComponentType::Float, GLTF::AccessorType::VEC4>(colors, colorAttribute, model, primitive);
 					}
 					else
 					{
 						colors.resize(positions.size(), glm::vec4(1.0f));
-						if(accessor.type == GLTF::AccessorType::VEC3) {
-							size_t sizeofValue = sizeof(glm::vec3);
-							VXM_CORE_ASSERT(accessor.componentType == GLTF::ComponentType::Float, "The component type should be Float and it is {0}.", GLTF::Helper::ComponentTypeToString( (GLTF::ComponentType) accessor.componentType));
-							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
-							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
-							const auto *bufferPtr = static_cast<const glm::vec3* >(static_cast<const void *>(&buffer.data.at(0) + bufferView.byteOffset));
-							for (int i = 0; i < bufferItemsCount; ++i)
-							{
-								colors[i] = glm::vec4(bufferPtr[i], 1.0f);
+						if(accessor.type == GLTF::AccessorType::VEC4)
+						{
+							switch ((GLTF::ComponentType)accessor.componentType) {
+								case GLTF::ComponentType::UnsignedByte:
+									FillBuffer<glm::vec4, glm::u8vec4, GLTF::ComponentType::UnsignedByte, GLTF::AccessorType::VEC4>(colors, glm::vec4(255.0), colorAttribute, model, primitive); break;
+								case GLTF::ComponentType::UnsignedShort:
+									FillBuffer<glm::vec4, glm::u16vec4, GLTF::ComponentType::UnsignedShort, GLTF::AccessorType::VEC4>(colors, glm::vec4(65535.0), colorAttribute, model, primitive); break;
+								case GLTF::ComponentType::UnsignedInt:
+									FillBuffer<glm::vec4, glm::u32vec4, GLTF::ComponentType::UnsignedInt, GLTF::AccessorType::VEC4>(colors, glm::vec4(4294967295.0), colorAttribute, model, primitive); break;
+								default:
+									VXM_CORE_ASSERT(false, "The type {0} is not supported.", accessor.componentType);
+							}
+						}
+						else if(accessor.type == GLTF::AccessorType::VEC3)
+						{
+							switch ((GLTF::ComponentType)accessor.componentType) {
+								case GLTF::ComponentType::UnsignedByte: FillAndConvertBuffer<glm::vec4, glm::u8vec3, GLTF::ComponentType::UnsignedByte, GLTF::AccessorType::VEC3>(colors, colorAttribute, model, primitive, Convertu8Vec3ToVec4); break;
+								case GLTF::ComponentType::UnsignedShort: FillAndConvertBuffer<glm::vec4, glm::u16vec3, GLTF::ComponentType::UnsignedShort, GLTF::AccessorType::VEC3>(colors, colorAttribute, model, primitive, Convertu16Vec3ToVec4); break;
+								case GLTF::ComponentType::UnsignedInt: FillAndConvertBuffer<glm::vec4, glm::u32vec3, GLTF::ComponentType::UnsignedInt, GLTF::AccessorType::VEC3>(colors, colorAttribute, model, primitive, Convertu32Vec3ToVec4); break;
+								case GLTF::ComponentType::Float: FillAndConvertBuffer<glm::vec4, glm::vec3, GLTF::ComponentType::Float, GLTF::AccessorType::VEC3>(colors, colorAttribute, model, primitive, ConvertVec3ToVec4); break;
+								default: VXM_CORE_ASSERT(false, "The type {0} is not supported.", accessor.componentType);
 							}
 						}
 					}
@@ -182,7 +211,7 @@ namespace Voxymore::Core
 						{
 							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedByte");
 							size_t sizeofValue = sizeof(uint8_t);
-							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofValue, "byteLength {0} is not long enought {1}.", bufferView.byteLength, accessor.count * sizeofValue);
 							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 							const auto*bufferPtr = static_cast<const uint8_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
 							index.resize(bufferItemsCount);
@@ -196,7 +225,7 @@ namespace Voxymore::Core
 						{
 							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedShort");
 							size_t sizeofValue = sizeof(uint16_t);
-							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofValue, "byteLength {0} is not long enought {1}.", bufferView.byteLength, accessor.count * sizeofValue);
 							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 							const auto*bufferPtr = static_cast<const uint16_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
 							index.resize(bufferItemsCount);
@@ -210,7 +239,7 @@ namespace Voxymore::Core
 						{
 							VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedInt");
 							size_t sizeofValue = sizeof(uint32_t);
-							VXM_CORE_ASSERT(bufferView.byteLength % sizeofValue == 0, "byteLength {0} is not correct.", bufferView.byteLength);
+							VXM_CORE_ASSERT(bufferView.byteLength >= accessor.count * sizeofValue, "byteLength {0} is not long enought {1}.", bufferView.byteLength, accessor.count * sizeofValue);
 							size_t bufferItemsCount = bufferView.byteLength / sizeofValue;
 							const auto*bufferPtr = static_cast<const uint32_t*>(static_cast<const void*>(&buffer.data.at(0) + bufferView.byteOffset));
 							index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
