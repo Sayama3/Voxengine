@@ -74,4 +74,9 @@ namespace Voxymore::Core
 	{
 		m_Material = std::move(material);
 	}
+
+	const Ref<Material>& SubMesh::GetMaterial() const
+	{
+		return m_Material;
+	}
 } // namespace Voxymore::Core

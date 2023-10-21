@@ -13,6 +13,8 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ModelUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ModelData), 1);
+		s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(glm::vec3), 2);
+		s_Data.MaterialUniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), 3);
 
 		RenderCommand::Init();
 	}
@@ -76,8 +78,8 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		//		material->SetUniformMat4("u_Projection.ViewProjectionMatrix", s_Data.ViewProjectionMatrix);
-		//		material->SetUniformMat4("u_Projection.Transform", transform);
+		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
+
 		material->Bind();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
@@ -90,9 +92,9 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		//TODO: Bind associated Material/Texture/Shaders/etc...
 		for (const auto& sm : mesh->GetSubMeshes())
 		{
+			s_Data.MaterialUniformBuffer->SetData(&sm.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			sm.Bind();
 			RenderCommand::DrawIndexed(sm.GetVertexArray());
 		}

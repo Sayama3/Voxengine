@@ -22,6 +22,15 @@ namespace Voxymore::Core
 	class Model;
 	class SubMesh;
 
+	// TODO: Implement a Vertex Struct.
+//	struct Vertex
+//	{
+//		glm::vec3 Position;
+//		glm::vec3 Normal;
+//		glm::vec2 TexCoord; //TODO: Add other TexCoords (optionnal)
+//		glm::vec4 Color = glm::vec4(1.0f);
+//	};
+
 	//TODO: create an API to be able to create Mesh from the client side.
 	class Mesh
 	{
@@ -48,6 +57,7 @@ namespace Voxymore::Core
 		void Bind() const;
 		void Unbind() const;
 		void SetMaterial(Ref<Material> material);
+		const Ref<Material>& GetMaterial() const;
 	private:
 		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;

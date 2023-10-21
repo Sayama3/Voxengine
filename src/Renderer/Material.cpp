@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Renderer/Material.hpp"
+#include "Voxymore/Renderer/Renderer.hpp"
 
 #define SerializeSerializable(Emitter, Param) Emitter << KEYVAL(#Param, YAML::BeginMap); \
 Param.Serialize(Emitter); \
@@ -104,31 +105,7 @@ namespace YAML
 }
 
 namespace Voxymore::Core {
-//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec2& v)
-//	{
-//		out << YAML::Flow;
-//		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-//		return out;
-//	}
-//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec3& v)
-//	{
-//		out << YAML::Flow;
-//		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-//		return out;
-//	}
-//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::vec4& v)
-//	{
-//		out << YAML::Flow;
-//		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-//		return out;
-//	}
-//	YAML::Emitter& operator <<(YAML::Emitter& out, const glm::quat& v)
-//	{
-//		out << YAML::Flow;
-//		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-//		return out;
-//	}
-
+	/*
 	void MaterialParameters::Deserialize(YAML::Node &node)
 	{
 		DeserializeSerializable(node, PbrMetallicRoughness);
@@ -220,36 +197,49 @@ namespace Voxymore::Core {
 		TexCoord = node["TexCoord"].as<int>();
 		Strength = node["Strength"].as<float>();
 	}
+*/
 
-	Material::Material(uint32_t binding)
+	void Material::Serialize(YAML::Emitter &emitter) const
 	{
-		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+		emitter << KEYVAL("MaterialName", m_MaterialName);
+		emitter << KEYVAL("ShaderName", m_ShaderName);
+		/*emitter << KEYVAL("Parameters", YAML::BeginMap);
+		m_Parameters.Serialize(emitter);
+		emitter << YAML::EndMap;*/
 	}
-
-	Material::Material(const std::string &shaderName, uint32_t binding) : m_ShaderName(shaderName)
+	void Material::Deserialize(YAML::Node &node)
+	{
+		m_MaterialName = node["MaterialName"].as<std::string>();
+		m_ShaderName = node["ShaderName"].as<std::string>();
+		//		auto ParameterNode = node["Parameters"];
+		//		m_Parameters.Deserialize(ParameterNode);
+		LoadShader();
+	}
+	Material::Material()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
+	}
+
+	Material::Material(const std::string &shaderName) : m_ShaderName(shaderName)
+	{
+		VXM_PROFILE_FUNCTION();
 		LoadShader();
 	}
 
-	Material::Material(const std::string& shaderName, const MaterialParameters& parameters, uint32_t binding) : m_ShaderName(shaderName), m_Parameters(parameters)
+	Material::Material(const std::string& shaderName, const MaterialParameters& parameters) : m_ShaderName(shaderName), m_Parameters()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
 		LoadShader();
 	}
 
-	Material::Material(const Ref<Shader> &shader, uint32_t binding) : m_ShaderName(shader->GetName()), m_Shader(shader)
+	Material::Material(const Ref<Shader> &shader) : m_ShaderName(shader->GetName()), m_Shader(shader)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
 	}
 
-	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters, uint32_t binding) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters)
+	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_UniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), binding);
 	}
 
 	Material::~Material()
@@ -258,11 +248,6 @@ namespace Voxymore::Core {
 
 	void Material::Bind() const
 	{
-		m_UniformBuffer->SetData(&m_Parameters, sizeof(MaterialParameters));
-//		for (uint32_t i = 0; i < m_Textures.size(); ++i)
-//		{
-//			if(m_Textures[i] != nullptr) LoadTexture(i);
-//		}
 		m_Shader->Bind();
 	}
 
@@ -278,13 +263,13 @@ namespace Voxymore::Core {
 		LoadShader();
 	}
 
-//	void Material::LoadTexture(uint32_t index) const
-//	{
-//		VXM_CORE_ASSERT(index >= 0 && index < m_Textures.size(), "The index {0} is not between [0, {1}[", index, m_Textures.size());
-//		VXM_CORE_ASSERT(m_Textures[index] != nullptr, "The texture {0} doesn't exist.", index);
-//
-//		m_Textures[index]->Bind(index);
-//	}
+	//	void Material::LoadTexture(uint32_t index) const
+	//	{
+	//		VXM_CORE_ASSERT(index >= 0 && index < m_Textures.size(), "The index {0} is not between [0, {1}[", index, m_Textures.size());
+	//		VXM_CORE_ASSERT(m_Textures[index] != nullptr, "The texture {0} doesn't exist.", index);
+	//
+	//		m_Textures[index]->Bind(index);
+	//	}
 
 	const std::string &Material::GetMaterialName() const
 	{
@@ -296,45 +281,9 @@ namespace Voxymore::Core {
 		return m_ShaderName;
 	}
 
-	void Material::Serialize(YAML::Emitter &emitter) const
+	const MaterialParameters& Material::GetMaterialsParameters() const
 	{
-		emitter << KEYVAL("MaterialName", m_MaterialName);
-		emitter << KEYVAL("ShaderName", m_ShaderName);
-		emitter << KEYVAL("Parameters", YAML::BeginMap);
-		m_Parameters.Serialize(emitter);
-		emitter << YAML::EndMap;
-//		emitter << KEYVAL("Textures", YAML::BeginMap);
-//		for (int i = 0; i < m_TexturesPath.size(); ++i) {
-//			if(m_TexturesPath[i].has_value()) emitter << KEYVAL(i, m_TexturesPath[i].value());
-//		}
-//		emitter << YAML::EndMap;
-	}
-	void Material::Deserialize(YAML::Node &node)
-	{
-		m_MaterialName = node["MaterialName"].as<std::string>();
-		m_ShaderName = node["ShaderName"].as<std::string>();
-		auto ParameterNode = node["Parameters"];
-		m_Parameters.Deserialize(ParameterNode);
-//		auto TextureNode = node["Textures"];
-//		if(TextureNode.IsDefined())
-//		{
-//			for (int i = 0; i < m_TexturesPath.size(); ++i)
-//			{
-//				if(TextureNode[i].IsDefined())
-//				{
-//					m_TexturesPath[i] = TextureNode[i].as<Path>();
-//				}
-//				else
-//				{
-//					m_TexturesPath[i] = {};
-//				}
-//			}
-//		}
-//		else
-//		{
-//			for (auto &tex: m_TexturesPath) tex = {};
-//		}
-		LoadShader();
+		return m_Parameters;
 	}
 
 	MaterialLibrary* MaterialLibrary::s_Instance = nullptr;

@@ -51,6 +51,8 @@ namespace Voxymore {
 			ModelData ModelBuffer;
 			Ref<UniformBuffer> CameraUniformBuffer;
 			Ref<UniformBuffer> ModelUniformBuffer;
+			Ref<UniformBuffer> LightUniformBuffer;
+			Ref<UniformBuffer> MaterialUniformBuffer;
 		};
 
 		class Renderer {

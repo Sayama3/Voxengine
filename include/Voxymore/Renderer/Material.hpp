@@ -25,99 +25,95 @@ namespace Voxymore::Core {
 
 	struct TextureInfo
 	{
-		int Index;
+		int Index = -1;
 		int TexCoord = 0;
 
-		void Deserialize(YAML::Node& node);
-		void Serialize(YAML::Emitter& emitter) const;
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
 	};
 
 	struct NormalTextureInfo
 	{
-		int Index;
+		int Index = -1;
 		int TexCoord = 0;
 		float Scale = 1.0f;
 
-		void Deserialize(YAML::Node& node);
-		void Serialize(YAML::Emitter& emitter) const;
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
 	};
 
 	struct OcclusionTextureInfo
 	{
-		int Index;
+		int Index = -1;
 		int TexCoord = 0;
 		float Strength = 1.0f;
 
-		void Deserialize(YAML::Node& node);
-		void Serialize(YAML::Emitter& emitter) const;
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
 	};
 
 	struct MetallicRoughtness
 	{
 		glm::vec4 BaseColorFactor = {1, 1, 1, 1};
-		bool HasBaseColorTexture = false;
 		TextureInfo BaseColorTexture;
 		float MetallicFactor = 1.0f;
 		float RoughnessFactor = 1.0f;
-		bool HasMetallicRoughnessTexture = false;
 		TextureInfo MetallicRoughnessTexture;
 
-		void Deserialize(YAML::Node& node);
-		void Serialize(YAML::Emitter& emitter) const;
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
 	};
 
 	struct MaterialParameters
 	{
 		MetallicRoughtness PbrMetallicRoughness;
-		bool HasNormalTexture = false;
 		NormalTextureInfo NormalTexture;
-		bool HasOcclusionTexture = false;
 		OcclusionTextureInfo OcclusionTexture;
-		bool HasEmissiveTexture = false;
 		TextureInfo EmissiveTexture;
 		glm::vec3 EmissiveFactor = {0,0,0};
-		AlphaMode AlphaMode = AlphaMode::Opaque;
+		int AlphaMode = AlphaMode::Opaque;
 		float AlphaCutoff = 0.5f;
-		bool DoubleSided = false;
+		int DoubleSided = false;
 
-		void Deserialize(YAML::Node& node);
-		void Serialize(YAML::Emitter& emitter) const;
-		void SetAlphaMode(const std::string& alphaMode);
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+		//		void SetAlphaMode(const std::string& alphaMode);
 	};
 
-    class Material : public Serializable
+	class Material : public Serializable
 	{
 	private://To Serialize
 		//TODO: Replace with a UUID.
 		std::string m_MaterialName = "";
 		std::string m_ShaderName = "Default";
 		MaterialParameters m_Parameters;
-//		std::array<std::optional<Path>, 32> m_TexturesPath;
+		//		std::array<std::optional<Path>, 32> m_TexturesPath;
 	private:
 		Ref<Shader> m_Shader;
-		Ref<UniformBuffer> m_UniformBuffer;
-    public:
-        Material(uint32_t binding = 3);
-        Material(const std::string& shaderName, uint32_t binding = 3);
-        Material(const std::string& shaderName, const MaterialParameters& parameters, uint32_t binding = 3);
-        Material(const Ref<Shader>& shader, uint32_t binding = 3);
-        Material(const Ref<Shader>& shader, const MaterialParameters& parameters, uint32_t binding = 3);
-        ~Material();
+	public:
+		Material();
+		Material(const std::string& shaderName);
+		Material(const std::string& shaderName, const MaterialParameters& parameters);
+		Material(const Ref<Shader>& shader);
+		Material(const Ref<Shader>& shader, const MaterialParameters& parameters);
+		~Material();
 
-        void Bind() const;
-        void Unbind() const;
+		void Bind() const;
+		void Unbind() const;
 
 		void ChangeShader(const std::string& shaderName);
 		const std::string& GetMaterialName() const;
 		const std::string& GetShaderName() const;
 		void SetMaterialName(const std::string& name);
+
+		const MaterialParameters& GetMaterialsParameters() const;
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
 		virtual void Serialize(YAML::Emitter& emitter) const override;
 	private:
 		void ResetShader();
 		void LoadShader();
-    };
+	};
 
 	class MaterialLibrary : public Serializable
 	{

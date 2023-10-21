@@ -257,55 +257,41 @@ namespace Voxymore::Core
 
 							// PbrMetallicRoughness
 							materialParams.PbrMetallicRoughness.BaseColorFactor = glm::vec4(mat.pbrMetallicRoughness.baseColorFactor[0], mat.pbrMetallicRoughness.baseColorFactor[1], mat.pbrMetallicRoughness.baseColorFactor[2], mat.pbrMetallicRoughness.baseColorFactor[3]);
-							materialParams.PbrMetallicRoughness.HasBaseColorTexture = mat.pbrMetallicRoughness.baseColorTexture.index > -1;
-							if(materialParams.PbrMetallicRoughness.HasBaseColorTexture)
-							{
-								materialParams.PbrMetallicRoughness.BaseColorTexture.Index = mat.pbrMetallicRoughness.baseColorTexture.index;
-								materialParams.PbrMetallicRoughness.BaseColorTexture.TexCoord = mat.pbrMetallicRoughness.baseColorTexture.texCoord;
-							}
+							materialParams.PbrMetallicRoughness.BaseColorTexture.Index = mat.pbrMetallicRoughness.baseColorTexture.index;
+							materialParams.PbrMetallicRoughness.BaseColorTexture.TexCoord = mat.pbrMetallicRoughness.baseColorTexture.texCoord;
+
 							materialParams.PbrMetallicRoughness.MetallicFactor = mat.pbrMetallicRoughness.metallicFactor;
 							materialParams.PbrMetallicRoughness.RoughnessFactor = mat.pbrMetallicRoughness.roughnessFactor;
-							materialParams.PbrMetallicRoughness.HasMetallicRoughnessTexture = mat.pbrMetallicRoughness.metallicRoughnessTexture.index > -1;
-							if(materialParams.PbrMetallicRoughness.HasMetallicRoughnessTexture)
-							{
-								materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.Index = mat.pbrMetallicRoughness.metallicRoughnessTexture.index;
-								materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.TexCoord = mat.pbrMetallicRoughness.metallicRoughnessTexture.texCoord;
-							}
+							materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.Index = mat.pbrMetallicRoughness.metallicRoughnessTexture.index;
+							materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.TexCoord = mat.pbrMetallicRoughness.metallicRoughnessTexture.texCoord;
+
 
 							// Normal Texture
-							materialParams.HasNormalTexture = mat.normalTexture.index > -1;
-							if(materialParams.HasNormalTexture)
-							{
-								materialParams.NormalTexture.Index = mat.normalTexture.index;
-								materialParams.NormalTexture.TexCoord = mat.normalTexture.texCoord;
-								materialParams.NormalTexture.Scale = mat.normalTexture.scale;
-							}
+							materialParams.NormalTexture.Index = mat.normalTexture.index;
+							materialParams.NormalTexture.TexCoord = mat.normalTexture.texCoord;
+							materialParams.NormalTexture.Scale = mat.normalTexture.scale;
+
 
 							// Occlusion Texture
-							materialParams.HasOcclusionTexture = mat.occlusionTexture.index > -1;
-							if(materialParams.HasOcclusionTexture)
-							{
-								materialParams.OcclusionTexture.Index = mat.occlusionTexture.index;
-								materialParams.OcclusionTexture.TexCoord = mat.occlusionTexture.texCoord;
-								materialParams.OcclusionTexture.Strength = mat.occlusionTexture.strength;
-							}
+							materialParams.OcclusionTexture.Index = mat.occlusionTexture.index;
+							materialParams.OcclusionTexture.TexCoord = mat.occlusionTexture.texCoord;
+							materialParams.OcclusionTexture.Strength = mat.occlusionTexture.strength;
+
 
 							// Emissive Texture
-							materialParams.HasEmissiveTexture = mat.occlusionTexture.index > -1;
-							if(materialParams.HasEmissiveTexture)
-							{
-								materialParams.EmissiveTexture.Index = mat.occlusionTexture.index;
-								materialParams.EmissiveTexture.TexCoord = mat.occlusionTexture.texCoord;
-							}
+							materialParams.EmissiveTexture.Index = mat.occlusionTexture.index;
+							materialParams.EmissiveTexture.TexCoord = mat.occlusionTexture.texCoord;
+
 
 							// classical parameters
 							materialParams.EmissiveFactor = {mat.emissiveFactor[0], mat.emissiveFactor[1], mat.emissiveFactor[2]};
-							materialParams.SetAlphaMode(mat.alphaMode);
+							//							materialParams.SetAlphaMode(mat.alphaMode);
 							materialParams.AlphaCutoff = mat.alphaCutoff;
 							materialParams.DoubleSided = mat.doubleSided;
 
 							material = CreateRef<Material>(m_Shader, materialParams);
 							material->SetMaterialName(mat.name);
+							MaterialLibrary::GetInstance().Add(material);
 						}
 						else
 						{
