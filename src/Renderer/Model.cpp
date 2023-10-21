@@ -88,6 +88,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto path = p.GetFullPath();
 		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
+		UnflipStbi();
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;

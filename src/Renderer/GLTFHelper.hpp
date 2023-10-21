@@ -93,8 +93,7 @@ namespace Voxymore::Core
 		};
 	}
 
-
-
-
+    void FlipStbi();
+	void UnflipStbi();
 } // namespace Voxymore::Core
 

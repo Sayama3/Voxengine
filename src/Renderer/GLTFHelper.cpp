@@ -4,6 +4,7 @@
 
 #include "GLTFHelper.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include <stb_image.h>
 
 namespace Voxymore::Core
 {
@@ -187,4 +188,13 @@ namespace Voxymore::Core
 			return (GLTF::PrimitiveAttribute)-1;
 		}
 	}// namespace Core
+
+    void FlipStbi()
+	{
+		stbi_set_flip_vertically_on_load(true);
+	}
+	void UnflipStbi()
+	{
+		stbi_set_flip_vertically_on_load(false);
+	}
 }// namespace Voxymore
