@@ -56,6 +56,8 @@ namespace Voxymore::Core{
         return nullptr;
     }
 
+	ShaderLibrary* ShaderLibrary::s_Instance = nullptr;
+
     void ShaderLibrary::Add(const Ref<Shader> &shader) {
         const auto& name = shader->GetName();
         VXM_CORE_ASSERT(!m_Shaders.contains(name), "Shader Library already contains '{0}'.", name);
@@ -81,7 +83,6 @@ namespace Voxymore::Core{
         return m_Shaders[name];
     }
 
-
     Ref<Shader> ShaderLibrary::Get(const std::string &name) {
         VXM_CORE_ASSERT(m_Shaders.contains(name), "The shader library doesn't contain '{0}'.", name);
         return m_Shaders[name];
@@ -90,4 +91,10 @@ namespace Voxymore::Core{
     bool ShaderLibrary::Exists(const std::string &name) const {
         return m_Shaders.contains(name);
     }
+
+	ShaderLibrary& ShaderLibrary::GetInstance()
+	{
+		if(s_Instance == nullptr) s_Instance = new ShaderLibrary();
+		return *s_Instance;
+	}
 }

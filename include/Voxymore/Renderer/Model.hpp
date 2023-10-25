@@ -4,12 +4,67 @@
 
 #pragma once
 
+#include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
+#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Renderer/Buffer.hpp"
+#include "Voxymore/Renderer/VertexArray.hpp"
+#include "Voxymore/Renderer/UniformBuffer.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
+#include "Voxymore/Renderer/Material.hpp"
+
+#define EXTENSION_GLTF ".gltf"
+#define EXTENSION_GLB ".glb"
+
+#include "Voxymore/Renderer/Mesh.hpp"
+#include "Voxymore/Renderer/Texture.hpp"
+#include <vector>
 
 namespace Voxymore::Core
 {
+	struct Node
+	{
+	public:
+		Node() = default;
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : mesh(mesh) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children) : mesh(mesh), children(children) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
+		inline Node(const std::vector<int>& children) : mesh(), children(children) {}
+		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(), children(children), transform(transform) {}
+	public:
+		std::optional<Ref<::Voxymore::Core::Mesh>> mesh;
+		std::vector<int> children;
+		glm::mat4 transform = glm::mat4(1.0f);
+		inline Ref<::Voxymore::Core::Mesh>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline const Ref<::Voxymore::Core::Mesh>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline bool HasMesh() const { return mesh.has_value();}
+		inline bool HasChildren() const { return !children.empty();}
+	};
 
 	class Model
 	{
+	private:
+		std::vector<Ref<Mesh>> m_Meshes;
+		std::vector<Node> m_Nodes;
+		std::vector<std::vector<int>> m_Scenes;
+		std::vector<Ref<Texture2D>> m_Textures;
+		Ref<Shader> m_Shader;
+
+		int m_DefaultScene = 0;
+		Path m_Path;
+	public:
+		Model(const Path& path, const Ref<Shader>& shader);
+		~Model();
+		static Ref<Model> CreateModel(const Path& path, const Ref<Shader>& shader);
+		const Node& GetNode(int index) const;
+		const std::vector<int>& GetDefaultScene() const;
+
+		void Bind();
+		void Unbind();
+	private:
+		//		Node& GetNode(int index);
 	};
 
 } // namespace Voxymore::Core

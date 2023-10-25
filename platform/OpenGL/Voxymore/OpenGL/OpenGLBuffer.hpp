@@ -27,7 +27,7 @@ namespace Voxymore::Core {
     };
     class OpenGLIndexBuffer : public IndexBuffer {
     public:
-        OpenGLIndexBuffer(uint32_t count, uint32_t* indices);
+        OpenGLIndexBuffer(uint32_t count, const uint32_t* indices);
         virtual ~OpenGLIndexBuffer() override;
         virtual void Bind() const override;
         virtual void Unbind() const override;

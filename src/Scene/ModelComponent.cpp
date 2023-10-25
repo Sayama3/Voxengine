@@ -1,0 +1,85 @@
+#include "Voxymore/Scene/ModelComponent.hpp"
+#include <cstring>
+#include <cmath>
+
+// ======== ModelComponent ========
+namespace Voxymore::Core
+{
+    VXM_CREATE_COMPONENT(ModelComponent);
+
+    void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
+    {
+    	auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
+    	model.m_ModelPath = componentNode["Path"].as<Path>();
+    	model.m_ShaderName = componentNode["ShaderName"].as<std::string>();
+    }
+
+    void ModelComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
+    {
+    	auto& model = sourceEntity.GetComponent<ModelComponent>();
+		emitter << KEYVAL("Path", model.m_ModelPath);
+		emitter << KEYVAL("ShaderName", model.m_ShaderName);
+    }
+
+    void ModelComponent::OnImGuiRender(Entity sourceEntity)
+    {
+    	auto& model = sourceEntity.GetComponent<ModelComponent>();
+		auto& p = model.m_ModelPath;
+
+		std::vector<std::string> PossibleFileSources = GetFileSourceNames();
+		int currentSourceIndex = static_cast<int>(p.source); // Here we store our selection data as an index.
+		const std::string&currentSourceName = PossibleFileSources[currentSourceIndex];  // Pass in the preview value visible before opening the combo (it could be anything)
+		if (ImGui::BeginCombo("Source", currentSourceName.c_str()))
+		{
+			for (int i = 0; i < PossibleFileSources.size(); i++)
+			{
+				const bool is_selected = (currentSourceIndex == i);
+				if (ImGui::Selectable(PossibleFileSources[i].c_str(), is_selected))
+				{
+					currentSourceIndex = i;
+					p.source = static_cast<FileSource>(i);
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected) ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		//TODO: use the cpp style ImGui InputText
+		{
+			const std::string pathStr = p.path.string();
+			const int BufferSize = 1024;
+			char path[BufferSize];
+			int fillSize = std::min(static_cast<int>(pathStr.size()), (BufferSize - 1));
+			std::memcpy(path, pathStr.c_str(), fillSize);
+			std::memset(path + fillSize, 0, sizeof(path) - fillSize);
+			if (ImGui::InputText("Path", path, BufferSize)) {
+				p.path = path;
+			}
+		}
+
+		//TODO: use the cpp style ImGui InputText
+		{
+			std::string& pathStr = model.m_ShaderName;
+			const int BufferSize = 1024;
+			char shaderName[BufferSize];
+			int fillSize = std::min(static_cast<int>(pathStr.size()), (BufferSize - 1));
+			std::memcpy(shaderName, pathStr.c_str(), fillSize);
+			std::memset(shaderName + fillSize, 0, sizeof(shaderName) - fillSize);
+			if (ImGui::InputText("Shader Name", shaderName, BufferSize)) {
+				pathStr = shaderName;
+			}
+		}
+	}
+
+	void ModelComponent::LoadModel()
+	{
+		VXM_CORE_ASSERT(!m_IsLoaded, "The model is already loaded.");
+		VXM_CORE_ASSERT(std::filesystem::exists(m_ModelPath.GetFullPath()), "The path '{0}' is not valid.", m_ModelPath.GetFullPath().string());
+		m_Model = Model::CreateModel(m_ModelPath, ShaderLibrary::GetInstance().Get(m_ShaderName));
+		m_IsLoaded = true;
+	}
+
+	//TODO: implement on ModelComponent change (i.e. change model when user choose to change the model)
+}

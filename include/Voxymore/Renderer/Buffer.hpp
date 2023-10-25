@@ -53,12 +53,21 @@ namespace Voxymore::Core {
         uint32_t m_Stride;
     };
 
-    class VertexBuffer {
+	class Buffer
+	{
+	public:
+		virtual ~Buffer() {}
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+	};
+
+    class VertexBuffer : public Buffer {
     public:
         virtual ~VertexBuffer() {}
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
+//        virtual void Bind() const = 0;
+//        virtual void Unbind() const = 0;
 
         virtual void SetLayout(const BufferLayout& layout) = 0;
         virtual const BufferLayout& GetLayout() const = 0;
@@ -66,15 +75,15 @@ namespace Voxymore::Core {
         static Ref<VertexBuffer> Create(uint32_t size, void* vertices);
     };
 
-    class IndexBuffer {
+    class IndexBuffer : public Buffer {
     public:
         virtual ~IndexBuffer() {}
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
+//        virtual void Bind() const = 0;
+//        virtual void Unbind() const = 0;
 
         virtual uint32_t GetCount() const = 0;
 
-        static Ref<IndexBuffer> Create(uint32_t count, uint32_t* indices);
+        static Ref<IndexBuffer> Create(uint32_t count, const uint32_t* indices);
     };
 }

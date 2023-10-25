@@ -2,6 +2,8 @@
 // Created by ianpo on 04/07/2023.
 //
 
+#include <utility>
+
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
@@ -13,7 +15,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(const std::string& name, uint32_t width, uint32_t height) {
+    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)) {
         VXM_PROFILE_FUNCTION();
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
@@ -21,7 +23,13 @@ namespace Voxymore::Core {
 
         s_Instance = this;
 
-        WindowProps props(name, width, height);
+		if(m_Parameters.argc > 0)
+		{
+			VXM_CORE_ASSERT(m_Parameters.argv != nullptr, "The parameter ARGV is not set.");
+			ProcessArguments(m_Parameters.argc, m_Parameters.argv);
+		}
+
+        WindowProps props(m_Parameters.name, m_Parameters.width, m_Parameters.height);
         m_Window = Scope<Window>(Window::Create(props));
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
@@ -117,4 +125,18 @@ namespace Voxymore::Core {
         VXM_CORE_INFO("Application is closing.");
         m_Running = false;
     }
+
+	void Application::ProcessArguments(int argc, char **argv)
+	{
+		std::filesystem::path exePath = m_Parameters.argv[0];
+		FileSystem::s_RootPath = exePath.parent_path();
+		for (int i = 1; i < argc; ++i)
+		{
+			if(std::strcmp(argv[i], "--root") == 0 || std::strcmp(argv[i], "-r") == 0)
+			{
+				VXM_CORE_ASSERT((i+1) < argc, "Not enough arguments.");
+				FileSystem::s_RootPath = argv[++i];
+			}
+		}
+	}
 } // Core

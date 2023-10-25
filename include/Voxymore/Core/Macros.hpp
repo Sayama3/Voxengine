@@ -30,10 +30,6 @@
 	#define VXM_FUNC __FUNCSIG__
 #endif
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-    #define STB_IMAGE_IMPLEMENTATION
-#endif
-
 #define VXM_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 //deprecated. Use VXM_BIND_EVENT_FN
 #define BIND_EVENT_FN(fn) VXM_BIND_EVENT_FN(fn)

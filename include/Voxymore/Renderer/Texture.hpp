@@ -23,6 +23,9 @@ namespace Voxymore::Core {
     class Texture2D : public Texture {
     public:
         static Ref<Texture2D> Create(const Path& path);
+        static Ref<Texture2D> Create(const std::filesystem::path& path);
+        static Ref<Texture2D> Create(const uint8_t* data, int width, int height, int channels);
+        static Ref<Texture2D> Create(const uint16_t* data, int width, int height, int channels);
     };
 
 } // Core

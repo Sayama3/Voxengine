@@ -5,64 +5,132 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Serializable.hpp"
+#include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
+#include "Voxymore/Renderer/UniformBuffer.hpp"
+#include "Voxymore/Renderer/Texture.hpp"
 
 
 namespace Voxymore::Core {
 
-    struct MaterialValue {
-    private :
-        ShaderDataType DataType;
-        void* ValuePtr;
-    public:
-        MaterialValue(ShaderDataType dataType);
-        ~MaterialValue();
+	enum AlphaMode : int
+	{
+		Opaque = 0,
+		Mask,
+		Blend,
+	};
 
-        MaterialValue ();
-        MaterialValue (const MaterialValue&);
-        MaterialValue& operator= (const MaterialValue&);
-    public:
-        template<typename T>
-        void SetValue(const T& value);
-        void SetValue(const void* value, uint32_t size);
+	struct TextureInfo
+	{
+		int Index = -1;
+		int TexCoord = 0;
 
-        const void* GetValue() const;
-        uint32_t GetSize() const;
-        ShaderDataType GetType() const;
-    private:
-        void DeleteValue();
-        void CreateValue();
-    };
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+	};
 
-    class Material {
+	struct NormalTextureInfo
+	{
+		int Index = -1;
+		int TexCoord = 0;
+		float Scale = 1.0f;
+
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+	};
+
+	struct OcclusionTextureInfo
+	{
+		int Index = -1;
+		int TexCoord = 0;
+		float Strength = 1.0f;
+
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+	};
+
+	struct MetallicRoughtness
+	{
+		glm::vec4 BaseColorFactor = {1, 1, 1, 1};
+		TextureInfo BaseColorTexture;
+		float MetallicFactor = 1.0f;
+		float RoughnessFactor = 1.0f;
+		TextureInfo MetallicRoughnessTexture;
+
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+	};
+
+	struct MaterialParameters
+	{
+		MetallicRoughtness PbrMetallicRoughness;
+		NormalTextureInfo NormalTexture;
+		OcclusionTextureInfo OcclusionTexture;
+		TextureInfo EmissiveTexture;
+		glm::vec3 EmissiveFactor = {0,0,0};
+		int AlphaMode = AlphaMode::Opaque;
+		float AlphaCutoff = 0.5f;
+		int DoubleSided = false;
+
+		//		void Deserialize(YAML::Node& node);
+		//		void Serialize(YAML::Emitter& emitter) const;
+		//		void SetAlphaMode(const std::string& alphaMode);
+	};
+
+	class Material : public Serializable
+	{
+	private://To Serialize
+		//TODO: Replace with a UUID.
+		std::string m_MaterialName = "";
+		std::string m_ShaderName = "Default";
+		MaterialParameters m_Parameters;
+		//		std::array<std::optional<Path>, 32> m_TexturesPath;
 	private:
 		Ref<Shader> m_Shader;
-		std::unordered_map<std::string, MaterialValue> m_Uniforms;
-    public:
-        Material(Ref<Shader>& shader);
-        ~Material();
+	public:
+		Material();
+		Material(const std::string& shaderName);
+		Material(const std::string& shaderName, const MaterialParameters& parameters);
+		Material(const Ref<Shader>& shader);
+		Material(const Ref<Shader>& shader, const MaterialParameters& parameters);
+		~Material();
 
-        void SetUniformInt(const std::string& name, int value);
-		void SetUniformInt2(const std::string& name, const glm::ivec2& value);
-		void SetUniformInt3(const std::string& name, const glm::ivec3& value);
-		void SetUniformInt4(const std::string& name, const glm::ivec4& value);
+		void Bind() const;
+		void Unbind() const;
 
-        void SetUniformFloat(const std::string& name, float value);
-        void SetUniformFloat2(const std::string& name, const glm::vec2& value);
-        void SetUniformFloat3(const std::string& name, const glm::vec3& value);
-        void SetUniformFloat4(const std::string& name, const glm::vec4& value);
+		void ChangeShader(const std::string& shaderName);
+		const std::string& GetMaterialName() const;
+		const std::string& GetShaderName() const;
+		void SetMaterialName(const std::string& name);
 
-		void SetUniformMat2(const std::string& name, const glm::mat2& value);
-        void SetUniformMat3(const std::string& name, const glm::mat3& value);
-        void SetUniformMat4(const std::string& name, const glm::mat4& value);
+		const MaterialParameters& GetMaterialsParameters() const;
+	public:
+		virtual void Deserialize(YAML::Node& node) override;
+		virtual void Serialize(YAML::Emitter& emitter) const override;
+	private:
+		void ResetShader();
+		void LoadShader();
+	};
 
-        void Bind() const;
-        void Unbind() const;
-
-		inline Ref<Shader> GetShader() { return m_Shader; }
-    };
+	class MaterialLibrary : public Serializable
+	{
+	private:
+		static MaterialLibrary* s_Instance;
+		std::map<std::string, Ref<Material>> m_Materials;
+	public:
+		static MaterialLibrary& GetInstance();
+		void Add(const Ref<Material>& material);
+		void Add(const std::string& name, const Ref<Material>& material);
+		Ref<Material> Get(const std::string& name);
+		Ref<Material> GetOrCreate(const std::string &materialName, const std::string &shaderName = "");
+		bool Exists(const std::string& name) const;
+	public:
+		virtual void Deserialize(YAML::Node& node) override;
+		virtual void Serialize(YAML::Emitter& emitter) const override;
+	};
 
 } // Voxymore
 // Core

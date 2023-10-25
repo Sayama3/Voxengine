@@ -30,7 +30,7 @@ namespace Voxymore::Core {
         glDeleteBuffers(1, &m_RendererID);
     }
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t count, uint32_t *indices) : m_Count(count) {
+    OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t count, const uint32_t *indices) : m_Count(count) {
         VXM_PROFILE_FUNCTION();
         glGenBuffers(1, &m_RendererID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);

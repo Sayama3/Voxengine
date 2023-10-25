@@ -26,6 +26,13 @@ namespace Voxymore::Core {
 		return trs; // Translation * Rotation * Scale => TRS Matrix.
 	}
 
+	void Math::TRS(glm::mat4& trs, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) {
+		VXM_PROFILE_FUNCTION();
+		trs = glm::translate(trs, position); // Translation Matrix
+		trs = trs * glm::toMat4(rotation); // Rotation Matrix
+		trs = glm::scale(trs, scale); // Scale Matrix
+	}
+
 	bool Math::DecomposeTransform(const glm::mat4 &transform, glm::vec3 &position, glm::vec3 &rotation, glm::vec3 &scale)
 	{
 		// from glm::decompose in matrix_decompose

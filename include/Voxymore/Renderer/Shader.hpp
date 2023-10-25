@@ -137,6 +137,8 @@ namespace Voxymore::Core {
 			case ShaderDataType::Sampler2D: return 1;
 			case ShaderDataType::Sampler3D: return 1;
 		}
+		VXM_CORE_ASSERT(false, "The type {0} is unknown...", (int)type);
+		return 0;
 	}
 
     enum class ShaderType : int {
@@ -202,7 +204,10 @@ namespace Voxymore::Core {
 
     class ShaderLibrary
     {
+	private:
+		static ShaderLibrary* s_Instance;
     public:
+		static ShaderLibrary&GetInstance();
         void Add(const Ref<Shader>& shader);
         void Add(const std::string& name, const Ref<Shader>& shader);
         Ref<Shader> Load(const Path& path);
