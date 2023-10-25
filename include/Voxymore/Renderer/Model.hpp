@@ -28,19 +28,19 @@ namespace Voxymore::Core
 	{
 	public:
 		Node() = default;
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : Mesh(mesh) {}
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children) : Mesh(mesh), Children(children) {}
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children, const glm::mat4& transform) : Mesh(mesh), Children(children), Transform(transform) {}
-		inline Node(const std::vector<int>& children) : Mesh(), Children(children) {}
-		inline Node(const std::vector<int>& children, const glm::mat4& transform) : Mesh(), Children(children), Transform(transform) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : mesh(mesh) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children) : mesh(mesh), children(children) {}
+		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
+		inline Node(const std::vector<int>& children) : mesh(), children(children) {}
+		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(), children(children), transform(transform) {}
 	public:
-		std::optional<Ref<Mesh>> Mesh;
-		std::vector<int> Children;
-		glm::mat4 Transform = glm::mat4(1.0f);
-		inline Ref<::Voxymore::Core::Mesh>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return Mesh.value();}
-		inline const Ref<::Voxymore::Core::Mesh>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return Mesh.value();}
-		inline bool HasMesh() const { return Mesh.has_value();}
-		inline bool HasChildren() const { return !Children.empty();}
+		std::optional<Ref<::Voxymore::Core::Mesh>> mesh;
+		std::vector<int> children;
+		glm::mat4 transform = glm::mat4(1.0f);
+		inline Ref<::Voxymore::Core::Mesh>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline const Ref<::Voxymore::Core::Mesh>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline bool HasMesh() const { return mesh.has_value();}
+		inline bool HasChildren() const { return !children.empty();}
 	};
 
 	class Model

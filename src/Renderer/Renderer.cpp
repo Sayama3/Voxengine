@@ -113,7 +113,7 @@ namespace Voxymore::Core {
 	void Renderer::Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		glm::mat4 currentTransform = transform * node.Transform;
+		glm::mat4 currentTransform = transform * node.transform;
 		if(node.HasMesh())
 		{
 			Submit(node.GetMesh(), currentTransform, entityId);
@@ -121,7 +121,7 @@ namespace Voxymore::Core {
 
 		if(!node.HasChildren())
 		{
-			for(const int i : node.Children)
+			for(const int i : node.children)
 			{
 				Submit(model, model->GetNode(i), currentTransform, entityId);
 			}

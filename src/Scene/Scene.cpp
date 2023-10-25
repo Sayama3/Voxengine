@@ -50,7 +50,7 @@ namespace Voxymore::Core
 			auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
 			for (auto entity: meshesView) {
 				auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-				Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+				Renderer::Submit(mesh.Material, mesh.mesh, transform.GetTransform(), static_cast<int>(entity));
 			}
 		}
 
@@ -125,7 +125,7 @@ namespace Voxymore::Core
 				auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
 				for (auto entity: meshesView) {
 					auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-					Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
+					Renderer::Submit(mesh.Material, mesh.mesh, transform.GetTransform(), static_cast<int>(entity));
 				}
 			}
 
