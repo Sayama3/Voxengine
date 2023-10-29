@@ -20,8 +20,7 @@ namespace Voxymore::Core {
 		std::string name = "Voxymore Application";
 		uint32_t width = 1600;
 		uint32_t height = 900;
-		int argc = 0;
-		char** argv = nullptr;
+		std::vector<std::string> arguments;
 	};
 
 	class Application {
@@ -39,13 +38,15 @@ namespace Voxymore::Core {
 		inline static Application& Get() {return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
 		inline ImGUILayer* GetImGuiLayer() { return m_ImGUILayer; }
+		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
+
+		const std::string& GetArgument(const std::string& key) const;
 
 		void Close();
-
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
-		void ProcessArguments(int argc, char** argv);
+		void ProcessArguments(const std::vector<std::string>& arguments);
 	private:
 		ApplicationParameters m_Parameters;
 		double m_LastFrameTime = 0.0;
