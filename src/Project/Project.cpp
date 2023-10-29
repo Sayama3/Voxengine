@@ -34,7 +34,7 @@ namespace Voxymore::Core
 	Ref<Project> Project::Load(const std::filesystem::path &path)
 	{
 		Ref<Project> project = CreateRef<Project>();
-		ProjectSerializer ps(s_ActiveProject);
+		ProjectSerializer ps(project);
 		if(ps.Deserialize(path))
 		{
 			s_ActiveProject = project;
