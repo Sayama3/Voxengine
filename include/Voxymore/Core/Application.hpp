@@ -42,6 +42,7 @@ namespace Voxymore::Core {
 
 		const std::string& GetArgument(const std::string& key) const;
 		const std::string& GetArgument(int key) const;
+		bool HasArgument(int key) const;
 
 		void Close();
 	private:

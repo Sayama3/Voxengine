@@ -161,4 +161,11 @@ namespace Voxymore::Core {
 		VXM_CORE_ASSERT(key >= 0 && key < arguments.size(), "The index is not valid.")
 		return arguments[key];
 	}
+
+	bool Application::HasArgument(int key) const
+	{
+		const std::vector<std::string>& arguments = m_Parameters.arguments;
+		VXM_CORE_ASSERT(key >= 0, "The index is not valid.")
+		return key < arguments.size();
+	}
 } // Core
