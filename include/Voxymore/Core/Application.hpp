@@ -41,6 +41,7 @@ namespace Voxymore::Core {
 		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
 
 		const std::string& GetArgument(const std::string& key) const;
+		const std::string& GetArgument(int key) const;
 
 		void Close();
 	private:

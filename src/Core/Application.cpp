@@ -154,4 +154,11 @@ namespace Voxymore::Core {
 		}
 		return "";
 	}
+
+	const std::string& Application::GetArgument(int key) const
+	{
+		const std::vector<std::string>& arguments = m_Parameters.arguments;
+		VXM_CORE_ASSERT(key >= 0 && key < arguments.size(), "The index is not valid.")
+		return arguments[key];
+	}
 } // Core
