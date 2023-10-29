@@ -53,7 +53,6 @@ namespace Voxymore::Core
 	private:
 		friend class Application;
 		static std::filesystem::path s_EditorPath;
-		static std::filesystem::path s_ProjectPath;
 		static std::filesystem::path GetRootPath(FileSource source);
 	public:
 		static std::ifstream ReadFileAsByte(const Path& path);

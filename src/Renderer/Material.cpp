@@ -18,92 +18,6 @@ if(Condition) Param.Deserialize(VXM_COMBINE(Param, Node))
 #define DeserializeSerializable(node, Param) auto VXM_COMBINE(Param, Node) = node[#Param]; \
 Param.Deserialize(VXM_COMBINE(Param, Node))
 
-namespace YAML
-{
-	template<>
-	struct convert<glm::vec2>
-	{
-		static Node encode(const glm::vec2& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec2& rhs)
-		{
-			if(!node.IsSequence() || node.size() != 2) return false;
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			return true;
-		}
-	};
-	template<>
-	struct convert<glm::vec3>
-	{
-		static Node encode(const glm::vec3& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec3& rhs)
-		{
-			if(!node.IsSequence() || node.size() != 3) return false;
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			return true;
-		}
-	};
-	template<>
-	struct convert<glm::vec4>
-	{
-		static Node encode(const glm::vec4& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
-			return node;
-		}
-		static bool decode(const Node& node, glm::vec4& rhs)
-		{
-			if(!node.IsSequence() || node.size() != 4) return false;
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
-			return true;
-		}
-	};
-	template<>
-	struct convert<glm::quat>
-	{
-		static Node encode(const glm::quat& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
-			return node;
-		}
-		static bool decode(const Node& node, glm::quat& rhs)
-		{
-			if(!node.IsSequence() || node.size() != 4) return false;
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
-			return true;
-		}
-	};
-}
-
 namespace Voxymore::Core {
 	/*
 	void MaterialParameters::Deserialize(YAML::Node &node)
@@ -204,7 +118,7 @@ namespace Voxymore::Core {
 		emitter << KEYVAL("MaterialName", m_MaterialName);
 		emitter << KEYVAL("ShaderName", m_ShaderName);
 		/*emitter << KEYVAL("Parameters", YAML::BeginMap);
-		m_Parameters.Serialize(emitter);
+		m_Config.Serialize(emitter);
 		emitter << YAML::EndMap;*/
 	}
 	void Material::Deserialize(YAML::Node &node)
@@ -212,7 +126,7 @@ namespace Voxymore::Core {
 		m_MaterialName = node["MaterialName"].as<std::string>();
 		m_ShaderName = node["ShaderName"].as<std::string>();
 		//		auto ParameterNode = node["Parameters"];
-		//		m_Parameters.Deserialize(ParameterNode);
+		//		m_Config.Deserialize(ParameterNode);
 		LoadShader();
 	}
 	Material::Material()

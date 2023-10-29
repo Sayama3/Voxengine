@@ -1,10 +1,10 @@
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 
 namespace Voxymore::Core
 {
 	std::filesystem::path FileSystem::s_EditorPath = "./";
-	std::filesystem::path FileSystem::s_ProjectPath = "./";
 
 	std::filesystem::path FileSystem::GetRootPath(FileSource source)
 	{
@@ -12,7 +12,7 @@ namespace Voxymore::Core
 		{
 			case FileSource::None:
 			{
-				return s_ProjectPath / "./";
+				return Project::GetProjectFilePath().parent_path();
 				break;
 			}
 
@@ -24,25 +24,25 @@ namespace Voxymore::Core
 
 			case FileSource::Asset:
 			{
-				return s_ProjectPath / "Assets/";
+				return Project::GetAssetDirectory();
 				break;
 			}
 
 			case FileSource::System:
 			{
-				return s_ProjectPath / "Systems/";
+				return Project::GetSystemsDirectory();
 				break;
 			}
 
 			case FileSource::Cache:
 			{
-				return s_ProjectPath / "Cache/";
+				return Project::GetCacheDirectory();
 				break;
 			}
 			default:
 				break;
 		}
-		return s_ProjectPath / "./";
+		return Project::GetProjectFilePath().parent_path();
 	}
 	std::ifstream FileSystem::ReadFileAsByte(const Path &path)
 	{

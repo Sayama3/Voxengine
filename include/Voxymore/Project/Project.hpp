@@ -11,11 +11,12 @@
 
 namespace Voxymore::Core
 {
-	struct ProjectParameters
-	{
+	struct ProjectConfig {
 		std::string name = "Untitled";
 
-		std::filesystem::path projectDirectory;
+		std::filesystem::path assetDirectory = "Assets";
+		std::filesystem::path cacheDirectory = "Cache";
+		std::filesystem::path systemDirectory = "Systems";
 
 		Path startScene;
 
@@ -24,17 +25,53 @@ namespace Voxymore::Core
 
 	class Project
 	{
+		friend class ProjectSerializer;
 	public:
 		Project();
-		Project(ProjectParameters parameters);
-
+		Project(ProjectConfig parameters);
 		~Project();
 
-		static void LoadProject();
+		inline static std::filesystem::path GetAssetDirectory()
+		{
+			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
+			return s_ActiveProject->GetAsset();
+		}
+		inline static std::filesystem::path GetCacheDirectory()
+		{
+			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
+			return s_ActiveProject->GetCache();
+		}
+		inline static std::filesystem::path GetSystemsDirectory()
+		{
+			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
+			return s_ActiveProject->GetSystems();
+		}
+		inline static const std::filesystem::path& GetProjectFilePath()
+		{
+			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
+			return s_ActiveProject->GetFilePath();
+		}
+
+		inline static const ProjectConfig& GetConfig()
+		{
+			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
+			return s_ActiveProject->m_Config;
+		}
+
+		static Ref<Project> New();
+		static Ref<Project> Load(const std::filesystem::path&);
+		static bool SaveActive(const std::filesystem::path& path = "");
+
+	private:
+		std::filesystem::path GetAsset() const;
+		std::filesystem::path GetCache() const;
+		std::filesystem::path GetSystems() const;
+		const std::filesystem::path& GetFilePath() const;
 
 
 	private:
-		ProjectParameters m_Parameters;
+		std::filesystem::path m_ProjectPath = "./Project.vxm";
+		ProjectConfig m_Config;
 
 		static Ref<Project> s_ActiveProject;
 	};

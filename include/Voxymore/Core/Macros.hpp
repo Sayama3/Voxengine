@@ -8,6 +8,10 @@
 #include "Voxymore/Core/PlatformDetection.hpp"
 #include <csignal>
 
+#ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+	#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
+#endif
+
 #define VXM_CONCAT(x, y) x ## y
 #define VXM_COMBINE(x, y) VXM_CONCAT(x, y)
 
