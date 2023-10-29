@@ -29,6 +29,7 @@ namespace Voxymore::Core
 		std::ofstream fout(filepath);
 		fout << out.c_str();
 		m_Handle->m_ProjectPath = filepath;
+		return true;
 	}
 
 	bool ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
@@ -67,6 +68,7 @@ namespace Voxymore::Core
 		config.startScene = projectNode["StartScene"].as<Path>();
 
 		m_Handle->m_ProjectPath = filepath;
+		return true;
 	}
 
 } // namespace Voxymore::Core
