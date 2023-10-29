@@ -19,10 +19,11 @@ namespace Voxymore::Core
 		return scene;
 	}
 
-	Ref<Scene> SceneManager::CreateScene(const std::filesystem::path& filepath)
+	Ref<Scene> SceneManager::CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height)
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Scene> scene = CreateRef<Scene>();
+		scene->SetViewportSize(width, height);
 		SceneSerializer serializer(scene);
 		serializer.Deserialize(filepath.string());
 		const std::string& sceneName = scene->GetName();
@@ -45,6 +46,19 @@ namespace Voxymore::Core
 		s_Scenes.erase(name);
 	}
 
+	void SceneManager::AddScene(const std::string& name, Ref<Scene> scene)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(!s_Scenes.contains(name), "The scene {0} exist.", name);
+		s_Scenes[name] = scene;
+	}
+
+	void SceneManager::AddScene(Ref<Scene> scene)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(!s_Scenes.contains(scene->GetName()), "The scene {0} exist.", scene->GetName());
+		s_Scenes[scene->GetName()] = scene;
+	}
 	
 	std::vector<std::string> SceneManager::GetSceneNames()
 	{
