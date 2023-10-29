@@ -7,6 +7,7 @@
 #include "Core.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"

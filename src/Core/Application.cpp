@@ -129,13 +129,13 @@ namespace Voxymore::Core {
 	void Application::ProcessArguments(int argc, char **argv)
 	{
 		std::filesystem::path exePath = m_Parameters.argv[0];
-		FileSystem::s_RootPath = exePath.parent_path();
+		FileSystem::s_EditorPath = exePath.parent_path();
 		for (int i = 1; i < argc; ++i)
 		{
 			if(std::strcmp(argv[i], "--root") == 0 || std::strcmp(argv[i], "-r") == 0)
 			{
 				VXM_CORE_ASSERT((i+1) < argc, "Not enough arguments.");
-				FileSystem::s_RootPath = argv[++i];
+				FileSystem::s_EditorPath = argv[++i];
 			}
 		}
 	}

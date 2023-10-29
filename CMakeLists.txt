@@ -101,6 +101,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/ThirdPartiesImplementor.cpp
         include/Voxymore/Core/Serializable.hpp
         src/Core/YamlHelper.cpp
+        src/Project/Project.cpp
+        include/Voxymore/Project/Project.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

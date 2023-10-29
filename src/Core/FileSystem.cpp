@@ -3,57 +3,46 @@
 
 namespace Voxymore::Core
 {
-	std::filesystem::path FileSystem::s_RootPath = "./";
+	std::filesystem::path FileSystem::s_EditorPath = "./";
+	std::filesystem::path FileSystem::s_ProjectPath = "./";
+
 	std::filesystem::path FileSystem::GetRootPath(FileSource source)
 	{
-		std::filesystem::path folder;
 		switch (source)
 		{
 			case FileSource::None:
 			{
-				folder = "./";
+				return s_ProjectPath / "./";
 				break;
 			}
 
 			case FileSource::EditorAsset:
 			{
-				folder = "EditorAssets/";
+				return s_EditorPath / "EditorAssets/";
 				break;
 			}
 
 			case FileSource::Asset:
 			{
-				folder = "Assets/";
-				break;
-			}
-
-			case FileSource::EditorShader:
-			{
-				folder = "EditorShaders/";
-				break;
-			}
-
-			case FileSource::Shader:
-			{
-				folder = "Shaders/";
+				return s_ProjectPath / "Assets/";
 				break;
 			}
 
 			case FileSource::System:
 			{
-				folder = "Systems/";
+				return s_ProjectPath / "Systems/";
 				break;
 			}
 
-			case FileSource::Scene:
+			case FileSource::Cache:
 			{
-				folder = "Scenes/";
+				return s_ProjectPath / "Cache/";
 				break;
 			}
 			default:
 				break;
 		}
-		return s_RootPath / folder;
+		return s_ProjectPath / "./";
 	}
 	std::ifstream FileSystem::ReadFileAsByte(const Path &path)
 	{
