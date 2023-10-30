@@ -222,9 +222,9 @@ namespace Voxymore::Core
 //{
 //	m_Speed = 5.0f;
 //}
-//void CameraControllerSystem::OnImGuiRender()
+//bool CameraControllerSystem::OnImGuiRender()
 //{
-//	ImGui::DragFloat("Speed", &m_Speed);
+//	return ImGui::DragFloat("Speed", &m_Speed);
 //};
 //void CameraControllerSystem::Update(Scene &scene, TimeStep ts)
 //{

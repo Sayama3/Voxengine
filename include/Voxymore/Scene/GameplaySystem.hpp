@@ -33,7 +33,7 @@ namespace Voxymore::Core
 		virtual void SerializeSystem(YAML::Emitter& Emitter) = 0;
 		virtual void ResetSystem() = 0;
 	public:
-		virtual void OnImGuiRender() = 0;
+		virtual bool OnImGuiRender() = 0;
 		virtual const std::string GetName() const = 0;
 		inline virtual void OnAttachToScene(Scene& scene) {}
 		virtual void Update(Scene& scene, TimeStep ts) = 0;
@@ -101,7 +101,7 @@ public: \
 //	virtual void SerializeSystem(YAML::Emitter& emitter) override;
 //	virtual void ResetSystem() override;
 //public:
-//	virtual void OnImGuiRender() override;
+//	virtual bool OnImGuiRender() override;
 //	virtual void Update(::Voxymore::Core::Scene& scene, ::Voxymore::Core::TimeStep ts) override;
 //private:
 //	float m_Speed = 5.0f;
