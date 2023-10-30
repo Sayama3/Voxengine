@@ -9,6 +9,9 @@
 #include <string>
 #include <filesystem>
 
+#define VOID_FUNC_PTR void(*)()
+#define NAMED_VOID_FUNC_PTR(name) void(*name)()
+
 namespace Voxymore::Core
 {
 	struct ProjectConfig {
@@ -58,9 +61,18 @@ namespace Voxymore::Core
 			return s_ActiveProject->m_Config;
 		}
 
+		inline static bool ProjectIsLoaded() { return s_ActiveProject != nullptr; }
+
 		static Ref<Project> New();
 		static Ref<Project> Load(const std::filesystem::path&);
-		static bool SaveActive(const std::filesystem::path& path = "");
+		static bool SaveActive(const std::filesystem::path& path);
+		static bool SaveActive();
+
+		static void AddOnLoad(VOID_FUNC_PTR);
+		static void RemoveOnLoad(VOID_FUNC_PTR);
+
+	private:
+		void CallOnLoad();
 
 	private:
 		std::filesystem::path GetAsset() const;
@@ -68,11 +80,11 @@ namespace Voxymore::Core
 		std::filesystem::path GetSystems() const;
 		const std::filesystem::path& GetFilePath() const;
 
-
 	private:
 		std::filesystem::path m_ProjectPath = "./Project.vxm";
 		ProjectConfig m_Config;
 
+		static std::vector<VOID_FUNC_PTR> s_OnLoad;
 		static Ref<Project> s_ActiveProject;
 	};
 

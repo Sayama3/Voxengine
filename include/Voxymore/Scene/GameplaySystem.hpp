@@ -31,6 +31,7 @@ namespace Voxymore::Core
 	protected:
 		virtual void DeserializeSystem(YAML::Node& componentNode) = 0;
 		virtual void SerializeSystem(YAML::Emitter& Emitter) = 0;
+		virtual void ResetSystem() = 0;
 	public:
 		virtual void OnImGuiRender() = 0;
 		virtual const std::string GetName() const = 0;
@@ -47,6 +48,9 @@ namespace Voxymore::Core
 		std::unordered_map<std::string, bool> s_SystemEnabled;
 		static SystemManager* s_SystemManager;
 		static SystemManager& GetInstance();
+	public:
+		SystemManager();
+		~SystemManager();
 	private:
 		static void WriteSystem(YAML::Emitter& out, const std::string& name);
 		static bool HasSaveFile(const std::string& name);
@@ -67,6 +71,8 @@ namespace Voxymore::Core
 		static Ref<GameplaySystem> GetSystem(const std::string& name);
 		static std::vector<Ref<GameplaySystem>> GetSystems(const std::string& sceneName);
 		static std::vector<std::string> GetSystemsName();
+	private:
+		static void ReloadSystems();
 	};
 }
 
@@ -93,6 +99,7 @@ public: \
 //protected:
 //	virtual void DeserializeSystem(YAML::Node& componentNode) override;
 //	virtual void SerializeSystem(YAML::Emitter& emitter) override;
+//	virtual void ResetSystem() override;
 //public:
 //	virtual void OnImGuiRender() override;
 //	virtual void Update(::Voxymore::Core::Scene& scene, ::Voxymore::Core::TimeStep ts) override;

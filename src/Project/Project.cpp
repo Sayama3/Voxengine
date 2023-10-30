@@ -4,11 +4,27 @@
 
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
+#include <algorithm>
 
 
 namespace Voxymore::Core
 {
+	std::vector<VOID_FUNC_PTR> Project::s_OnLoad;
 	Ref<Project> Project::s_ActiveProject;
+
+	void Project::AddOnLoad(NAMED_VOID_FUNC_PTR(func))
+	{
+		s_OnLoad.push_back(func);
+	}
+
+	void Project::RemoveOnLoad(NAMED_VOID_FUNC_PTR(func))
+	{
+		const auto it = std::find(s_OnLoad.cbegin(), s_OnLoad.cend(), func);
+		if (it != s_OnLoad.end())
+		{
+			s_OnLoad.erase(it);
+		}
+	}
 
 	Project::Project()
 	{
@@ -28,6 +44,7 @@ namespace Voxymore::Core
 	Ref<Project> Project::New()
 	{
 		s_ActiveProject = CreateRef<Project>();
+		s_ActiveProject->CallOnLoad();
 		return s_ActiveProject;
 	}
 
@@ -38,16 +55,33 @@ namespace Voxymore::Core
 		if(ps.Deserialize(path))
 		{
 			s_ActiveProject = project;
+			s_ActiveProject->CallOnLoad();
 			return s_ActiveProject;
 		}
 		return nullptr;
 	}
 
-	bool Project::SaveActive(const std::filesystem::path &path)
+	bool Project::SaveActive()
 	{
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project was not loaded.");
 		ProjectSerializer ps(s_ActiveProject);
-		return ps.Serialize(path.empty() ? s_ActiveProject->m_ProjectPath : path);
+		return ps.Serialize(s_ActiveProject->m_ProjectPath);
+	}
+
+	bool Project::SaveActive(const std::filesystem::path &path)
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project was not loaded.");
+		VXM_CORE_ASSERT(!path.empty(), "When given, the path should not be empty.");
+		ProjectSerializer ps(s_ActiveProject);
+		return ps.Serialize(path);
+	}
+
+	void Project::CallOnLoad()
+	{
+		for (NAMED_VOID_FUNC_PTR(func) : s_OnLoad)
+		{
+			func();
+		}
 	}
 
 	std::filesystem::path Project::GetAsset() const

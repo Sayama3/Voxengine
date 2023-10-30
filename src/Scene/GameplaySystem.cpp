@@ -6,6 +6,7 @@
 
 #include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
+#include "Voxymore/Project/Project.hpp"
 
 namespace Voxymore::Core
 {
@@ -27,10 +28,18 @@ namespace Voxymore::Core
 		GetInstance().s_Systems[name] = std::move(system);
 		GetInstance().s_SystemToScene[name] = {};
 		GetInstance().s_SystemEnabled[name] = true;
-		if(HasSaveFile(name))
-		{
-			FillSystem(name);
+		if (Project::ProjectIsLoaded())
+		{			
+			if (HasSaveFile(name))
+			{
+				FillSystem(name);
+			}
+			else
+			{
+				system->ResetSystem();
+			}
 		}
+		
 	}
 
 	Ref<GameplaySystem> SystemManager::GetSystem(const std::string& name)
@@ -169,6 +178,31 @@ namespace Voxymore::Core
 		}
 		return systems;
 	}
+
+	SystemManager::SystemManager()
+	{
+		Project::AddOnLoad(ReloadSystems);
+	}
+
+	SystemManager::~SystemManager()
+	{
+		Project::RemoveOnLoad(ReloadSystems);
+	}
+
+	void SystemManager::ReloadSystems()
+	{
+		for (auto &&[name, sys]: GetInstance().s_Systems)
+		{
+			if (HasSaveFile(name))
+			{
+				FillSystem(name);
+			}
+			else
+			{
+				sys->ResetSystem();
+			}
+		}
+	}
 }
 
 //// ======== CameraControllerSystem ========
@@ -183,6 +217,10 @@ namespace Voxymore::Core
 //void CameraControllerSystem::DeserializeSystem(YAML::Node &componentNode)
 //{
 //	m_Speed = componentNode["Speed"].as<float>();
+//}
+//void CameraControllerSystem::ResetSystem()
+//{
+//	m_Speed = 5.0f;
 //}
 //void CameraControllerSystem::OnImGuiRender()
 //{
