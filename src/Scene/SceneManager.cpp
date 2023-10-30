@@ -71,4 +71,9 @@ namespace Voxymore::Core
 		}
 		return scenes;
 	}
+
+	bool SceneManager::HasScene(const std::string &name)
+	{
+		return s_Scenes.contains(name);
+	}
 } // namespace Voxymore::Core

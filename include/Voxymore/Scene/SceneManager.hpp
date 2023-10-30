@@ -24,6 +24,8 @@ namespace Voxymore::Core
 		static void AddScene(Ref<Scene> scene);
 		static void AddScene(const std::string& name, Ref<Scene> scene);
 
+		static bool HasScene(const std::string& name);
+
 		static std::vector<std::string> GetSceneNames();
 	private:
 		static std::unordered_map<std::string, Ref<Scene>> s_Scenes;
