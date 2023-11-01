@@ -9,20 +9,28 @@
 
 namespace Voxymore::Core
 {
-	std::vector<VOID_FUNC_PTR> Project::s_OnLoad;
+	std::vector<VOID_FUNC_PTR>* Project::s_OnLoad = nullptr;
 	Ref<Project> Project::s_ActiveProject;
+
+	std::vector<VOID_FUNC_PTR>& Project::GetOnLoad()
+	{
+		if(Project::s_OnLoad == nullptr) {
+			s_OnLoad = new std::vector<VOID_FUNC_PTR>();
+		}
+		return *Project::s_OnLoad;
+	}
 
 	void Project::AddOnLoad(NAMED_VOID_FUNC_PTR(func))
 	{
-		s_OnLoad.push_back(func);
+		GetOnLoad().push_back(func);
 	}
 
 	void Project::RemoveOnLoad(NAMED_VOID_FUNC_PTR(func))
 	{
-		const auto it = std::find(s_OnLoad.cbegin(), s_OnLoad.cend(), func);
-		if (it != s_OnLoad.end())
+		const auto it = std::find(GetOnLoad().cbegin(), GetOnLoad().cend(), func);
+		if (it != GetOnLoad().end())
 		{
-			s_OnLoad.erase(it);
+			GetOnLoad().erase(it);
 		}
 	}
 
@@ -78,7 +86,7 @@ namespace Voxymore::Core
 
 	void Project::CallOnLoad()
 	{
-		for (NAMED_VOID_FUNC_PTR(func) : s_OnLoad)
+		for (NAMED_VOID_FUNC_PTR(func) : GetOnLoad())
 		{
 			func();
 		}

@@ -28,6 +28,9 @@ namespace Voxymore::Core
 
 	class Project
 	{
+	private:
+		static std::vector<VOID_FUNC_PTR>* s_OnLoad;
+		static Ref<Project> s_ActiveProject;
 		friend class ProjectSerializer;
 	public:
 		Project();
@@ -73,7 +76,7 @@ namespace Voxymore::Core
 
 	private:
 		void CallOnLoad();
-
+		static std::vector<VOID_FUNC_PTR>& GetOnLoad();
 	private:
 		std::filesystem::path GetAsset() const;
 		std::filesystem::path GetCache() const;
@@ -83,9 +86,6 @@ namespace Voxymore::Core
 	private:
 		std::filesystem::path m_ProjectPath = "./Project.vxm";
 		ProjectConfig m_Config;
-
-		static std::vector<VOID_FUNC_PTR> s_OnLoad;
-		static Ref<Project> s_ActiveProject;
 	};
 
 } // namespace Voxymore::Core

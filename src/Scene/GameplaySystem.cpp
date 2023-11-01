@@ -20,7 +20,7 @@ namespace Voxymore::Core
 
 	Path SystemManager::GetPath(const std::string& name)
 	{
-		return {FileSource::System, name};
+		return {FileSource::System, name + VXM_SYSTEM_EXTENSION};
 	}
 	void SystemManager::AddSystem(std::string name, Ref<GameplaySystem> system)
 	{
@@ -63,6 +63,14 @@ namespace Voxymore::Core
 		return FileSystem::Exist(GetPath(name));
 	}
 
+	void SystemManager::ResetSystem(const std::string& name)
+	{
+		GetInstance().s_SystemEnabled[name] = true;
+		GetInstance().s_SystemToScene[name].clear();
+		Ref<GameplaySystem> system = GetSystem(name);
+		system->ResetSystem();
+	}
+
 	void SystemManager::FillSystem(const std::string& name)
 	{
 		YAML::Node data = FileSystem::ReadFileAsYAML(GetPath(name));
@@ -73,13 +81,12 @@ namespace Voxymore::Core
 		}
 
 		Ref<GameplaySystem> system = GetSystem(name);
-	
+
 		GetInstance().s_SystemEnabled[name] = systemNode["Enable"].as<bool>();
 		auto sceneNodes = systemNode["Scenes"];
 		GetInstance().s_SystemToScene[name].clear();
 		if(sceneNodes)
 		{
-			VXM_CORE_ASSERT(sceneNodes.IsSequence(), "The scene node should be a sequence !");
 			if(sceneNodes.IsSequence())
 			{
 				for (auto && sceneNode : sceneNodes)
@@ -89,7 +96,7 @@ namespace Voxymore::Core
 			}
 		}
 		system->DeserializeSystem(systemNode);
-	} 
+	}
 
 	void SystemManager::WriteSystem(YAML::Emitter& out, const std::string& name)
 	{
@@ -114,12 +121,13 @@ namespace Voxymore::Core
 		out << YAML::EndMap;
 		FileSystem::WriteYamlFile(GetPath(name), out);
 	}
+
 	void SystemManager::LoadSystem(const std::string& name)
 	{
 		VXM_CORE_ASSERT(GetInstance().s_Systems.contains(name), "The system named {0} doesn't exist...");
 		if(HasSaveFile(name)) FillSystem(name);
 	}
-	
+
 	bool SystemManager::IsActive(const std::string& name)
 	{
 		VXM_CORE_ASSERT(GetInstance().s_SystemEnabled.contains(name), "The system named {0} doesn't exist...");
@@ -138,7 +146,7 @@ namespace Voxymore::Core
 		return GetInstance().s_SystemToScene[name];
 	}
 
-	
+
 	void SystemManager::AddSceneToSystem(const std::string& systemName, const std::string& sceneName)
 	{
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
@@ -146,7 +154,7 @@ namespace Voxymore::Core
 		scenes.push_back(sceneName);
 	}
 
-	
+
 	void SystemManager::AddSceneToSystemIfNotExist(const std::string& systemName, const std::string& sceneName)
 	{
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
@@ -181,73 +189,77 @@ namespace Voxymore::Core
 
 	SystemManager::SystemManager()
 	{
-		Project::AddOnLoad(ReloadSystems);
+		Project::AddOnLoad(&ReloadSystems);
 	}
 
 	SystemManager::~SystemManager()
 	{
-		Project::RemoveOnLoad(ReloadSystems);
+		Project::RemoveOnLoad(&ReloadSystems);
 	}
 
 	void SystemManager::ReloadSystems()
 	{
+		VXM_CORE_INFO("Reload Systems");
 		for (auto &&[name, sys]: GetInstance().s_Systems)
 		{
 			if (HasSaveFile(name))
 			{
+				VXM_CORE_INFO("Reload System {0}.", name);
 				FillSystem(name);
 			}
 			else
 			{
-				sys->ResetSystem();
+				VXM_CORE_INFO("Reset System {0}.", name);
+				ResetSystem(name);
 			}
 		}
 	}
 }
+/*
+// ======== CameraControllerSystem ========
+using namespace Voxymore::Core;
 
-//// ======== CameraControllerSystem ========
-//using namespace Voxymore::Core;
-//
-//VXM_CREATE_SYSTEM(CameraControllerSystem)
-//
-//void CameraControllerSystem::SerializeSystem(YAML::Emitter &emitter)
-//{
-//	emitter << KEYVAL("Speed", m_Speed);
-//}
-//void CameraControllerSystem::DeserializeSystem(YAML::Node &componentNode)
-//{
-//	m_Speed = componentNode["Speed"].as<float>();
-//}
-//void CameraControllerSystem::ResetSystem()
-//{
-//	m_Speed = 5.0f;
-//}
-//bool CameraControllerSystem::OnImGuiRender()
-//{
-//	return ImGui::DragFloat("Speed", &m_Speed);
-//};
-//void CameraControllerSystem::Update(Scene &scene, TimeStep ts)
-//{
-//	auto view = scene.GetRegistry().view<TransformComponent, CameraComponent>();
-//
-//	for (entt::entity entity : view)
-//	{
-//		if(!view.get<CameraComponent>(entity).Primary) continue;
-//		TransformComponent& tc = view.get<TransformComponent>(entity);
-//		glm::vec3 localMovement(0);
-//		glm::quat rotation = tc.GetRotation();
-//		glm::vec3 position = tc.GetPosition();
-//
-//		if (Input::IsKeyPressed(m_ForwardKey)) localMovement += glm::vec3(0, 0, 1);
-//		if (Input::IsKeyPressed(m_BackwardKey)) localMovement += glm::vec3(0, 0, -1);
-//		if (Input::IsKeyPressed(m_RightKey)) localMovement += glm::vec3(1, 0, 0);
-//		if (Input::IsKeyPressed(m_LeftKey)) localMovement += glm::vec3(-1, 0, 0);
-//		if (Input::IsKeyPressed(m_UpKey)) localMovement += glm::vec3(0, 1, 0);
-//		if (Input::IsKeyPressed(m_DownKey)) localMovement += glm::vec3(0, -1, 0);
-//
-//		position += (rotation * localMovement) * (ts * m_Speed);
-//		tc.SetPosition(position);
-//		return;
-//	}
-//
-//}
+VXM_CREATE_SYSTEM(CameraControllerSystem)
+
+void CameraControllerSystem::SerializeSystem(YAML::Emitter &emitter)
+{
+	emitter << KEYVAL("Speed", m_Speed);
+}
+void CameraControllerSystem::DeserializeSystem(YAML::Node &componentNode)
+{
+	m_Speed = componentNode["Speed"].as<float>();
+}
+void CameraControllerSystem::ResetSystem()
+{
+	m_Speed = 5.0f;
+}
+bool CameraControllerSystem::OnImGuiRender()
+{
+	return ImGui::DragFloat("Speed", &m_Speed);
+};
+void CameraControllerSystem::Update(Scene &scene, TimeStep ts)
+{
+	auto view = scene.GetRegistry().view<TransformComponent, CameraComponent>();
+
+	for (entt::entity entity : view)
+	{
+		if(!view.get<CameraComponent>(entity).Primary) continue;
+		TransformComponent& tc = view.get<TransformComponent>(entity);
+		glm::vec3 localMovement(0);
+		glm::quat rotation = tc.GetRotation();
+		glm::vec3 position = tc.GetPosition();
+
+		if (Input::IsKeyPressed(m_ForwardKey)) localMovement += glm::vec3(0, 0, 1);
+		if (Input::IsKeyPressed(m_BackwardKey)) localMovement += glm::vec3(0, 0, -1);
+		if (Input::IsKeyPressed(m_RightKey)) localMovement += glm::vec3(1, 0, 0);
+		if (Input::IsKeyPressed(m_LeftKey)) localMovement += glm::vec3(-1, 0, 0);
+		if (Input::IsKeyPressed(m_UpKey)) localMovement += glm::vec3(0, 1, 0);
+		if (Input::IsKeyPressed(m_DownKey)) localMovement += glm::vec3(0, -1, 0);
+
+		position += (rotation * localMovement) * (ts * m_Speed);
+		tc.SetPosition(position);
+		return;
+	}
+
+}
+*/
