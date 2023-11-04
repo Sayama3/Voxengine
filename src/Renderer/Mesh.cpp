@@ -66,4 +66,8 @@ namespace Voxymore::Core
 	{
 		return m_Material;
 	}
+
+	Vertex::Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color) : Position(position), Normal(normal), TexCoord(texCoord), Color(color)
+	{
+	}
 } // namespace Voxymore::Core
