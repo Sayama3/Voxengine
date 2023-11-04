@@ -387,4 +387,14 @@ namespace Voxymore::Core
 	{
 		m_Shader->Unbind();
 	}
+
+	const Path& Model::GetPath() const
+	{
+		return m_Path;
+	}
+
+	const Ref<Shader>& Model::GetShader() const
+	{
+		return m_Shader;
+	}
 } // namespace Voxymore::Core

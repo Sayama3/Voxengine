@@ -39,7 +39,7 @@ namespace Voxymore::Core
 			for (entt::entity entity : models)
 			{
 				auto& model = models.get<ModelComponent>(entity);
-				if(!model.IsLoaded()) model.LoadModel();
+				if(model.ShouldLoad()) model.LoadModel();
 			}
 		}
 

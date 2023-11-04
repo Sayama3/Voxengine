@@ -20,7 +20,9 @@ namespace Voxymore::Core
 		inline const std::string& GetShader() const { return m_ShaderName;}
         inline const Ref<Model>& GetModel() const {return m_Model;}
         void LoadModel();
-		inline bool IsLoaded() const { return m_IsLoaded; }
+		bool IsLoaded() const;
+		bool ShouldLoad() const;
+		bool IsValid() const;
     private:
     	Path m_ModelPath;
 		std::string m_ShaderName;

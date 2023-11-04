@@ -46,6 +46,9 @@ namespace Voxymore::Core
 		std::filesystem::path path;
 		std::filesystem::path GetFullPath() const;
 		inline bool empty() const {return path.empty() || source == FileSource::None;}
+
+		bool operator==(const Path& rhs) const;
+		bool operator!=(const Path& rhs) const;
 	};
 
 	class FileSystem

@@ -113,6 +113,17 @@ namespace Voxymore::Core
 		return FileSystem::GetPath(*this);
 	}
 
+	bool Path::operator==(const Path &rhs) const
+	{
+		return this->path == rhs.path
+			   && this->source == rhs.source;
+	}
+
+	bool Path::operator!=(const Path &rhs) const
+	{
+		return !(*this == rhs);
+	}
+
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
 	{
 		out << YAML::Flow;

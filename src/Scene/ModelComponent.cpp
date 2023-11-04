@@ -5,9 +5,15 @@
 // ======== ModelComponent ========
 namespace Voxymore::Core
 {
-    VXM_CREATE_COMPONENT(ModelComponent);
+    VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
 
-    void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
+	template<>
+	void ::Voxymore::Core::Scene::OnComponentAdded<ModelComponent>(entt::entity entity, ModelComponent& component)
+	{
+		if(component.IsValid() && !component.IsLoaded()) component.LoadModel();
+	}
+
+	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
     {
     	auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
     	model.m_ModelPath = componentNode["Path"].as<Path>();
@@ -75,10 +81,31 @@ namespace Voxymore::Core
 
 	void ModelComponent::LoadModel()
 	{
-		VXM_CORE_ASSERT(!m_IsLoaded, "The model is already loaded.");
-		VXM_CORE_ASSERT(std::filesystem::exists(m_ModelPath.GetFullPath()), "The path '{0}' is not valid.", m_ModelPath.GetFullPath().string());
+		VXM_CORE_ASSERT(!m_ModelPath.empty() && std::filesystem::exists(m_ModelPath.GetFullPath()), "The path '{0}' is not valid.", m_ModelPath.GetFullPath().string());
+		VXM_CORE_ASSERT(ShaderLibrary::GetInstance().Exists(m_ShaderName), "The shader '{0}' doesn't exist.", m_ShaderName);
 		m_Model = Model::CreateModel(m_ModelPath, ShaderLibrary::GetInstance().Get(m_ShaderName));
 		m_IsLoaded = true;
+	}
+
+	bool ModelComponent::IsLoaded() const
+	{
+		return m_IsLoaded;
+	}
+
+	bool ModelComponent::ShouldLoad() const
+	{
+		return IsValid() &&
+			   (
+				   !m_IsLoaded
+				   || (m_ModelPath != m_Model->GetPath() || m_ShaderName != m_Model->GetShader()->GetName())
+			   );
+	}
+
+	bool ModelComponent::IsValid() const
+	{
+		return !m_ModelPath.empty()
+			   && std::filesystem::exists(m_ModelPath.GetFullPath())
+			   && ShaderLibrary::GetInstance().Exists(m_ShaderName);
 	}
 
 	//TODO: implement on ModelComponent change (i.e. change model when user choose to change the model)

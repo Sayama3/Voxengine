@@ -83,6 +83,10 @@ void ::Voxymore::Core::Scene::OnComponentAdded<COMP>(entt::entity entity, COMP& 
 template<> \
 bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
 
+#define VXM_CREATE_LIGHT_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \
+template<> \
+bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
+
 //// ======== BoatComponent ========
 //class BoatComponent
 //{

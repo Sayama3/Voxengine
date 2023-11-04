@@ -63,6 +63,9 @@ namespace Voxymore::Core
 
 		void Bind();
 		void Unbind();
+
+		const Path& GetPath() const;
+		const Ref<Shader>& GetShader() const;
 	private:
 		//		Node& GetNode(int index);
 	};
