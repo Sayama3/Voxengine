@@ -10,7 +10,7 @@ namespace Voxymore::Core {
 
     class OpenGLVertexBuffer : public VertexBuffer {
         public:
-        OpenGLVertexBuffer(uint32_t size, void* vertices);
+        OpenGLVertexBuffer(uint32_t size, const void* vertices);
         virtual ~OpenGLVertexBuffer() override;
         virtual void Bind() const override;
         virtual void Unbind() const override;

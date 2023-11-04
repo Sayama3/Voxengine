@@ -7,7 +7,7 @@
 #include "Voxymore/Core/Logger.hpp"
 namespace Voxymore::Core {
 
-    Ref<VertexBuffer> Voxymore::Core::VertexBuffer::Create(uint32_t size, void* vertices)
+    Ref<VertexBuffer> Voxymore::Core::VertexBuffer::Create(uint32_t size, const void* vertices)
     {
         switch (Renderer::GetAPI())
         {

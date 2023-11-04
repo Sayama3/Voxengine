@@ -22,14 +22,24 @@ namespace Voxymore::Core
 	class Model;
 	class SubMesh;
 
-	// TODO: Implement a Vertex Struct.
-//	struct Vertex
-//	{
-//		glm::vec3 Position;
-//		glm::vec3 Normal;
-//		glm::vec2 TexCoord; //TODO: Add other TexCoords (optionnal)
-//		glm::vec4 Color = glm::vec4(1.0f);
-//	};
+	struct Vertex
+	{
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoord; //TODO: Add other TexCoords (optionnal)
+		glm::vec4 Color = glm::vec4(1.0f);
+
+		inline static BufferLayout Layout()
+		{
+			return {
+					BufferElement(ShaderDataType::Float3, "Position"),
+					BufferElement(ShaderDataType::Float3, "Normal"),
+					BufferElement(ShaderDataType::Float2, "TexCoord"),
+					BufferElement(ShaderDataType::Float4, "Color"),
+			};
+		}
+	};
+
 
 	//TODO: create an API to be able to create Mesh from the client side.
 	class Mesh
@@ -43,15 +53,18 @@ namespace Voxymore::Core
 		Mesh() = default;
 		~Mesh() = default;
 		inline const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
-		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
-		void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
+		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
+		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material);
 	};
 
 	class SubMesh
 	{
 		friend class Mesh;
 	public:
-		SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
+		//SubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
+		SubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
 		~SubMesh() = default;
 		inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		void Bind() const;
@@ -64,10 +77,6 @@ namespace Voxymore::Core
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Material> m_Material;
 		BufferLayout m_BufferLayout;
-
-		const size_t VerticeCount;
-		const size_t VerticeFloatCount;
-		const size_t BufferSize;
 	};
 
 } // namespace Voxymore::Core

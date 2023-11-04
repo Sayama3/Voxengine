@@ -72,7 +72,7 @@ namespace Voxymore::Core {
         virtual void SetLayout(const BufferLayout& layout) = 0;
         virtual const BufferLayout& GetLayout() const = 0;
 
-        static Ref<VertexBuffer> Create(uint32_t size, void* vertices);
+        static Ref<VertexBuffer> Create(uint32_t size, const void* vertices);
     };
 
     class IndexBuffer : public Buffer {
