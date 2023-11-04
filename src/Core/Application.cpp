@@ -23,10 +23,9 @@ namespace Voxymore::Core {
 
         s_Instance = this;
 
-		if(m_Parameters.argc > 0)
+		if(m_Parameters.arguments.size() > 0)
 		{
-			VXM_CORE_ASSERT(m_Parameters.argv != nullptr, "The parameter ARGV is not set.");
-			ProcessArguments(m_Parameters.argc, m_Parameters.argv);
+			ProcessArguments(m_Parameters.arguments);
 		}
 
         WindowProps props(m_Parameters.name, m_Parameters.width, m_Parameters.height);
@@ -126,17 +125,47 @@ namespace Voxymore::Core {
         m_Running = false;
     }
 
-	void Application::ProcessArguments(int argc, char **argv)
+	void Application::ProcessArguments(const std::vector<std::string>& arguments)
 	{
-		std::filesystem::path exePath = m_Parameters.argv[0];
-		FileSystem::s_RootPath = exePath.parent_path();
-		for (int i = 1; i < argc; ++i)
+		size_t argc = arguments.size();
+		std::filesystem::path exePath = arguments[0];
+		FileSystem::s_EditorPath = exePath.parent_path();
+		for (int i = 1; i < arguments.size(); ++i)
 		{
-			if(std::strcmp(argv[i], "--root") == 0 || std::strcmp(argv[i], "-r") == 0)
+			if(arguments[i]== "--root" || arguments[i] == "-r")
 			{
 				VXM_CORE_ASSERT((i+1) < argc, "Not enough arguments.");
-				FileSystem::s_RootPath = argv[++i];
+				FileSystem::s_EditorPath = arguments[++i];
 			}
 		}
+	}
+
+	const std::string& Application::GetArgument(const std::string& key) const
+	{
+		const std::vector<std::string>& arguments = m_Parameters.arguments;
+		size_t argc = arguments.size();
+		for (int i = 1; i < arguments.size(); ++i)
+		{
+			if(arguments[i] == key)
+			{
+				VXM_CORE_ASSERT((i+1) < argc, "Not enough arguments.");
+				return arguments[++i];
+			}
+		}
+		return "";
+	}
+
+	const std::string& Application::GetArgument(int key) const
+	{
+		const std::vector<std::string>& arguments = m_Parameters.arguments;
+		VXM_CORE_ASSERT(key >= 0 && key < arguments.size(), "The index is not valid.")
+		return arguments[key];
+	}
+
+	bool Application::HasArgument(int key) const
+	{
+		const std::vector<std::string>& arguments = m_Parameters.arguments;
+		VXM_CORE_ASSERT(key >= 0, "The index is not valid.")
+		return key < arguments.size();
 	}
 } // Core
