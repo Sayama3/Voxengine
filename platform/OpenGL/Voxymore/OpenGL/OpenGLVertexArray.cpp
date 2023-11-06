@@ -44,20 +44,24 @@ namespace Voxymore::Core {
     OpenGLVertexArray::OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
         glGenVertexArrays(1, &m_RendererID);
+        VXM_CORE_TRACE("Create Vertex Array '{0}'", m_RendererID);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
+        VXM_CORE_TRACE("Delete Vertex Array '{0}'", m_RendererID);
         glDeleteVertexArrays(1, &m_RendererID);
     }
 
     void OpenGLVertexArray::Bind() const {
         VXM_PROFILE_FUNCTION();
+        VXM_CORE_TRACE("Binding Vertex Array '{0}'", m_RendererID);
         glBindVertexArray(m_RendererID);
     }
 
     void OpenGLVertexArray::Unbind() const {
         VXM_PROFILE_FUNCTION();
+        VXM_CORE_TRACE("Unbinding Vertex Array '{0}'", m_RendererID);
         glBindVertexArray(0);
     }
 

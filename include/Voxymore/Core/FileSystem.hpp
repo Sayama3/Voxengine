@@ -27,6 +27,12 @@ namespace Voxymore::Core
 		};
 	}
 
+    namespace Helper
+    {
+        std::string GetFileSourceName(FileSource fileSource);
+    }
+
+
 	enum class FilePermission
 	{
 		None = 0,

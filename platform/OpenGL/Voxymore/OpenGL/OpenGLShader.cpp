@@ -810,12 +810,14 @@ namespace Voxymore::Core
 	void OpenGLShader::Bind() const
 	{
 		VXM_PROFILE_FUNCTION();
+        VXM_CORE_TRACE("Bind Shader '{0}' : {1}", this->m_Name, m_RendererID);
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
 		VXM_PROFILE_FUNCTION();
+        VXM_CORE_TRACE("Unbind Shader '{0}' : {1}", this->m_Name, m_RendererID);
 		glUseProgram(0);
 	}
 

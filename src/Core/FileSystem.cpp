@@ -4,6 +4,12 @@
 
 namespace Voxymore::Core
 {
+
+    std::string Helper::GetFileSourceName(FileSource fileSource)
+    {
+        return GetFileSourceNames()[static_cast<int32_t>(fileSource)];
+    }
+
 	std::filesystem::path FileSystem::s_EditorPath = "./";
 
 	std::filesystem::path FileSystem::GetRootPath(FileSource source)
@@ -44,6 +50,7 @@ namespace Voxymore::Core
 		}
 		return Project::GetProjectFilePath().parent_path();
 	}
+
 	std::ifstream FileSystem::ReadFileAsByte(const Path &path)
 	{
 		std::ifstream ifstream(GetPath(path));

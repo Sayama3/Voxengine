@@ -67,6 +67,8 @@ namespace Voxymore::Core {
 		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+        vertexArray->Unbind();
+        shader->Unbind();
 	}
 	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform, int entityId)
 	{
@@ -83,6 +85,8 @@ namespace Voxymore::Core {
 		material->Bind();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+        vertexArray->Unbind();
+        material->Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
@@ -97,6 +101,7 @@ namespace Voxymore::Core {
 			s_Data.MaterialUniformBuffer->SetData(&sm.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			sm.Bind();
 			RenderCommand::DrawIndexed(sm.GetVertexArray());
+            sm.Unbind();
 		}
 	}
 
@@ -108,6 +113,7 @@ namespace Voxymore::Core {
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);
 		}
+        model->Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform, int entityId)
@@ -119,7 +125,7 @@ namespace Voxymore::Core {
 			Submit(node.GetMesh(), currentTransform, entityId);
 		}
 
-		if(!node.HasChildren())
+		if(node.HasChildren())
 		{
 			for(const int i : node.children)
 			{

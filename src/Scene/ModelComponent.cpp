@@ -10,7 +10,7 @@ namespace Voxymore::Core
 	template<>
 	void ::Voxymore::Core::Scene::OnComponentAdded<ModelComponent>(entt::entity entity, ModelComponent& component)
 	{
-		if(component.IsValid() && !component.IsLoaded()) component.LoadModel();
+//		if(component.IsValid() && !component.IsLoaded()) component.LoadModel();
 	}
 
 	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)

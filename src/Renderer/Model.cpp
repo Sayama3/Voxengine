@@ -116,7 +116,15 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 		auto path = p.GetFullPath();
-		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
+        VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
+
+        //TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
+        uint64_t modelId;
+        {
+            std::hash<std::filesystem::path> pathHasher;
+            modelId = pathHasher(Helper::GetFileSourceName(p.source) / p.path);
+        }
+
 		UnflipStbi();
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
@@ -243,7 +251,10 @@ namespace Voxymore::Core
 						VXM_PROFILE_SCOPE("Model::Model -> Create Material");
 						if (primitive.material > -1) {
 							tinygltf::Material mat = model.materials[primitive.material];
-							if (!MaterialLibrary::GetInstance().Exists(mat.name)) {
+
+                            std::string matName = std::to_string(modelId) + "_" + mat.name;
+
+							if (!MaterialLibrary::GetInstance().Exists(matName)) {
 								MaterialParameters materialParams;
 
 								// PbrMetallicRoughness
@@ -281,11 +292,11 @@ namespace Voxymore::Core
 								materialParams.DoubleSided = mat.doubleSided;
 
 								material = CreateRef<Material>(m_Shader, materialParams);
-								material->SetMaterialName(mat.name);
+								material->SetMaterialName(matName);
 								MaterialLibrary::GetInstance().Add(material);
 							}
 							else {
-								material = MaterialLibrary::GetInstance().Get(mat.name);
+								material = MaterialLibrary::GetInstance().Get(matName);
 							}
 						}
 						else {
