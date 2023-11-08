@@ -121,8 +121,9 @@ namespace Voxymore::Core
         //TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
         uint64_t modelId;
         {
-            std::hash<std::filesystem::path> pathHasher;
-            modelId = pathHasher(Helper::GetFileSourceName(p.source) / p.path);
+            std::hash<std::string> pathHasher;
+			std::string pathStr = (Helper::GetFileSourceName(p.source) / p.path).string();
+            modelId = pathHasher(pathStr);
         }
 
 		UnflipStbi();
