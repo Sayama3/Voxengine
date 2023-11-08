@@ -89,7 +89,7 @@ namespace Voxymore::Core {
         material->Unbind();
 	}
 
-	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
+	void Renderer::Submit(const Ref<MeshGroup>& mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;

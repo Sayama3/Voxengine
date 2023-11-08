@@ -28,17 +28,17 @@ namespace Voxymore::Core
 	{
 	public:
 		Node() = default;
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh) : mesh(mesh) {}
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children) : mesh(mesh), children(children) {}
-		inline Node(const Ref<::Voxymore::Core::Mesh>& mesh, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
+		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh) : mesh(mesh) {}
+		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh, const std::vector<int>& children) : mesh(mesh), children(children) {}
+		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
 		inline Node(const std::vector<int>& children) : mesh(), children(children) {}
 		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(), children(children), transform(transform) {}
 	public:
-		std::optional<Ref<::Voxymore::Core::Mesh>> mesh;
+		std::optional<Ref<::Voxymore::Core::MeshGroup>> mesh;
 		std::vector<int> children;
 		glm::mat4 transform = glm::mat4(1.0f);
-		inline Ref<::Voxymore::Core::Mesh>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
-		inline const Ref<::Voxymore::Core::Mesh>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline Ref<::Voxymore::Core::MeshGroup>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline const Ref<::Voxymore::Core::MeshGroup>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
 		inline bool HasMesh() const { return mesh.has_value();}
 		inline bool HasChildren() const { return !children.empty();}
 	};
@@ -46,7 +46,7 @@ namespace Voxymore::Core
 	class Model
 	{
 	private:
-		std::vector<Ref<Mesh>> m_Meshes;
+		std::vector<Ref<MeshGroup>> m_Meshes;
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
 		std::vector<Ref<Texture2D>> m_Textures;

@@ -153,13 +153,13 @@ namespace Voxymore::Core
 			VXM_PROFILE_SCOPE("Model::Model -> Create Meshes");
 			m_Meshes.reserve(model.meshes.size());
 			for (auto &mesh: model.meshes) {
-				VXM_PROFILE_SCOPE("Model::Model -> Create Mesh");
-				Ref<Mesh> m = CreateRef<Mesh>();
+				VXM_PROFILE_SCOPE("Model::Model -> Create MeshGroup");
+				Ref<MeshGroup> m = CreateRef<MeshGroup>();
 
 
-				m->m_SubMeshes.reserve(mesh.primitives.size());
+				m->m_Meshes.reserve(mesh.primitives.size());
 				for (auto &primitive: mesh.primitives) {
-					VXM_PROFILE_SCOPE("Model::Model -> Create Primitive Mesh");
+					VXM_PROFILE_SCOPE("Model::Model -> Create Mesh");
 
 					std::vector<Vertex> vertexes;
 					std::vector<uint32_t> index;

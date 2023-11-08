@@ -9,20 +9,20 @@
 
 namespace Voxymore::Core
 {
-	void Mesh::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_SubMeshes.emplace_back(vertices, indexes);
+		auto &sm = m_Meshes.emplace_back(vertices, indexes);
 	}
 
-	void Mesh::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material)
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_SubMeshes.emplace_back(vertices, indexes);
+		auto &sm = m_Meshes.emplace_back(vertices, indexes);
 		sm.SetMaterial(material);
 	}
 
-	SubMesh::SubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
+	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_VertexArray = VertexArray::Create();
@@ -38,7 +38,7 @@ namespace Voxymore::Core
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 	}
 	
-	void SubMesh::Bind() const
+	void Mesh::Bind() const
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
@@ -47,7 +47,7 @@ namespace Voxymore::Core
 		m_VertexArray->Bind();
 	}
 
-	void SubMesh::Unbind() const
+	void Mesh::Unbind() const
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
@@ -56,13 +56,13 @@ namespace Voxymore::Core
 		m_Material->Unbind();
 	}
 
-	void SubMesh::SetMaterial(Ref<Material> material)
+	void Mesh::SetMaterial(Ref<Material> material)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Material = std::move(material);
 	}
 
-	const Ref<Material>& SubMesh::GetMaterial() const
+	const Ref<Material>&Mesh::GetMaterial() const
 	{
 		return m_Material;
 	}
