@@ -42,8 +42,11 @@ namespace Voxymore::Core
 		Scene(UUID id, std::string name);
 		~Scene();
 
-		Entity CreateEntity(const std::string& name = std::string());
-		Entity CreateEntity(UUID id, const std::string& name = std::string());
+		Entity CreateEntity();
+		Entity CreateEntity(const std::string& name);
+		Entity CreateEntity(UUID id, const std::string& name);
+		Entity CreateEntity(UUID id);
+
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);

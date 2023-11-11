@@ -71,7 +71,7 @@ namespace Voxymore::Core
 		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;
 		bool operator!=(const Path& rhs) const;
-		static Path GetPath(const std::filesystem::path& path);
+		static Path GetPath(std::filesystem::path path);
 	};
 
 	class FileSystem

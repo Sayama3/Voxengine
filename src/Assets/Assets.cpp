@@ -49,13 +49,13 @@ namespace Voxymore::Core
 
 	void Assets::ReloadAssets()
 	{
-		Path p = {FileSource::Asset, "/"};
+		Path p = {FileSource::Asset, "./"};
 		ReloadFolder(p.GetFullPath());
 	}
 
 	void Assets::ReloadEditorAssets()
 	{
-		Path p = {FileSource::EditorAsset, "/"};
+		Path p = {FileSource::EditorAsset, "./"};
 		ReloadFolder(p.GetFullPath());
 	}
 

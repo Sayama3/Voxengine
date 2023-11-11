@@ -16,13 +16,13 @@
 
 namespace Voxymore::Core
 {
-    Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
-    {
-    }
+	Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
+	{
+	}
 
-    Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
-    {
-    }
+	Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
+	{
+	}
 
 	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
 	{
@@ -34,160 +34,173 @@ namespace Voxymore::Core
 
 	}
 
-    Scene::~Scene()
-    {
-    }
+	Scene::~Scene()
+	{
+	}
 
-    void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
-    {
-        VXM_PROFILE_FUNCTION();
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+		VXM_PROFILE_FUNCTION();
 
-        {
-            auto models = m_Registry.view<ModelComponent>();
-            for (entt::entity entity : models)
-            {
-                auto& model = models.get<ModelComponent>(entity);
-                if(model.ShouldLoad()) model.LoadModel();
-            }
-        }
+		{
+			auto models = m_Registry.view<ModelComponent>();
+			for (entt::entity entity : models)
+			{
+				auto& model = models.get<ModelComponent>(entity);
+				if(model.ShouldLoad()) model.LoadModel();
+			}
+		}
 
-        Renderer::BeginScene(camera);
-        {
-            auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
-            for (auto entity: modelsView) {
-                auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-                if(model.IsLoaded())
-                {
-                    VXM_CORE_INFO("Submit Model {0}", model.GetLocalPath().string());
-                    Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
-                }
-            }
-        }
+		Renderer::BeginScene(camera);
+		{
+			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+			for (auto entity: modelsView) {
+				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+				if(model.IsLoaded())
+				{
+					VXM_CORE_INFO("Submit Model {0}", model.GetLocalPath().string());
+					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
+		}
 
-        Renderer::EndScene();
-    }
+		Renderer::EndScene();
+	}
 
-    void Scene::OnUpdateRuntime(TimeStep ts)
-    {
-        VXM_PROFILE_FUNCTION();
+	void Scene::OnUpdateRuntime(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
 
-        {
-            auto models = m_Registry.view<ModelComponent>();
-            for (entt::entity entity : models)
-            {
-                auto& model = models.get<ModelComponent>(entity);
-                if(model.ShouldLoad()) model.LoadModel();
-            }
-        }
+		{
+			auto models = m_Registry.view<ModelComponent>();
+			for (entt::entity entity : models)
+			{
+				auto& model = models.get<ModelComponent>(entity);
+				if(model.ShouldLoad()) model.LoadModel();
+			}
+		}
 
-        // TODO: make it happen only when the scene play !
-        {
-            VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
-            auto systems = SystemManager::GetSystems(GetName());
-            for (Ref<GameplaySystem>& system : systems)
-            {
-                if(SystemManager::IsActive(system->GetName())) system->Update(*this, ts);
-            }
-        }
+		// TODO: make it happen only when the scene play !
+		{
+			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
+			auto systems = SystemManager::GetSystems(GetName());
+			for (Ref<GameplaySystem>& system : systems)
+			{
+				if(SystemManager::IsActive(system->GetName())) system->Update(*this, ts);
+			}
+		}
 
-        {
-            VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
-            m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
-                                                          {
-                                                              if(!nsc.IsValid())
-                                                              {
-                                                                  nsc.CreateInstance();
-                                                                  nsc.Instance->m_Entity = Entity{entity, this};
-                                                                  nsc.Instance->OnCreate();
-                                                              }
-                                                              nsc.Instance->OnUpdate(ts);
-                                                          });
-        }
+		{
+			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
+			m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
+														  {
+															if(!nsc.IsValid())
+															{
+																nsc.CreateInstance();
+																nsc.Instance->m_Entity = Entity{entity, this};
+																nsc.Instance->OnCreate();
+															}
+															nsc.Instance->OnUpdate(ts);
+														  });
+		}
 
-        Camera* mainCamera = nullptr;
-        glm::mat4 cameraTransform;
+		Camera* mainCamera = nullptr;
+		glm::mat4 cameraTransform;
 
-        auto camerasView = m_Registry.view<CameraComponent, TransformComponent>();
-        for (auto entity : camerasView) {
-            auto [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
+		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>();
+		for (auto entity : camerasView) {
+			auto [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
 
-            if(camera.Primary)
-            {
-                mainCamera = &camera.Camera;
-                cameraTransform = transform.GetTransform();
-                break;
-            }
-        }
+			if(camera.Primary)
+			{
+				mainCamera = &camera.Camera;
+				cameraTransform = transform.GetTransform();
+				break;
+			}
+		}
 
-        if(mainCamera)
-        {
-            Renderer::BeginScene(*mainCamera, cameraTransform);
+		if(mainCamera)
+		{
+			Renderer::BeginScene(*mainCamera, cameraTransform);
 
-            {
-                auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
-                for (auto entity: modelsView) {
-                    auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-                    if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
-                }
-            }
+			{
+				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+				for (auto entity: modelsView) {
+					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+					if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
 
-            Renderer::EndScene();
-        }
-    }
+			Renderer::EndScene();
+		}
+	}
 
-    Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity()
+	{
+		UUID id;
+		std::string entity = "Entity_"+std::to_string(id);
+		return CreateEntity(id, entity);
+	}
+
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		return CreateEntity(UUID(), name);
 	}
 
-    Entity Scene::CreateEntity(UUID id, const std::string& name)
-    {
-        Entity entity = Entity{m_Registry.create(), this};
+	Entity Scene::CreateEntity(UUID id)
+	{
+		std::string entity = "Entity_"+std::to_string(id);
+		return CreateEntity(id, entity);
+	}
 
-        entity.AddComponent<IDComponent>(id);
-        entity.AddComponent<TransformComponent>();
-        auto& tag = entity.AddComponent<TagComponent>();
-        tag.Tag = name;
+	Entity Scene::CreateEntity(UUID id, const std::string& name)
+	{
+		Entity entity = Entity{m_Registry.create(), this};
 
-        return entity;
-    }
+		entity.AddComponent<IDComponent>(id);
+		entity.AddComponent<TransformComponent>();
+		auto& tag = entity.AddComponent<TagComponent>();
+		tag.Tag = name;
 
-    void Scene::SetViewportSize(uint32_t width, uint32_t height)
-    {
-        m_ViewportWidth = width;
-        m_ViewportHeight = height;
+		return entity;
+	}
 
-        auto cameraView = m_Registry.view<CameraComponent>();
-        for (auto entity : cameraView) {
-            auto& camera = cameraView.get<CameraComponent>(entity);
-            if(!camera.FixedAspectRatio)
-            {
-                camera.Camera.SetViewportSize(width, height);
-            }
-        }
-    }
+	void Scene::SetViewportSize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
 
-    void Scene::DestroyEntity(Entity entity)
-    {
-        VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
-        m_Registry.destroy(entity);
-    }
+		auto cameraView = m_Registry.view<CameraComponent>();
+		for (auto entity : cameraView) {
+			auto& camera = cameraView.get<CameraComponent>(entity);
+			if(!camera.FixedAspectRatio)
+			{
+				camera.Camera.SetViewportSize(width, height);
+			}
+		}
+	}
 
-    Entity Scene::GetPrimaryCameraEntity()
-    {
-        auto cameraView = m_Registry.view<CameraComponent>();
-        for (auto entity : cameraView)
-        {
-            auto& camera = cameraView.get<CameraComponent>(entity);
-            if(camera.Primary)
-            {
-                return Entity(entity, this);
-            }
-        }
-        return Entity();
-    }
+	void Scene::DestroyEntity(Entity entity)
+	{
+		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
+		m_Registry.destroy(entity);
+	}
 
-//    template<typename T>
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto cameraView = m_Registry.view<CameraComponent>();
+		for (auto entity : cameraView)
+		{
+			auto& camera = cameraView.get<CameraComponent>(entity);
+			if(camera.Primary)
+			{
+				return Entity(entity, this);
+			}
+		}
+		return Entity();
+	}
+
+	//    template<typename T>
 //    void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
 //    {
 //    }

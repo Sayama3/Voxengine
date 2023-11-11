@@ -5,10 +5,10 @@
 namespace Voxymore::Core
 {
 
-    std::string Helper::GetFileSourceName(FileSource fileSource)
-    {
-        return GetFileSourceNames()[static_cast<int32_t>(fileSource)];
-    }
+	std::string Helper::GetFileSourceName(FileSource fileSource)
+	{
+		return GetFileSourceNames()[static_cast<int32_t>(fileSource)];
+	}
 
 	std::filesystem::path FileSystem::s_EditorPath = "./";
 
@@ -142,16 +142,20 @@ namespace Voxymore::Core
 		return p.string();
 	}
 
-	Path Path::GetPath(const std::filesystem::path &path)
+	Path Path::GetPath(std::filesystem::path path)
 	{
-		auto pathStr = path.string();
+		auto pathStr = path.make_preferred().string();
 
 		for (int i = 1; i < (int)FileSource::COUNT; ++i) {
 			auto source = static_cast<FileSource>(i);
-			std::string rootSourceStr = FileSystem::GetRootPath(source).string();
+			std::string rootSourceStr = FileSystem::GetRootPath(source).make_preferred().string();
 			if(pathStr.starts_with(rootSourceStr))
 			{
 				std::string localPath = pathStr.substr(rootSourceStr.size(), pathStr.size()-rootSourceStr.size());
+				if(localPath.starts_with("/") || localPath.starts_with("\\"))
+				{
+					localPath = localPath.substr(1, localPath.size() - 1);
+				}
 				return {source, localPath};
 			}
 		}
