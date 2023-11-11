@@ -8,7 +8,6 @@
 #include "Voxymore/Scene/SceneManager.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include <cctype>    // std::tolower
-#include <algorithm> // std::ranges::equal or std::equal
 #include <string_view> // std::string_view
 
 namespace fs = std::filesystem;
@@ -26,7 +25,11 @@ namespace Voxymore::Core
 
 		bool iequals(std::string_view lhs, std::string_view rhs)
 		{
-			return std::ranges::equal(lhs, rhs, ichar_equals);
+			if(lhs.size() != rhs.size()) return false;
+			for (int i = 0; i < lhs.size(); ++i) {
+				if(!ichar_equals(lhs[i], rhs[i])) return false;
+			}
+			return true;
 		}
 	}
 	std::unordered_map<Assets::FileType, std::vector<std::string>> Assets::s_FileTypeExtensions = {
@@ -61,7 +64,14 @@ namespace Voxymore::Core
 
 	void Assets::ReloadFolder(const fs::path &path)
 	{
+		if(!fs::exists(path))
+		{
+			VXM_CORE_WARNING("The folder '{0}' doesn't exist. Exiting early.", path.string());
+			return;
+		}
+
 		VXM_CORE_ASSERT(fs::is_directory(path), "The path '{0}' must be a folder.", path.string());
+
 		for (const fs::directory_entry& dirEntry : fs::recursive_directory_iterator(path))
 		{
 			if(!dirEntry.is_regular_file()) continue;
