@@ -46,6 +46,7 @@ namespace Voxymore::Core
 		std::unordered_map<std::string, Ref<GameplaySystem>> s_Systems;
 		std::unordered_map<std::string, std::vector<std::string>> s_SystemToScene;
 		std::unordered_map<std::string, bool> s_SystemEnabled;
+		UUID m_OnProjectLoadId;
 		static SystemManager* s_SystemManager;
 		static SystemManager& GetInstance();
 	public:

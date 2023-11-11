@@ -189,12 +189,12 @@ namespace Voxymore::Core
 
 	SystemManager::SystemManager()
 	{
-		Project::AddOnLoad(&ReloadSystems);
+		m_OnProjectLoadId = Project::AddOnLoad(ReloadSystems);
 	}
 
 	SystemManager::~SystemManager()
 	{
-		Project::RemoveOnLoad(&ReloadSystems);
+		Project::RemoveOnLoad(m_OnProjectLoadId);
 	}
 
 	void SystemManager::ReloadSystems()

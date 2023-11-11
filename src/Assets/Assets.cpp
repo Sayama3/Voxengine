@@ -319,5 +319,4 @@ namespace Voxymore::Core
 		auto idNode = node["UUID"];
 		return idNode && idNode.IsScalar();
 	}
-
 }// namespace Voxymore::Core

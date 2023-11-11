@@ -9,8 +9,14 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Core.hpp"
 
-#define VOID_FUNC_PTR void(*)()
-#define NAMED_VOID_FUNC_PTR(name) void(*name)()
+//#define VOID_FUNC_PTR void(*)()
+//#define NAMED_VOID_FUNC_PTR(name) void(*name)()
+//#define CONST_REF_NAMED_VOID_FUNC_PTR(name) void(*name)()
+//#define CONST_REF_VOID_FUNC_PTR void(*)()
+#define VOID_FUNC_PTR std::function<void()>
+#define NAMED_VOID_FUNC_PTR(name) std::function<void()> name
+#define CONST_REF_NAMED_VOID_FUNC_PTR(name) const std::function<void()>& name
+#define CONST_REF_VOID_FUNC_PTR const std::function<void()>&
 
 namespace Voxymore::Core
 {
@@ -29,7 +35,7 @@ namespace Voxymore::Core
 	class Project
 	{
 	private:
-		static std::vector<VOID_FUNC_PTR>* s_OnLoad;
+		static std::unordered_map<UUID, VOID_FUNC_PTR>* s_OnLoad;
 		static Ref<Project> s_ActiveProject;
 		friend class ProjectSerializer;
 	public:
@@ -72,12 +78,12 @@ namespace Voxymore::Core
 		static bool SaveActive(const std::filesystem::path& path);
 		static bool SaveActive();
 
-		static void AddOnLoad(VOID_FUNC_PTR);
-		static void RemoveOnLoad(VOID_FUNC_PTR);
+		static UUID AddOnLoad(CONST_REF_VOID_FUNC_PTR);
+		static void RemoveOnLoad(UUID id);
 
 	private:
 		void CallOnLoad();
-		static std::vector<VOID_FUNC_PTR>& GetOnLoad();
+		static std::unordered_map<UUID, VOID_FUNC_PTR>& GetOnLoad();
 	private:
 		std::filesystem::path GetAsset() const;
 		std::filesystem::path GetCache() const;
