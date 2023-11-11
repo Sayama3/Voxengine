@@ -10,6 +10,21 @@
 #include <cctype>    // std::tolower
 #include <string_view> // std::string_view
 
+#define VXM_LOAD_ASSET_IF_FOUND(Maps, LoadIfExist, fileType) if(LoadIfExist && FileSystem::Exist(path) && GetFileType(path) == fileType)\
+		{\
+			if(!LoadScene(path)) return nullptr;\
+			else {\
+				UUID fileId = GetFileID(path);\
+				auto it = Maps.find(fileId);\
+				VXM_CORE_ASSERT(it != Maps.end(), "The scene '{0}' should have been loaded but is not.")\
+				return it->second;\
+			}\
+		}\
+		else\
+		{\
+			return nullptr;\
+		}
+
 namespace fs = std::filesystem;
 
 namespace Voxymore::Core
@@ -224,47 +239,67 @@ namespace Voxymore::Core
 		s_Textures.clear();
 	}
 
-	Ref<Scene> Assets::GetScene(const Path& path)
+	Ref<Scene> Assets::GetScene(const Path& path, bool loadIfExist)
 	{
-		if(!HasFileID(path)) return nullptr;
+		if(!HasFileID(path))
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene)
+		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Scenes.find(id);
-		if(it == s_Scenes.end()) return nullptr;
+		if(it == s_Scenes.end())
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene)
+		}
 		return it->second;
 	}
-	Ref<Model> Assets::GetModel(const Path& path)
+
+	Ref<Model> Assets::GetModel(const Path& path, bool loadIfExist)
 	{
-		if(!HasFileID(path)) return nullptr;
+		if(!HasFileID(path))
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model)
+		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Models.find(id);
-		if(it == s_Models.end()) return nullptr;
+		if(it == s_Models.end())
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model)
+		}
 		return it->second;
 	}
-	Ref<Texture2D> Assets::GetTexture(const Path& path)
+
+	Ref<Texture2D> Assets::GetTexture(const Path& path, bool loadIfExist)
 	{
-		if(!HasFileID(path)) return nullptr;
+		if(!HasFileID(path))
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture)
+		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Textures.find(id);
-		if(it == s_Textures.end()) return nullptr;
+		if(it == s_Textures.end())
+		{
+			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture)
+		}
 		return it->second;
 	}
 
 	bool Assets::HasScene(const Path& path)
 	{
 		if(!HasFileID(path)) return false;
-		UUID id = GetOrCreateFileID(path);
+		UUID id = GetFileID(path);
 		return s_Scenes.contains(id);
 	}
 	bool Assets::HasModel(const Path& path)
 	{
 		if(!HasFileID(path)) return false;
-		UUID id = GetOrCreateFileID(path);
+		UUID id = GetFileID(path);
 		return s_Models.contains(id);
 	}
 	bool Assets::HasTexture(const Path& path)
 	{
 		if(!HasFileID(path)) return false;
-		UUID id = GetOrCreateFileID(path);
+		UUID id = GetFileID(path);
 		return s_Textures.contains(id);
 	}
 
@@ -298,6 +333,16 @@ namespace Voxymore::Core
 			FileSystem::WriteYamlFile(filePath, out);
 		}
 		return id;
+	}
+
+	UUID Assets::GetFileID(Path filePath)
+	{
+		UUID id;
+		filePath.path += ".meta";
+		VXM_CORE_ASSERT(FileSystem::Exist(filePath), "The fileID '{0}' doesn't exist.", filePath.GetFullPath().string());
+		YAML::Node node = FileSystem::ReadFileAsYAML(filePath);
+		VXM_CORE_ASSERT(node["UUID"], "The fileID '{0}' doesn't have a 'UUID' value.", filePath.GetFullPath().string());
+		return node["UUID"].as<uint64_t>();
 	}
 
 	void Assets::SetFileID(Path filePath, UUID id)

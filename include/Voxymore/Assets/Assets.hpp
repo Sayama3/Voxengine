@@ -35,9 +35,9 @@ namespace Voxymore::Core
 		static void ReloadAssets();
 		static void ReloadEditorAssets();
 
-		static Ref<Scene> GetScene(const Path& path);
-		static Ref<Model> GetModel(const Path& path);
-		static Ref<Texture2D> GetTexture(const Path& path);
+		static Ref<Scene> GetScene(const Path& path, bool loadIfExistAndNotLoaded = true);
+		static Ref<Model> GetModel(const Path& path, bool loadIfExistAndNotLoaded = true);
+		static Ref<Texture2D> GetTexture(const Path& path, bool loadIfExistAndNotLoaded = true);
 
 		static bool HasScene(const Path& path);
 		static bool HasModel(const Path& path);
@@ -63,6 +63,7 @@ namespace Voxymore::Core
 
 		static bool HasFileID(Path filePath);
 		static UUID GetOrCreateFileID(Path filePath);
+		static UUID GetFileID(Path filePath);
 		static void SetFileID(Path filePath, UUID id);
 	};
 
