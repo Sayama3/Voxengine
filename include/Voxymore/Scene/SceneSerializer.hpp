@@ -22,6 +22,7 @@ namespace Voxymore::Core
 
 		bool Deserialize(const std::string& filePath);
 		bool DeserializeRuntime(const std::string& filePath);
+		static std::optional<UUID> GetSceneID(const std::string& filePath);
 	private:
 		static void SerializeEntity(YAML::Emitter& emitter, Entity entity);
 	private:

@@ -32,6 +32,10 @@ namespace Voxymore::Core
 
 		static std::vector<std::string> GetSceneNames();
 		static std::vector<UUID> GetSceneIds();
+
+		static bool IsLoaded(const std::filesystem::path& filepath);
+
+		static void Clear();
 	private:
 		static std::unordered_map<UUID, Ref<Scene>> s_Scenes;
 	};

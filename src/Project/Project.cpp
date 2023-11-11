@@ -5,6 +5,7 @@
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Assets/Assets.hpp"
 #include <algorithm>
 
 
@@ -87,6 +88,10 @@ namespace Voxymore::Core
 
 	void Project::CallOnLoad()
 	{
+		//TODO: See if we don't need to only call ReloadAssets...
+
+		Assets::ReloadAll();
+
 		for (NAMED_VOID_FUNC_PTR(func) : GetOnLoad())
 		{
 			func();

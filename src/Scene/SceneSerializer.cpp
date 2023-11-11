@@ -214,4 +214,20 @@ namespace Voxymore::Core
 			}
 		}
 	}
+
+	std::optional<UUID> SceneSerializer::GetSceneID(const std::string &filePath)
+	{
+		std::ifstream ifstream(filePath);
+		std::stringstream stringstream;
+		stringstream << ifstream.rdbuf();
+
+		YAML::Node data = YAML::Load(stringstream.str());
+		YAML::Node sceneNode = data["Scene"];
+		if (!sceneNode) {
+			return {};
+		}
+
+		UUID id = sceneNode["UUID"].as<uint64_t>();
+		return id;
+	}
 }// namespace Voxymore::Core

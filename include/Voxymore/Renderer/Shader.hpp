@@ -207,7 +207,7 @@ namespace Voxymore::Core {
 	private:
 		static ShaderLibrary* s_Instance;
     public:
-		static ShaderLibrary&GetInstance();
+		static ShaderLibrary& GetInstance();
         void Add(const Ref<Shader>& shader);
         void Add(const std::string& name, const Ref<Shader>& shader);
         Ref<Shader> Load(const Path& path);

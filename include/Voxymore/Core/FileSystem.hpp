@@ -14,6 +14,7 @@ namespace Voxymore::Core
 		Asset,
 		System,
 		Cache,
+		COUNT,
 	};
 
 	inline std::vector<std::string> GetFileSourceNames()
@@ -67,14 +68,17 @@ namespace Voxymore::Core
 		std::string GetPathId() const;
 		inline bool empty() const {return path.empty() || source == FileSource::None;}
 
+		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;
 		bool operator!=(const Path& rhs) const;
+		static Path GetPath(const std::filesystem::path& path);
 	};
 
 	class FileSystem
 	{
 	private:
 		friend class Application;
+		friend struct Path;
 		static std::filesystem::path s_EditorPath;
 		static std::filesystem::path GetRootPath(FileSource source);
 	public:
@@ -113,3 +117,16 @@ namespace YAML
 		}
 	};
 }
+
+namespace std
+{
+	template<>
+	struct hash<Voxymore::Core::Path>
+	{
+		inline std::size_t operator()(const Voxymore::Core::Path& path) const
+		{
+			//TODO: Check if I want to use the PathId or the FullPath to make the hash.
+			return hash<std::string>()(path.GetPathId());
+		}
+	};
+} // namespace std

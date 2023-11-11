@@ -107,4 +107,21 @@ namespace Voxymore::Core
 	{
 		return s_Scenes.contains(id);
 	}
+
+	bool SceneManager::IsLoaded(const std::filesystem::path &filepath)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto id = SceneSerializer::GetSceneID(filepath.string());
+		if(!id.has_value())
+		{
+			VXM_CORE_WARNING("The scene '{0}' do not have an ID and is most likely not a scene...", filepath.string());
+			return false;
+		}
+		return HasScene(id.value());
+	}
+
+	void SceneManager::Clear()
+	{
+		s_Scenes.clear();
+	}
 } // namespace Voxymore::Core

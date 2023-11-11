@@ -131,10 +131,31 @@ namespace Voxymore::Core
 		return !(*this == rhs);
 	}
 
+	Path::operator std::filesystem::path() const
+	{
+		return GetFullPath();
+	}
+
 	std::string Path::GetPathId() const
 	{
 		std::filesystem::path p = GetFileSourceName(source) / path;
 		return p.string();
+	}
+
+	Path Path::GetPath(const std::filesystem::path &path)
+	{
+		auto pathStr = path.string();
+
+		for (int i = 1; i < (int)FileSource::COUNT; ++i) {
+			auto source = static_cast<FileSource>(i);
+			std::string rootSourceStr = FileSystem::GetRootPath(source).string();
+			if(pathStr.starts_with(rootSourceStr))
+			{
+				std::string localPath = pathStr.substr(rootSourceStr.size(), pathStr.size()-rootSourceStr.size());
+				return {source, localPath};
+			}
+		}
+		return {};
 	}
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
