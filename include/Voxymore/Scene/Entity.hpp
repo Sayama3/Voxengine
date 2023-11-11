@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include <entt/entt.hpp>
@@ -33,6 +34,13 @@ namespace Voxymore::Core
 
 		template<typename T>
 		inline T& GetComponent()
+		{
+			VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+			return m_Scene->m_Registry.get<T>(m_EntityID);
+		}
+
+		template<typename T>
+		inline const T& GetComponent() const
 		{
 			VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
 			return m_Scene->m_Registry.get<T>(m_EntityID);
@@ -83,6 +91,8 @@ namespace Voxymore::Core
 		{
 			return !(*this == other);
 		}
+
+		UUID GetUUID() const;
 	};
 } // namespace Voxymore::Core
 

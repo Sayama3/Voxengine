@@ -27,6 +27,19 @@ namespace Voxymore::Core
 		};
 	}
 
+	inline std::string GetFileSourceName(FileSource source)
+	{
+		switch (source) {
+
+			case FileSource::None: return "None";
+			case FileSource::EditorAsset: return "EditorAsset";
+			case FileSource::Asset: return "Asset";
+			case FileSource::System: return "System";
+			case FileSource::Cache: return "Cache";
+		}
+		return "Unknown";
+	}
+
     namespace Helper
     {
         std::string GetFileSourceName(FileSource fileSource);
@@ -51,6 +64,7 @@ namespace Voxymore::Core
 		FileSource source = FileSource::None;
 		std::filesystem::path path;
 		std::filesystem::path GetFullPath() const;
+		std::string GetPathId() const;
 		inline bool empty() const {return path.empty() || source == FileSource::None;}
 
 		bool operator==(const Path& rhs) const;

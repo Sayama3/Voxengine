@@ -16,15 +16,23 @@
 
 namespace Voxymore::Core
 {
-    static uint32_t entityCount = 0;
-    static uint32_t sceneCount = 0;
-    Scene::Scene() : m_Name("NoName")
-    {
-        m_Name.append(std::to_string(sceneCount++));
-    }
-    Scene::Scene(std::string name) : m_Name(std::move(name))
+    Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
     {
     }
+
+    Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
+    {
+    }
+
+	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
+	{
+
+	}
+
+	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
+	{
+
+	}
 
     Scene::~Scene()
     {
@@ -44,14 +52,6 @@ namespace Voxymore::Core
         }
 
         Renderer::BeginScene(camera);
-        {
-            auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
-            for (auto entity: meshesView) {
-                auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-                Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
-            }
-        }
-
         {
             auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
             for (auto entity: modelsView) {
@@ -124,14 +124,6 @@ namespace Voxymore::Core
             Renderer::BeginScene(*mainCamera, cameraTransform);
 
             {
-                auto meshesView = m_Registry.view<MeshComponent, TransformComponent>();
-                for (auto entity: meshesView) {
-                    auto&& [transform, mesh] = meshesView.get<TransformComponent, MeshComponent>(entity);
-                    Renderer::Submit(mesh.Material, mesh.Mesh, transform.GetTransform(), static_cast<int>(entity));
-                }
-            }
-
-            {
                 auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
                 for (auto entity: modelsView) {
                     auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
@@ -144,12 +136,18 @@ namespace Voxymore::Core
     }
 
     Entity Scene::CreateEntity(const std::string& name)
+	{
+		return CreateEntity(UUID(), name);
+	}
+
+    Entity Scene::CreateEntity(UUID id, const std::string& name)
     {
         Entity entity = Entity{m_Registry.create(), this};
 
+        entity.AddComponent<IDComponent>(id);
         entity.AddComponent<TransformComponent>();
         auto& tag = entity.AddComponent<TagComponent>();
-        tag.Tag = name.empty() ? "SceneEntity_" +std::to_string(entityCount++) : name;
+        tag.Tag = name;
 
         return entity;
     }
@@ -189,38 +187,9 @@ namespace Voxymore::Core
         return Entity();
     }
 
-    template<typename T>
-    void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
-    {
-    }
-
-    template<>
-    void Scene::OnComponentAdded<TagComponent>(entt::entity entity, TagComponent& tagComponent)
-    {
-    }
-
-    template<>
-    void Scene::OnComponentAdded<TransformComponent>(entt::entity entity, TransformComponent& transformComponent)
-    {
-    }
-
-    template<>
-    void Scene::OnComponentAdded<MeshComponent>(entt::entity entity, MeshComponent& meshComponent)
-    {
-    }
-
-    template<>
-    void Scene::OnComponentAdded<CameraComponent>(entt::entity entity, CameraComponent& cameraComponent)
-    {
-        if(!cameraComponent.FixedAspectRatio)
-        {
-            cameraComponent.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
-        }
-    }
-
-    template<>
-    void Scene::OnComponentAdded<NativeScriptComponent>(entt::entity entity, NativeScriptComponent& nativeScriptComponent)
-    {
-    }
+//    template<typename T>
+//    void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
+//    {
+//    }
 } // Voxymore
 // Core

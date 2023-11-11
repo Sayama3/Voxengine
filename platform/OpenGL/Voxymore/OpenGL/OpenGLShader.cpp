@@ -664,13 +664,13 @@ namespace Voxymore::Core
 		}
 	}
 
-	//    void DebugUniforms(uint32_t id)
+	//    void DebugUniforms(uint32_t ID)
 	//    {
 	//        VXM_CORE_INFO("Debug Uniforms");
 	//        int count = 0;
 	//        int bufSize = 0;
-	//        glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
-	//        glGetProgramiv(id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufSize);
+	//        glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
+	//        glGetProgramiv(ID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufSize);
 	//        std::vector<char> name(bufSize);
 	//        memset(name.data(), 0, bufSize);
 	//        for (uint32_t index = 0; index < count; ++index)
@@ -678,7 +678,7 @@ namespace Voxymore::Core
 	//            GLsizei length;
 	//            GLint size;
 	//            GLenum type;
-	//            glGetActiveUniform(id, index, bufSize, &length, &size, &type, name.data());
+	//            glGetActiveUniform(ID, index, bufSize, &length, &size, &type, name.data());
 	//            VXM_CORE_INFO("Uniform named '{0}': size = {1}", name.data(), size);
 	//            memset(name.data(), 0, bufSize);
 	//

@@ -5,16 +5,35 @@
 #pragma once
 
 #include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Scene/ScriptableEntity.hpp"
 #include "Voxymore/Scene/SceneCamera.hpp"
+#include "Voxymore/Scene/CustomComponent.hpp"
 
 namespace Voxymore::Core
 {
+	struct IDComponent
+	{
+		private:
+//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::IDComponent);
+		public:
+		UUID ID;
+
+		inline IDComponent() = default;
+		inline IDComponent(const IDComponent&) = default;
+		inline IDComponent(UUID id) : ID(id) {}
+
+		inline operator UUID() const { return ID; }
+	};
+
 	struct TagComponent
 	{
+		private:
+//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::TagComponent);
+		public:
 		std::string Tag;
 
 		inline TagComponent() = default;
@@ -24,6 +43,9 @@ namespace Voxymore::Core
 
 	struct TransformComponent
 	{
+		private:
+//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::TransformComponent);
+		public:
 	private:
 		glm::vec3 Position = glm::vec3(0.0f);
 		glm::quat Rotation = glm::identity<glm::quat>();
@@ -59,18 +81,51 @@ namespace Voxymore::Core
 		}
 	};
 
-	struct MeshComponent
-	{
-		Ref<Voxymore::Core::Material> Material;
-		Ref<VertexArray> Mesh;
+//	struct MeshComponent
+//	{
+//		private:
+//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::MeshComponent);
+//		public:
+//		Ref<Voxymore::Core::Material> Material;
+//		Ref<VertexArray> Mesh;
+//
+//		inline MeshComponent() = default;
+//		inline MeshComponent(const MeshComponent&) = default;
+//		inline MeshComponent(const Ref<Voxymore::Core::Material>& material,const Ref<VertexArray>& vertexArray) : Material(material), Mesh(vertexArray) {}
+//	};
 
-		inline MeshComponent() = default;
-		inline MeshComponent(const MeshComponent&) = default;
-		inline MeshComponent(const Ref<Voxymore::Core::Material>& material,const Ref<VertexArray>& vertexArray) : Material(material), Mesh(vertexArray) {}
+	struct NativeScriptComponent
+	{
+	private:
+//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::NativeScriptComponent);
+	public:
+		friend class Scene;
+	private:
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity*(*InstantiateScript)();
+		void(*DestroyScript)(NativeScriptComponent*);
+
+		inline bool IsValid() { return Instance != nullptr; }
+
+		inline void CreateInstance() { Instance = InstantiateScript(); }
+		inline void DestroyInstance() { DestroyScript(this); }
+	public:
+		template<typename T>
+		inline void Bind()
+		{
+			VXM_CORE_ASSERT(Instance != nullptr, "Instance already exist. Binding will cause memory leaks.");
+
+			InstantiateScript = []() { return static_cast<ScriptableEntity>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete (T*)nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 
 	struct CameraComponent
 	{
+	private:
+		VXM_IMPLEMENT_COMPONENT(CameraComponent);
+	public:
 		Voxymore::Core::SceneCamera Camera;
 		// TODO: Moving primary camera logic on Scene.
 		bool Primary = true;
@@ -99,29 +154,5 @@ namespace Voxymore::Core
 		inline CameraComponent(float fov, float nearClip, float farClip, uint32_t width, uint32_t height) : Camera(fov, nearClip, farClip, width, height) {}
 		inline CameraComponent(const Voxymore::Core::SceneCamera& camera) : Camera(camera) {}
 
-	};
-
-	struct NativeScriptComponent
-	{
-		friend class Scene;
-	private:
-		ScriptableEntity* Instance = nullptr;
-
-		ScriptableEntity*(*InstantiateScript)();
-		void(*DestroyScript)(NativeScriptComponent*);
-
-		inline bool IsValid() { return Instance != nullptr; }
-
-		inline void CreateInstance() { Instance = InstantiateScript(); }
-		inline void DestroyInstance() { DestroyScript(this); }
-	public:
-		template<typename T>
-		inline void Bind()
-		{
-			VXM_CORE_ASSERT(Instance != nullptr, "Instance already exist. Binding will cause memory leaks.");
-
-			InstantiateScript = []() { return static_cast<ScriptableEntity>(new T()); };
-			DestroyScript = [](NativeScriptComponent* nsc) { delete (T*)nsc->Instance; nsc->Instance = nullptr; };
-		}
 	};
 }

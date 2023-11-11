@@ -27,8 +27,9 @@ namespace Voxymore::Core
 		emitter << KEYVAL("ShaderName", model.m_ShaderName);
     }
 
-    void ModelComponent::OnImGuiRender(Entity sourceEntity)
+    bool ModelComponent::OnImGuiRender(Entity sourceEntity)
     {
+		bool componentChanged = false;
     	auto& model = sourceEntity.GetComponent<ModelComponent>();
 		auto& p = model.m_ModelPath;
 
@@ -42,6 +43,7 @@ namespace Voxymore::Core
 				const bool is_selected = (currentSourceIndex == i);
 				if (ImGui::Selectable(PossibleFileSources[i].c_str(), is_selected))
 				{
+					componentChanged |= true;
 					currentSourceIndex = i;
 					p.source = static_cast<FileSource>(i);
 				}
@@ -61,6 +63,7 @@ namespace Voxymore::Core
 			std::memcpy(path, pathStr.c_str(), fillSize);
 			std::memset(path + fillSize, 0, sizeof(path) - fillSize);
 			if (ImGui::InputText("Path", path, BufferSize)) {
+				componentChanged |= true;
 				p.path = path;
 			}
 		}
@@ -74,9 +77,11 @@ namespace Voxymore::Core
 			std::memcpy(shaderName, pathStr.c_str(), fillSize);
 			std::memset(shaderName + fillSize, 0, sizeof(shaderName) - fillSize);
 			if (ImGui::InputText("Shader Name", shaderName, BufferSize)) {
+				componentChanged |= true;
 				pathStr = shaderName;
 			}
 		}
+		return componentChanged;
 	}
 
 	void ModelComponent::LoadModel()

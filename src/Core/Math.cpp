@@ -2,8 +2,8 @@
 // Created by Iannis on 30/05/2023.
 //
 
-#include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Core/Core.hpp"
 
 namespace Voxymore::Core {
 // Old way

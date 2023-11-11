@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Voxymore/Core/FileSystem.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include <string>
-#include <filesystem>
+#include "Voxymore/Core/Core.hpp"
 
 #define VOID_FUNC_PTR void(*)()
 #define NAMED_VOID_FUNC_PTR(name) void(*name)()
@@ -21,7 +21,7 @@ namespace Voxymore::Core
 		std::filesystem::path cacheDirectory = "Cache";
 		std::filesystem::path systemDirectory = "Systems";
 
-		Path startScene;
+		UUID startSceneId;
 
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};

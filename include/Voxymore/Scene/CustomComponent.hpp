@@ -20,9 +20,9 @@ public:
 		uint64_t ComponentHash;
 
 		bool (*HasComponent)(Entity);
-		void (*SerializeComponent)(YAML::Emitter &/*Emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
+		void (*SerializeComponent)(YAML::Emitter &/*emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
 		void (*DeserializeComponent)(YAML::Node& /*componentNode*/, Entity/*targetEntity*/); // TODO: Change for own "deserializer"
-		void (*OnImGuiRender)(Entity/*sourceEntity*/);
+		bool (*OnImGuiRender)(Entity/*sourceEntity*/);
 		void (*AddComponent)(Entity);
 		void (*RemoveComponent)(Entity);
 	};
@@ -65,6 +65,7 @@ public:
 	};
 
 }
+
 #define VXM_IMPLEMENT_COMPONENT(COMP) private:\
 	static ::Voxymore::Core::ComponentCreator<COMP> s_ComponentCreator;\
 public:\
@@ -73,8 +74,7 @@ public:\
 	inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<COMP>(); }\
 	static void DeserializeComponent(YAML::Node& componentNode, ::Voxymore::Core::Entity targetEntity); \
 	static void SerializeComponent(YAML::Emitter& Emitter, ::Voxymore::Core::Entity sourceEntity); \
-	static void OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
-	static void DrawComponent(::Voxymore::Core::Entity sourceEntity); \
+	static bool OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
 	inline static std::string GetName() { return #COMP; }
 
 #define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \

@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include "Voxymore/Core/UUID.hpp"
+#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+
 #include <unordered_map>
 #include <filesystem>
-#include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/Scene/Scene.hpp"
 
 namespace Voxymore::Core
 {
@@ -15,20 +17,23 @@ namespace Voxymore::Core
 	class SceneManager
 	{
 	public:
+		static Ref<Scene> CreateScene();
+		static Ref<Scene> CreateScene(UUID id);
 		static Ref<Scene> CreateScene(const std::string& name);
+		static Ref<Scene> CreateScene(UUID id, const std::string& name);
 		static Ref<Scene> CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height);
 
-		static Ref<Scene> GetScene(const std::string& name);
-		static void DeleteScene(const std::string& name);
+		static Ref<Scene> GetScene(UUID id);
+		static void DeleteScene(UUID id);
 
 		static void AddScene(Ref<Scene> scene);
-		static void AddScene(const std::string& name, Ref<Scene> scene);
 
-		static bool HasScene(const std::string& name);
+		static bool HasScene(UUID name);
 
 		static std::vector<std::string> GetSceneNames();
+		static std::vector<UUID> GetSceneIds();
 	private:
-		static std::unordered_map<std::string, Ref<Scene>> s_Scenes;
+		static std::unordered_map<UUID, Ref<Scene>> s_Scenes;
 	};
 
 } // namespace Voxymore::Core

@@ -107,6 +107,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Project/ProjectSerializer.hpp
         src/Core/UUID.cpp
         include/Voxymore/Core/UUID.hpp
+        src/Scene/Entity.cpp
+        src/Scene/Components.cpp
+        include/Voxymore/ImGUI/ImGuiLib.cpp
+        include/Voxymore/ImGUI/ImGuiLib.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

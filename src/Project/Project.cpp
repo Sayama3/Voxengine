@@ -4,13 +4,14 @@
 
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include <algorithm>
 
 
 namespace Voxymore::Core
 {
 	std::vector<VOID_FUNC_PTR>* Project::s_OnLoad = nullptr;
-	Ref<Project> Project::s_ActiveProject;
+	Ref<Project> Project::s_ActiveProject = nullptr;
 
 	std::vector<VOID_FUNC_PTR>& Project::GetOnLoad()
 	{

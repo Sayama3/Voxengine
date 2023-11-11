@@ -4,10 +4,11 @@
 
 #pragma once
 
-#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Renderer/EditorCamera.hpp"
+#include "Voxymore/Core/Core.hpp"
 #include <entt/entt.hpp>
 
 // TODO: find a better way?
@@ -15,7 +16,7 @@ namespace Voxymore::Editor {
 	class SceneHierarchyPanel;
 }
 
-//TODO: add a way to create/delete system (that can go onto the whole scene) instead of juste NativeScriptComponent.
+//TODO: remove all the redifinitions of class by using the unified component system.
 namespace Voxymore::Core
 {
 	class SceneSerializer;
@@ -37,9 +38,12 @@ namespace Voxymore::Core
 	public:
 		Scene();
 		Scene(std::string name);
+		Scene(UUID id);
+		Scene(UUID id, std::string name);
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntity(UUID id, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
@@ -48,34 +52,22 @@ namespace Voxymore::Core
 
 		inline const std::string& GetName() const {return m_Name;}
 		inline void SetName(const std::string& name) {m_Name = name;}
+		inline UUID GetID() const {return m_ID;}
 	private:
 		template<typename T>
-		void OnComponentAdded(entt::entity entity, T& component);
+		inline void OnComponentAdded(entt::entity entity, T& component) {}
 	public:
 		// Helper:
 		Entity GetPrimaryCameraEntity();
 	private:
+		UUID m_ID;
+		std::string m_Name;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;
-		std::string m_Name;
 	public:
 		inline entt::registry& GetRegistry() { return m_Registry; }
 		inline const entt::registry& GetRegistry() const { return m_Registry; }
 	};
-	template<>
-	void Scene::OnComponentAdded<TagComponent>(entt::entity entity, TagComponent& tagComponent);
-
-	template<>
-	void Scene::OnComponentAdded<TransformComponent>(entt::entity entity, TransformComponent& transformComponent);
-
-	template<>
-	void Scene::OnComponentAdded<MeshComponent>(entt::entity entity, MeshComponent& meshComponent);
-
-	template<>
-	void Scene::OnComponentAdded<CameraComponent>(entt::entity entity, CameraComponent& cameraComponent);
-
-	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(entt::entity entity, NativeScriptComponent& nativeScriptComponent);
 
 } // Voxymore
 // Core

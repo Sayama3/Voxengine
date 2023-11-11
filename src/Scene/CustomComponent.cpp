@@ -57,8 +57,8 @@ namespace Voxymore::Core
 //	emitter << KEYVAL("Speed", boat.m_Speed);
 //}
 //
-//void BoatComponent::OnImGuiRender(Entity sourceEntity)
+//bool BoatComponent::OnImGuiRender(Entity sourceEntity)
 //{
 //	auto& boat = sourceEntity.GetComponent<BoatComponent>();
-//	ImGui::DragFloat("Speed", &boat.m_Speed);
+//	return ImGui::DragFloat("Speed", &boat.m_Speed);
 //}

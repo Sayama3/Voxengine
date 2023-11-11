@@ -15,6 +15,7 @@
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/Input.hpp"
 #include "Voxymore/Core/MouseButtonCodes.hpp"
@@ -24,6 +25,7 @@
 #include "Voxymore/Layers/Layer.hpp"
 
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
+#include "Voxymore/ImGUI/ImGuiLib.hpp"
 
 #include "Voxymore/Project/Project.hpp"
 

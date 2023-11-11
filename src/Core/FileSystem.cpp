@@ -131,6 +131,12 @@ namespace Voxymore::Core
 		return !(*this == rhs);
 	}
 
+	std::string Path::GetPathId() const
+	{
+		std::filesystem::path p = GetFileSourceName(source) / path;
+		return p.string();
+	}
+
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
 	{
 		out << YAML::Flow;
