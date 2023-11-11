@@ -60,12 +60,16 @@ namespace Voxymore::Core{
 
     void ShaderLibrary::Add(const Ref<Shader> &shader) {
         const auto& name = shader->GetName();
-        VXM_CORE_ASSERT(!m_Shaders.contains(name), "Shader Library already contains '{0}'.", name);
+#if VXM_DEBUG
+        if(!m_Shaders.contains(name)) VXM_CORE_WARNING("Shader Library already contains '{0}'.", name);
+#endif
         m_Shaders[name] = shader;
     }
 
     void ShaderLibrary::Add(const std::string& name, const Ref<Shader> &shader) {
-        VXM_CORE_ASSERT(!m_Shaders.contains(name), "Shader Library already contains '{0}'.", name);
+#if VXM_DEBUG
+        if(!m_Shaders.contains(name)) VXM_CORE_WARNING("Shader Library already contains '{0}'.", name);
+#endif
         m_Shaders[name] = shader;
     }
 
