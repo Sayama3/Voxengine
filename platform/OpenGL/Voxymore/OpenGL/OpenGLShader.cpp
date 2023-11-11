@@ -368,15 +368,16 @@ namespace Voxymore::Core
 			return (shaderc_shader_kind) -1;
 		}
 
-		static const char *GetCacheDirectory()
+		static std::filesystem::path GetCacheDirectory()
 		{
 			// TODO: make sure the assets directory is valid
-			return "assets/cache/shader/opengl";
+			Path cacheDir = {FileSource::Cache, "./shader/opengl/"};
+			return cacheDir;
 		}
 
 		static void CreateCacheDirectoryIfNeeded()
 		{
-			std::string cacheDirectory = GetCacheDirectory();
+			std::filesystem::path cacheDirectory = GetCacheDirectory();
 			if (!std::filesystem::exists(cacheDirectory))
 				std::filesystem::create_directories(cacheDirectory);
 		}
