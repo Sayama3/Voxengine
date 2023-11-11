@@ -37,6 +37,7 @@ namespace Voxymore::Core
 		Project(ProjectConfig parameters);
 		~Project();
 
+		inline static Ref<Project> Get() { return s_ActiveProject; }
 		inline static std::filesystem::path GetAssetDirectory()
 		{
 			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
