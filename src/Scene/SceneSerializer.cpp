@@ -102,29 +102,29 @@ namespace Voxymore::Core
 					}
 				}
 
-//				auto cameraComponent = yamlEntity["CameraComponent"];
-//				if (cameraComponent) {
-//					auto &cc = entity.AddComponent<CameraComponent>();
-//
-//					cc.Primary = cameraComponent["Primary"].as<bool>();
-//					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
-//
-//					auto camera = cameraComponent["Camera"];
-//					auto aspectRatio = camera["AspectRatio"].as<float>();
-//					cc.Camera.SetAspectRatio(aspectRatio);
-//
-//					auto orthographicSize = camera["OrthographicSize"].as<float>();
-//					auto orthographicNear = camera["OrthographicNear"].as<float>();
-//					auto orthographicFar = camera["OrthographicFar"].as<float>();
-//					cc.Camera.SetOrthographic(orthographicSize, orthographicNear, orthographicFar);
-//
-//					auto perspectiveVerticalFOV = camera["PerspectiveVerticalFOV"].as<float>();
-//					auto perspectiveNear = camera["PerspectiveNear"].as<float>();
-//					auto perspectiveFar = camera["PerspectiveFar"].as<float>();
-//					cc.Camera.SetPerspective(perspectiveVerticalFOV, perspectiveNear, perspectiveFar);
-//
-//					cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<bool>());
-//				}
+				auto cameraComponent = yamlEntity["CameraComponent"];
+				if (cameraComponent) {
+					auto &cc = entity.AddComponent<CameraComponent>();
+
+					cc.Primary = cameraComponent["Primary"].as<bool>();
+					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+
+					auto camera = cameraComponent["Camera"];
+					auto aspectRatio = camera["AspectRatio"].as<float>();
+					cc.Camera.SetAspectRatio(aspectRatio);
+
+					auto orthographicSize = camera["OrthographicSize"].as<float>();
+					auto orthographicNear = camera["OrthographicNear"].as<float>();
+					auto orthographicFar = camera["OrthographicFar"].as<float>();
+					cc.Camera.SetOrthographic(orthographicSize, orthographicNear, orthographicFar);
+
+					auto perspectiveVerticalFOV = camera["PerspectiveVerticalFOV"].as<float>();
+					auto perspectiveNear = camera["PerspectiveNear"].as<float>();
+					auto perspectiveFar = camera["PerspectiveFar"].as<float>();
+					cc.Camera.SetPerspective(perspectiveVerticalFOV, perspectiveNear, perspectiveFar);
+
+					cc.Camera.SwitchToOrthographic(camera["IsOrthographic"].as<bool>());
+				}
 
 				for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
 					YAML::Node yamlcc = yamlEntity[cc.ComponentName];
@@ -176,31 +176,31 @@ namespace Voxymore::Core
 			}
 		}
 
-//		if (entity.HasComponent<CameraComponent>()) {
-//			out << KEYVAL("CameraComponent", YAML::BeginMap);// CameraComponent
-//			{
-//				auto &component = entity.GetComponent<CameraComponent>();
-//				out << KEYVAL("Primary", component.Primary);
-//				out << KEYVAL("FixedAspectRatio", component.FixedAspectRatio);
-//
-//				out << KEY("Camera");
-//				out << YAML::BeginMap;// Camera
-//				{
-//					out << KEYVAL("IsOrthographic", component.Camera.IsOrthographic());
-//					out << KEYVAL("AspectRatio", component.Camera.GetAspectRatio());
-//
-//					out << KEYVAL("OrthographicSize", component.Camera.GetOrthographicSize());
-//					out << KEYVAL("OrthographicNear", component.Camera.GetOrthographicNear());
-//					out << KEYVAL("OrthographicFar", component.Camera.GetOrthographicFar());
-//
-//					out << KEYVAL("PerspectiveVerticalFOV", component.Camera.GetPerspectiveVerticalFOV());
-//					out << KEYVAL("PerspectiveNear", component.Camera.GetPerspectiveNear());
-//					out << KEYVAL("PerspectiveFar", component.Camera.GetPerspectiveFar());
-//					out << YAML::EndMap;// Camera
-//				}
-//				out << YAML::EndMap;// CameraComponent
-//			}
-//		}
+		if (entity.HasComponent<CameraComponent>()) {
+			out << KEYVAL("CameraComponent", YAML::BeginMap);// CameraComponent
+			{
+				auto &component = entity.GetComponent<CameraComponent>();
+				out << KEYVAL("Primary", component.Primary);
+				out << KEYVAL("FixedAspectRatio", component.FixedAspectRatio);
+
+				out << KEY("Camera");
+				out << YAML::BeginMap;// Camera
+				{
+					out << KEYVAL("IsOrthographic", component.Camera.IsOrthographic());
+					out << KEYVAL("AspectRatio", component.Camera.GetAspectRatio());
+
+					out << KEYVAL("OrthographicSize", component.Camera.GetOrthographicSize());
+					out << KEYVAL("OrthographicNear", component.Camera.GetOrthographicNear());
+					out << KEYVAL("OrthographicFar", component.Camera.GetOrthographicFar());
+
+					out << KEYVAL("PerspectiveVerticalFOV", component.Camera.GetPerspectiveVerticalFOV());
+					out << KEYVAL("PerspectiveNear", component.Camera.GetPerspectiveNear());
+					out << KEYVAL("PerspectiveFar", component.Camera.GetPerspectiveFar());
+					out << YAML::EndMap;// Camera
+				}
+				out << YAML::EndMap;// CameraComponent
+			}
+		}
 
 		//TODO: serialize the NativeScriptComponent.
 

@@ -112,8 +112,6 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/ImGUI/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
-        src/Components/CameraComponent.cpp
-        include/Voxymore/Components/CameraComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
