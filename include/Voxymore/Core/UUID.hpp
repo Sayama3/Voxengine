@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core
 {
-	struct UUID
+	class UUID
 	{
 	public:
 		UUID();
