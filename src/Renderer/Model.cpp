@@ -119,12 +119,7 @@ namespace Voxymore::Core
         VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
 
         //TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
-        uint64_t modelId;
-        {
-            std::hash<std::string> pathHasher;
-			std::string pathStr = (Helper::GetFileSourceName(p.source) / p.path).string();
-            modelId = pathHasher(pathStr);
-        }
+        uint64_t modelId = std::hash<Path>()(p);
 
 		UnflipStbi();
 		tinygltf::Model model;
@@ -154,10 +149,10 @@ namespace Voxymore::Core
 			m_Meshes.reserve(model.meshes.size());
 			for (auto &mesh: model.meshes) {
 				VXM_PROFILE_SCOPE("Model::Model -> Create MeshGroup");
-				Ref<MeshGroup> m = CreateRef<MeshGroup>();
+				MeshGroup meshGroup;
 
+				meshGroup.m_Meshes.reserve(mesh.primitives.size());
 
-				m->m_Meshes.reserve(mesh.primitives.size());
 				for (auto &primitive: mesh.primitives) {
 					VXM_PROFILE_SCOPE("Model::Model -> Create Mesh");
 
@@ -305,9 +300,9 @@ namespace Voxymore::Core
 						}
 					}
 
-					m->AddSubMesh(vertexes, index, material);
+					meshGroup.AddSubMesh(vertexes, index, material);
 				}
-				m_Meshes.push_back(m);
+				m_Meshes.push_back(meshGroup);
 			}
 		}
 
@@ -317,9 +312,8 @@ namespace Voxymore::Core
 			for (auto &node: model.nodes) {
 				glm::mat4 matrix = GLTF::Helper::GetMatrix(node);
 				std::vector<int> children = node.children;
-				if (node.mesh > -1) m_Nodes.push_back(Node(m_Meshes[node.mesh], children, matrix));
-				else
-					m_Nodes.push_back(Node(children, matrix));
+				if (node.mesh > -1) m_Nodes.emplace_back(node.mesh, children, matrix);
+				else m_Nodes.push_back(Node(children, matrix));
 			}
 		}
 
@@ -408,5 +402,35 @@ namespace Voxymore::Core
 	const Ref<Shader>& Model::GetShader() const
 	{
 		return m_Shader;
+	}
+
+	void Model::SetShader(Ref<Shader> & shader)
+	{
+		m_Shader = shader;
+		for (auto& meshGroup : m_Meshes)
+		{
+			for(auto& mesh : meshGroup.m_Meshes)
+			{
+				mesh.SetShader(shader);
+			}
+		}
+	}
+
+	void Model::SetShader(const std::string & shaderName)
+	{
+		m_Shader = ShaderLibrary::GetInstance().Get(shaderName);
+		for (auto& meshGroup : m_Meshes)
+		{
+			for(auto& mesh : meshGroup.m_Meshes)
+			{
+				mesh.SetShader(shaderName);
+			}
+		}
+	}
+
+	const MeshGroup& Model::GetMeshGroup(int index) const
+	{
+		VXM_CORE_ASSERT(index > -1 && index < m_Meshes.size(), "The index '{0}' is not a valid mesh.", index);
+		return m_Meshes[index];
 	}
 } // namespace Voxymore::Core

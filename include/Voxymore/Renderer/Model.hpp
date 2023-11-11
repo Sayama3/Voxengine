@@ -28,25 +28,26 @@ namespace Voxymore::Core
 	{
 	public:
 		Node() = default;
-		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh) : mesh(mesh) {}
-		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh, const std::vector<int>& children) : mesh(mesh), children(children) {}
-		inline Node(const Ref<::Voxymore::Core::MeshGroup>& mesh, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
+		inline Node(int meshIndex) : mesh(mesh) {}
+		inline Node(int meshIndex, const std::vector<int>& children) : mesh(mesh), children(children) {}
+		inline Node(int meshIndex, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
 		inline Node(const std::vector<int>& children) : mesh(), children(children) {}
 		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(), children(children), transform(transform) {}
 	public:
-		std::optional<Ref<::Voxymore::Core::MeshGroup>> mesh;
+		int mesh = -1;
 		std::vector<int> children;
 		glm::mat4 transform = glm::mat4(1.0f);
-		inline Ref<::Voxymore::Core::MeshGroup>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
-		inline const Ref<::Voxymore::Core::MeshGroup>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
-		inline bool HasMesh() const { return mesh.has_value();}
+//		inline Ref<::Voxymore::Core::MeshGroup>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+//		inline const Ref<::Voxymore::Core::MeshGroup>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		inline int GetMeshIndex() const {return mesh;}
+		inline bool HasMesh() const { return mesh > -1;}
 		inline bool HasChildren() const { return !children.empty();}
 	};
 
 	class Model
 	{
 	private:
-		std::vector<Ref<MeshGroup>> m_Meshes;
+		std::vector<MeshGroup> m_Meshes;
 		std::vector<Node> m_Nodes;
 		std::vector<std::vector<int>> m_Scenes;
 		std::vector<Ref<Texture2D>> m_Textures;
@@ -59,6 +60,7 @@ namespace Voxymore::Core
 		~Model();
 		static Ref<Model> CreateModel(const Path& path, const Ref<Shader>& shader);
 		const Node& GetNode(int index) const;
+		const MeshGroup& GetMeshGroup(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
 
 		void Bind();
@@ -66,6 +68,8 @@ namespace Voxymore::Core
 
 		const Path& GetPath() const;
 		const Ref<Shader>& GetShader() const;
+		void SetShader(Ref<Shader>&);
+		void SetShader(const std::string&);
 	private:
 		//		Node& GetNode(int index);
 	};

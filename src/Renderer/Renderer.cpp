@@ -89,14 +89,14 @@ namespace Voxymore::Core {
         material->Unbind();
 	}
 
-	void Renderer::Submit(const Ref<MeshGroup>& mesh, const glm::mat4& transform, int entityId)
+	void Renderer::Submit(const MeshGroup& mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		for (const auto& sm : mesh->GetSubMeshes())
+		for (const auto& sm : mesh.GetSubMeshes())
 		{
 			s_Data.MaterialUniformBuffer->SetData(&sm.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			sm.Bind();
@@ -122,7 +122,7 @@ namespace Voxymore::Core {
 		glm::mat4 currentTransform = transform * node.transform;
 		if(node.HasMesh())
 		{
-			Submit(node.GetMesh(), currentTransform, entityId);
+			Submit(model->GetMeshGroup(node.GetMeshIndex()), currentTransform, entityId);
 		}
 
 		if(node.HasChildren())

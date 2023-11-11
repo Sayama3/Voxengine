@@ -67,6 +67,16 @@ namespace Voxymore::Core
 		return m_Material;
 	}
 
+	void Mesh::SetShader(const std::string& shaderName)
+	{
+		m_Material->ChangeShader(shaderName);
+	}
+
+	void Mesh::SetShader(Ref<Shader>& shader)
+	{
+		m_Material->ChangeShader(shader);
+	}
+
 	Vertex::Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color) : Position(position), Normal(normal), TexCoord(texCoord), Color(color)
 	{
 	}

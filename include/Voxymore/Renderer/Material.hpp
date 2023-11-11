@@ -102,6 +102,7 @@ namespace Voxymore::Core {
 		void Unbind() const;
 
 		void ChangeShader(const std::string& shaderName);
+		void ChangeShader(Ref<Shader>& shader);
 		const std::string& GetMaterialName() const;
 		const std::string& GetShaderName() const;
 		void SetMaterialName(const std::string& name);

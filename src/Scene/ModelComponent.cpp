@@ -1,4 +1,5 @@
 #include "Voxymore/Scene/ModelComponent.hpp"
+#include "Voxymore/Assets/Assets.hpp"
 #include <cstring>
 #include <cmath>
 
@@ -88,8 +89,14 @@ namespace Voxymore::Core
 	{
 		VXM_CORE_ASSERT(!m_ModelPath.empty() && std::filesystem::exists(m_ModelPath.GetFullPath()), "The path '{0}' is not valid.", m_ModelPath.GetFullPath().string());
 		VXM_CORE_ASSERT(ShaderLibrary::GetInstance().Exists(m_ShaderName), "The shader '{0}' doesn't exist.", m_ShaderName);
-		m_Model = Model::CreateModel(m_ModelPath, ShaderLibrary::GetInstance().Get(m_ShaderName));
-		m_IsLoaded = true;
+
+		m_Model = Assets::GetModel(m_ModelPath);
+		m_IsLoaded = m_Model != nullptr;
+
+		if(m_IsLoaded) {
+			Ref<Shader> shader = ShaderLibrary::GetInstance().Get(m_ShaderName);
+			m_Model->SetShader(shader);
+		}
 	}
 
 	bool ModelComponent::IsLoaded() const

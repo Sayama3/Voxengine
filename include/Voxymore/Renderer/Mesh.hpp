@@ -71,8 +71,10 @@ namespace Voxymore::Core
 		inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		void Bind() const;
 		void Unbind() const;
-		void SetMaterial(Ref<Material> material);
+		void SetShader(Ref<Shader>& shader);
+		void SetShader(const std::string& shader);
 		const Ref<Material>& GetMaterial() const;
+		void SetMaterial(Ref<Material> material);
 	private:
 		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;

@@ -177,6 +177,13 @@ namespace Voxymore::Core {
 		LoadShader();
 	}
 
+	void Material::ChangeShader(Ref<Shader>& shader)
+	{
+		ResetShader();
+		m_ShaderName = shader->GetName();
+		m_Shader = shader;
+	}
+
 	//	void Material::LoadTexture(uint32_t index) const
 	//	{
 	//		VXM_CORE_ASSERT(index >= 0 && index < m_Textures.size(), "The index {0} is not between [0, {1}[", index, m_Textures.size());
