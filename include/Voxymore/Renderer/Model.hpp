@@ -28,17 +28,17 @@ namespace Voxymore::Core
 	{
 	public:
 		Node() = default;
-		inline Node(int meshIndex) : mesh(mesh) {}
-		inline Node(int meshIndex, const std::vector<int>& children) : mesh(mesh), children(children) {}
-		inline Node(int meshIndex, const std::vector<int>& children, const glm::mat4& transform) : mesh(mesh), children(children), transform(transform) {}
-		inline Node(const std::vector<int>& children) : mesh(), children(children) {}
-		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(), children(children), transform(transform) {}
+		inline Node(int meshIndex) : mesh(meshIndex) {}
+		inline Node(int meshIndex, const std::vector<int>& children) : mesh(meshIndex), children(children) {}
+		inline Node(int meshIndex, const std::vector<int>& children, const glm::mat4& transform) : mesh(meshIndex), children(children), transform(transform) {}
+		inline Node(const std::vector<int>& children) : mesh(-1), children(children) {}
+		inline Node(const std::vector<int>& children, const glm::mat4& transform) : mesh(-1), children(children), transform(transform) {}
 	public:
 		int mesh = -1;
 		std::vector<int> children;
 		glm::mat4 transform = glm::mat4(1.0f);
-//		inline Ref<::Voxymore::Core::MeshGroup>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
-//		inline const Ref<::Voxymore::Core::MeshGroup>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		//		inline Ref<::Voxymore::Core::MeshGroup>& GetMesh() {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
+		//		inline const Ref<::Voxymore::Core::MeshGroup>& GetMesh() const {VXM_CORE_ASSERT(HasMesh(), "Node don't have a mesh.");return mesh.value();}
 		inline int GetMeshIndex() const {return mesh;}
 		inline bool HasMesh() const { return mesh > -1;}
 		inline bool HasChildren() const { return !children.empty();}

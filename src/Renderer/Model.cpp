@@ -116,10 +116,10 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 		auto path = p.GetFullPath();
-        VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
+		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
 
-        //TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
-        uint64_t modelId = std::hash<Path>()(p);
+		//TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
+		uint64_t modelId = std::hash<Path>()(p);
 
 		UnflipStbi();
 		tinygltf::Model model;
@@ -248,7 +248,7 @@ namespace Voxymore::Core
 						if (primitive.material > -1) {
 							tinygltf::Material mat = model.materials[primitive.material];
 
-                            std::string matName = std::to_string(modelId) + "_" + mat.name;
+							std::string matName = std::to_string(modelId) + "_" + mat.name;
 
 							if (!MaterialLibrary::GetInstance().Exists(matName)) {
 								MaterialParameters materialParams;
@@ -313,7 +313,7 @@ namespace Voxymore::Core
 				glm::mat4 matrix = GLTF::Helper::GetMatrix(node);
 				std::vector<int> children = node.children;
 				if (node.mesh > -1) m_Nodes.emplace_back(node.mesh, children, matrix);
-				else m_Nodes.push_back(Node(children, matrix));
+				else m_Nodes.emplace_back(children, matrix);
 			}
 		}
 
