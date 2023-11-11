@@ -109,7 +109,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/UUID.hpp
         src/Scene/Entity.cpp
         src/Scene/Components.cpp
-        include/Voxymore/ImGUI/ImGuiLib.cpp
+        src/ImGui/ImGuiLib.cpp
         include/Voxymore/ImGUI/ImGuiLib.hpp
 )
 
