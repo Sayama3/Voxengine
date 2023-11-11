@@ -128,13 +128,20 @@ namespace Voxymore::Core
 	Ref<Scene> Assets::GetScene(UUID id)
 	{
 		auto sceneIt = s_Scenes.find(id);
-		if(sceneIt == s_Scenes.end()) return nullptr;
+		if(sceneIt == s_Scenes.end()) {
+			if(SceneManager::HasScene(id))
+			{
+				s_Scenes[id] = SceneManager::GetScene(id);
+				return s_Scenes[id];
+			}
+			return nullptr;
+		}
 		return sceneIt->second;
 	}
 
 	bool Assets::HasModel(UUID id)
 	{
-		return s_Models.contains(id);
+		return s_Models.contains(id) || SceneManager::HasScene(id);
 	}
 
 	Ref<Model> Assets::GetModel(UUID id)
@@ -249,7 +256,15 @@ namespace Voxymore::Core
 		auto it = s_Scenes.find(id);
 		if(it == s_Scenes.end())
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene, LoadScene)
+			if(SceneManager::HasScene(id))
+			{
+				s_Scenes[id] = SceneManager::GetScene(id);
+				return s_Scenes[id];
+			}
+			else
+			{
+				VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene, LoadScene)
+			}
 		}
 		return it->second;
 	}
@@ -288,19 +303,19 @@ namespace Voxymore::Core
 	{
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
-		return s_Scenes.contains(id);
+		return HasScene(id);
 	}
 	bool Assets::HasModel(const Path& path)
 	{
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
-		return s_Models.contains(id);
+		return HasModel(id);
 	}
 	bool Assets::HasTexture(const Path& path)
 	{
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
-		return s_Textures.contains(id);
+		return HasTexture(id);
 	}
 
 	UUID Assets::GetOrCreateFileID(Path filePath)
