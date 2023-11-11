@@ -21,7 +21,7 @@ namespace Voxymore::Core
 		std::filesystem::path cacheDirectory = "Cache";
 		std::filesystem::path systemDirectory = "Systems";
 
-		UUID startSceneId;
+		std::optional<UUID> startSceneId;
 
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};

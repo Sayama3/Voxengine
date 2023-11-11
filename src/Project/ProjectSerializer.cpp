@@ -23,7 +23,10 @@ namespace Voxymore::Core
 		out << KEYVAL("AssetDirectory", config.assetDirectory);
 		out << KEYVAL("CacheDirectory", config.cacheDirectory);
 		out << KEYVAL("SystemDirectory", config.systemDirectory);
-		out << KEYVAL("StartSceneId", config.startSceneId);
+		if(config.startSceneId.has_value())
+		{
+			out << KEYVAL("StartSceneId", config.startSceneId.value());
+		}
 
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -65,8 +68,8 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(projectNode["SystemDirectory"], "The node SystemDirectory doesn't exist.");
 		config.systemDirectory = projectNode["SystemDirectory"].as<std::string>();
 
-		VXM_CORE_ASSERT(projectNode["StartScene"], "The node StartScene doesn't exist.");
-		config.startSceneId = projectNode["StartSceneId"].as<uint64_t>();
+//		VXM_CORE_ASSERT(projectNode["StartScene"], "The node StartScene doesn't exist.");
+		if(projectNode["StartSceneId"]) config.startSceneId = projectNode["StartSceneId"].as<uint64_t>();
 
 		m_Handle->m_ProjectPath = filepath;
 		return true;
