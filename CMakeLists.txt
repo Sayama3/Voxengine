@@ -105,6 +105,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Project/Project.hpp
         src/Project/ProjectSerializer.cpp
         include/Voxymore/Project/ProjectSerializer.hpp
+        src/Core/UUID.cpp
+        include/Voxymore/Core/UUID.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
