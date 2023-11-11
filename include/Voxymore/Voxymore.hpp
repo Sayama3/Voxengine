@@ -33,11 +33,14 @@
 
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Components/ModelComponent.hpp"
+#include "Voxymore/Components/CameraComponent.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
+#include "Voxymore/Scene/SceneManager.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"
@@ -50,9 +53,16 @@
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Renderer/Mesh.hpp"
 
+#include "Voxymore/Renderer/Framebuffer.hpp"
+#include "Voxymore/Renderer/Model.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
+#include "Voxymore/Core/PerspectiveCameraController.hpp"
+
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/Events/KeyEvent.hpp"
 #include "Voxymore/Events/MouseEvent.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
+
+#include "Voxymore/Assets/Assets.hpp"
 
 //#include "Voxymore/Core/EntryPoint.hpp"
