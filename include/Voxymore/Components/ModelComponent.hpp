@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "Voxymore/Scene/CustomComponent.hpp"
+#include "CustomComponent.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Renderer/Model.hpp"
 

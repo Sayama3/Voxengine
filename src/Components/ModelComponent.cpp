@@ -1,7 +1,7 @@
-#include "Voxymore/Scene/ModelComponent.hpp"
+#include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Assets/Assets.hpp"
-#include <cstring>
 #include <cmath>
+#include <cstring>
 
 // ======== ModelComponent ========
 namespace Voxymore::Core

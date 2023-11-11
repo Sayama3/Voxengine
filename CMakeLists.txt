@@ -70,7 +70,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Framebuffer.hpp
         src/Scene/Scene.cpp
         include/Voxymore/Scene/Scene.hpp
-        include/Voxymore/Scene/Components.hpp
+        include/Voxymore/Components/Components.hpp
         include/Voxymore/Scene/Entity.hpp
         src/Scene/SceneCamera.cpp
         include/Voxymore/Scene/SceneCamera.hpp
@@ -83,8 +83,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/EditorCamera.hpp
         src/Scene/SceneManager.cpp
         include/Voxymore/Scene/SceneManager.hpp
-        src/Scene/CustomComponent.cpp
-        include/Voxymore/Scene/CustomComponent.hpp
+        src/Components/CustomComponent.cpp
+        include/Voxymore/Components/CustomComponent.hpp
         include/Voxymore/Scene/GameplaySystem.hpp
         src/Scene/GameplaySystem.cpp
         include/Voxymore/Core/YamlHelper.hpp
@@ -96,8 +96,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Renderer/Mesh.cpp
         include/Voxymore/Renderer/Model.hpp
         src/Renderer/Model.cpp
-        include/Voxymore/Scene/ModelComponent.hpp
-        src/Scene/ModelComponent.cpp
+        include/Voxymore/Components/ModelComponent.hpp
+        src/Components/ModelComponent.cpp
         src/ThirdPartiesImplementor.cpp
         include/Voxymore/Core/Serializable.hpp
         src/Core/YamlHelper.cpp
@@ -108,11 +108,12 @@ set(SRC_FILES src/Core/Application.cpp
         src/Core/UUID.cpp
         include/Voxymore/Core/UUID.hpp
         src/Scene/Entity.cpp
-        src/Scene/Components.cpp
         src/ImGui/ImGuiLib.cpp
         include/Voxymore/ImGUI/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
+        src/Components/CameraComponent.cpp
+        include/Voxymore/Components/CameraComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

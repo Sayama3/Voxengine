@@ -3,12 +3,12 @@
 //
 
 #include "Voxymore/Scene/SceneSerializer.hpp"
-#include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/Components.hpp"
+#include "Voxymore/Components/Components.hpp"
+#include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
-#include "Voxymore/Scene/CustomComponent.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 
 namespace Voxymore::Core
 {

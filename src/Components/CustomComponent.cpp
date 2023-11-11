@@ -2,7 +2,7 @@
 // Created by ianpo on 21/09/2023.
 //
 
-#include "Voxymore/Scene/CustomComponent.hpp"
+#include "Voxymore/Components/CustomComponent.hpp"
 
 namespace Voxymore::Core
 {

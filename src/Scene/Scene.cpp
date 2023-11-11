@@ -4,13 +4,14 @@
 
 #include <utility>
 
+#include "Voxymore/Components/Components.hpp"
+#include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Components/ModelComponent.hpp"
+#include "Voxymore/Components/CameraComponent.hpp"
 #include "Voxymore/Debug/Instrumentor.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
-#include "Voxymore/Scene/Components.hpp"
-#include "Voxymore/Scene/CustomComponent.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"
-#include "Voxymore/Scene/ModelComponent.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 
 

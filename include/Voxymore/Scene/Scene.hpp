@@ -16,16 +16,10 @@ namespace Voxymore::Editor {
 	class SceneHierarchyPanel;
 }
 
-//TODO: remove all the redifinitions of class by using the unified component system.
 namespace Voxymore::Core
 {
 	class SceneSerializer;
 	class Entity;
-	struct TagComponent;
-	struct TransformComponent;
-	struct MeshComponent;
-	struct CameraComponent;
-	struct NativeScriptComponent;
 	class GameplaySystem;
 
 	class Scene

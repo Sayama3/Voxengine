@@ -3,7 +3,7 @@
 //
 
 #include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/Components.hpp"
+#include "Voxymore/Components/Components.hpp"
 
 namespace Voxymore::Core
 {

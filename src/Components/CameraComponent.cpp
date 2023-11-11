@@ -2,16 +2,10 @@
 // Created by ianpo on 11/11/2023.
 //
 
-#include "Voxymore/Scene/Components.hpp"
-#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Components/CameraComponent.hpp"
 
 namespace Voxymore::Core
 {
-//	VXM_CREATE_COMPONENT(IDComponent);
-//	VXM_CREATE_COMPONENT(TagComponent);
-//	VXM_CREATE_COMPONENT(TransformComponent);
-//	VXM_CREATE_COMPONENT(NativeScriptComponent);
-
 	VXM_CREATE_LIGHT_COMPONENT(CameraComponent);
 	template<>
 	void ::Voxymore::Core::Scene::OnComponentAdded<::Voxymore::Core::CameraComponent>(entt::entity entity, ::Voxymore::Core::CameraComponent &component)
@@ -137,4 +131,5 @@ namespace Voxymore::Core
 
 		return componentChanged;
 	}
-} // Voxymore::Core
+
+}// namespace Voxymore::Core

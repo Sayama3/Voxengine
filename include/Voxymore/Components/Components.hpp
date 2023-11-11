@@ -4,21 +4,18 @@
 
 #pragma once
 
+#include "CustomComponent.hpp"
 #include "Voxymore/Core/Math.hpp"
-#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Scene/ScriptableEntity.hpp"
-#include "Voxymore/Scene/SceneCamera.hpp"
-#include "Voxymore/Scene/CustomComponent.hpp"
 
 namespace Voxymore::Core
 {
 	struct IDComponent
 	{
-		private:
-//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::IDComponent);
 		public:
 		UUID ID;
 
@@ -31,8 +28,6 @@ namespace Voxymore::Core
 
 	struct TagComponent
 	{
-		private:
-//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::TagComponent);
 		public:
 		std::string Tag;
 
@@ -43,8 +38,6 @@ namespace Voxymore::Core
 
 	struct TransformComponent
 	{
-		private:
-//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::TransformComponent);
 		public:
 	private:
 		glm::vec3 Position = glm::vec3(0.0f);
@@ -96,8 +89,6 @@ namespace Voxymore::Core
 
 	struct NativeScriptComponent
 	{
-	private:
-//		VXM_IMPLEMENT_COMPONENT(::Voxymore::Core::NativeScriptComponent);
 	public:
 		friend class Scene;
 	private:
@@ -121,38 +112,4 @@ namespace Voxymore::Core
 		}
 	};
 
-	struct CameraComponent
-	{
-	private:
-		VXM_IMPLEMENT_COMPONENT(CameraComponent);
-	public:
-		Voxymore::Core::SceneCamera Camera;
-		// TODO: Moving primary camera logic on Scene.
-		bool Primary = true;
-		bool FixedAspectRatio = false;
-
-		inline CameraComponent() = default;
-		inline CameraComponent(const CameraComponent&) = default;
-
-		/**
-		 * Orthographic Camera Constructor.
-		 * @param width
-		 * @param height
-		 * @param size
-		 * @param nearClip
-		 * @param farClip
-		 */
-		inline CameraComponent(uint32_t width, uint32_t height, float size, float nearClip, float farClip) : Camera(width, height, size, nearClip, farClip) {}
-		/**
-		 * Perspective Camera Constructor.
-		 * @param fov
-		 * @param nearClip
-		 * @param farClip
-		 * @param width
-		 * @param height
-		 */
-		inline CameraComponent(float fov, float nearClip, float farClip, uint32_t width, uint32_t height) : Camera(fov, nearClip, farClip, width, height) {}
-		inline CameraComponent(const Voxymore::Core::SceneCamera& camera) : Camera(camera) {}
-
-	};
 }
