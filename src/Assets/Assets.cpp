@@ -10,9 +10,9 @@
 #include <cctype>    // std::tolower
 #include <string_view> // std::string_view
 
-#define VXM_LOAD_ASSET_IF_FOUND(Maps, LoadIfExist, fileType) if(LoadIfExist && FileSystem::Exist(path) && GetFileType(path) == fileType)\
+#define VXM_LOAD_ASSET_IF_FOUND(Maps, LoadIfExist, fileType, LoadFunc) if(LoadIfExist && FileSystem::Exist(path) && GetFileType(path) == fileType)\
 		{\
-			if(!LoadScene(path)) return nullptr;\
+			if(!LoadFunc(path)) return nullptr;\
 			else {\
 				UUID fileId = GetFileID(path);\
 				auto it = Maps.find(fileId);\
@@ -243,13 +243,13 @@ namespace Voxymore::Core
 	{
 		if(!HasFileID(path))
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene)
+			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene, LoadScene)
 		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Scenes.find(id);
 		if(it == s_Scenes.end())
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene)
+			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene, LoadScene)
 		}
 		return it->second;
 	}
@@ -258,13 +258,13 @@ namespace Voxymore::Core
 	{
 		if(!HasFileID(path))
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model)
+			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model, LoadModel)
 		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Models.find(id);
 		if(it == s_Models.end())
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model)
+			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model, LoadModel)
 		}
 		return it->second;
 	}
@@ -273,13 +273,13 @@ namespace Voxymore::Core
 	{
 		if(!HasFileID(path))
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture)
+			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture, LoadTexture)
 		}
 		UUID id = GetOrCreateFileID(path);
 		auto it = s_Textures.find(id);
 		if(it == s_Textures.end())
 		{
-			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture)
+			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture, LoadTexture)
 		}
 		return it->second;
 	}
