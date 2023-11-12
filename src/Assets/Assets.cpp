@@ -122,7 +122,7 @@ namespace Voxymore::Core
 
 	bool Assets::HasScene(UUID id)
 	{
-		return s_Scenes.contains(id);
+		return s_Scenes.contains(id) || SceneManager::HasScene(id);
 	}
 
 	Ref<Scene> Assets::GetScene(UUID id)
@@ -141,7 +141,7 @@ namespace Voxymore::Core
 
 	bool Assets::HasModel(UUID id)
 	{
-		return s_Models.contains(id) || SceneManager::HasScene(id);
+		return s_Models.contains(id);
 	}
 
 	Ref<Model> Assets::GetModel(UUID id)
@@ -187,7 +187,7 @@ namespace Voxymore::Core
 	{
 		UUID fileId;
 		if(HasFileID(filePath)) {
-			fileId = GetOrCreateFileID(filePath);
+			fileId = GetFileID(filePath);
 			if (s_Scenes.contains(fileId)) return true;
 		}
 
@@ -206,6 +206,7 @@ namespace Voxymore::Core
 		}
 
 		fileId = scene->GetID();
+		SetFileID(filePath, fileId);
 		s_Scenes[fileId] = scene;
 		return scene != nullptr;
 	}

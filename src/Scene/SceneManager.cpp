@@ -52,9 +52,16 @@ namespace Voxymore::Core
 		SceneSerializer serializer(scene);
 		serializer.Deserialize(filepath.string());
 		UUID id = scene->GetID();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id);
-		s_Scenes[id] = scene;
-		return scene;
+		if(s_Scenes.contains(id))
+		{
+			VXM_CORE_WARNING("The scene id {0} is already loaded. Not creating a new scene.");
+			return s_Scenes[id];
+		}
+		else
+		{
+			s_Scenes[id] = scene;
+			return scene;
+		}
 	}
 
 	Ref<Scene> SceneManager::GetScene(UUID id)
