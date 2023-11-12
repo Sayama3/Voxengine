@@ -43,6 +43,8 @@ namespace Voxymore::Core
 		Entity CreateEntity(UUID id, const std::string& name);
 		Entity CreateEntity(UUID id);
 
+		Entity GetEntity(UUID id);
+
 		void DestroyEntity(Entity entity);
 
 		void StartScene();
@@ -61,6 +63,9 @@ namespace Voxymore::Core
 		inline void OnComponentAdded(entt::entity entity, T& component) {}
 		template<typename T>
 		inline void OnEmptyComponentAdded(entt::entity entity) {}
+		void InitScene();
+		void OnCreateIDComponent(entt::entity);
+		void OnDestroyIDComponent(entt::entity);
 	public:
 		// Helper:
 		Entity GetPrimaryCameraEntity();
@@ -70,6 +75,7 @@ namespace Voxymore::Core
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;
 		std::unordered_set<std::string> m_StartedSystem;
+		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
 	public:
 		inline entt::registry& GetRegistry() { return m_Registry; }

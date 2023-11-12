@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "Voxymore/Components/Components.hpp"
-#include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Debug/Instrumentor.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
@@ -19,24 +18,29 @@ namespace Voxymore::Core
 {
 	Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
 	{
+		InitScene();
 	}
 
 	Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
 	{
+		InitScene();
 	}
 
 	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
 	{
-
+		InitScene();
 	}
 
 	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
 	{
-
+		InitScene();
 	}
 
 	Scene::Scene(Ref<Scene> scene) : m_ID(scene->m_ID), m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
+		InitScene();
+
+		// Copy the scene here, we want to retrive each entity uppon creation on this scene.
 		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->m_ID)+".vxm"};
 		std::string cacheSceneStr = cacheScene.GetFullPath().string();
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as raw non-const pointer.
@@ -47,8 +51,36 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheSceneStr);
 	}
 
+	void Scene::InitScene()
+	{
+		m_Registry.on_construct<IDComponent>().connect<&Scene::OnCreateIDComponent>(this);
+		m_Registry.on_destroy<IDComponent>().connect<&Scene::OnDestroyIDComponent>(this);
+	}
+
 	Scene::~Scene()
 	{
+		m_Registry.on_construct<IDComponent>().disconnect<&Scene::OnCreateIDComponent>(this);
+		m_Registry.on_destroy<IDComponent>().disconnect<&Scene::OnDestroyIDComponent>(this);
+	}
+
+	void Scene::OnCreateIDComponent(entt::entity e)
+	{
+		Entity entity(e, this);
+		m_Entities[entity.GetUUID()] = entity;
+	}
+
+	void Scene::OnDestroyIDComponent(entt::entity e)
+	{
+		Entity entity(e, this);
+		auto it = m_Entities.find(entity.GetUUID());
+		if(it != m_Entities.end())
+		{
+			m_Entities.erase(it);
+		}
+		else
+		{
+			VXM_CORE_WARNING("The entity ({0}) was not found in the entity map.", entity.GetUUID());
+		}
 	}
 
 	void Scene::StartScene()
@@ -241,6 +273,18 @@ namespace Voxymore::Core
 		tag.Tag = name;
 
 		return entity;
+	}
+
+	Entity Scene::GetEntity(UUID id)
+	{
+		auto it = m_Entities.find(id);
+		if(it != m_Entities.end()) {
+			return it->second;
+		}
+		else {
+			VXM_CORE_ERROR("Entity ID({0}) not found.", id);
+			return {};
+		}
 	}
 
 	void Scene::SetViewportSize(uint32_t width, uint32_t height)
