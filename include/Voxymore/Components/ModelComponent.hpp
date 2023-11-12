@@ -1,3 +1,9 @@
+//
+// Created by ianpo on 08/10/2023.
+//
+
+#pragma once
+
 #include <utility>
 
 #include "CustomComponent.hpp"
