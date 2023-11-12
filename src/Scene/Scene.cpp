@@ -96,7 +96,7 @@ namespace Voxymore::Core
 		// TODO: make it happen only when the scene play !
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
-			auto systems = SystemManager::GetSystems(GetName());
+			auto systems = SystemManager::GetSystems(GetID());
 			for (Ref<GameplaySystem>& system : systems)
 			{
 				if(SystemManager::IsActive(system->GetName())) system->Update(*this, ts);
