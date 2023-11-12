@@ -10,6 +10,7 @@
 #include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include <entt/entt.hpp>
+#include <unordered_set>
 
 // TODO: find a better way?
 namespace Voxymore::Editor {
@@ -44,6 +45,10 @@ namespace Voxymore::Core
 
 		void DestroyEntity(Entity entity);
 
+		void StartScene();
+		void StopScene();
+		inline bool IsStarted() const {return m_Started;}
+
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRuntime(TimeStep ts);
 		void SetViewportSize(uint32_t width, uint32_t height);
@@ -64,6 +69,8 @@ namespace Voxymore::Core
 		std::string m_Name;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;
+		std::unordered_set<std::string> m_StartedSystem;
+		bool m_Started = false;
 	public:
 		inline entt::registry& GetRegistry() { return m_Registry; }
 		inline const entt::registry& GetRegistry() const { return m_Registry; }

@@ -51,6 +51,46 @@ namespace Voxymore::Core
 	{
 	}
 
+	void Scene::StartScene()
+	{
+		VXM_PROFILE_FUNCTION();
+		auto systems = SystemManager::GetSystems(m_ID);
+		std::unordered_set<std::string> toStopSystems = m_StartedSystem;
+		for (Ref<GameplaySystem>& system : systems)
+		{
+			std::string systemName = system->GetName();
+			if(SystemManager::IsActive(systemName))
+			{
+				auto it = toStopSystems.find(systemName);
+				if(it != toStopSystems.end())toStopSystems.erase(it);
+				if(!m_StartedSystem.contains(systemName))
+				{
+					system->OnStart(*this);
+					m_StartedSystem.insert(systemName);
+				}
+			}
+		}
+
+		for(auto& toStopSystem : toStopSystems)
+		{
+			SystemManager::GetSystem(toStopSystem)->OnStop(*this);
+			m_StartedSystem.erase(toStopSystem);
+		}
+		m_Started = true;
+	}
+
+	void Scene::StopScene()
+	{
+		VXM_PROFILE_FUNCTION();
+		std::unordered_set<std::string> toStopSystems = m_StartedSystem;
+		for(auto& system : toStopSystems)
+		{
+			SystemManager::GetSystem(system)->OnStop(*this);
+			m_StartedSystem.erase(system);
+		}
+		m_Started = false;
+	}
+
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -84,6 +124,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 
+
 		{
 			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
 			for (entt::entity entity : models)
@@ -93,13 +134,37 @@ namespace Voxymore::Core
 			}
 		}
 
-		// TODO: make it happen only when the scene play !
+#if VXM_DEBUG
+		VXM_CORE_WARNING("The scene '{0}' is updating but hasn't been started.", m_Name);
+#endif
+
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
 			auto systems = SystemManager::GetSystems(m_ID);
+			std::unordered_set<std::string> toStopSystems = m_StartedSystem;
 			for (Ref<GameplaySystem>& system : systems)
 			{
-				if(SystemManager::IsActive(system->GetName())) system->Update(*this, ts);
+				std::string systemName = system->GetName();
+				if(SystemManager::IsActive(systemName))
+				{
+					auto it = toStopSystems.find(systemName);
+					if(it != toStopSystems.end()) toStopSystems.erase(it);
+					if(!m_StartedSystem.contains(systemName))
+					{
+						system->OnStart(*this);
+						m_StartedSystem.insert(systemName);
+					}
+					else
+					{
+						system->Update(*this, ts);
+					}
+				}
+			}
+
+			for(auto& toStopSystem : toStopSystems)
+			{
+				SystemManager::GetSystem(toStopSystem)->OnStop(*this);
+				m_StartedSystem.erase(toStopSystem);
 			}
 		}
 

@@ -36,8 +36,10 @@ namespace Voxymore::Core
 		virtual bool OnImGuiRender() = 0;
 		virtual const std::string GetName() const = 0;
 		inline virtual void OnAttachToScene(Scene& scene) {}
-		virtual void Update(Scene& scene, TimeStep ts) = 0;
 		inline virtual void OnDetachFromScene(Scene& scene) {}
+		virtual void Update(Scene& scene, TimeStep ts) = 0;
+		virtual void OnStart(Scene& scene) {};
+		virtual void OnStop(Scene& scene) {};
 	};
 
 	class SystemManager
