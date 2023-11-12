@@ -34,7 +34,7 @@ namespace Voxymore::Core
 		Scene(std::string name);
 		Scene(UUID id);
 		Scene(UUID id, std::string name);
-		Scene(const Scene& scene);
+		Scene(Ref<Scene> scene);
 		~Scene();
 
 		Entity CreateEntity();

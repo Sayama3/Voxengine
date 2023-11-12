@@ -35,12 +35,12 @@ namespace Voxymore::Core
 
 	}
 
-	Scene::Scene(const Scene& scene) : m_ID(), m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
+	Scene::Scene(Ref<Scene> scene) : m_ID(), m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
-		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->m_ID)+".vxm"};
 		std::string cacheSceneStr = cacheScene.GetFullPath().string();
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as raw non-const pointer.
-		SceneSerializer cacheSerializer((Scene*)&scene);
+		SceneSerializer cacheSerializer(scene);
 		cacheSerializer.Serialize(cacheSceneStr);
 		// Change target to deserialize the data to the current scene
 		cacheSerializer.ChangeSceneTarget(this);
@@ -106,15 +106,15 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
 			m_Registry.view<NativeScriptComponent>(entt::exclude<DisableComponent>).each([=, this](auto entity, NativeScriptComponent& nsc)
-														  {
-															if(!nsc.IsValid())
-															{
-																nsc.CreateInstance();
-																nsc.Instance->m_Entity = Entity{entity, this};
-																nsc.Instance->OnCreate();
-															}
-															nsc.Instance->OnUpdate(ts);
-														  });
+																						 {
+																							 if(!nsc.IsValid())
+																							 {
+																								 nsc.CreateInstance();
+																								 nsc.Instance->m_Entity = Entity{entity, this};
+																								 nsc.Instance->OnCreate();
+																							 }
+																							 nsc.Instance->OnUpdate(ts);
+																						 });
 		}
 
 		Camera* mainCamera = nullptr;
@@ -213,9 +213,5 @@ namespace Voxymore::Core
 		return Entity();
 	}
 
-	//    template<typename T>
-//    void Scene::OnComponentAdded(entt::entity entity, T& tagComponent)
-//    {
-//    }
 } // Voxymore
 // Core

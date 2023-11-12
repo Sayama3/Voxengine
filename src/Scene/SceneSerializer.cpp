@@ -36,7 +36,7 @@ namespace Voxymore::Core
 	{
 	}
 
-	bool SceneSerializer::Serialize(const std::string &filePath) const
+	bool SceneSerializer::Serialize(const std::filesystem::path &filePath) const
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -63,13 +63,15 @@ namespace Voxymore::Core
 			out << YAML::EndMap;
 		}
 
+		std::filesystem::create_directories(filePath.parent_path());
+
 		std::ofstream fileOut(filePath);
 		fileOut << out.c_str();
 
 		return true;
 	}
 
-	bool SceneSerializer::Deserialize(const std::string &filePath, bool deserializeId)
+	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath, bool deserializeId)
 	{
 		std::ifstream ifstream(filePath);
 		std::stringstream stringstream;
@@ -156,12 +158,12 @@ namespace Voxymore::Core
 		return true;
 	}
 
-	bool SceneSerializer::SerializeRuntime(const std::string &filePath) const
+	bool SceneSerializer::SerializeRuntime(const std::filesystem::path &filePath) const
 	{
 		return false;
 	}
 
-	bool SceneSerializer::DeserializeRuntime(const std::string &filePath, bool deserializeId)
+	bool SceneSerializer::DeserializeRuntime(const std::filesystem::path &filePath, bool deserializeId)
 	{
 		VXM_CORE_ASSERT(false, "Function DeserializeRuntime not implemented yet.");
 		return false;
@@ -236,7 +238,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	std::optional<UUID> SceneSerializer::GetSceneID(const std::string &filePath)
+	std::optional<UUID> SceneSerializer::GetSceneID(const std::filesystem::path &filePath)
 	{
 		std::ifstream ifstream(filePath);
 		std::stringstream stringstream;

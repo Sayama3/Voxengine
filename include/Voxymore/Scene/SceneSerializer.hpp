@@ -18,12 +18,12 @@ namespace Voxymore::Core
 		SceneSerializer(Scene* scene);
 		~SceneSerializer();
 
-		bool Serialize(const std::string& filePath) const;
-		bool SerializeRuntime(const std::string& filePath) const;
+		bool Serialize(const std::filesystem::path& filePath) const;
+		bool SerializeRuntime(const std::filesystem::path& filePath) const;
 
-		bool Deserialize(const std::string& filePath, bool deserializeId = true);
-		bool DeserializeRuntime(const std::string& filePath, bool deserializeId = true);
-		static std::optional<UUID> GetSceneID(const std::string& filePath);
+		bool Deserialize(const std::filesystem::path& filePath, bool deserializeId = true);
+		bool DeserializeRuntime(const std::filesystem::path& filePath, bool deserializeId = true);
+		static std::optional<UUID> GetSceneID(const std::filesystem::path& filePath);
 	public:
 		void ChangeSceneTarget(const Ref<Scene>& scene);
 		void ChangeSceneTarget(Scene* scene);
