@@ -146,4 +146,5 @@ namespace Voxymore::Core
 
 	};
 
+	struct DisableComponent {};
 }

@@ -53,6 +53,8 @@ namespace Voxymore::Core
 	private:
 		template<typename T>
 		inline void OnComponentAdded(entt::entity entity, T& component) {}
+		template<typename T>
+		inline void OnEmptyComponentAdded(entt::entity entity) {}
 	public:
 		// Helper:
 		Entity GetPrimaryCameraEntity();

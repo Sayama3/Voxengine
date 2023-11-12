@@ -24,8 +24,6 @@ namespace Voxymore::Core
 		{
 		}
 
-		inline bool IsValid() const {return m_EntityID != entt::null;}
-
 		template<typename T>
 		inline bool HasComponent() const
 		{
@@ -54,6 +52,15 @@ namespace Voxymore::Core
 			// Using the operator in case later on we change this to take our Entity
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
+		}
+
+		template<typename T>
+		inline void AddEmptyComponent()
+		{
+			VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
+			m_Scene->m_Registry.emplace<T>(m_EntityID);
+			// Using the operator in case later on we change this to take our Entity
+			m_Scene->OnEmptyComponentAdded<T>(*this);
 		}
 
 		template<typename T,  typename... Args>
@@ -92,6 +99,10 @@ namespace Voxymore::Core
 			return !(*this == other);
 		}
 
+
+		bool IsValid() const;
+		bool IsActive() const;
+		void SetActive(bool enable);
 		UUID GetUUID() const;
 	};
 } // namespace Voxymore::Core

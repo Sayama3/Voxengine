@@ -43,7 +43,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 		{
-			auto models = m_Registry.view<ModelComponent>();
+			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
 			for (entt::entity entity : models)
 			{
 				auto& model = models.get<ModelComponent>(entity);
@@ -53,7 +53,7 @@ namespace Voxymore::Core
 
 		Renderer::BeginScene(camera);
 		{
-			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
 				if(model.IsLoaded())
@@ -72,7 +72,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 		{
-			auto models = m_Registry.view<ModelComponent>();
+			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
 			for (entt::entity entity : models)
 			{
 				auto& model = models.get<ModelComponent>(entity);
@@ -92,7 +92,7 @@ namespace Voxymore::Core
 
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
-			m_Registry.view<NativeScriptComponent>().each([=, this](auto entity, NativeScriptComponent& nsc)
+			m_Registry.view<NativeScriptComponent>(entt::exclude<DisableComponent>).each([=, this](auto entity, NativeScriptComponent& nsc)
 														  {
 															if(!nsc.IsValid())
 															{
@@ -107,7 +107,7 @@ namespace Voxymore::Core
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 
-		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>();
+		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>(entt::exclude<DisableComponent>);
 		for (auto entity : camerasView) {
 			auto [transform, camera] = camerasView.get<TransformComponent, CameraComponent>(entity);
 
@@ -124,7 +124,7 @@ namespace Voxymore::Core
 			Renderer::BeginScene(*mainCamera, cameraTransform);
 
 			{
-				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>();
+				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 				for (auto entity: modelsView) {
 					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
 					if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
