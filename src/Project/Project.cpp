@@ -5,6 +5,7 @@
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 #include <algorithm>
 
 
@@ -122,6 +123,64 @@ namespace Voxymore::Core
 	const std::filesystem::path& Project::GetFilePath() const
 	{
 		return m_ProjectPath;
+	}
+
+	std::filesystem::path Project::GetAssetDirectory()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetAsset();
+	}
+	std::filesystem::path Project::GetCacheDirectory()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetCache();
+	}
+	std::filesystem::path Project::GetSystemsDirectory()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetSystems();
+	}
+	const std::filesystem::path& Project::GetProjectFilePath()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetFilePath();
+	}
+
+	const ProjectConfig& Project::GetConfig()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->m_Config;
+	}
+
+	void Project::ResetMainScene()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		s_ActiveProject->m_Config.startSceneId = {};
+	}
+
+	void Project::SetMainScene(UUID id)
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		s_ActiveProject->m_Config.startSceneId = id;
+	}
+
+	void Project::SetMainScene(const Scene& scene)
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		s_ActiveProject->m_Config.startSceneId = scene.GetID();
+	}
+
+	void Project::SetMainScene(const Ref<Scene>& scene)
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		s_ActiveProject->m_Config.startSceneId = scene->GetID();
+	}
+
+	UUID Project::GetMainScene()
+	{
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.startSceneId.has_value(), "Not Start Scene associated with the project.");
+		return s_ActiveProject->m_Config.startSceneId.value();
 	}
 
 } // namespace Voxymore::Core

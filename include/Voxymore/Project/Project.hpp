@@ -8,6 +8,7 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 
 //#define VOID_FUNC_PTR void(*)()
 //#define NAMED_VOID_FUNC_PTR(name) void(*name)()
@@ -44,32 +45,18 @@ namespace Voxymore::Core
 		~Project();
 
 		inline static Ref<Project> Get() { return s_ActiveProject; }
-		inline static std::filesystem::path GetAssetDirectory()
-		{
-			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
-			return s_ActiveProject->GetAsset();
-		}
-		inline static std::filesystem::path GetCacheDirectory()
-		{
-			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
-			return s_ActiveProject->GetCache();
-		}
-		inline static std::filesystem::path GetSystemsDirectory()
-		{
-			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
-			return s_ActiveProject->GetSystems();
-		}
-		inline static const std::filesystem::path& GetProjectFilePath()
-		{
-			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
-			return s_ActiveProject->GetFilePath();
-		}
+		static std::filesystem::path GetAssetDirectory();
+		static std::filesystem::path GetCacheDirectory();
+		static std::filesystem::path GetSystemsDirectory();
+		static const std::filesystem::path& GetProjectFilePath();
 
-		inline static const ProjectConfig& GetConfig()
-		{
-			VXM_CORE_ASSERT(s_ActiveProject, "The Active Directory is not loaded yet.");
-			return s_ActiveProject->m_Config;
-		}
+		static void ResetMainScene();
+		static void SetMainScene(UUID id);
+		static void SetMainScene(const Scene& scene);
+		static void SetMainScene(const Ref<Scene>& scene);
+		static UUID GetMainScene();
+
+		static const ProjectConfig& GetConfig();
 
 		inline static bool ProjectIsLoaded() { return s_ActiveProject != nullptr; }
 
