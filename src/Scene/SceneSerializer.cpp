@@ -83,7 +83,7 @@ namespace Voxymore::Core
 					name = "Entity_" + std::to_string(uuid);
 				}
 
-				bool enable = yamlEntity["IsActive"].as<bool>();
+				bool enable = (!yamlEntity["IsActive"]) || yamlEntity["IsActive"].as<bool>();
 
 				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid);
 
