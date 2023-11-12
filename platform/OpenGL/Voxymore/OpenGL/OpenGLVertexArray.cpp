@@ -60,7 +60,6 @@ namespace Voxymore::Core {
 
     void OpenGLVertexArray::Unbind() const {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_TRACE("Unbinding Vertex Array '{0}'", m_RendererID);
         glBindVertexArray(0);
     }
 

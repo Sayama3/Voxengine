@@ -143,7 +143,6 @@ namespace Voxymore::Core
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
 				if(model.IsLoaded())
 				{
-					VXM_CORE_INFO("Submit Model {0}", model.GetLocalPath().string());
 					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
 				}
 			}
