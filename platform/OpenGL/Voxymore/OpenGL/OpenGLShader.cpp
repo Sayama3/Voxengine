@@ -811,7 +811,6 @@ namespace Voxymore::Core
 	void OpenGLShader::Bind() const
 	{
 		VXM_PROFILE_FUNCTION();
-        VXM_CORE_TRACE("Bind Shader '{0}' : {1}", this->m_Name, m_RendererID);
 		glUseProgram(m_RendererID);
 	}
 

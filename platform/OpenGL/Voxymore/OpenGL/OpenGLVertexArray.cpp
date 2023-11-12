@@ -55,7 +55,6 @@ namespace Voxymore::Core {
 
     void OpenGLVertexArray::Bind() const {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_TRACE("Binding Vertex Array '{0}'", m_RendererID);
         glBindVertexArray(m_RendererID);
     }
 
