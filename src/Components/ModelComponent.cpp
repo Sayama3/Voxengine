@@ -8,12 +8,6 @@ namespace Voxymore::Core
 {
     VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
 
-	template<>
-	void ::Voxymore::Core::Scene::OnComponentAdded<ModelComponent>(entt::entity entity, ModelComponent& component)
-	{
-//		if(component.IsValid() && !component.IsLoaded()) component.LoadModel();
-	}
-
 	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
     {
     	auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
