@@ -15,18 +15,25 @@ namespace Voxymore::Core
 	{
 	public:
 		SceneSerializer(const Ref<Scene>& scene);
+		SceneSerializer(Scene* scene);
 		~SceneSerializer();
 
-		bool Serialize(const std::string& filePath);
-		bool SerializeRuntime(const std::string& filePath);
+		bool Serialize(const std::string& filePath) const;
+		bool SerializeRuntime(const std::string& filePath) const;
 
-		bool Deserialize(const std::string& filePath);
-		bool DeserializeRuntime(const std::string& filePath);
+		bool Deserialize(const std::string& filePath, bool deserializeId = true);
+		bool DeserializeRuntime(const std::string& filePath, bool deserializeId = true);
 		static std::optional<UUID> GetSceneID(const std::string& filePath);
+	public:
+		void ChangeSceneTarget(const Ref<Scene>& scene);
+		void ChangeSceneTarget(Scene* scene);
 	private:
 		static void SerializeEntity(YAML::Emitter& emitter, Entity entity);
 	private:
-		Ref<Scene> m_Scene;
+		Scene& GetScene();
+		const Scene& GetScene() const;
+		Ref<Scene> m_RefScene = nullptr;
+		Scene* m_ScenePtr = nullptr;
 	};
 
 } // namespace Voxymore::Core

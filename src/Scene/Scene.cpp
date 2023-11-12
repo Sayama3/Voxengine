@@ -12,6 +12,7 @@
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/SceneSerializer.hpp"
 
 
 namespace Voxymore::Core
@@ -32,6 +33,18 @@ namespace Voxymore::Core
 	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
 	{
 
+	}
+
+	Scene::Scene(const Scene& scene) : m_ID(), m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
+	{
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
+		std::string cacheSceneStr = cacheScene.GetFullPath().string();
+		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as raw non-const pointer.
+		SceneSerializer cacheSerializer((Scene*)&scene);
+		cacheSerializer.Serialize(cacheSceneStr);
+		// Change target to deserialize the data to the current scene
+		cacheSerializer.ChangeSceneTarget(this);
+		cacheSerializer.Deserialize(cacheSceneStr, false);
 	}
 
 	Scene::~Scene()

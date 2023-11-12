@@ -13,27 +13,42 @@
 namespace Voxymore::Core
 {
 	SceneSerializer::SceneSerializer(const Ref<Scene> &scene)
-		: m_Scene(scene)
+		: m_RefScene(scene), m_ScenePtr(nullptr)
 	{
+	}
+
+	SceneSerializer::SceneSerializer(Scene* scene) : m_RefScene(nullptr), m_ScenePtr(scene)
+	{
+	}
+
+	void SceneSerializer::ChangeSceneTarget(const Ref<Scene>& scene)
+	{
+		m_RefScene = scene;
+		m_ScenePtr = nullptr;
+	}
+	void SceneSerializer::ChangeSceneTarget(Scene* scene)
+	{
+		m_RefScene = nullptr;
+		m_ScenePtr = scene;
 	}
 
 	SceneSerializer::~SceneSerializer()
 	{
 	}
 
-	bool SceneSerializer::Serialize(const std::string &filePath)
+	bool SceneSerializer::Serialize(const std::string &filePath) const
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		{
 			out << KEYVAL("Scene", YAML::BeginMap);// TODO: add a name to the scenes.
 			{
-				out << KEYVAL("Name", m_Scene->m_Name);
-				out << KEYVAL("UUID", m_Scene->m_ID);
+				out << KEYVAL("Name", GetScene().m_Name);
+				out << KEYVAL("UUID", GetScene().m_ID);
 				out << KEYVAL("Entities", YAML::BeginSeq);
 				{
-					for (entt::entity id: m_Scene->m_Registry.storage<entt::entity>()) {
-						Entity entity(id, m_Scene.get());
+					for (entt::entity id : *GetScene().m_Registry.storage<entt::entity>()) {
+						Entity entity(id, m_RefScene.get());
 						if (!entity) continue;
 						out << YAML::BeginMap;// Entity
 						{
@@ -54,7 +69,7 @@ namespace Voxymore::Core
 		return true;
 	}
 
-	bool SceneSerializer::Deserialize(const std::string &filePath)
+	bool SceneSerializer::Deserialize(const std::string &filePath, bool deserializeId)
 	{
 		std::ifstream ifstream(filePath);
 		std::stringstream stringstream;
@@ -66,8 +81,8 @@ namespace Voxymore::Core
 			return false;
 		}
 
-		m_Scene->m_Name = sceneNode["Name"].as<std::string>();
-		m_Scene->m_ID = sceneNode["UUID"].as<uint64_t>();
+		GetScene().m_Name = sceneNode["Name"].as<std::string>();
+		if(deserializeId) GetScene().m_ID = sceneNode["UUID"].as<uint64_t>();
 
 		auto entities = sceneNode["Entities"];
 		if (entities) {
@@ -87,7 +102,7 @@ namespace Voxymore::Core
 
 				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid);
 
-				Entity entity = m_Scene->CreateEntity(uuid, name);
+				Entity entity = GetScene().CreateEntity(uuid, name);
 				entity.SetActive(enable);
 
 				auto transformComponent = yamlEntity["TransformComponent"];
@@ -141,11 +156,12 @@ namespace Voxymore::Core
 		return true;
 	}
 
-	bool SceneSerializer::SerializeRuntime(const std::string &filePath)
+	bool SceneSerializer::SerializeRuntime(const std::string &filePath) const
 	{
 		return false;
 	}
-	bool SceneSerializer::DeserializeRuntime(const std::string &filePath)
+
+	bool SceneSerializer::DeserializeRuntime(const std::string &filePath, bool deserializeId)
 	{
 		VXM_CORE_ASSERT(false, "Function DeserializeRuntime not implemented yet.");
 		return false;
@@ -234,5 +250,15 @@ namespace Voxymore::Core
 
 		UUID id = sceneNode["UUID"].as<uint64_t>();
 		return id;
+	}
+	Scene& SceneSerializer::GetScene()
+	{
+		if(m_RefScene != nullptr) return *m_RefScene;
+		else return *m_ScenePtr;
+	}
+	const Scene& SceneSerializer::GetScene() const
+	{
+		if(m_RefScene != nullptr) return *m_RefScene;
+		else return *m_ScenePtr;
 	}
 }// namespace Voxymore::Core
