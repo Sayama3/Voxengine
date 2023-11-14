@@ -142,6 +142,11 @@ namespace Voxymore::Core
 		return p.string();
 	}
 
+	Path Path::GetCachePath() const
+	{
+		return {FileSource::Cache, GetPathId()};
+	}
+
 	Path Path::GetPath(std::filesystem::path path)
 	{
 		auto pathStr = path.make_preferred().string();
