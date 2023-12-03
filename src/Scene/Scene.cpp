@@ -6,7 +6,7 @@
 
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
-#include "Voxymore/Debug/Instrumentor.hpp"
+#include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/GameplaySystem.hpp"

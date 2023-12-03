@@ -60,6 +60,7 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
+			VXM_FRAME_START();
             TimeStep timeStep;
             {
                 VXM_PROFILE_SCOPE("Application::Run -> Get TimeStep");
@@ -88,6 +89,7 @@ namespace Voxymore::Core {
             m_ImGUILayer->End();
 
             m_Window->OnUpdate();
+			VXM_FRAME_END();
         }
     }
 

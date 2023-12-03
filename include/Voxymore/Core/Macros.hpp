@@ -51,6 +51,12 @@
     #endif
 #endif
 
+#ifndef VXM_DONT_PROFILE
+	#ifndef VXM_PROFILING
+		#define VXM_PROFILING 1
+	#endif
+#endif
+
 #if VXM_USE_ASSERT
     #if (_MSC_VER && !__INTEL_COMPILER) || (__MINGW32__ || __MINGW64__)
         #define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); __debugbreak(); }

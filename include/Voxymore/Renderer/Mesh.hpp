@@ -28,6 +28,7 @@ namespace Voxymore::Core
 		glm::vec3 Normal;
 		glm::vec2 TexCoord; //TODO: Add other TexCoords (optionnal)
 		glm::vec4 Color = glm::vec4(1.0f);
+		//TODO: Add Material ID.
 		inline Vertex() = default;
 		Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color = glm::vec4(1.0f));
 
@@ -40,11 +41,18 @@ namespace Voxymore::Core
 					BufferElement(ShaderDataType::Float4, "Color"),
 			};
 		}
+
+		inline static Vertex UpdateVertex(Vertex v, const glm::mat4& transform)
+		{
+			v.Position = transform * glm::vec4(v.Position, 1.0);
+			v.Normal = glm::transpose(glm::inverse(transform)) * glm::vec4(v.Normal, 0.0f);
+			return v;
+		}
 	};
 
 
 	//TODO: create an API to be able to create Mesh from the client side.
-	class MeshGroup
+	class  MeshGroup
 	{
 	private:
 		friend class Model;
