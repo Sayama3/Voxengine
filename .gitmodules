@@ -20,6 +20,3 @@
 [submodule "lib/ImGuizmo"]
 	path = lib/ImGuizmo
 	url = https://github.com/Sayama3/ImGuizmo
-[submodule "lib/tracy"]
-	path = lib/tracy
-	url = https://github.com/wolfpld/tracy
