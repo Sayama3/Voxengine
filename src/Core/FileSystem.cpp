@@ -7,6 +7,7 @@ namespace Voxymore::Core
 
 	std::string Helper::GetFileSourceName(FileSource fileSource)
 	{
+		VXM_PROFILE_FUNCTION();
 		return GetFileSourceNames()[static_cast<int32_t>(fileSource)];
 	}
 
@@ -14,6 +15,7 @@ namespace Voxymore::Core
 
 	std::filesystem::path FileSystem::GetRootPath(FileSource source)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (source)
 		{
 			case FileSource::None:
@@ -53,12 +55,14 @@ namespace Voxymore::Core
 
 	std::ifstream FileSystem::ReadFileAsByte(const Path &path)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::ifstream ifstream(GetPath(path));
 		return ifstream;
 	}
 
 	std::stringstream FileSystem::ReadFileAsStringStream(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::stringstream  stringstream;
 		std::ifstream ifstream(GetPath(path));
 		stringstream << ifstream.rdbuf();
@@ -67,12 +71,14 @@ namespace Voxymore::Core
 
 	void FileSystem::WriteYamlFile(const Path& path, YAML::Emitter& emitter)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::ofstream fileOut(GetPath(path));
 		fileOut << emitter.c_str();
 	}
 
 	YAML::Node FileSystem::ReadFileAsYAML(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		YAML::Node data;
 		std::ifstream ifstream(GetPath(path));
 		std::stringstream  stringstream;
@@ -89,15 +95,18 @@ namespace Voxymore::Core
 	// }
 	std::filesystem::path FileSystem::GetPath(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		return GetRootPath(path.source) / path.path;
 	}
 
 	bool FileSystem::Exist(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		return std::filesystem::exists(GetPath(path));
 	}
 	std::string FileSystem::ReadFileAsString(const Path &path)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::string result;
 		std::ifstream fileStream(GetPath(path), std::ios::in | std::ios::binary);
 		if(fileStream)
@@ -117,6 +126,7 @@ namespace Voxymore::Core
 
 	std::filesystem::path Path::GetFullPath() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return FileSystem::GetPath(*this);
 	}
 
@@ -138,17 +148,20 @@ namespace Voxymore::Core
 
 	std::string Path::GetPathId() const
 	{
+		VXM_PROFILE_FUNCTION();
 		std::filesystem::path p = GetFileSourceName(source) / path;
 		return p.string();
 	}
 
 	Path Path::GetCachePath() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return {FileSource::Cache, GetPathId()};
 	}
 
 	Path Path::GetPath(std::filesystem::path path)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto pathStr = path.make_preferred().string();
 
 		for (int i = 1; i < (int)FileSource::COUNT; ++i) {
@@ -169,6 +182,7 @@ namespace Voxymore::Core
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
 	{
+		VXM_PROFILE_FUNCTION();
 		out << YAML::Flow;
 		out << YAML::BeginMap;
 		out << KEYVAL("Source", static_cast<int>(p.source));

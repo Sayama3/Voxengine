@@ -34,6 +34,7 @@ namespace Voxymore::Core
 
 		inline static BufferLayout Layout()
 		{
+			VXM_PROFILE_FUNCTION();
 			return {
 					BufferElement(ShaderDataType::Float3, "Position"),
 					BufferElement(ShaderDataType::Float3, "Normal"),
@@ -44,6 +45,7 @@ namespace Voxymore::Core
 
 		inline static Vertex UpdateVertex(Vertex v, const glm::mat4& transform)
 		{
+			VXM_PROFILE_FUNCTION();
 			v.Position = transform * glm::vec4(v.Position, 1.0);
 			v.Normal = glm::transpose(glm::inverse(transform)) * glm::vec4(v.Normal, 0.0f);
 			return v;

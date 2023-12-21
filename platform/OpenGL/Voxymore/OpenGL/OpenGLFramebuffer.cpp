@@ -14,21 +14,25 @@ namespace Voxymore::Core {
 	{
 		static GLenum TextureTarget(bool multisampled)
 		{
+			VXM_PROFILE_FUNCTION();
 			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
 		static void CreateTextures(bool multisampled, uint32_t* outIds, uint32_t count)
 		{
+			VXM_PROFILE_FUNCTION();
 			glCreateTextures(TextureTarget(multisampled), count, outIds);
 		}
 
 		static void BindTexture(bool multisampled, uint32_t textureId)
 		{
+			VXM_PROFILE_FUNCTION();
 			glBindTexture(TextureTarget(multisampled), textureId);
 		}
 
 		static void AttachmentColorTexture(uint32_t id, uint32_t samples, GLenum textureFormat, GLenum internalFormat, uint32_t width, uint32_t height, int index)
 		{
+			VXM_PROFILE_FUNCTION();
 			bool multisample = samples > 1;
 			if(multisample)
 			{
@@ -51,6 +55,7 @@ namespace Voxymore::Core {
 
 		static void AttachmentDepthTexture(uint32_t id, uint32_t samples, GLenum textureFormat, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
+			VXM_PROFILE_FUNCTION();
 			bool multisample = samples > 1;
 			if(multisample)
 			{
@@ -73,6 +78,7 @@ namespace Voxymore::Core {
 
 		static bool IsDepthFormat(FramebufferTextureFormat format)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (format) {
 				// Other Depth format.
 				case FramebufferTextureFormat::DEPTH24STENCIL8:
@@ -85,6 +91,7 @@ namespace Voxymore::Core {
 
 		static GLenum GetTextureFormat(FramebufferTextureFormat format)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
@@ -98,6 +105,7 @@ namespace Voxymore::Core {
 
 		static GLenum GetInternalTextureFormat(FramebufferTextureFormat format)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA;
@@ -112,6 +120,7 @@ namespace Voxymore::Core {
 
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification) : m_Specification(specification)
     {
+		VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(m_Specification.Width > 0 && m_Specification.Width <= s_MaxFramebufferSize, "Framebufffer width '{0}' must be superior to 0 and inferior to {1}.", m_Specification.Width, s_MaxFramebufferSize);
         VXM_CORE_ASSERT(m_Specification.Height > 0 && m_Specification.Height <= s_MaxFramebufferSize, "Framebufffer height '{0}'  must be superior to 0 and inferior to {1}.", m_Specification.Height, s_MaxFramebufferSize);
 
@@ -132,17 +141,20 @@ namespace Voxymore::Core {
 
     const FramebufferSpecification& OpenGLFramebuffer::GetSpecification() const
     {
+		VXM_PROFILE_FUNCTION();
         return m_Specification;
     }
 
     OpenGLFramebuffer::~OpenGLFramebuffer()
     {
+		VXM_PROFILE_FUNCTION();
 		glDeleteFramebuffers(1, &m_RendererID);
 		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
     }
 
     void OpenGLFramebuffer::Invalidate() {
+		VXM_PROFILE_FUNCTION();
         if(m_RendererID)
         {
             glDeleteFramebuffers(1, &m_RendererID);
@@ -198,24 +210,29 @@ namespace Voxymore::Core {
     }
 
     void OpenGLFramebuffer::Bind() {
+		VXM_PROFILE_FUNCTION();
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
         glViewport(0, 0, m_Specification.Width, m_Specification.Height);
     }
 
     void OpenGLFramebuffer::Unbind() {
+		VXM_PROFILE_FUNCTION();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(uint32_t index) const {
+		VXM_PROFILE_FUNCTION();
         return m_ColorAttachments[index];
     }
 
     uint32_t OpenGLFramebuffer::GetDepthAttachmentRendererID() const {
+		VXM_PROFILE_FUNCTION();
         return m_DepthAttachment;
     }
 
     void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
     {
+		VXM_PROFILE_FUNCTION();
         if(width == 0 || width > s_MaxFramebufferSize ||
             height == 0 || height > s_MaxFramebufferSize)
         {
@@ -231,6 +248,7 @@ namespace Voxymore::Core {
 
 	int OpenGLFramebuffer::ReadPixel(uint32_t index, int x, int y)
 	{
+		VXM_PROFILE_FUNCTION();
 		int pixelData;
 
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
@@ -244,6 +262,7 @@ namespace Voxymore::Core {
 
 	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, uint8_t value)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
 		auto& spec = m_ColorAttachmentSpecifications[index];
 
@@ -252,6 +271,7 @@ namespace Voxymore::Core {
 
 	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, uint32_t value)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
 		auto& spec = m_ColorAttachmentSpecifications[index];
 
@@ -260,6 +280,7 @@ namespace Voxymore::Core {
 
 	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, int value)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
 		auto& spec = m_ColorAttachmentSpecifications[index];
 
@@ -268,6 +289,7 @@ namespace Voxymore::Core {
 
 	void OpenGLFramebuffer::ClearColorAttachment(uint32_t index, float value)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
 		auto& spec = m_ColorAttachmentSpecifications[index];
 

@@ -34,12 +34,14 @@ namespace Voxymore::Core
 
 		bool ichar_equals(char a, char b)
 		{
+			VXM_PROFILE_FUNCTION();
 			return std::tolower(static_cast<unsigned char>(a)) ==
 				   std::tolower(static_cast<unsigned char>(b));
 		}
 
 		bool iequals(std::string_view lhs, std::string_view rhs)
 		{
+			VXM_PROFILE_FUNCTION();
 			if(lhs.size() != rhs.size()) return false;
 			for (int i = 0; i < lhs.size(); ++i) {
 				if(!ichar_equals(lhs[i], rhs[i])) return false;
@@ -59,6 +61,7 @@ namespace Voxymore::Core
 
 	void Assets::ReloadAll()
 	{
+		VXM_PROFILE_FUNCTION();
 		CleanLoadedAssets();
 
 		ReloadAssets();
@@ -67,18 +70,21 @@ namespace Voxymore::Core
 
 	void Assets::ReloadAssets()
 	{
+		VXM_PROFILE_FUNCTION();
 		Path p = {FileSource::Asset, "./"};
 		ReloadFolder(p.GetFullPath());
 	}
 
 	void Assets::ReloadEditorAssets()
 	{
+		VXM_PROFILE_FUNCTION();
 		Path p = {FileSource::EditorAsset, "./"};
 		ReloadFolder(p.GetFullPath());
 	}
 
 	void Assets::ReloadFolder(const fs::path &path)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!fs::exists(path))
 		{
 			VXM_CORE_WARNING("The folder '{0}' doesn't exist. Exiting early.", path.string());
@@ -122,11 +128,13 @@ namespace Voxymore::Core
 
 	bool Assets::HasScene(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		return s_Scenes.contains(id) || SceneManager::HasScene(id);
 	}
 
 	Ref<Scene> Assets::GetScene(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto sceneIt = s_Scenes.find(id);
 		if(sceneIt == s_Scenes.end()) {
 			if(SceneManager::HasScene(id))
@@ -141,11 +149,13 @@ namespace Voxymore::Core
 
 	bool Assets::HasModel(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		return s_Models.contains(id);
 	}
 
 	Ref<Model> Assets::GetModel(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto modelIt = s_Models.find(id);
 		if(modelIt == s_Models.end()) return nullptr;
 		return modelIt->second;
@@ -153,11 +163,13 @@ namespace Voxymore::Core
 
 	bool Assets::HasTexture(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		return s_Textures.contains(id);
 	}
 
 	Ref<Texture2D> Assets::GetTexture(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto textureIt = s_Textures.find(id);
 		if(textureIt == s_Textures.end()) return nullptr;
 		return textureIt->second;
@@ -165,7 +177,7 @@ namespace Voxymore::Core
 
 	Assets::FileType Assets::GetFileType(const std::filesystem::path& filePath)
 	{
-
+		VXM_PROFILE_FUNCTION();
 		if(!filePath.has_extension()) return Assets::FileType::None;
 		std::string fileExtention = filePath.extension().string();
 		for (auto&&[fileSource, extentions] : Assets::s_FileTypeExtensions)
@@ -180,11 +192,13 @@ namespace Voxymore::Core
 
 	Assets::FileType Assets::GetFileType(const Path &filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		return GetFileType(filePath.GetFullPath());
 	}
 
 	bool Assets::LoadScene(const Path &filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		UUID fileId;
 		if(HasFileID(filePath)) {
 			fileId = GetFileID(filePath);
@@ -213,6 +227,7 @@ namespace Voxymore::Core
 
 	bool Assets::LoadModel(const Path &filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		UUID fileId = GetOrCreateFileID(filePath);
 		if(s_Models.contains(fileId)) return true;
 
@@ -228,6 +243,7 @@ namespace Voxymore::Core
 
 	bool Assets::LoadTexture(const Path& filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		UUID fileId = GetOrCreateFileID(filePath);
 		if(s_Textures.contains(fileId)) return true;
 
@@ -241,6 +257,7 @@ namespace Voxymore::Core
 
 	void Assets::CleanLoadedAssets()
 	{
+		VXM_PROFILE_FUNCTION();
 		SceneManager::Clear();
 		s_Scenes.clear();
 		s_Models.clear();
@@ -249,6 +266,7 @@ namespace Voxymore::Core
 
 	Ref<Scene> Assets::GetScene(const Path& path, bool loadIfExist)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path))
 		{
 			VXM_LOAD_ASSET_IF_FOUND(s_Scenes, loadIfExist, FileType::Scene, LoadScene)
@@ -272,6 +290,7 @@ namespace Voxymore::Core
 
 	Ref<Model> Assets::GetModel(const Path& path, bool loadIfExist)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path))
 		{
 			VXM_LOAD_ASSET_IF_FOUND(s_Models, loadIfExist, FileType::Model, LoadModel)
@@ -287,6 +306,7 @@ namespace Voxymore::Core
 
 	Ref<Texture2D> Assets::GetTexture(const Path& path, bool loadIfExist)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path))
 		{
 			VXM_LOAD_ASSET_IF_FOUND(s_Textures, loadIfExist, FileType::Texture, LoadTexture)
@@ -302,18 +322,21 @@ namespace Voxymore::Core
 
 	bool Assets::HasScene(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
 		return HasScene(id);
 	}
 	bool Assets::HasModel(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
 		return HasModel(id);
 	}
 	bool Assets::HasTexture(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		if(!HasFileID(path)) return false;
 		UUID id = GetFileID(path);
 		return HasTexture(id);
@@ -321,6 +344,7 @@ namespace Voxymore::Core
 
 	UUID Assets::GetOrCreateFileID(Path filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		UUID id;
 		filePath.path += ".meta";
 		if(FileSystem::Exist(filePath))
@@ -353,6 +377,7 @@ namespace Voxymore::Core
 
 	UUID Assets::GetFileID(Path filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		UUID id;
 		filePath.path += ".meta";
 		VXM_CORE_ASSERT(FileSystem::Exist(filePath), "The fileID '{0}' doesn't exist.", filePath.GetFullPath().string());
@@ -363,6 +388,7 @@ namespace Voxymore::Core
 
 	void Assets::SetFileID(Path filePath, UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		filePath.path += ".meta";
 		YAML::Emitter out;
 		if(FileSystem::Exist(filePath))
@@ -384,6 +410,7 @@ namespace Voxymore::Core
 
 	bool Assets::HasFileID(Path filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		filePath.path += ".meta";
 		if(!FileSystem::Exist(filePath)) return false;
 		YAML::Node node = FileSystem::ReadFileAsYAML(filePath);

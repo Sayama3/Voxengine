@@ -33,11 +33,13 @@ namespace Voxymore::Core {
     }
 
     float Input::GetMouseX() {
+		VXM_PROFILE_FUNCTION();
         auto[x, y] = GetMousePosition();
         return x;
     }
 
     float Input::GetMouseY() {
+		VXM_PROFILE_FUNCTION();
         auto[x, y] = GetMousePosition();
         return y;
     }

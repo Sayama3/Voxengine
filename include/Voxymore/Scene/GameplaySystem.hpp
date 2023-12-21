@@ -87,6 +87,7 @@ public: \
     inline static ::Voxymore::Core::Ref<SYS> GetInstance() { return s_Instance; }\
 	inline static ::Voxymore::Core::Ref<SYS> CreateSystem() \
 	{ \
+        VXM_PROFILE_FUNCTION(); \
 		auto instance = ::Voxymore::Core::CreateRef<SYS>();\
 		::Voxymore::Core::SystemManager::AddSystem(instance->GetName(), std::static_pointer_cast<::Voxymore::Core::GameplaySystem>(instance));\
 		return instance; \

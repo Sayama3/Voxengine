@@ -24,6 +24,7 @@ namespace Voxymore::Core {
 
 
     void PerspectiveCameraController::OnEvent(Event &e) {
+		VXM_PROFILE_FUNCTION();
         Voxymore::Core::EventDispatcher dispatcher(e);
         dispatcher.Dispatch<Voxymore::Core::WindowResizeEvent>(BIND_EVENT_FN(PerspectiveCameraController::OnWindowResize));
         if(m_Enable)
@@ -50,6 +51,7 @@ namespace Voxymore::Core {
 
     void PerspectiveCameraController::SetEnable(bool isEnable)
     {
+		VXM_PROFILE_FUNCTION();
         if(isEnable != m_Enable)
         {
             m_Movement = {0, 0, 0};
@@ -84,12 +86,14 @@ namespace Voxymore::Core {
     }
 
     void PerspectiveCameraController::SetWidth(uint32_t width) {
+		VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(width > 0, "Camera width must be superior to 0.");
         m_Width = width;
         m_UpdateProjectionMatrix = true;
     }
 
     void PerspectiveCameraController::SetSize(uint32_t width, uint32_t height) {
+		VXM_PROFILE_FUNCTION();
         VXM_CORE_ASSERT(width > 0, "Camera width must be superior to 0.");
         VXM_CORE_ASSERT(height > 0, "Camera height must be superior to 0.");
         m_Width = width;

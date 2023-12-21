@@ -10,6 +10,7 @@
 
 namespace Voxymore::Core{
     double Platform::GetTime() {
+		VXM_PROFILE_FUNCTION();
 #if VXM_DEFAULT
         return glfwGetTime();
 #endif

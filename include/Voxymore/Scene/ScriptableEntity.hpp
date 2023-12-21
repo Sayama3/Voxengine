@@ -20,24 +20,28 @@ namespace Voxymore::Core
 		template<typename T>
 		inline bool HasComponent() const
 		{
+			VXM_PROFILE_FUNCTION();
 			return m_Entity.HasComponent<T>();
 		}
 
 		template<typename T>
 		inline T& GetComponent()
 		{
+			VXM_PROFILE_FUNCTION();
 			return m_Entity.GetComponent<T>();
 		}
 
 		template<typename T,  typename... Args>
 		inline T& AddComponent(Args &&...args)
 		{
+			VXM_PROFILE_FUNCTION();
 			return m_Entity.AddComponent<T>(std::forward<Args>(args)...);
 		}
 
 		template<typename T>
 		inline void RemoveComponent()
 		{
+			VXM_PROFILE_FUNCTION();
 			m_Entity.RemoveComponent<T>();
 		}
 	private:

@@ -12,6 +12,7 @@ namespace Voxymore::Core
 	{
 		glm::mat4 Helper::GetMatrix(const tinygltf::Node& node)
 		{
+			VXM_PROFILE_FUNCTION();
 			glm::mat4 matrix(1.0f);
 			if(!node.matrix.empty())
 			{
@@ -40,6 +41,7 @@ namespace Voxymore::Core
 		}
 		int Helper::GetComponentCount(GLTF::AccessorType accessorType)
 		{
+			VXM_PROFILE_FUNCTION();
 			int count = -1;
 			switch (accessorType)
 			{
@@ -56,6 +58,7 @@ namespace Voxymore::Core
 		}
 		GLTF::AccessorType Helper::GetAccessorType(const std::string &accessorType)
 		{
+			VXM_PROFILE_FUNCTION();
 			GLTF::AccessorType accessor;
 			if(accessorType == "SCALAR") accessor = GLTF::AccessorType::SCALAR;
 			else if(accessorType == "VEC2") accessor = GLTF::AccessorType::VEC2;
@@ -71,6 +74,7 @@ namespace Voxymore::Core
 
 		ShaderDataType Helper::GetShaderDataType(GLTF::PrimitiveAttribute accessor, int colorCount)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (accessor)
 			{
 				case GLTF::POSITION: return ShaderDataType::Float3;
@@ -87,21 +91,25 @@ namespace Voxymore::Core
 
 		bool Helper::NodeHasMesh(const tinygltf::Node &node)
 		{
+        	VXM_PROFILE_FUNCTION();
 			return node.mesh > -1;
 		}
 
 		tinygltf::Mesh&Helper::GetMesh(tinygltf::Model &model, const tinygltf::Node &node)
 		{
+        	VXM_PROFILE_FUNCTION();
 			VXM_CORE_ASSERT(NodeHasMesh(node), "The node {0} must have a mesh.", node.name);
 			return model.meshes[node.mesh];
 		}
 		bool Helper::PrimitiveHasAttribute(const tinygltf::Primitive &primitive, GLTF::PrimitiveAttribute attribute, int index)
 		{
+        	VXM_PROFILE_FUNCTION();
 			std::string name = GetPrimitiveAttributeString(attribute, index);
 			return primitive.attributes.contains(name);
 		}
 		std::string Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute attribute, int index)
 		{
+        	VXM_PROFILE_FUNCTION();
 			std::string name;
 			switch (attribute)
 			{
@@ -119,6 +127,7 @@ namespace Voxymore::Core
 
 		std::string Helper::AccessorTypeToString(AccessorType accessorType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch(accessorType)
 			{
 				case AccessorType::SCALAR: return "SCALAR";
@@ -133,6 +142,7 @@ namespace Voxymore::Core
 		}
 		std::string Helper::ComponentTypeToString(ComponentType componentType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (componentType)
 			{
 				case ComponentType::SignedByte: return "SignedByte";
@@ -148,6 +158,7 @@ namespace Voxymore::Core
 
 		GLTF::AccessorType Helper::GetAssociatedAccessor(GLTF::PrimitiveAttribute attribute)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (attribute)
 			{
 				case GLTF::PrimitiveAttribute::POSITION: return GLTF::AccessorType::VEC3;
@@ -163,6 +174,7 @@ namespace Voxymore::Core
 		}
 		int Helper::GetComponentByteCount(GLTF::ComponentType componentType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (componentType) {
 				case GLTF::SignedByte: return 1;
 				case GLTF::UnsignedByte: return 1;
@@ -176,6 +188,7 @@ namespace Voxymore::Core
 		}
 		GLTF::PrimitiveAttribute Helper::GetPrimitiveAttribute(const std::string &attributeStr)
 		{
+			VXM_PROFILE_FUNCTION();
 			if(attributeStr == "POSITION") return GLTF::PrimitiveAttribute::POSITION;
 			else if(attributeStr == "NORMAL") return GLTF::PrimitiveAttribute::NORMAL;
 			else if(attributeStr == "TANGENT") return GLTF::PrimitiveAttribute::TANGENT;
@@ -191,10 +204,12 @@ namespace Voxymore::Core
 
     void FlipStbi()
 	{
+		VXM_PROFILE_FUNCTION();
 		stbi_set_flip_vertically_on_load(true);
 	}
 	void UnflipStbi()
 	{
+		VXM_PROFILE_FUNCTION();
 		stbi_set_flip_vertically_on_load(false);
 	}
 }// namespace Voxymore

@@ -9,6 +9,7 @@ namespace Voxymore::Core {
 
     Ref<VertexBuffer> Voxymore::Core::VertexBuffer::Create(uint32_t size, const void* vertices)
     {
+		VXM_PROFILE_FUNCTION();
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:
@@ -29,6 +30,7 @@ namespace Voxymore::Core {
 
     Ref<IndexBuffer> Voxymore::Core::IndexBuffer::Create(uint32_t size, const uint32_t* indices)
     {
+		VXM_PROFILE_FUNCTION();
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:

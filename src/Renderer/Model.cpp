@@ -16,13 +16,15 @@ namespace Voxymore::Core
 {
 	Ref<Model> Model::CreateModel(const Path &path, const Ref<Shader> &shader)
 	{
+		VXM_PROFILE_FUNCTION();
 		return CreateRef<Model>(path, shader);
 	}
 
 	template<typename T, GLTF::ComponentType ct, GLTF::AccessorType at>
 	std::pair<const T *, size_t> GetBuffer(const std::string &attribute, tinygltf::Model &model, tinygltf::Primitive &primitive)
 	{
-		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
+		VXM_PROFILE_FUNCTION();
+//		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
 		size_t sizeofValue = sizeof(T);
 		int value = primitive.attributes[attribute];
 		auto &accessor = model.accessors[value];
@@ -38,7 +40,8 @@ namespace Voxymore::Core
 
 	std::pair<const void *, size_t> GetRawBuffer(int value, tinygltf::Model &model, tinygltf::Primitive &primitive)
 	{
-		VXM_PROFILE_SCOPE("Model::Model -> GetRawBuffer");
+		VXM_PROFILE_FUNCTION();
+//		VXM_PROFILE_SCOPE("Model::Model -> GetRawBuffer");
 		auto &accessor = model.accessors[value];
 		auto &bufferView = model.bufferViews[accessor.bufferView];
 		auto &buffer = model.buffers[bufferView.buffer];
@@ -46,13 +49,14 @@ namespace Voxymore::Core
 		return {bufferPtr, bufferView.byteLength};
 	}
 
-	glm::vec4 Convertu8Vec3ToVec4(const glm::u8vec3 &v) { return glm::vec4(glm::vec3(v) / 255.0f, 1.0f); }
-	glm::vec4 Convertu16Vec3ToVec4(const glm::u16vec3 &v) { return glm::vec4(glm::vec3(v) / 65535.0f, 1.0f); }
-	glm::vec4 Convertu32Vec3ToVec4(const glm::u32vec3 &v) { return glm::vec4(glm::vec3(v) / 4294967295.0f, 1.0f); }
-	glm::vec4 ConvertVec3ToVec4(const glm::vec3 &v) { return glm::vec4(v, 1.0f); }
+	glm::vec4 Convertu8Vec3ToVec4(const glm::u8vec3 &v) { VXM_PROFILE_FUNCTION(); return glm::vec4(glm::vec3(v) / 255.0f, 1.0f); }
+	glm::vec4 Convertu16Vec3ToVec4(const glm::u16vec3 &v) { VXM_PROFILE_FUNCTION(); return glm::vec4(glm::vec3(v) / 65535.0f, 1.0f); }
+	glm::vec4 Convertu32Vec3ToVec4(const glm::u32vec3 &v) { VXM_PROFILE_FUNCTION(); return glm::vec4(glm::vec3(v) / 4294967295.0f, 1.0f); }
+	glm::vec4 ConvertVec3ToVec4(const glm::vec3 &v) { VXM_PROFILE_FUNCTION(); return glm::vec4(v, 1.0f); }
 
 	glm::vec4 GetColor(const std::string &attribute, tinygltf::Model &model, tinygltf::Primitive &primitive, size_t verticesCount, size_t index)
 	{
+		VXM_PROFILE_FUNCTION();
 		glm::vec4 color;
 		int colorValue = primitive.attributes[attribute];
 		auto &colorAccessor = model.accessors[colorValue];
@@ -370,18 +374,21 @@ namespace Voxymore::Core
 
 	const Node& Model::GetNode(int index) const
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index >= 0 && index < m_Nodes.size(), "Index {0} is invalid.", index);
 		return m_Nodes[index];
 	}
 
 	const std::vector<int> &Model::GetDefaultScene() const
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(!m_Scenes.empty(), "No scene on the model...");
 		return  m_Scenes[m_DefaultScene];
 	}
 
 	void Model::Bind()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Shader->Bind();
 		for (int i = 0; i < m_Textures.size(); ++i)
 		{
@@ -391,21 +398,25 @@ namespace Voxymore::Core
 
 	void Model::Unbind()
 	{
+        VXM_PROFILE_FUNCTION();
 		m_Shader->Unbind();
 	}
 
 	const Path& Model::GetPath() const
 	{
+        VXM_PROFILE_FUNCTION();
 		return m_Path;
 	}
 
 	const Ref<Shader>& Model::GetShader() const
 	{
+        VXM_PROFILE_FUNCTION();
 		return m_Shader;
 	}
 
 	void Model::SetShader(Ref<Shader> & shader)
 	{
+        VXM_PROFILE_FUNCTION();
 		m_Shader = shader;
 		for (auto& meshGroup : m_Meshes)
 		{
@@ -418,6 +429,7 @@ namespace Voxymore::Core
 
 	void Model::SetShader(const std::string & shaderName)
 	{
+        VXM_PROFILE_FUNCTION();
 		m_Shader = ShaderLibrary::GetInstance().Get(shaderName);
 		for (auto& meshGroup : m_Meshes)
 		{
@@ -430,6 +442,7 @@ namespace Voxymore::Core
 
 	const MeshGroup& Model::GetMeshGroup(int index) const
 	{
+        VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(index > -1 && index < m_Meshes.size(), "The index '{0}' is not a valid mesh.", index);
 		return m_Meshes[index];
 	}

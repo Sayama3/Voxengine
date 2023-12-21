@@ -107,6 +107,7 @@ namespace Voxymore::Core
 		template<typename T>
 		inline void Bind()
 		{
+			VXM_PROFILE_FUNCTION();
 			VXM_CORE_ASSERT(Instance != nullptr, "Instance already exist. Binding will cause memory leaks.");
 
 			InstantiateScript = []() { return static_cast<ScriptableEntity>(new T()); };

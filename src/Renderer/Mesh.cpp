@@ -64,16 +64,19 @@ namespace Voxymore::Core
 
 	const Ref<Material>&Mesh::GetMaterial() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return m_Material;
 	}
 
 	void Mesh::SetShader(const std::string& shaderName)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Material->ChangeShader(shaderName);
 	}
 
 	void Mesh::SetShader(Ref<Shader>& shader)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Material->ChangeShader(shader);
 	}
 

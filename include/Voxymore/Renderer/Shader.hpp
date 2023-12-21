@@ -108,6 +108,7 @@ namespace Voxymore::Core {
 
 	inline static uint32_t GetShaderDataTypeCount(ShaderDataType type)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (type) {
 			case ShaderDataType::Float: return 1;
 			case ShaderDataType::Float2: return 2;

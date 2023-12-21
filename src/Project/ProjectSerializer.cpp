@@ -15,6 +15,7 @@ namespace Voxymore::Core
 
 	bool ProjectSerializer::Serialize(const std::filesystem::path& filepath)
 	{
+		VXM_PROFILE_FUNCTION();
 		const auto& config = m_Handle->m_Config;
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -38,6 +39,7 @@ namespace Voxymore::Core
 
 	bool ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto& config = m_Handle->m_Config;
 
 		YAML::Node data;

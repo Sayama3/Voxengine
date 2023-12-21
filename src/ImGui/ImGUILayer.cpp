@@ -25,6 +25,7 @@
 
 namespace Voxymore::Core {
     ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
+		VXM_PROFILE_FUNCTION();
         VXM_CORE_INFO("Create ImGUILayer");
 		m_Fonts.reserve((uint8_t )FontType::Count);
     }
@@ -125,6 +126,7 @@ namespace Voxymore::Core {
     }
 
     void ImGUILayer::OnEvent(Event &e) {
+		VXM_PROFILE_FUNCTION();
         if(m_BlockEvents) {
             ImGuiIO &io = ImGui::GetIO();
             e.m_Handled |= e.IsInCategory(EventCategory::EventCategoryMouse) & io.WantCaptureMouse;
@@ -134,6 +136,7 @@ namespace Voxymore::Core {
 
 	void ImGUILayer::AddFont(const std::string &path, float size, FontType fontType, bool isDefault)
 	{
+		VXM_PROFILE_FUNCTION();
 		ImGuiIO &io = ImGui::GetIO();
 		auto* fontPtr = io.Fonts->AddFontFromFileTTF(path.c_str(), size);
 		if(isDefault) io.FontDefault = fontPtr;
@@ -142,17 +145,20 @@ namespace Voxymore::Core {
 
 	ImFont* ImGUILayer::GetFont(FontType fontType)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
 		return m_Fonts[fontType];
 	}
 
 	void ImGUILayer::PushFont(FontType fontType)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
 		ImGui::PushFont(m_Fonts[fontType]);
 	}
 	void ImGUILayer::SetDarkThemeColors()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_IsDarkTheme = true;
 		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -188,6 +194,7 @@ namespace Voxymore::Core {
 	}
 	void ImGUILayer::SetLightThemeColors()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_IsDarkTheme = false;
 		ImGui::StyleColorsLight();
 		ImGuiStyle& style = ImGui::GetStyle();

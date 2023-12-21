@@ -18,26 +18,31 @@ namespace Voxymore::Core
 {
 	Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
 	{
+        VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
 	{
+        VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
 	{
+        VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
 	{
+        VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(Ref<Scene> scene) : m_ID(scene->m_ID), m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
+        VXM_PROFILE_FUNCTION();
 		InitScene();
 
 		// Copy the scene here, we want to retrive each entity uppon creation on this scene.
@@ -53,24 +58,28 @@ namespace Voxymore::Core
 
 	void Scene::InitScene()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Registry.on_construct<IDComponent>().connect<&Scene::OnCreateIDComponent>(this);
 		m_Registry.on_destroy<IDComponent>().connect<&Scene::OnDestroyIDComponent>(this);
 	}
 
 	Scene::~Scene()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Registry.on_construct<IDComponent>().disconnect<&Scene::OnCreateIDComponent>(this);
 		m_Registry.on_destroy<IDComponent>().disconnect<&Scene::OnDestroyIDComponent>(this);
 	}
 
 	void Scene::OnCreateIDComponent(entt::entity e)
 	{
+        VXM_PROFILE_FUNCTION();
 		Entity entity(e, this);
 		m_Entities[entity.GetUUID()] = entity;
 	}
 
 	void Scene::OnDestroyIDComponent(entt::entity e)
 	{
+        VXM_PROFILE_FUNCTION();
 		Entity entity(e, this);
 		auto it = m_Entities.find(entity.GetUUID());
 		if(it != m_Entities.end())
@@ -246,6 +255,7 @@ namespace Voxymore::Core
 
 	Entity Scene::CreateEntity()
 	{
+        VXM_PROFILE_FUNCTION();
 		UUID id;
 		std::string entity = "Entity_"+std::to_string(id);
 		return CreateEntity(id, entity);
@@ -253,17 +263,20 @@ namespace Voxymore::Core
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+        VXM_PROFILE_FUNCTION();
 		return CreateEntity(UUID(), name);
 	}
 
 	Entity Scene::CreateEntity(UUID id)
 	{
+        VXM_PROFILE_FUNCTION();
 		std::string entity = "Entity_"+std::to_string(id);
 		return CreateEntity(id, entity);
 	}
 
 	Entity Scene::CreateEntity(UUID id, const std::string& name)
 	{
+        VXM_PROFILE_FUNCTION();
 		Entity entity = Entity{m_Registry.create(), this};
 
 		entity.AddComponent<IDComponent>(id);
@@ -276,6 +289,7 @@ namespace Voxymore::Core
 
 	Entity Scene::GetEntity(UUID id)
 	{
+        VXM_PROFILE_FUNCTION();
 		auto it = m_Entities.find(id);
 		if(it != m_Entities.end()) {
 			return it->second;
@@ -288,6 +302,7 @@ namespace Voxymore::Core
 
 	void Scene::SetViewportSize(uint32_t width, uint32_t height)
 	{
+        VXM_PROFILE_FUNCTION();
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -303,12 +318,14 @@ namespace Voxymore::Core
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+        VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
 		m_Registry.destroy(entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
+        VXM_PROFILE_FUNCTION();
 		auto cameraView = m_Registry.view<CameraComponent>();
 		for (auto entity : cameraView)
 		{

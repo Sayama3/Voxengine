@@ -64,6 +64,7 @@ namespace Voxymore::Core
 
 		ShaderDataType GetShaderDataType(spirv_cross::SPIRType::BaseType spirvType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (spirvType) {
 				case spirv_cross::SPIRType::Unknown: return ShaderDataType::Unknown;
 				case spirv_cross::SPIRType::Void: return ShaderDataType::Void;
@@ -95,6 +96,7 @@ namespace Voxymore::Core
 		}
 		const char *GetShaderDataTypeName(ShaderDataType sdt)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (sdt) {
 				case ShaderDataType::Unknown: return "Unknown";
 				case ShaderDataType::Void: return "Void";
@@ -157,6 +159,7 @@ namespace Voxymore::Core
 	{
 		static ShaderDataType GetShaderDataType(GLenum type)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (type) {
 				case (GL_FLOAT): return ShaderDataType::Float;		// float
 				case (GL_FLOAT_VEC2): return ShaderDataType::Float2;// vec2
@@ -272,6 +275,7 @@ namespace Voxymore::Core
 
 		static GLenum ShaderTypeToOpenGL(ShaderType shaderType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (shaderType) {
 				case ShaderType::COMPUTE_SHADER:
 					return GL_COMPUTE_SHADER;
@@ -344,6 +348,7 @@ namespace Voxymore::Core
 
 		static shaderc_shader_kind ShaderTypeToShaderC(ShaderType shaderType)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (shaderType) {
 				case ShaderType::COMPUTE_SHADER:
 					return shaderc_glsl_compute_shader;
@@ -370,6 +375,7 @@ namespace Voxymore::Core
 
 		static std::filesystem::path GetCacheDirectory()
 		{
+			VXM_PROFILE_FUNCTION();
 			// TODO: make sure the assets directory is valid
 			Path cacheDir = {FileSource::Cache, "./shader/opengl/"};
 			return cacheDir;
@@ -377,6 +383,7 @@ namespace Voxymore::Core
 
 		static void CreateCacheDirectoryIfNeeded()
 		{
+			VXM_PROFILE_FUNCTION();
 			std::filesystem::path cacheDirectory = GetCacheDirectory();
 			if (!std::filesystem::exists(cacheDirectory))
 				std::filesystem::create_directories(cacheDirectory);
@@ -384,6 +391,7 @@ namespace Voxymore::Core
 
 		static const char *ShaderTypeToCachedVulkanFileExtension(ShaderType type)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (type) {
 				case ShaderType::COMPUTE_SHADER: return ".cached_opengl.comp";
 				case ShaderType::VERTEX_SHADER: return ".cached_opengl.vert";
@@ -399,6 +407,7 @@ namespace Voxymore::Core
 
 		static const char *ShaderTypeToCachedOpenGLFileExtension(ShaderType type)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (type) {
 				case ShaderType::COMPUTE_SHADER: return ".cached_vulkan.comp";
 				case ShaderType::VERTEX_SHADER: return ".cached_vulkan.vert";
@@ -414,6 +423,7 @@ namespace Voxymore::Core
 
 		static const char *ShaderTypeToCachedHashFileExtension(ShaderType type)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (type) {
 				case ShaderType::COMPUTE_SHADER: return ".cached_hash.comp";
 				case ShaderType::VERTEX_SHADER: return ".cached_hash.vert";
@@ -513,6 +523,7 @@ namespace Voxymore::Core
 
 	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string> &shaders)
 	{
+		VXM_PROFILE_FUNCTION();
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
@@ -602,6 +613,7 @@ namespace Voxymore::Core
 	}
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
 	{
+		VXM_PROFILE_FUNCTION();
 		auto &shaderData = m_OpenGLSPIRV;
 
 		shaderc::Compiler compiler;
@@ -687,6 +699,7 @@ namespace Voxymore::Core
 	//    }
 	void OpenGLShader::CreateProgram()
 	{
+		VXM_PROFILE_FUNCTION();
 		GLuint program = glCreateProgram();
 
 		std::vector<GLuint> shaderIDs;
@@ -726,6 +739,7 @@ namespace Voxymore::Core
 
 	Test::ShaderDataMember GetShaderDataMember(const spirv_cross::Compiler &compiler, const spirv_cross::SPIRType &type, const std::string &name)
 	{
+		VXM_PROFILE_FUNCTION();
 		Test::ShaderDataMember shaderDataMember;
 		shaderDataMember.m_Type = Test::GetShaderDataType(type.basetype);
 		shaderDataMember.m_Name = name;
@@ -776,6 +790,7 @@ namespace Voxymore::Core
 
 	void OpenGLShader::Reflect(ShaderType stage, const std::vector<uint32_t> &shaderData)
 	{
+		VXM_PROFILE_FUNCTION();
 		Test::ShaderData analyzedShaderData;
 		//TODO: Create the uniforms.
 		spirv_cross::Compiler compiler(shaderData);
@@ -933,7 +948,14 @@ namespace Voxymore::Core
 		glUniform4fv(location, 1, glm::value_ptr(value));
 	}
 
-	void OpenGLShader::SetUniformMat2(const std::string& name, const glm::mat2& value) {}
+	void OpenGLShader::SetUniformMat2(const std::string& name, const glm::mat2& value) {
+		VXM_PROFILE_FUNCTION();
+		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
+		//		int location = m_Uniforms[name].Location;
+		int location = glGetUniformLocation(m_RendererID, name.c_str());
+		if(location < 0) return;
+		glUniformMatrix2fv(location, 1, false, glm::value_ptr(value));
+	}
 	void OpenGLShader::SetUniformMat3(const std::string &name, const glm::mat3 &value)
 	{
 		VXM_PROFILE_FUNCTION();

@@ -8,6 +8,7 @@
 namespace Voxymore::Core {
     //TODO: remove and abstract
     static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType shaderDataType){
+		VXM_PROFILE_FUNCTION();
         switch (shaderDataType) {
             case ShaderDataType::Float:     return GL_FLOAT;
             case ShaderDataType::Float2:    return GL_FLOAT;

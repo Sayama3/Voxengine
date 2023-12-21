@@ -19,6 +19,7 @@ namespace Voxymore::Core
 
 	inline std::vector<std::string> GetFileSourceNames()
 	{
+		VXM_PROFILE_FUNCTION();
 		return {
 			"None",
 			"EditorAsset",
@@ -30,6 +31,7 @@ namespace Voxymore::Core
 
 	inline std::string GetFileSourceName(FileSource source)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (source) {
 
 			case FileSource::None: return "None";
@@ -103,6 +105,7 @@ namespace YAML
 	struct convert<::Voxymore::Core::Path> {
 		inline static Node encode(::Voxymore::Core::Path &path)
 		{
+			VXM_PROFILE_FUNCTION();
 			Node node;
 			node["Source"] = static_cast<int>(path.source);
 			node["Path"] = path.path.string();
@@ -111,6 +114,7 @@ namespace YAML
 
 		inline static bool decode(const Node &node, ::Voxymore::Core::Path &rhs)
 		{
+			VXM_PROFILE_FUNCTION();
 			if (!node.IsMap() || node.size() != 2) return false;
 			rhs.source = static_cast<::Voxymore::Core::FileSource>(node["Source"].as<int>());
 			rhs.path = node["Path"].as<std::string>();
@@ -126,6 +130,7 @@ namespace std
 	{
 		inline std::size_t operator()(const Voxymore::Core::Path& path) const
 		{
+			VXM_PROFILE_FUNCTION();
 			//TODO: Check if I want to use the PathId or the FullPath to make the hash.
 			return hash<std::string>()(path.GetPathId());
 		}

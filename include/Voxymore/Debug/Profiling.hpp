@@ -137,7 +137,7 @@
     #define VXM_PROFILE_END_SESSION() //::Voxymore::Core::Instrumentor::Get().EndSession()
 	#define VXM_FRAME_START() FrameMarkStart("VXM_FRAME")
 	#define VXM_FRAME_END() FrameMarkEnd("VXM_FRAME")
-    #define VXM_PROFILE_SCOPE(name) ZoneScopedN(name)
+    #define VXM_PROFILE_SCOPE(name) //ZoneScopedN(name)
     #define VXM_PROFILE_FUNCTION() ZoneScoped
 #else
     #define VXM_PROFILE_BEGIN_SESSION(name, filepath)
