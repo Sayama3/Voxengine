@@ -2,6 +2,7 @@
 
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
+#include "Voxymore/Debug/Profiling.hpp"
 #include <filesystem>
 
 namespace Voxymore::Core
