@@ -22,11 +22,11 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		return {
-			"None",
-			"EditorAsset",
-			"Asset",
-			"System",
-			"Cache",
+				"None",
+				"EditorAsset",
+				"Asset",
+				"System",
+				"Cache",
 		};
 	}
 
@@ -44,10 +44,10 @@ namespace Voxymore::Core
 		return "Unknown";
 	}
 
-    namespace Helper
-    {
-        std::string GetFileSourceName(FileSource fileSource);
-    }
+	namespace Helper
+	{
+		std::string GetFileSourceName(FileSource fileSource);
+	}
 
 
 	enum class FilePermission
@@ -75,7 +75,11 @@ namespace Voxymore::Core
 		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;
 		bool operator!=(const Path& rhs) const;
+
+		bool equivalent(const Path& rhs) const;
+
 		static Path GetPath(std::filesystem::path path);
+		inline static bool equivalent(const Path& lhs, const Path& rhs) { return lhs.equivalent(rhs); }
 	};
 
 	class FileSystem

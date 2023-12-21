@@ -96,7 +96,9 @@ namespace Voxymore::Core
 	std::filesystem::path FileSystem::GetPath(const Path& path)
 	{
 		VXM_PROFILE_FUNCTION();
-		return GetRootPath(path.source) / path.path;
+		std::filesystem::path p = GetRootPath(path.source) / path.path;
+		p.make_preferred();
+		return p;
 	}
 
 	bool FileSystem::Exist(const Path& path)
@@ -132,17 +134,25 @@ namespace Voxymore::Core
 
 	bool Path::operator==(const Path &rhs) const
 	{
-		return this->path == rhs.path
-			   && this->source == rhs.source;
+		VXM_PROFILE_FUNCTION();
+		return this->source == rhs.source && this->path == rhs.path;
+	}
+
+	bool Path::equivalent(const Path &rhs) const
+	{
+		VXM_PROFILE_FUNCTION();
+		return std::filesystem::equivalent(this->GetFullPath(), rhs.GetFullPath());
 	}
 
 	bool Path::operator!=(const Path &rhs) const
 	{
+		VXM_PROFILE_FUNCTION();
 		return !(*this == rhs);
 	}
 
 	Path::operator std::filesystem::path() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return GetFullPath();
 	}
 
