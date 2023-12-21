@@ -6,29 +6,29 @@
 // ======== ModelComponent ========
 namespace Voxymore::Core
 {
-    VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
+	VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
 
 	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
-    {
+	{
 		VXM_PROFILE_FUNCTION();
-    	auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
-    	model.m_ModelPath = componentNode["Path"].as<Path>();
-    	model.m_ShaderName = componentNode["ShaderName"].as<std::string>();
-    }
+		auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
+		model.m_ModelPath = componentNode["Path"].as<Path>();
+		model.m_ShaderName = componentNode["ShaderName"].as<std::string>();
+	}
 
-    void ModelComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
-    {
+	void ModelComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
+	{
 		VXM_PROFILE_FUNCTION();
-    	auto& model = sourceEntity.GetComponent<ModelComponent>();
+		auto& model = sourceEntity.GetComponent<ModelComponent>();
 		emitter << KEYVAL("Path", model.m_ModelPath);
 		emitter << KEYVAL("ShaderName", model.m_ShaderName);
-    }
+	}
 
-    bool ModelComponent::OnImGuiRender(Entity sourceEntity)
-    {
+	bool ModelComponent::OnImGuiRender(Entity sourceEntity)
+	{
 		VXM_PROFILE_FUNCTION();
 		bool componentChanged = false;
-    	auto& model = sourceEntity.GetComponent<ModelComponent>();
+		auto& model = sourceEntity.GetComponent<ModelComponent>();
 		auto& p = model.m_ModelPath;
 
 		std::vector<std::string> PossibleFileSources = GetFileSourceNames();
@@ -106,10 +106,11 @@ namespace Voxymore::Core
 	bool ModelComponent::ShouldLoad() const
 	{
 		VXM_PROFILE_FUNCTION();
+		//TODO: use dirty flag ? (~0.3ms to use equivalent)
 		return IsValid() &&
 			   (
 				   !m_IsLoaded
-				   || (m_ModelPath != m_Model->GetPath() || m_ShaderName != m_Model->GetShader()->GetName())
+				   || ((!m_ModelPath.equivalent(m_Model->GetPath())) || m_ShaderName != m_Model->GetShader()->GetName())
 			   );
 	}
 
