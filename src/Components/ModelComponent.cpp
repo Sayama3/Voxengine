@@ -10,6 +10,7 @@ namespace Voxymore::Core
 
 	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
     {
+		VXM_PROFILE_FUNCTION();
     	auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
     	model.m_ModelPath = componentNode["Path"].as<Path>();
     	model.m_ShaderName = componentNode["ShaderName"].as<std::string>();
@@ -17,6 +18,7 @@ namespace Voxymore::Core
 
     void ModelComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
     {
+		VXM_PROFILE_FUNCTION();
     	auto& model = sourceEntity.GetComponent<ModelComponent>();
 		emitter << KEYVAL("Path", model.m_ModelPath);
 		emitter << KEYVAL("ShaderName", model.m_ShaderName);
@@ -24,6 +26,7 @@ namespace Voxymore::Core
 
     bool ModelComponent::OnImGuiRender(Entity sourceEntity)
     {
+		VXM_PROFILE_FUNCTION();
 		bool componentChanged = false;
     	auto& model = sourceEntity.GetComponent<ModelComponent>();
 		auto& p = model.m_ModelPath;
@@ -81,6 +84,7 @@ namespace Voxymore::Core
 
 	void ModelComponent::LoadModel()
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(!m_ModelPath.empty() && std::filesystem::exists(m_ModelPath.GetFullPath()), "The path '{0}' is not valid.", m_ModelPath.GetFullPath().string());
 		VXM_CORE_ASSERT(ShaderLibrary::GetInstance().Exists(m_ShaderName), "The shader '{0}' doesn't exist.", m_ShaderName);
 
@@ -95,11 +99,13 @@ namespace Voxymore::Core
 
 	bool ModelComponent::IsLoaded() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return m_IsLoaded;
 	}
 
 	bool ModelComponent::ShouldLoad() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return IsValid() &&
 			   (
 				   !m_IsLoaded
@@ -109,6 +115,7 @@ namespace Voxymore::Core
 
 	bool ModelComponent::IsValid() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return !m_ModelPath.empty()
 			   && std::filesystem::exists(m_ModelPath.GetFullPath())
 			   && ShaderLibrary::GetInstance().Exists(m_ShaderName);

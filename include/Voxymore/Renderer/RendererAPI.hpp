@@ -33,8 +33,8 @@ namespace Voxymore {
         };
 
         static inline std::string RendererAPIToString(RendererAPI::API api){
+			VXM_PROFILE_FUNCTION();
             switch (api) {
-
                 case RendererAPI::API::None:
                     return "RendererAPI::None";
                 case RendererAPI::API::OpenGL:

@@ -112,6 +112,7 @@ namespace Voxymore::Core
 
 	bool SceneManager::HasScene(UUID id)
 	{
+		VXM_PROFILE_FUNCTION();
 		return s_Scenes.contains(id);
 	}
 
@@ -129,6 +130,7 @@ namespace Voxymore::Core
 
 	void SceneManager::Clear()
 	{
+		VXM_PROFILE_FUNCTION();
 		s_Scenes.clear();
 	}
 } // namespace Voxymore::Core

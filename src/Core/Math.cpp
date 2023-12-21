@@ -35,6 +35,7 @@ namespace Voxymore::Core {
 
 	bool Math::DecomposeTransform(const glm::mat4 &transform, glm::vec3 &position, glm::vec3 &rotation, glm::vec3 &scale)
 	{
+		VXM_PROFILE_FUNCTION();
 		// from glm::decompose in matrix_decompose
 		using namespace glm;
 		using T = float;
@@ -104,6 +105,7 @@ namespace Voxymore::Core {
 
 	bool Math::DecomposeTransform(const glm::mat4 &transform, glm::vec3 &position, glm::quat &rotation, glm::vec3 &scale)
 	{
+		VXM_PROFILE_FUNCTION();
 		// from glm::decompose in matrix_decompose
 		using namespace glm;
 		using T = float;

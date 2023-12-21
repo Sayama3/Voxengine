@@ -17,6 +17,6 @@
 #include <utility>
 #include <vector>
 
-#include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/Logger.hpp"
-#include "Voxymore/Debug/Instrumentor.hpp"
+#include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Debug/Profiling.hpp"

@@ -10,6 +10,7 @@ namespace Voxymore::Core{
 
 	Ref<Shader> Shader::Create(const std::string& name, const std::string &srcVertex, const std::string &srcFragment)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
@@ -26,6 +27,7 @@ namespace Voxymore::Core{
 
 	Ref<Shader> Shader::Create(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
@@ -42,6 +44,7 @@ namespace Voxymore::Core{
 
 	Ref<Shader> Shader::Create(const std::string& name, const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
@@ -59,6 +62,7 @@ namespace Voxymore::Core{
 	ShaderLibrary* ShaderLibrary::s_Instance = nullptr;
 
 	void ShaderLibrary::Add(const Ref<Shader> &shader) {
+		VXM_PROFILE_FUNCTION();
 		const auto& name = shader->GetName();
 #if VXM_DEBUG
 		if(!m_Shaders.contains(name)) VXM_CORE_WARNING("Shader Library already contains '{0}'.", name);
@@ -67,6 +71,7 @@ namespace Voxymore::Core{
 	}
 
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader> &shader) {
+		VXM_PROFILE_FUNCTION();
 #if VXM_DEBUG
 		if(!m_Shaders.contains(name)) VXM_CORE_WARNING("Shader Library already contains '{0}'.", name);
 #endif
@@ -75,6 +80,7 @@ namespace Voxymore::Core{
 
 	Ref<Shader> ShaderLibrary::Load(const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto shader = Shader::Create(path);
 		Add(shader);
 		return m_Shaders[shader->GetName()];
@@ -82,22 +88,26 @@ namespace Voxymore::Core{
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& name, const Path& path)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto shader = Shader::Create(name, path);
 		Add(name, shader);
 		return m_Shaders[name];
 	}
 
 	Ref<Shader> ShaderLibrary::Get(const std::string &name) {
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Shaders.contains(name), "The shader library doesn't contain '{0}'.", name);
 		return m_Shaders[name];
 	}
 
 	bool ShaderLibrary::Exists(const std::string &name) const {
+		VXM_PROFILE_FUNCTION();
 		return m_Shaders.contains(name);
 	}
 
 	ShaderLibrary& ShaderLibrary::GetInstance()
 	{
+		VXM_PROFILE_FUNCTION();
 		if(s_Instance == nullptr) s_Instance = new ShaderLibrary();
 		return *s_Instance;
 	}

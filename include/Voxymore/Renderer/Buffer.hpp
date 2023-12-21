@@ -21,6 +21,7 @@ namespace Voxymore::Core {
 
         inline uint32_t GetComponentCount() const
         {
+			VXM_PROFILE_FUNCTION();
             return GetShaderDataTypeCount(Type);
         }
     };
@@ -40,6 +41,7 @@ namespace Voxymore::Core {
 
     private:
         inline void CalculateOffsetAndStride() {
+			VXM_PROFILE_FUNCTION();
             uint32_t offset = 0;
             m_Stride = 0;
             for (auto& element:m_Elements) {

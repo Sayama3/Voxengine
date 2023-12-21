@@ -12,6 +12,7 @@ namespace Voxymore
 	{
 		Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
 		{
+			VXM_PROFILE_FUNCTION();
 			switch (Renderer::GetAPI()) {
 
 				case RendererAPI::API::None:

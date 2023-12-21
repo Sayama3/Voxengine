@@ -26,14 +26,17 @@ namespace Voxymore::Core {
     }
 
     Voxymore::Core::Window* Voxymore::Core::Window::Create(const Voxymore::Core::WindowProps &props) {
+		VXM_PROFILE_FUNCTION();
         return new DefaultWindow(props);
     }
 
     DefaultWindow::DefaultWindow(const Voxymore::Core::WindowProps &props) : m_CursorState(CursorState::None) {
+		VXM_PROFILE_FUNCTION();
         Init(props);
     }
 
     DefaultWindow::~DefaultWindow() {
+		VXM_PROFILE_FUNCTION();
         Shutdown();
     }
 
@@ -189,6 +192,7 @@ namespace Voxymore::Core {
     }
 
     void DefaultWindow::SetVSync(bool enabled) {
+		VXM_PROFILE_FUNCTION();
         if (enabled) {
             glfwSwapInterval(1);
         }
@@ -200,14 +204,17 @@ namespace Voxymore::Core {
     }
 
     bool DefaultWindow::IsVSync() const {
+		VXM_PROFILE_FUNCTION();
         return m_Data.VSync;
     }
 
     bool DefaultWindow::IsMinify() const {
+		VXM_PROFILE_FUNCTION();
         return m_Data.Minified || m_Data.Width == 0 || m_Data.Height == 0;
     }
 
     void DefaultWindow::SetCursorState(CursorState cursorState) {
+		VXM_PROFILE_FUNCTION();
         switch (cursorState) {
             case CursorState::None:
                 glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

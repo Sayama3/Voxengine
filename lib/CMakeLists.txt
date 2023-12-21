@@ -22,3 +22,7 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
+option(TRACY_ENABLE "" ON)
+option(TRACY_ON_DEMAND "" ON)
+add_subdirectory(tracy)
+

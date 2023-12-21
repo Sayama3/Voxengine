@@ -42,6 +42,7 @@ namespace Voxymore::Core {
 
     }
     void Application::OnEvent(Event& e){
+		VXM_PROFILE_FUNCTION();
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
@@ -60,6 +61,7 @@ namespace Voxymore::Core {
     void Application::Run() {
         while (m_Running)
         {
+			VXM_FRAME_START();
             TimeStep timeStep;
             {
                 VXM_PROFILE_SCOPE("Application::Run -> Get TimeStep");
@@ -70,34 +72,36 @@ namespace Voxymore::Core {
             //TODO: Remove later as it should be abstracted?
             if(!GetWindow().IsMinify())
             {
-                {
-                    VXM_PROFILE_SCOPE("Application::Run -> Update Layer");
-                    for (Layer *layer: m_LayerStack) {
-                        layer->OnUpdate(timeStep);
-                    }
-                }
+				VXM_PROFILE_SCOPE("Application::Run -> Update Layer");
+				for (Layer *layer: m_LayerStack) {
+					layer->OnUpdate(timeStep);
+				}
             }
 
-            m_ImGUILayer->Begin();
             {
                 VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
+				m_ImGUILayer->Begin();
                 for (Layer *layer: m_LayerStack) {
+					VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer -> Render a layer");
                     layer->OnImGuiRender();
                 }
+				m_ImGUILayer->End();
             }
-            m_ImGUILayer->End();
 
             m_Window->OnUpdate();
+			VXM_FRAME_END();
         }
     }
 
     bool Application::OnWindowClose(WindowCloseEvent &e) {
+		VXM_PROFILE_FUNCTION();
         m_Running = false;
         return true;
     }
 
     bool Application::OnWindowResize(WindowResizeEvent &e)
     {
+		VXM_PROFILE_FUNCTION();
         if(e.GetWidth() == 0 || e.GetHeight() == 0)
         {
             return false;
@@ -121,12 +125,14 @@ namespace Voxymore::Core {
     }
 
     void Application::Close() {
+		VXM_PROFILE_FUNCTION();
         VXM_CORE_INFO("Application is closing.");
         m_Running = false;
     }
 
 	void Application::ProcessArguments(const std::vector<std::string>& arguments)
 	{
+		VXM_PROFILE_FUNCTION();
 		size_t argc = arguments.size();
 		std::filesystem::path exePath = arguments[0];
 		FileSystem::s_EditorPath = exePath.parent_path();
@@ -142,6 +148,7 @@ namespace Voxymore::Core {
 
 	const std::string& Application::GetArgument(const std::string& key) const
 	{
+		VXM_PROFILE_FUNCTION();
 		const std::vector<std::string>& arguments = m_Parameters.arguments;
 		size_t argc = arguments.size();
 		for (int i = 1; i < arguments.size(); ++i)
@@ -157,6 +164,7 @@ namespace Voxymore::Core {
 
 	const std::string& Application::GetArgument(int key) const
 	{
+		VXM_PROFILE_FUNCTION();
 		const std::vector<std::string>& arguments = m_Parameters.arguments;
 		VXM_CORE_ASSERT(key >= 0 && key < arguments.size(), "The index is not valid.")
 		return arguments[key];
@@ -164,6 +172,7 @@ namespace Voxymore::Core {
 
 	bool Application::HasArgument(int key) const
 	{
+		VXM_PROFILE_FUNCTION();
 		const std::vector<std::string>& arguments = m_Parameters.arguments;
 		VXM_CORE_ASSERT(key >= 0, "The index is not valid.")
 		return key < arguments.size();

@@ -20,10 +20,12 @@ namespace Voxymore::Core
 
 	Path SystemManager::GetPath(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		return {FileSource::System, name + VXM_SYSTEM_EXTENSION};
 	}
 	void SystemManager::AddSystem(std::string name, Ref<GameplaySystem> system)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(!GetInstance().s_Systems.contains(name), "The System '{0}' already exist.", name);
 		GetInstance().s_Systems[name] = std::move(system);
 		GetInstance().s_SystemToScene[name] = {};
@@ -44,12 +46,14 @@ namespace Voxymore::Core
 
 	Ref<GameplaySystem> SystemManager::GetSystem(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_Systems.contains(name), "The System '{0}' doesn't exist.", name);
 		return GetInstance().s_Systems[name];
 	}
 
 	std::vector<std::string> SystemManager::GetSystemsName()
 	{
+		VXM_PROFILE_FUNCTION();
 		std::vector<std::string> names;
 		names.reserve(GetInstance().s_Systems.size());
 		for (auto &kv: GetInstance().s_Systems) {
@@ -60,11 +64,13 @@ namespace Voxymore::Core
 	
 	bool SystemManager::HasSaveFile(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		return FileSystem::Exist(GetPath(name));
 	}
 
 	void SystemManager::ResetSystem(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		GetInstance().s_SystemEnabled[name] = true;
 		GetInstance().s_SystemToScene[name].clear();
 		Ref<GameplaySystem> system = GetSystem(name);
@@ -73,6 +79,7 @@ namespace Voxymore::Core
 
 	void SystemManager::FillSystem(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		YAML::Node data = FileSystem::ReadFileAsYAML(GetPath(name));
 		YAML::Node systemNode = data[name];
 		if(!systemNode)
@@ -100,6 +107,7 @@ namespace Voxymore::Core
 
 	void SystemManager::WriteSystem(YAML::Emitter& out, const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto sys = GetSystem(name);
 		out << KEYVAL(name, YAML::BeginMap);
 		out << KEYVAL("Enable", GetInstance().s_SystemEnabled[name]);
@@ -115,6 +123,7 @@ namespace Voxymore::Core
 
 	void SystemManager::SaveSystem(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		WriteSystem(out, name);
@@ -124,24 +133,28 @@ namespace Voxymore::Core
 
 	void SystemManager::LoadSystem(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_Systems.contains(name), "The system named {0} doesn't exist...");
 		if(HasSaveFile(name)) FillSystem(name);
 	}
 
 	bool SystemManager::IsActive(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemEnabled.contains(name), "The system named {0} doesn't exist...");
 		return GetInstance().s_SystemEnabled[name];
 	}
 
 	void SystemManager::SetActive(const std::string &systemName, bool enable)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemEnabled.contains(systemName), "The system named {0} doesn't exist...");
 		GetInstance().s_SystemEnabled[systemName] = enable;
 	}
 
 	std::vector<UUID>& SystemManager::GetSystemScenes(const std::string& name)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(name), "The system named {0} doesn't exist...");
 		return GetInstance().s_SystemToScene[name];
 	}
@@ -149,6 +162,7 @@ namespace Voxymore::Core
 
 	void SystemManager::AddSceneToSystem(const std::string& systemName, UUID sceneName)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
 		auto& scenes = GetInstance().s_SystemToScene[systemName];
 		scenes.push_back(sceneName);
@@ -157,6 +171,7 @@ namespace Voxymore::Core
 
 	void SystemManager::AddSceneToSystemIfNotExist(const std::string& systemName, UUID sceneName)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
 		auto& scenes = GetInstance().s_SystemToScene[systemName];
 		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
@@ -165,6 +180,7 @@ namespace Voxymore::Core
 
 	void SystemManager::RemoveSceneFromSystem(const std::string& systemName, UUID sceneName)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
 		auto& scenes = GetInstance().s_SystemToScene[systemName];
 		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
@@ -173,6 +189,7 @@ namespace Voxymore::Core
 
 	std::vector<Ref<GameplaySystem>> SystemManager::GetSystems(UUID sceneName)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::vector<Ref<GameplaySystem>> systems;
 		systems.reserve(GetInstance().s_Systems.size());
 		for (auto&& [systemName, system] : GetInstance().s_Systems)
@@ -189,16 +206,19 @@ namespace Voxymore::Core
 
 	SystemManager::SystemManager()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_OnProjectLoadId = Project::AddOnLoad(ReloadSystems);
 	}
 
 	SystemManager::~SystemManager()
 	{
+		VXM_PROFILE_FUNCTION();
 		Project::RemoveOnLoad(m_OnProjectLoadId);
 	}
 
 	void SystemManager::ReloadSystems()
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_INFO("Reload Systems");
 		for (auto &&[name, sys]: GetInstance().s_Systems)
 		{

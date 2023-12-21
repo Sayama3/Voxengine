@@ -9,6 +9,7 @@
 
 namespace Voxymore::Core {
     Ref<VertexArray> VertexArray::Create() {
+		VXM_PROFILE_FUNCTION();
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None:
             {

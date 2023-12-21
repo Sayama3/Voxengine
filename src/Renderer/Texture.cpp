@@ -11,7 +11,7 @@
 namespace Voxymore {
     namespace Core {
         Ref<Texture2D> Core::Texture2D::Create(const Path& path) {
-
+			VXM_PROFILE_FUNCTION();
             switch (Renderer::GetAPI()) {
 
                 case RendererAPI::API::None:
@@ -27,7 +27,7 @@ namespace Voxymore {
         }
 
         Ref<Texture2D> Core::Texture2D::Create(const std::filesystem::path& path) {
-
+			VXM_PROFILE_FUNCTION();
             switch (Renderer::GetAPI()) {
 
                 case RendererAPI::API::None:
@@ -43,7 +43,7 @@ namespace Voxymore {
         }
 
         Ref<Texture2D> Core::Texture2D::Create(const uint8_t* data, int width, int height, int channels) {
-
+			VXM_PROFILE_FUNCTION();
             switch (Renderer::GetAPI()) {
 
                 case RendererAPI::API::None:
@@ -59,7 +59,7 @@ namespace Voxymore {
         }
 
         Ref<Texture2D> Core::Texture2D::Create(const uint16_t* data, int width, int height, int channels) {
-
+			VXM_PROFILE_FUNCTION();
             switch (Renderer::GetAPI()) {
 
                 case RendererAPI::API::None:

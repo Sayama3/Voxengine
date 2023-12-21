@@ -23,11 +23,13 @@ namespace Voxymore::Core
 
 	void SceneSerializer::ChangeSceneTarget(const Ref<Scene>& scene)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_RefScene = scene;
 		m_ScenePtr = nullptr;
 	}
 	void SceneSerializer::ChangeSceneTarget(Scene* scene)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_RefScene = nullptr;
 		m_ScenePtr = scene;
 	}
@@ -38,6 +40,7 @@ namespace Voxymore::Core
 
 	bool SceneSerializer::Serialize(const std::filesystem::path &filePath) const
 	{
+		VXM_PROFILE_FUNCTION();
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		{
@@ -73,6 +76,7 @@ namespace Voxymore::Core
 
 	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath, bool deserializeId)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::ifstream ifstream(filePath);
 		std::stringstream stringstream;
 		stringstream << ifstream.rdbuf();
@@ -160,17 +164,20 @@ namespace Voxymore::Core
 
 	bool SceneSerializer::SerializeRuntime(const std::filesystem::path &filePath) const
 	{
+		VXM_PROFILE_FUNCTION();
 		return false;
 	}
 
 	bool SceneSerializer::DeserializeRuntime(const std::filesystem::path &filePath, bool deserializeId)
 	{
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(false, "Function DeserializeRuntime not implemented yet.");
 		return false;
 	}
 
 	void SceneSerializer::SerializeEntity(YAML::Emitter &out, Entity entity)
 	{
+		VXM_PROFILE_FUNCTION();
 		out << KEYVAL("Entity", entity.GetUUID());//TODO: set entity ID;
 
 		out << KEYVAL("IsActive", entity.IsActive());
@@ -240,6 +247,7 @@ namespace Voxymore::Core
 
 	std::optional<UUID> SceneSerializer::GetSceneID(const std::filesystem::path &filePath)
 	{
+		VXM_PROFILE_FUNCTION();
 		std::ifstream ifstream(filePath);
 		std::stringstream stringstream;
 		stringstream << ifstream.rdbuf();
@@ -255,11 +263,13 @@ namespace Voxymore::Core
 	}
 	Scene& SceneSerializer::GetScene()
 	{
+		VXM_PROFILE_FUNCTION();
 		if(m_RefScene != nullptr) return *m_RefScene;
 		else return *m_ScenePtr;
 	}
 	const Scene& SceneSerializer::GetScene() const
 	{
+		VXM_PROFILE_FUNCTION();
 		if(m_RefScene != nullptr) return *m_RefScene;
 		else return *m_ScenePtr;
 	}

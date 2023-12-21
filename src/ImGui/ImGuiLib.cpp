@@ -12,6 +12,7 @@ namespace Voxymore
 	namespace Core
 	{
 		bool ImGuiLib::DrawVec3ControlAdvanced(const std::string& label, glm::vec3& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
@@ -86,6 +87,7 @@ namespace Voxymore
 			return changed;
 		}
 		bool ImGuiLib::DrawVec2ControlAdvanced(const std::string& label, glm::vec2& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);

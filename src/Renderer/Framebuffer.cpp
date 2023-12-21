@@ -11,6 +11,7 @@ namespace Voxymore::Core {
 
     Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification &spec)
     {
+		VXM_PROFILE_FUNCTION();
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:

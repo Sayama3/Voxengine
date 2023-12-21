@@ -132,10 +132,12 @@ namespace Voxymore {
         }
 
         uint32_t OpenGLTexture2D::GetWidth() const {
+			VXM_PROFILE_FUNCTION();
             return m_Width;
         }
 
         uint32_t OpenGLTexture2D::GetHeight() const {
+			VXM_PROFILE_FUNCTION();
             return m_Height;
         }
 

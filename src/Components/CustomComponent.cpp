@@ -12,22 +12,26 @@ namespace Voxymore::Core
 	ComponentManager* ComponentManager::s_ComponentManager = nullptr;
 	ComponentManager& ComponentManager::GetInstance()
 	{
+		VXM_PROFILE_FUNCTION();
 		if(s_ComponentManager == nullptr) s_ComponentManager = new ComponentManager();
 		return *s_ComponentManager;
 	}
 
 	void ComponentManager::AddComponent(const ComponentChecker &component)
 	{
+		VXM_PROFILE_FUNCTION();
 		GetInstance().s_Components.push_back(component);
 	}
 
 	const std::vector<ComponentChecker> &ComponentManager::GetComponents()
 	{
+		VXM_PROFILE_FUNCTION();
 		return GetInstance().s_Components;
 	}
 
 	bool ComponentManager::HasComponent(const std::string &componentName)
 	{
+		VXM_PROFILE_FUNCTION();
 		for (auto& c : GetInstance().s_Components)
 		{
 			if(c.ComponentName == componentName) {

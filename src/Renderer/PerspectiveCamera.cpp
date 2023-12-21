@@ -17,14 +17,17 @@ namespace Voxymore::Core {
 
 
 	glm::mat4 PerspectiveCamera::GetViewMatrix() const {
+		VXM_PROFILE_FUNCTION();
 		return m_ViewMatrix;
 	}
 
 	glm::mat4 PerspectiveCamera::GetViewProjectionMatrix() const {
+		VXM_PROFILE_FUNCTION();
 		return m_ViewProjectionMatrix;
 	}
 	glm::mat4 PerspectiveCamera::GetProjectionMatrix() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return m_ProjectionMatrix;
 	}
 

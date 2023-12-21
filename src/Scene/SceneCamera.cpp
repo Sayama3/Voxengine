@@ -35,6 +35,7 @@ namespace Voxymore
 
 		void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
 		{
+        	VXM_PROFILE_FUNCTION();
 			m_IsOrthographic = true;
 			m_OrthographicSize = size;
 			m_OrthographicNear = nearClip;
@@ -43,6 +44,7 @@ namespace Voxymore
 
 		void SceneCamera::SetPerspective(float radianVerticalFov, float nearClip, float farClip)
 		{
+        	VXM_PROFILE_FUNCTION();
 			m_IsOrthographic = false;
 			m_PerspectiveVerticalFOV = radianVerticalFov;
 			m_PerspectiveNear = nearClip;
@@ -51,22 +53,26 @@ namespace Voxymore
 
 		void SceneCamera::SwitchToPerspective(bool isPerspective)
 		{
+        	VXM_PROFILE_FUNCTION();
 			m_IsOrthographic = !isPerspective;
 		}
 
 		void SceneCamera::SwitchToOrthographic(bool isOrthographic)
 		{
+        	VXM_PROFILE_FUNCTION();
 			m_IsOrthographic = isOrthographic;
 		}
 
 		void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
 		{
+        	VXM_PROFILE_FUNCTION();
 			VXM_CORE_ASSERT(width > 0 && height > 0, "Width({0}) and Height({1}) must be superior to 0.", width, height);
 			m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
 		}
 
 		glm::mat4 SceneCamera::CalculateOrthographic() const
 		{
+        	VXM_PROFILE_FUNCTION();
 			float left = -m_OrthographicSize * m_AspectRatio * 0.5f;
 			float right = +m_OrthographicSize * m_AspectRatio * 0.5f;
 			float top = +m_OrthographicSize * 0.5f;
@@ -76,21 +82,25 @@ namespace Voxymore
 
 		glm::mat4 SceneCamera::CalculatePerspective() const
 		{
+        	VXM_PROFILE_FUNCTION();
 			return glm::perspective(m_PerspectiveVerticalFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 
 		glm::mat4 SceneCamera::CalculateProjectionMatrix() const
 		{
+        	VXM_PROFILE_FUNCTION();
 			return m_IsOrthographic ? CalculateOrthographic() : CalculatePerspective();
 		}
 
 		void SceneCamera::SetAspectRatio(float aspectRatio)
 		{
+        	VXM_PROFILE_FUNCTION();
 			VXM_CORE_ASSERT(aspectRatio != 0.0f, "Aspect Ratio cannot be 0.");
 			m_AspectRatio = aspectRatio;
 		}
 		glm::mat4 SceneCamera::GetProjectionMatrix() const
 		{
+        	VXM_PROFILE_FUNCTION();
 			return CalculateProjectionMatrix();
 		}
 	}// namespace Core

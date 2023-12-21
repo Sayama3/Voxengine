@@ -19,18 +19,6 @@
 namespace Voxymore {
 	namespace Core {
 
-		struct QuadVertex
-		{
-			glm::vec3 Position;
-			glm::vec4 Color;
-			glm::vec2 TexCoord;
-			float TexIndex;
-			float TilingFactor;
-
-			// Editor-only
-			int EntityID;
-		};
-
 		struct RendererData
 		{
 			// TODO: Add Normal Matrix
