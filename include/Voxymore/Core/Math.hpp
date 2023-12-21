@@ -5,6 +5,8 @@
 #ifndef LEARNOPENGL_MATHHELPER_HPP
 #define LEARNOPENGL_MATHHELPER_HPP
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,12 +14,13 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/hash.hpp>
 #include <iostream>
 #include <cmath>
 #include <cstdint>
 
 namespace Voxymore::Core {
-    class Math {
+	class Math {
 	public:
 		/**
 		 * Create a Transform matrix from a position, a rotation, and a scale.
@@ -31,7 +34,7 @@ namespace Voxymore::Core {
 
 		static bool DecomposeTransform(const glm::mat4& transform, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale);
 		static bool DecomposeTransform(const glm::mat4& transform, glm::vec3& position, glm::quat& rotation, glm::vec3& scale);
-    };
+	};
 
 	inline std::ostream& operator << (std::ostream & os, const glm::mat4 value){
 		return os << glm::to_string(value);
