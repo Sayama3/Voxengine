@@ -68,9 +68,14 @@ namespace Voxymore::Core
 		FileSource source = FileSource::None;
 		std::filesystem::path path;
 		std::filesystem::path GetFullPath() const;
-		std::string GetPathId() const;
+
+		[[deprecated("Replaced by 'id()' which has a better consistency.")]]
+		inline std::string GetPathId() const {return id();}
+
 		Path GetCachePath() const;
 		inline bool empty() const {return path.empty() || source == FileSource::None;}
+		std::string string() const;
+		inline std::string id() const;
 
 		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;

@@ -156,13 +156,12 @@ namespace Voxymore::Core
 		return GetFullPath();
 	}
 
-	std::string Path::GetPathId() const
+	std::string Path::id() const
 	{
 		VXM_PROFILE_FUNCTION();
 		std::filesystem::path p = GetFileSourceName(source) / path;
 		return p.string();
 	}
-
 	Path Path::GetCachePath() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -188,6 +187,10 @@ namespace Voxymore::Core
 			}
 		}
 		return {};
+	}
+	std::string Path::string() const
+	{
+		return GetFullPath().string();
 	}
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p)
