@@ -27,10 +27,10 @@ namespace Voxymore::Core {
 
 	enum PixelFormat
 	{
-		RED,
-		RG,
-		RGB,
-		RGBA,
+		RED = 1,
+		RG = 2,
+		RGB = 3,
+		RGBA = 4,
 	};
 
 	enum PixelType

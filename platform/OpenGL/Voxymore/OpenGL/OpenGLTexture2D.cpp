@@ -40,7 +40,7 @@ namespace Voxymore::Core {
 				std::string strPath = path.string();
 				VXM_CORE_ASSERT(FileSystem::Exist(path), "The file {0} do not exist...", strPath);
 
-				data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
+				data = stbi_load(strPath.c_str(), &width, &height, &channels, static_cast<int>(spec.channels));
 				VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
 
 				if(spec.width && spec.width != width) VXM_CORE_WARNING("The width set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.width, width);
@@ -50,6 +50,9 @@ namespace Voxymore::Core {
 				spec.width = width;
 				spec.height = height;
 				spec.channels = channels;
+
+				spec.pixelType = PixelType::PX_8;
+				spec.pixelFormat = static_cast<PixelFormat>(channels);
 			}
 		}
 
@@ -239,12 +242,14 @@ namespace Voxymore::Core {
 				VXM_CORE_ASSERT(spec.width == width,"The width set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.width, width);
 				VXM_CORE_ASSERT(spec.height == height,"The height set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.height, height);
 				VXM_CORE_ASSERT(spec.channels == channels,"The channels set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.channels, channels);
+				VXM_CORE_ASSERT(spec.pixelType == PixelType::PX_8, "The Pixel Type in the spec ({0}) doesn't not correspond to the image ({1})", spec.pixelType, PixelType::PX_8);
+				VXM_CORE_ASSERT(spec.pixelFormat == static_cast<PixelFormat>(channels), "The Pixel Format in the spec ({0}) doesn't not correspond to the image ({1})", spec.pixelFormat, static_cast<PixelFormat>(channels));
 			}
 
+			if(data == nullptr) { VXM_CORE_WARNING("We return a null data pointer for the texture '{0}'", spec.name); }
 			return data;
 		}
 	};
-
 
 	OpenGLTexture2D::OpenGLTexture2D(const Path& path) : m_Path(path)
 	{
@@ -252,168 +257,81 @@ namespace Voxymore::Core {
 		m_TextureSpecification.name = m_Path.id();
 		m_TextureSpecification.image = m_Path;
 
-		stbi_set_flip_vertically_on_load(true);
-		int width, height, channels;
-		std::string strPath = m_Path.string();
-		VXM_CORE_ASSERT(std::filesystem::exists(m_Path), "The file {0} do not exist...", strPath);
-		stbi_uc* data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
-		VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
-		m_Width = width;
-		m_Height = height;
-		m_Channels = channels;
-
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-
-		GLenum internalFormat = 0;
-		GLenum dataFormat = 0;
-		if(channels == 4) { internalFormat = GL_RGBA8; dataFormat = GL_RGBA; }
-		else if(channels == 3) { internalFormat = GL_RGB8; dataFormat = GL_RGB; }
-		else if(channels == 2) { internalFormat = GL_RG8; dataFormat = GL_RG; }
-		else if(channels == 1) { internalFormat = GL_R8; dataFormat = GL_RED; }
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
-
-		stbi_image_free(data);
+		CreateTexture();
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path) : m_Path(Path::GetPath(path))
 	{
 		VXM_PROFILE_FUNCTION();
-
 		m_TextureSpecification.name = m_Path.id();
 		m_TextureSpecification.image = m_Path;
 
-		stbi_set_flip_vertically_on_load(true);
-		int width, height, channels;
-		std::string strPath = m_Path.string();
-		VXM_CORE_ASSERT(FileSystem::Exist(m_Path), "The file {0} do not exist...", strPath);
-		stbi_uc* data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
-		VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
-		m_TextureSpecification.width = m_Width = width;
-		m_TextureSpecification.height = m_Height = height;
-		m_TextureSpecification.channels = m_Channels = channels;
-
-
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-
-		GLenum internalFormat = 0;
-		GLenum dataFormat = 0;
-		m_TextureSpecification.pixelType = PixelType::PX_8UI;
-		if(channels == 4) { internalFormat = GL_RGBA8; dataFormat = GL_RGBA; m_TextureSpecification.pixelFormat = PixelFormat::RGBA; }
-		else if(channels == 3) { internalFormat = GL_RGB8; dataFormat = GL_RGB; m_TextureSpecification.pixelFormat = PixelFormat::RGB; }
-		else if(channels == 2) { internalFormat = GL_RG8; dataFormat = GL_RG; m_TextureSpecification.pixelFormat = PixelFormat::RG; }
-		else if(channels == 1) { internalFormat = GL_R8; dataFormat = GL_RED; m_TextureSpecification.pixelFormat = PixelFormat::RED; }
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
-
-		stbi_image_free(data);
+		CreateTexture();
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const uint8_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_TextureSpecification.name = std::to_string(m_TextureSpecification.id);
-		m_TextureSpecification.width = m_Width;
-		m_TextureSpecification.height = m_Height;
-		m_TextureSpecification.channels = m_Channels;
-
 		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
+		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
+		m_TextureSpecification.pixelType = PX_8;
+		m_TextureSpecification.width = width;
+		m_TextureSpecification.height = height;
+		m_TextureSpecification.channels = channels;
+		m_TextureSpecification.image = data;
 
-		GLenum internalFormat = 0;
-		GLenum dataFormat = 0;
-		m_TextureSpecification.pixelType = PixelType::PX_8UI;
-		if(channels == 4) { internalFormat = GL_RGBA8; dataFormat = GL_RGBA; m_TextureSpecification.pixelFormat = PixelFormat::RGBA; }
-		else if(channels == 3) { internalFormat = GL_RGB8; dataFormat = GL_RGB; m_TextureSpecification.pixelFormat = PixelFormat::RGB; }
-		else if(channels == 2) { internalFormat = GL_RG8; dataFormat = GL_RG; m_TextureSpecification.pixelFormat = PixelFormat::RG; }
-		else if(channels == 1) { internalFormat = GL_R8; dataFormat = GL_RED; m_TextureSpecification.pixelFormat = PixelFormat::RED; }
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+		CreateTexture();
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const uint16_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_TextureSpecification.name = std::to_string(m_TextureSpecification.id);
-		m_TextureSpecification.width = m_Width;
-		m_TextureSpecification.height = m_Height;
-		m_TextureSpecification.channels = m_Channels;
-
 		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
+		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
+		m_TextureSpecification.pixelType = PX_16;
+		m_TextureSpecification.width = width;
+		m_TextureSpecification.height = height;
+		m_TextureSpecification.channels = channels;
+		m_TextureSpecification.image = data;
 
-		GLenum internalFormat = 0;
-		GLenum dataFormat = 0;
-		m_TextureSpecification.pixelType = PixelType::PX_16UI;
-		if(channels == 4) { internalFormat = GL_RGBA16; dataFormat = GL_RGBA; m_TextureSpecification.pixelFormat = PixelFormat::RGBA; }
-		else if(channels == 3) { internalFormat = GL_RGB16; dataFormat = GL_RGB; m_TextureSpecification.pixelFormat = PixelFormat::RGB; }
-		else if(channels == 2) { internalFormat = GL_RG16; dataFormat = GL_RG; m_TextureSpecification.pixelFormat = PixelFormat::RG; }
-		else if(channels == 1) { internalFormat = GL_R16; dataFormat = GL_RED; m_TextureSpecification.pixelFormat = PixelFormat::RED; }
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_SHORT, data);
+		CreateTexture();
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs) : m_TextureSpecification(std::move(textureSpecs))
 	{
 		VXM_PROFILE_FUNCTION();
+		CreateTexture();
+	}
+
+	void OpenGLTexture2D::CreateTexture()
+	{
+		VXM_PROFILE_FUNCTION();
 		TexSpecHelper helper(m_TextureSpecification);
 		helper.ReadDataFromImage();
+
 		m_Width = m_TextureSpecification.width;
 		m_Height = m_TextureSpecification.height;
 		m_Channels = m_TextureSpecification.channels;
 
-
 		VXM_CORE_ASSERT(m_TextureSpecification.channels > 0 && m_TextureSpecification.channels < 5, "The number of channel {0} is not handle at the moment.", m_TextureSpecification.channels);
+
 		GLenum internalFormat = helper.GetInternalFormat();
 		GLenum dataFormat = helper.GetFormat();
 		GLenum pixelType = helper.GetType();
 		const void* data = helper.GetData();
 		VXM_CORE_ASSERT(data != nullptr, "No data where found on the image {0}.", m_TextureSpecification.name);
-		//TODO: create the whole texture from the texture specification
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
-//		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
+		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, helper.GetMinFilter());
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, helper.GetMagFilter());
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, helper.GetWrapS());
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, helper.GetWrapT());
-//
+
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, helper.GetData());
 	}
 

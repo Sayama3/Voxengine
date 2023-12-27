@@ -25,10 +25,12 @@ namespace Voxymore::Core {
 
 		virtual void Bind(uint32_t slot = 0) const override;
     private:
+		void CreateTexture();
+	private:
 		Texture2DSpecification m_TextureSpecification;
 		Path m_Path;
 		uint32_t m_Width, m_Height, m_Channels;
         uint32_t m_RendererID;
-    };
+	};
 
 } // Core
