@@ -2,6 +2,8 @@
 // Created by ianpo on 01/08/2023.
 //
 
+#include <utility>
+
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 
@@ -153,9 +155,12 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 	}
 
-	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters)
+	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters), m_Textures()
 	{
 		VXM_PROFILE_FUNCTION();
+		for (auto& texture : m_Textures) {
+			texture = nullptr;
+		}
 	}
 
 	Material::~Material()
@@ -166,12 +171,41 @@ namespace Voxymore::Core {
 	{
         VXM_PROFILE_FUNCTION();
 		m_Shader->Bind();
+		for (int i = 0; i < m_Textures.size(); ++i) {
+			if(m_Textures[i] != nullptr)
+			{
+				m_Textures[i]->Bind(i);
+			}
+		}
 	}
 
 	void Material::Unbind() const
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		m_Shader->Unbind();
+		for (int i = 0; i < m_Textures.size(); ++i)
+		{
+			if(m_Textures[i] != nullptr)
+			{
+				Texture2D::Unbind(i);
+			}
+		}
+	}
+
+	void Material::SetTexture(Ref<Texture2D> texture, int binding)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
+		if(binding >= 0 && binding < m_Textures.max_size()) return;
+		m_Textures[binding] = std::move(texture);
+	}
+
+	void Material::UnsetTexture(int binding)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
+		if(binding >= 0 && binding < m_Textures.max_size()) return;
+		m_Textures[binding] = nullptr;
 	}
 
 	void Material::ChangeShader(const std::string &shaderName)

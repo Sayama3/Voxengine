@@ -48,5 +48,11 @@ namespace Voxymore {
             VXM_PROFILE_FUNCTION();
             glViewport(static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height));
         }
-    } // Voxymore
+
+		void OpenGLRenderAPI::UnbindTexture(uint32_t slot)
+		{
+			VXM_PROFILE_FUNCTION();
+			glBindTextureUnit(slot, 0);
+		}
+	} // Voxymore
 } // Core

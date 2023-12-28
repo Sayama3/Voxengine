@@ -17,6 +17,7 @@ namespace Voxymore::Core {
             virtual void Clear() override;
 			virtual void ClearVABinding() override;
 			virtual void ClearShaderBinding() override;
+			virtual void UnbindTexture(uint32_t slot) override;
 
             virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
         };

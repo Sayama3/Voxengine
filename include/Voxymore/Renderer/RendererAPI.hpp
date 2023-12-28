@@ -26,6 +26,7 @@ namespace Voxymore {
             virtual void Clear() = 0;
 			virtual void ClearVABinding() = 0;
 			virtual void ClearShaderBinding() = 0;
+			virtual void UnbindTexture(uint32_t slot) = 0;
 
             virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 

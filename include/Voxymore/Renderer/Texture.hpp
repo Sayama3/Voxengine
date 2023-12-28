@@ -77,6 +77,7 @@ namespace Voxymore::Core {
         virtual uint32_t GetDepth() const = 0;
 
         virtual void Bind(uint32_t slot = 0) const = 0;
+        static void Unbind(uint32_t slot = 0);
 		virtual uint32_t GetRendererID() const = 0;
 
 		//TODO: Add a 'T GetPixel<T>(uint32_t index) const;' function.

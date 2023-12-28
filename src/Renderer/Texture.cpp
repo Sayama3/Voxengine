@@ -89,5 +89,22 @@ namespace Voxymore::Core {
 		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
 		return nullptr;
 	}
+
+	void Texture::Unbind(uint32_t slot)
+	{
+		VXM_PROFILE_FUNCTION();
+		switch (Renderer::GetAPI()) {
+
+			case RendererAPI::API::None:
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				break;
+			case RendererAPI::API::OpenGL:
+				RenderCommand::UnbindTexture(slot);
+				break;
+			default:
+				VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()));
+				break;
+		}
+	}
 } // Voxymore
 // Core
