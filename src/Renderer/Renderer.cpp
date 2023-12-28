@@ -98,11 +98,21 @@ namespace Voxymore::Core {
 
 		for (const auto& sm : mesh.GetSubMeshes())
 		{
-			s_Data.MaterialUniformBuffer->SetData(&sm.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
-			sm.Bind();
-			RenderCommand::DrawIndexed(sm.GetVertexArray());
-            sm.Unbind();
+			Submit(sm);
 		}
+	}
+
+	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
+	{
+		Submit(*mesh, transform, entityId);
+	}
+
+	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)
+	{
+		s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+		mesh.Bind();
+		RenderCommand::DrawIndexed(mesh.GetVertexArray());
+		mesh.Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform, int entityId)

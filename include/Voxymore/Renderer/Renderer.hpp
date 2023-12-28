@@ -61,6 +61,9 @@ namespace Voxymore {
 			static void Submit(const MeshGroup& mesh, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 			static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 
+			static void Submit(const Ref<Mesh>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+
 			inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		private:
 			//            static Scope<RendererData> s_Data;
