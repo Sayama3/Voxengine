@@ -167,7 +167,7 @@ namespace Voxymore::Core
 			};
 
 			mesh = CreateRef<Mesh>(square, vertices);
-			mesh->SetShader("Default");
+			mesh->SetMaterial(MaterialLibrary::GetInstance().GetOrCreate(std::to_string(mesh->GetUUID()), "Default"));
 			m_Meshes[currentType] = mesh;
 		}
 
@@ -242,7 +242,7 @@ namespace Voxymore::Core
 			};
 
 			mesh = CreateRef<Mesh>(cube, vertices);
-			mesh->SetShader("Default");
+			mesh->SetMaterial(MaterialLibrary::GetInstance().GetOrCreate(std::to_string(mesh->GetUUID()), "Default"));
 			m_Meshes[currentType] = mesh;
 		}
 
