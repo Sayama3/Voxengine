@@ -135,7 +135,11 @@ namespace Voxymore::Core
 		switch (type)
 		{
 			case Primitive::Square: return GetInstance()->GetOrCreateSquare();
+			case Primitive::Cube: return GetInstance()->GetOrCreateCube();
 		}
+
+		VXM_CORE_ASSERT(false, "The Primitive ({0}) is not implemented", (uint32_t)type);
+		return nullptr;
 	}
 
 	Ref<Mesh> Primitive::GetOrCreateSquare()
