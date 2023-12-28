@@ -9,6 +9,8 @@
 
 namespace Voxymore::Core
 {
+	Primitive* s_Primitive = nullptr;
+
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -82,5 +84,164 @@ namespace Voxymore::Core
 
 	Vertex::Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color) : Position(position), Normal(normal), TexCoord(texCoord), Color(color)
 	{
+	}
+
+	Primitive* Primitive::GetInstance()
+	{
+		VXM_PROFILE_FUNCTION();
+		return s_Primitive;
+	}
+
+	void Primitive::InitPrimitives()
+	{
+		VXM_PROFILE_FUNCTION();
+		if(IsInit())
+		{
+			VXM_CORE_WARNING("The primitive is already initialized.");
+			return;
+		}
+
+		s_Primitive = new Primitive();
+	}
+
+	void Primitive::DestroyPrimitives()
+	{
+		VXM_PROFILE_FUNCTION();
+		if(!IsInit())
+		{
+			VXM_CORE_WARNING("The primitive is not initialized.");
+			return;
+		}
+
+		delete s_Primitive;
+		s_Primitive = nullptr;
+	}
+
+	bool Primitive::IsInit()
+	{
+		VXM_PROFILE_FUNCTION();
+		return s_Primitive != nullptr;
+	}
+
+	Ref<Mesh> Primitive::GetMesh(Primitive::Type type)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(IsInit(), "The Primitive is not initialized.");
+		if(!IsInit())
+		{
+			return nullptr;
+		}
+
+		switch (type)
+		{
+			case Primitive::Square: return GetInstance()->GetOrCreateSquare();
+		}
+	}
+
+	Ref<Mesh> Primitive::GetOrCreateSquare()
+	{
+		VXM_PROFILE_FUNCTION();
+		Ref<Mesh> mesh;
+		Type currentType = Type::Square;
+
+		if (m_Meshes.contains(currentType))
+		{
+			mesh = m_Meshes.at(currentType);
+		}
+		else
+		{
+			std::vector<Vertex> square {
+					Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0,0,1), glm::vec2(0,0)), // 0
+					Vertex(glm::vec3(+0.5f, -0.5f, 0.0f), glm::vec3(0,0,1), glm::vec2(1,0)), // 1
+					Vertex(glm::vec3(+0.5f, +0.5f, 0.0f), glm::vec3(0,0,1), glm::vec2(1,1)), // 2
+					Vertex(glm::vec3(-0.5f, +0.5f, 0.0f), glm::vec3(0,0,1), glm::vec2(0,1)), // 3
+			};
+
+			std::vector<uint32_t> vertices {
+					0,1,2,
+					0,2,3
+			};
+
+			mesh = CreateRef<Mesh>(square, vertices);
+			mesh->SetShader("Default");
+			m_Meshes[currentType] = mesh;
+		}
+
+		return mesh;
+	}
+
+	Ref<Mesh> Primitive::GetOrCreateCube()
+	{
+		VXM_PROFILE_FUNCTION();
+		Ref<Mesh> mesh;
+		Type currentType = Type::Cube;
+
+		if (m_Meshes.contains(currentType))
+		{
+			mesh = m_Meshes.at(currentType);
+		}
+		else
+		{
+			std::vector<Vertex> cube {
+					//Front Face
+					Vertex(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(0,0,+1), glm::vec2(0,0)), // 0
+					Vertex(glm::vec3(+0.5f, -0.5f, +0.5f), glm::vec3(0,0,+1), glm::vec2(1,0)), // 1
+					Vertex(glm::vec3(+0.5f, +0.5f, +0.5f), glm::vec3(0,0,+1), glm::vec2(1,1)), // 2
+					Vertex(glm::vec3(-0.5f, +0.5f, +0.5f), glm::vec3(0,0,+1), glm::vec2(0,1)), // 3
+					//Front Face
+					Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0,0,-1), glm::vec2(0,0)), // 4
+					Vertex(glm::vec3(+0.5f, -0.5f, -0.5f), glm::vec3(0,0,-1), glm::vec2(1,0)), // 5
+					Vertex(glm::vec3(+0.5f, +0.5f, -0.5f), glm::vec3(0,0,-1), glm::vec2(1,1)), // 6
+					Vertex(glm::vec3(-0.5f, +0.5f, -0.5f), glm::vec3(0,0,-1), glm::vec2(0,1)), // 7
+					//Front Face
+					Vertex(glm::vec3(-0.5f, +0.5f, -0.5f), glm::vec3(0,+1, 0), glm::vec2(0,0)), // 8
+					Vertex(glm::vec3(+0.5f, +0.5f, -0.5f), glm::vec3(0,+1, 0), glm::vec2(1,0)), // 9
+					Vertex(glm::vec3(+0.5f, +0.5f, +0.5f), glm::vec3(0,+1, 0), glm::vec2(1,1)), // 10
+					Vertex(glm::vec3(-0.5f, +0.5f, +0.5f), glm::vec3(0,+1, 0), glm::vec2(0,1)), // 11
+					//Front Face
+					Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0,-1, 0), glm::vec2(0,0)), // 12
+					Vertex(glm::vec3(+0.5f, -0.5f, -0.5f), glm::vec3(0,-1, 0), glm::vec2(1,0)), // 13
+					Vertex(glm::vec3(+0.5f, -0.5f, +0.5f), glm::vec3(0,-1, 0), glm::vec2(1,1)), // 14
+					Vertex(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(0,-1, 0), glm::vec2(0,1)), // 15
+					//Right Face
+					Vertex(glm::vec3(+0.5f, -0.5f, -0.5f), glm::vec3(+1, 0, 0), glm::vec2(0,0)), // 16
+					Vertex(glm::vec3(+0.5f, +0.5f, -0.5f), glm::vec3(+1, 0, 0), glm::vec2(1,0)), // 17
+					Vertex(glm::vec3(+0.5f, +0.5f, +0.5f), glm::vec3(+1, 0, 0), glm::vec2(1,1)), // 18
+					Vertex(glm::vec3(+0.5f, -0.5f, +0.5f), glm::vec3(+1, 0, 0), glm::vec2(0,1)), // 19
+					//Left Face
+					Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1, 0, 0), glm::vec2(0,0)), // 20
+					Vertex(glm::vec3(-0.5f, +0.5f, -0.5f), glm::vec3(-1, 0, 0), glm::vec2(1,0)), // 21
+					Vertex(glm::vec3(-0.5f, +0.5f, +0.5f), glm::vec3(-1, 0, 0), glm::vec2(1,1)), // 22
+					Vertex(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(-1, 0, 0), glm::vec2(0,1)), // 23
+
+			};
+
+			std::vector<uint32_t> vertices {
+					// Front
+					0,1,2,
+					0,2,3,
+					// Back
+					4,6,5,
+					4,7,6,
+					// Front
+					8,9,10,
+					8,10,11,
+					// Back
+					12,14,13,
+					12,15,14,
+					// Front
+					16,17,18,
+					16,18,19,
+					// Back
+					20,22,21,
+					20,23,22,
+			};
+
+			mesh = CreateRef<Mesh>(cube, vertices);
+			mesh->SetShader("Default");
+			m_Meshes[currentType] = mesh;
+		}
+
+		return mesh;
 	}
 } // namespace Voxymore::Core
