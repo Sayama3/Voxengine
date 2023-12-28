@@ -67,8 +67,8 @@ namespace Voxymore::Core {
 		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
-        vertexArray->Unbind();
-        shader->Unbind();
+		vertexArray->Unbind();
+		shader->Unbind();
 	}
 	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform, int entityId)
 	{
@@ -85,20 +85,23 @@ namespace Voxymore::Core {
 		material->Bind();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
-        vertexArray->Unbind();
-        material->Unbind();
+		vertexArray->Unbind();
+		material->Unbind();
 	}
 
-	void Renderer::Submit(const MeshGroup& mesh, const glm::mat4& transform, int entityId)
+	void Renderer::Submit(const MeshGroup& meshGroup, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		for (const auto& sm : mesh.GetSubMeshes())
+		for (const auto& mesh : meshGroup.GetSubMeshes())
 		{
-			Submit(sm);
+			s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+			mesh.Bind();
+			RenderCommand::DrawIndexed(mesh.GetVertexArray());
+			mesh.Unbind();
 		}
 	}
 
@@ -109,6 +112,9 @@ namespace Voxymore::Core {
 
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)
 	{
+		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.EntityId = entityId;
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 		mesh.Bind();
 		RenderCommand::DrawIndexed(mesh.GetVertexArray());
@@ -123,7 +129,7 @@ namespace Voxymore::Core {
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);
 		}
-        model->Unbind();
+		model->Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform, int entityId)
@@ -143,7 +149,6 @@ namespace Voxymore::Core {
 			}
 		}
 	}
-
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
