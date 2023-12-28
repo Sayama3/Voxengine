@@ -216,6 +216,12 @@ namespace Voxymore::Core {
 		return m_Parameters;
 	}
 
+	MaterialParameters& Material::GetMaterialsParameters()
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_Parameters;
+	}
+
 	MaterialLibrary* MaterialLibrary::s_Instance = nullptr;
 	MaterialLibrary& MaterialLibrary::GetInstance()
 	{

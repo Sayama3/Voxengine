@@ -108,6 +108,7 @@ namespace Voxymore::Core {
 		void SetMaterialName(const std::string& name);
 
 		const MaterialParameters& GetMaterialsParameters() const;
+		MaterialParameters& GetMaterialsParameters();
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
 		virtual void Serialize(YAML::Emitter& emitter) const override;
