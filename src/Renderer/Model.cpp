@@ -389,7 +389,6 @@ namespace Voxymore::Core
 	void Model::Bind()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Shader->Bind();
 		for (int i = 0; i < m_Textures.size(); ++i)
 		{
 			m_Textures[i]->Bind(i);

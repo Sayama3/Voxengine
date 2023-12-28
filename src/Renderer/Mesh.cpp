@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core
 {
-	Primitive* s_Primitive = nullptr;
+	static Primitive* s_Primitive = nullptr;
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
@@ -44,8 +44,8 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
-		VXM_CORE_ASSERT(m_Material != nullptr, "The Material must be set.");
-		m_Material->Bind();
+//		VXM_CORE_ASSERT(m_Material != nullptr, "The Material must be set.");
+//		m_Material->Bind();
 		m_VertexArray->Bind();
 	}
 

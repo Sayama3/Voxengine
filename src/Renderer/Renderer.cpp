@@ -8,6 +8,7 @@
 
 namespace Voxymore::Core {
 	static RendererData s_Data;
+	static std::string s_BindedShader;
 
 	void Renderer::Init() {
 		VXM_PROFILE_FUNCTION();
@@ -36,6 +37,7 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 
+		s_BindedShader = "";
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
@@ -43,13 +45,14 @@ namespace Voxymore::Core {
 	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform)
 	{
 		VXM_PROFILE_FUNCTION();
-
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
 	void Renderer::EndScene() {
 		VXM_PROFILE_FUNCTION();
+		RenderCommand::ClearBinding();
+		s_BindedShader = "";
 	}
 
 	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform, int entityId) {
@@ -61,14 +64,17 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		shader->Bind();
+		auto& shaderName = shader->GetName();
+		if(shaderName != s_BindedShader)
+		{
+			shader->Bind();
+			s_BindedShader = shaderName;
+		}
 		//TODO: Set the view projection matrix once per frame not once per model drawn.
 		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_Data.ViewProjectionMatrix);
 		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
-		vertexArray->Unbind();
-		shader->Unbind();
 	}
 	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform, int entityId)
 	{
@@ -81,12 +87,14 @@ namespace Voxymore::Core {
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-		material->Bind();
+		auto& shaderName = material->GetShaderName();
+		if(shaderName != s_BindedShader)
+		{
+			material->Bind();
+			s_BindedShader = shaderName;
+		}
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
-		vertexArray->Unbind();
-		material->Unbind();
 	}
 
 	void Renderer::Submit(const MeshGroup& meshGroup, const glm::mat4& transform, int entityId)
@@ -100,25 +108,37 @@ namespace Voxymore::Core {
 		{
 			s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			mesh.Bind();
+			auto& shaderName = mesh.GetMaterial()->GetShaderName();
+			if(shaderName != s_BindedShader)
+			{
+				mesh.GetMaterial()->Bind();
+				s_BindedShader = shaderName;
+			}
 			RenderCommand::DrawIndexed(mesh.GetVertexArray());
-			mesh.Unbind();
 		}
 	}
 
 	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
 	{
+		VXM_PROFILE_FUNCTION();
 		Submit(*mesh, transform, entityId);
 	}
 
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)
 	{
+		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 		mesh.Bind();
+		auto& shaderName = mesh.GetMaterial()->GetShaderName();
+		if(shaderName != s_BindedShader)
+		{
+			mesh.GetMaterial()->Bind();
+			s_BindedShader = shaderName;
+		}
 		RenderCommand::DrawIndexed(mesh.GetVertexArray());
-		mesh.Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform, int entityId)
@@ -129,7 +149,6 @@ namespace Voxymore::Core {
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);
 		}
-		model->Unbind();
 	}
 
 	void Renderer::Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform, int entityId)

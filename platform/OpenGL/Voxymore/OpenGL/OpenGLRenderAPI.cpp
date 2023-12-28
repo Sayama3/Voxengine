@@ -27,6 +27,17 @@ namespace Voxymore {
             VXM_PROFILE_FUNCTION();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
+		void ClearVABinding()
+		{
+			VXM_PROFILE_FUNCTION();
+			glBindVertexArray(0);
+		}
+
+		void ClearShaderBinding()
+		{
+			VXM_PROFILE_FUNCTION();
+			glUseProgram(0);
+		}
 
         void OpenGLRenderAPI::DrawIndexed(const Ref<VertexArray> &vertexArray) {
             VXM_PROFILE_FUNCTION();
