@@ -37,11 +37,9 @@ namespace Voxymore::Core
 		for (entt::entity e : particles)
 		{
 			auto&& [pc, tc] = particles.get<ParticleComponent, TransformComponent>(e);
-			Particle p = pc.GetParticle(tc.GetPosition());
-			p.Integrate(ts);
-			tc.SetPosition(p.GetPosition());
-			pc.Velocity = p.GetVelocity();
-			pc.Acceleration = p.GetAcceleration();
+			pc.SetPosition(tc.GetPosition());
+			pc.Integrate(ts);
+			tc.SetPosition(pc.GetPosition());
 		}
 	}
 

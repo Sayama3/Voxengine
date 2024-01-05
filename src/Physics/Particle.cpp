@@ -6,14 +6,14 @@
 
 namespace Voxymore::Core
 {
-	Particle::Particle(const Vec3& position, const Vec3& velocity, const Vec3& acceleration, Real damping, Real mass) : m_Position(position), m_Velocity(velocity), m_Acceleration(acceleration), m_Damping(damping), m_InverseMass(1.0)
+	Particle::Particle(const Vec3& position, const Vec3& velocity, const Vec3& acceleration, Real damping, Real inverseMass) :
+			m_Position(position), m_Velocity(velocity), m_Acceleration(acceleration), m_Damping(damping), m_InverseMass(inverseMass)
 	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(mass != 0, "The mass cannot be 0.");
-		if(mass != 0)
-		{
-			m_InverseMass = 1.0 / mass;
-		}
+	}
+
+	Particle::Particle(const Vec3 &position, const Vec3 &forceAccumulate, const Vec3 &velocity, const Vec3 &acceleration, Real damping, Real inverseMass) :
+			m_Position(position), m_ForceAccumulate(forceAccumulate), m_Velocity(velocity), m_Acceleration(acceleration), m_Damping(damping), m_InverseMass(inverseMass)
+	{
 	}
 
 	const Vec3& Particle::GetPosition() const
@@ -78,6 +78,7 @@ namespace Voxymore::Core
 
 	Real Particle::GetInverseMass() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return m_InverseMass;
 	}
 
@@ -128,4 +129,26 @@ namespace Voxymore::Core
 		//TODO: clearAccumulator();
 	}
 
+	Vec3 Particle::AddAcceleration(Vec3 acceleration)
+	{
+		VXM_PROFILE_FUNCTION();
+		Vec3 force = acceleration;
+		if(m_InverseMass > 0)
+		{
+			force *= GetMass();
+		}
+		m_ForceAccumulate += force;
+	}
+
+	Vec3 Particle::AddForce(Vec3 force)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_ForceAccumulate += force;
+	}
+
+	void Particle::ClearAccumulator()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_ForceAccumulate = Vec3(0);
+	}
 }
