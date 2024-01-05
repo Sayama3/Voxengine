@@ -46,7 +46,7 @@ namespace Voxymore::Core
 		InitScene();
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
 		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->m_ID)+".vxm"};
-		std::string cacheSceneStr = cacheScene.GetFullPath().string();
+		auto cacheSceneStr = cacheScene.GetFullPath();
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
 		SceneSerializer cacheSerializer(scene);
 		cacheSerializer.Serialize(cacheSceneStr);
@@ -55,8 +55,26 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheSceneStr);
 	}
 
+	Scene::Scene(const Scene &scene) : m_ID(scene.m_ID), m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
+	{
+		VXM_PROFILE_FUNCTION();
+		InitScene();
+
+		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
+		auto cacheSceneStr = cacheScene.GetFullPath();
+		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
+		SceneSerializer cacheSerializer((Scene*)&scene);
+		cacheSerializer.Serialize(cacheSceneStr);
+		// Change target to deserialize the data to the current scene
+		cacheSerializer.ChangeSceneTarget(this);
+		cacheSerializer.Deserialize(cacheSceneStr);
+	}
+
+
 	Scene &Scene::operator=(const Scene & scene)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_ID = scene.m_ID;
 		m_Name = scene.m_Name;
 		m_ViewportHeight = scene.m_ViewportHeight;
@@ -64,7 +82,7 @@ namespace Voxymore::Core
 
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
 		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
-		std::string cacheSceneStr = cacheScene.GetFullPath().string();
+		auto cacheSceneStr = cacheScene.GetFullPath();
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
 		SceneSerializer cacheSerializer((Scene*)&scene);
 		cacheSerializer.Serialize(cacheSceneStr);
@@ -356,6 +374,5 @@ namespace Voxymore::Core
 		}
 		return Entity();
 	}
-
 } // Voxymore
 // Core

@@ -36,6 +36,7 @@ namespace Voxymore::Core
 		Scene(UUID id);
 		Scene(UUID id, std::string name);
 		Scene(Ref<Scene> scene);
+		Scene(const Scene& scene);
 		Scene& operator= (const Scene&);
 		~Scene();
 

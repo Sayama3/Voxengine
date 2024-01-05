@@ -38,6 +38,11 @@ namespace Voxymore::Core
 	{
 	}
 
+	bool SceneSerializer::Serialize(const Path &filePath) const
+	{
+		return Serialize(filePath.GetFullPath());
+	}
+
 	bool SceneSerializer::Serialize(const std::filesystem::path &filePath) const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -72,6 +77,11 @@ namespace Voxymore::Core
 		fileOut << out.c_str();
 
 		return true;
+	}
+
+	bool SceneSerializer::Deserialize(const Path &filePath, bool deserializeId)
+	{
+		return Deserialize(filePath.GetFullPath(), deserializeId);
 	}
 
 	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath, bool deserializeId)
