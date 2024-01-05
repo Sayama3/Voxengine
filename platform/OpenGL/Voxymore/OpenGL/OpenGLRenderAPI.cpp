@@ -27,6 +27,17 @@ namespace Voxymore {
             VXM_PROFILE_FUNCTION();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
+		void OpenGLRenderAPI::ClearVABinding()
+		{
+			VXM_PROFILE_FUNCTION();
+			glBindVertexArray(0);
+		}
+
+		void OpenGLRenderAPI::ClearShaderBinding()
+		{
+			VXM_PROFILE_FUNCTION();
+			glUseProgram(0);
+		}
 
         void OpenGLRenderAPI::DrawIndexed(const Ref<VertexArray> &vertexArray) {
             VXM_PROFILE_FUNCTION();
@@ -37,5 +48,11 @@ namespace Voxymore {
             VXM_PROFILE_FUNCTION();
             glViewport(static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height));
         }
-    } // Voxymore
+
+		void OpenGLRenderAPI::UnbindTexture(uint32_t slot)
+		{
+			VXM_PROFILE_FUNCTION();
+			glBindTextureUnit(slot, 0);
+		}
+	} // Voxymore
 } // Core

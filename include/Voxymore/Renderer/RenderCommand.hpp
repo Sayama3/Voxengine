@@ -34,6 +34,18 @@ namespace Voxymore::Core {
         	VXM_PROFILE_FUNCTION();
             s_RendererAPI->Clear();
         }
+		inline static void ClearBinding()
+		{
+			VXM_PROFILE_FUNCTION();
+			s_RendererAPI->ClearVABinding();
+			s_RendererAPI->ClearShaderBinding();
+		}
+
+		inline static void UnbindTexture(uint32_t slot)
+		{
+			VXM_PROFILE_FUNCTION();
+			s_RendererAPI->UnbindTexture(slot);
+		}
     private:
         static RendererAPI* s_RendererAPI;
     };

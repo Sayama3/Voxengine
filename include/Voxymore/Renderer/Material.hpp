@@ -87,7 +87,7 @@ namespace Voxymore::Core {
 		std::string m_MaterialName = "";
 		std::string m_ShaderName = "Default";
 		MaterialParameters m_Parameters;
-		//		std::array<std::optional<Path>, 32> m_TexturesPath;
+		std::array<Ref<Texture2D>, 32> m_Textures;
 	private:
 		Ref<Shader> m_Shader;
 	public:
@@ -107,7 +107,12 @@ namespace Voxymore::Core {
 		const std::string& GetShaderName() const;
 		void SetMaterialName(const std::string& name);
 
+	public:
 		const MaterialParameters& GetMaterialsParameters() const;
+		MaterialParameters& GetMaterialsParameters();
+
+		void SetTexture(Ref<Texture2D> texture, int binding);
+		void UnsetTexture(int binding);
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
 		virtual void Serialize(YAML::Emitter& emitter) const override;

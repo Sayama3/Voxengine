@@ -148,6 +148,65 @@ namespace Voxymore::Core
 			return;
 		}
 
+
+
+		{
+			VXM_PROFILE_SCOPE("Model::Model -> Create Nodes");
+			m_Nodes.reserve(model.nodes.size());
+			for (auto &node: model.nodes) {
+				glm::mat4 matrix = GLTF::Helper::GetMatrix(node);
+				std::vector<int> children = node.children;
+				if (node.mesh > -1) m_Nodes.emplace_back(node.mesh, children, matrix);
+				else m_Nodes.emplace_back(children, matrix);
+			}
+		}
+
+		{
+			VXM_PROFILE_SCOPE("Model::Model -> Create Textures");
+			m_Textures.reserve(model.textures.size());
+			for (auto &texture: model.textures) {
+				VXM_PROFILE_SCOPE("Model::Model -> Create Texture");
+				//TODO: remove the assert and leave a blank or magenta texture by default.
+				VXM_CORE_ASSERT(texture.source > -1, "No texture associated.");
+				auto &image = model.images[texture.source];
+				if (image.bufferView > -1) {
+					VXM_CORE_ASSERT(image.width > -1 && image.height > -1 && image.component > -1, "Cannot handle image if we don't have the size or the bits of each pixels.");
+					VXM_CORE_ASSERT(image.image.size() != 0, "Cannot handle the current image...");
+					int width = image.width;
+					int height = image.height;
+					int channels = image.component;
+					if (image.bits == 8) {
+						VXM_CORE_ASSERT(image.image.size() >= width * height * channels * (image.bits / 8), "The buffer is not long enought...");
+						const auto *bufferPtr = static_cast<const uint8_t *>(image.image.data());
+						m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
+					}
+					else if (image.bits == 16) {
+						VXM_CORE_ASSERT(image.image.size() >= width * height * channels * (image.bits / 8), "The buffer is not long enought...");
+						const auto *bufferPtr = static_cast<const uint16_t *>(static_cast<const void *>(image.image.data()));
+						m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
+					}
+					else {
+						VXM_CORE_ASSERT(false, "The pixel type {0} is not handled.", image.pixel_type);
+					}
+				}
+				else {
+					VXM_CORE_ASSERT(!image.uri.empty(), "The image don't have any way to be fetch.");
+					VXM_CORE_ASSERT(!image.uri.starts_with("http"), "The engine cannot fetch the image from the internet for now.");
+					VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif", "Cannot handle the image type {0}.", image.mimeType);
+					auto parentFolder = p.GetFullPath().parent_path();
+					m_Textures.push_back(Texture2D::Create(parentFolder / image.uri));
+				}
+			}
+		}
+
+		{
+			VXM_PROFILE_SCOPE("Model::Model -> Create Scenes");
+			m_Scenes.reserve(model.scenes.size());
+			for (auto &scene: model.scenes) {
+				m_Scenes.push_back(scene.nodes);
+			}
+		}
+
 		{
 			VXM_PROFILE_SCOPE("Model::Model -> Create Meshes");
 			m_Meshes.reserve(model.meshes.size());
@@ -257,6 +316,9 @@ namespace Voxymore::Core
 							if (!MaterialLibrary::GetInstance().Exists(matName)) {
 								MaterialParameters materialParams;
 
+								std::vector<int> textures;
+								textures.reserve(5);
+
 								// PbrMetallicRoughness
 								materialParams.PbrMetallicRoughness.BaseColorFactor = glm::vec4(mat.pbrMetallicRoughness.baseColorFactor[0], mat.pbrMetallicRoughness.baseColorFactor[1], mat.pbrMetallicRoughness.baseColorFactor[2], mat.pbrMetallicRoughness.baseColorFactor[3]);
 								materialParams.PbrMetallicRoughness.BaseColorTexture.Index = mat.pbrMetallicRoughness.baseColorTexture.index;
@@ -291,8 +353,21 @@ namespace Voxymore::Core
 								materialParams.AlphaCutoff = mat.alphaCutoff;
 								materialParams.DoubleSided = mat.doubleSided;
 
+								// Textures
+								if(materialParams.PbrMetallicRoughness.BaseColorTexture.Index >= 0) textures.push_back(materialParams.PbrMetallicRoughness.BaseColorTexture.Index);
+								if(materialParams.NormalTexture.Index >= 0) textures.push_back(materialParams.NormalTexture.Index);
+								if(materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.Index >= 0) textures.push_back(materialParams.PbrMetallicRoughness.MetallicRoughnessTexture.Index);
+								if(materialParams.OcclusionTexture.Index >= 0) textures.push_back(materialParams.OcclusionTexture.Index);
+								if(materialParams.EmissiveTexture.Index >= 0) textures.push_back(materialParams.EmissiveTexture.Index);
+
 								material = CreateRef<Material>(m_Shader, materialParams);
 								material->SetMaterialName(matName);
+
+								for (uint32_t binding : textures)
+								{
+									material->SetTexture(m_Textures[binding], binding);
+								}
+
 								MaterialLibrary::GetInstance().Add(material);
 							}
 							else {
@@ -307,63 +382,6 @@ namespace Voxymore::Core
 					meshGroup.AddSubMesh(vertexes, index, material);
 				}
 				m_Meshes.push_back(meshGroup);
-			}
-		}
-
-		{
-			VXM_PROFILE_SCOPE("Model::Model -> Create Nodes");
-			m_Nodes.reserve(model.nodes.size());
-			for (auto &node: model.nodes) {
-				glm::mat4 matrix = GLTF::Helper::GetMatrix(node);
-				std::vector<int> children = node.children;
-				if (node.mesh > -1) m_Nodes.emplace_back(node.mesh, children, matrix);
-				else m_Nodes.emplace_back(children, matrix);
-			}
-		}
-
-		{
-			VXM_PROFILE_SCOPE("Model::Model -> Create Textures");
-			m_Textures.reserve(model.textures.size());
-			for (auto &texture: model.textures) {
-				VXM_PROFILE_SCOPE("Model::Model -> Create Texture");
-				//TODO: remove the assert and leave a blank or magenta texture by default.
-				VXM_CORE_ASSERT(texture.source > -1, "No texture associated.");
-				auto &image = model.images[texture.source];
-				if (image.bufferView > -1) {
-					VXM_CORE_ASSERT(image.width > -1 && image.height > -1 && image.component > -1, "Cannot handle image if we don't have the size or the bits of each pixels.");
-					VXM_CORE_ASSERT(image.image.size() != 0, "Cannot handle the current image...");
-					int width = image.width;
-					int height = image.height;
-					int channels = image.component;
-					if (image.bits == 8) {
-						VXM_CORE_ASSERT(image.image.size() >= width * height * channels * (image.bits / 8), "The buffer is not long enought...");
-						const auto *bufferPtr = static_cast<const uint8_t *>(image.image.data());
-						m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
-					}
-					else if (image.bits == 16) {
-						VXM_CORE_ASSERT(image.image.size() >= width * height * channels * (image.bits / 8), "The buffer is not long enought...");
-						const auto *bufferPtr = static_cast<const uint16_t *>(static_cast<const void *>(image.image.data()));
-						m_Textures.push_back(Texture2D::Create(bufferPtr, width, height, channels));
-					}
-					else {
-						VXM_CORE_ASSERT(false, "The pixel type {0} is not handled.", image.pixel_type);
-					}
-				}
-				else {
-					VXM_CORE_ASSERT(!image.uri.empty(), "The image don't have any way to be fetch.");
-					VXM_CORE_ASSERT(!image.uri.starts_with("http"), "The engine cannot fetch the image from the internet for now.");
-					VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif", "Cannot handle the image type {0}.", image.mimeType);
-					auto parentFolder = p.GetFullPath().parent_path();
-					m_Textures.push_back(Texture2D::Create(parentFolder / image.uri));
-				}
-			}
-		}
-
-		{
-			VXM_PROFILE_SCOPE("Model::Model -> Create Scenes");
-			m_Scenes.reserve(model.scenes.size());
-			for (auto &scene: model.scenes) {
-				m_Scenes.push_back(scene.nodes);
 			}
 		}
 	}
@@ -389,7 +407,6 @@ namespace Voxymore::Core
 	void Model::Bind()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Shader->Bind();
 		for (int i = 0; i < m_Textures.size(); ++i)
 		{
 			m_Textures[i]->Bind(i);

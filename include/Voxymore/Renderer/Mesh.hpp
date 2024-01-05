@@ -85,12 +85,44 @@ namespace Voxymore::Core
 		void SetShader(const std::string& shader);
 		const Ref<Material>& GetMaterial() const;
 		void SetMaterial(Ref<Material> material);
+		[[nodiscard]] inline UUID id() const { return m_Id; }
 	private:
+		UUID m_Id;
 		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Material> m_Material;
 		BufferLayout m_BufferLayout;
+	};
+
+	class Primitive
+	{
+	public:
+		enum Type
+		{
+			Square,
+			Cube,
+		};
+	private:
+		static Primitive* GetInstance();
+	public:
+		static void InitPrimitives();
+		static void DestroyPrimitives();
+		static bool IsInit();
+
+		static Ref<Mesh> GetMesh(Type type);
+		static Ref<Mesh> CreateOrphan(Type type);
+
+	public:
+		Primitive() = default;
+		~Primitive() = default;
+	private:
+		Ref<Mesh> GetOrCreateSquare();
+		Ref<Mesh> GetOrCreateCube();
+		static Ref<Mesh> CreateSquare();
+		static Ref<Mesh> CreateCube();
+	private:
+		std::unordered_map<Type, Ref<Mesh>> m_Meshes;
 	};
 
 } // namespace Voxymore::Core
