@@ -26,7 +26,7 @@ namespace Voxymore::Core {
 			KeyPressedEvent(const int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
             inline int GetRepeatCount() const { return m_RepeatCount; }
-            inline std::string ToString() const override
+            inline std::string string() const override
             {
                 std::stringstream ss;
                 ss << "KeyPressedEvent: " << static_cast<int>(m_KeyCode) << " (" << m_RepeatCount << " repeats)";
@@ -45,7 +45,7 @@ namespace Voxymore::Core {
 			KeyReleasedEvent(const Key keycode) : KeyEvent(keycode) {}
 			KeyReleasedEvent(const int keycode) : KeyEvent(keycode) {}
 
-            inline std::string ToString() const override
+            inline std::string string() const override
             {
                 std::stringstream ss;
                 ss << "KeyReleasedEvent: " << static_cast<int>(m_KeyCode);
@@ -61,7 +61,7 @@ namespace Voxymore::Core {
 			KeyTypedEvent(const Key keycode) : KeyEvent(keycode) {}
 			KeyTypedEvent(const int keycode) : KeyEvent(keycode) {}
 
-            inline std::string ToString() const override
+            inline std::string string() const override
             {
                 std::stringstream ss;
                 ss << "KeyTypedEvent: " << static_cast<int>(m_KeyCode);

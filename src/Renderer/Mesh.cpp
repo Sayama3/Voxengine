@@ -11,6 +11,18 @@ namespace Voxymore::Core
 {
 	static Primitive* s_Primitive = nullptr;
 
+	std::string Primitive::GetTypeString(Primitive::Type type)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		switch (type) {
+			case Square: return "Square";
+			case Cube: return "Cube";
+		}
+
+		return "None";
+	}
+
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();

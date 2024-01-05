@@ -37,15 +37,15 @@ namespace Voxymore::Core {
 
 		if(m_Parameters.addImGuiLayer)
 		{
-			// Will be delete by the LayerStack
+			// Will be deleted by the LayerStack
 			m_ImGUILayer = new ImGUILayer();
 			PushOverlay(m_ImGUILayer);
 		}
 		if(m_Parameters.addPhysicsLayer)
 		{
-			// Will be delete by the LayerStack
+			// Will be deleted by the LayerStack
 			m_PhysicsLayer = new PhysicsLayer();
-			PushLayer(m_PhysicsLayer);
+			PushOverlay(m_PhysicsLayer);
 		}
     }
 
@@ -58,7 +58,7 @@ namespace Voxymore::Core {
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
-//        VXM_CORE_INFO(e.ToString());
+//        VXM_CORE_INFO(e.string());
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
             (*--it)->OnEvent(e);{

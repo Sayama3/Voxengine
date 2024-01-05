@@ -6,6 +6,7 @@
 
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
+#include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
@@ -18,31 +19,31 @@ namespace Voxymore::Core
 {
 	Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
 	Scene::Scene(Ref<Scene> scene) : m_ID(scene->m_ID), m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		InitScene();
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
 		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->m_ID)+".vxm"};
@@ -106,14 +107,14 @@ namespace Voxymore::Core
 
 	void Scene::OnCreateIDComponent(entt::entity e)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		Entity entity(e, this);
 		m_Entities[entity.GetUUID()] = entity;
 	}
 
 	void Scene::OnDestroyIDComponent(entt::entity e)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		Entity entity(e, this);
 		auto it = m_Entities.find(entity.GetUUID());
 		if(it != m_Entities.end())
@@ -179,6 +180,15 @@ namespace Voxymore::Core
 			}
 		}
 
+		{
+			auto primitives = m_Registry.view<PrimitiveComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : primitives)
+			{
+				auto& pc = primitives.get<PrimitiveComponent>(entity);
+				if(pc.IsDirty()) pc.Load();
+			}
+		}
+
 		Renderer::BeginScene(camera);
 		{
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
@@ -187,6 +197,16 @@ namespace Voxymore::Core
 				if(model.IsLoaded())
 				{
 					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
+
+			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : primitives)
+			{
+				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
+				if(pc.IsLoaded())
+				{
+					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
 				}
 			}
 		}
@@ -199,12 +219,27 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 
+		// TODO: See if I really should reload on Runtime the models...
 		{
 			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
 			for (entt::entity entity : models)
 			{
 				auto& model = models.get<ModelComponent>(entity);
-				if(model.ShouldLoad()) model.LoadModel();
+				if(model.ShouldLoad()) {
+					model.LoadModel();
+				}
+			}
+		}
+
+		// TODO: See if I really should reload on Runtime the primitives...
+		{
+			auto primitives = m_Registry.view<PrimitiveComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : primitives)
+			{
+				auto& pc = primitives.get<PrimitiveComponent>(entity);
+				if(pc.IsDirty()) {
+					pc.Load();
+				}
 			}
 		}
 
@@ -246,13 +281,13 @@ namespace Voxymore::Core
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
 			m_Registry.view<NativeScriptComponent>(entt::exclude<DisableComponent>).each([=, this](auto entity, NativeScriptComponent& nsc)
 																						 {
-																							 if(!nsc.IsValid())
-																							 {
-																								 nsc.CreateInstance();
-																								 nsc.Instance->m_Entity = Entity{entity, this};
-																								 nsc.Instance->OnCreate();
-																							 }
-																							 nsc.Instance->OnUpdate(ts);
+																						   if(!nsc.IsValid())
+																						   {
+																							   nsc.CreateInstance();
+																							   nsc.Instance->m_Entity = Entity{entity, this};
+																							   nsc.Instance->OnCreate();
+																						   }
+																						   nsc.Instance->OnUpdate(ts);
 																						 });
 		}
 
@@ -279,7 +314,20 @@ namespace Voxymore::Core
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 				for (auto entity: modelsView) {
 					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-					if(model.IsLoaded()) Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+					if(model.IsLoaded())
+					{
+						Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+					}
+				}
+			}
+
+			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : primitives)
+			{
+				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
+				if(pc.IsLoaded())
+				{
+					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
 				}
 			}
 
@@ -289,7 +337,7 @@ namespace Voxymore::Core
 
 	Entity Scene::CreateEntity()
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		UUID id;
 		std::string entity = "Entity_"+std::to_string(id);
 		return CreateEntity(id, entity);
@@ -297,20 +345,20 @@ namespace Voxymore::Core
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		return CreateEntity(UUID(), name);
 	}
 
 	Entity Scene::CreateEntity(UUID id)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		std::string entity = "Entity_"+std::to_string(id);
 		return CreateEntity(id, entity);
 	}
 
 	Entity Scene::CreateEntity(UUID id, const std::string& name)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		Entity entity = Entity{m_Registry.create(), this};
 
 		entity.AddComponent<IDComponent>(id);
@@ -323,7 +371,7 @@ namespace Voxymore::Core
 
 	Entity Scene::GetEntity(UUID id)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		auto it = m_Entities.find(id);
 		if(it != m_Entities.end()) {
 			return it->second;
@@ -336,7 +384,7 @@ namespace Voxymore::Core
 
 	void Scene::SetViewportSize(uint32_t width, uint32_t height)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -352,14 +400,14 @@ namespace Voxymore::Core
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(entity.IsValid(), "Scene can only destroy valid entity.");
 		m_Registry.destroy(entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
-        VXM_PROFILE_FUNCTION();
+		VXM_PROFILE_FUNCTION();
 		auto cameraView = m_Registry.view<CameraComponent>();
 		for (auto entity : cameraView)
 		{

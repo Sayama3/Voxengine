@@ -73,6 +73,12 @@
     #define VXM_ASSERT(condition, ...)
 #endif
 
+#if VXM_DEBUG
+#define VXM_CHECK_WARN(condition, ...)  if(!(condition)) { VXM_CORE_WARNING(__VA_ARGS__); }
+#else
+#define VXM_CHECK_WARN(condition, ...)
+#endif
+
 #ifndef BIT
 #define BIT(X) (1 << X)
 #endif

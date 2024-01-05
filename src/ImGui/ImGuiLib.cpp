@@ -5,13 +5,21 @@
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Voxymore/Core/Application.hpp"
+#include "imgui.h"
 #include "imgui_internal.h"
+
+#ifdef VXM_DOUBLE
+#define IMGUI_SCALAR_TYPE ImGuiDataType_Double
+#else //FLOAT
+#define IMGUI_SCALAR_TYPE ImGuiDataType_Float
+#endif
+
 
 namespace Voxymore
 {
 	namespace Core
 	{
-		bool ImGuiLib::DrawVec3ControlAdvanced(const std::string& label, glm::vec3& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+		bool ImGuiLib::DrawVec3ControlAdvanced(const std::string& label, Vec3& values, float step, Real min, Real max, const std::string& format, float resetValue, float columnWidth) {
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
@@ -43,7 +51,7 @@ namespace Voxymore
 			ImGui::PopStyleColor(3);
 
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##X", &values.x, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##X", IMGUI_SCALAR_TYPE, &values.x, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -60,7 +68,7 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Y", &values.y, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##Y", IMGUI_SCALAR_TYPE, &values.y, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -77,7 +85,7 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Z", &values.z, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##Z", IMGUI_SCALAR_TYPE, &values.z, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::PopStyleVar();
 
@@ -86,7 +94,8 @@ namespace Voxymore
 			ImGui::PopID();
 			return changed;
 		}
-		bool ImGuiLib::DrawVec2ControlAdvanced(const std::string& label, glm::vec2& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+
+		bool ImGuiLib::DrawVec2ControlAdvanced(const std::string& label, Vec2& values, float step, Real min, Real max, const std::string& format, float resetValue, float columnWidth) {
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
@@ -117,7 +126,7 @@ namespace Voxymore
 			ImGui::PopStyleColor(3);
 
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##X", &values.x, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##X", IMGUI_SCALAR_TYPE, &values.x, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -134,7 +143,7 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Y", &values.y, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##Y", IMGUI_SCALAR_TYPE, &values.y, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 
 			// ==================== END ====================

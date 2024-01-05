@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_COMPUTED_DEFAULT "20")
 
 option(VoxymoreCore_SHARED_BUILD "The ${VoxymoreCore} lib in shared mode" OFF)
 option(VXM_DONT_PROFILE "Stop the profiling of the application" OFF)
+option(VXM_USE_DOUBLE "Set the application to use double as default" OFF)
 
 set(SRC_FILES src/Core/Application.cpp
         src/Core/Math.cpp
@@ -115,6 +116,12 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Assets/Assets.hpp
         src/Physics/PhysicsLayer.cpp
         include/Voxymore/Physics/PhysicsLayer.hpp
+        include/Voxymore/Physics/Particle.hpp
+        src/Physics/ParticleComponent.cpp
+        include/Voxymore/Physics/ParticleComponent.hpp
+        src/Physics/Particle.cpp
+        src/Components/PrimitiveComponent.cpp
+        include/Voxymore/Components/PrimitiveComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -128,6 +135,13 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
 endif()
 
 target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
+if(VXM_USE_DOUBLE)
+    message(STATUS "Voxymore::Core is using Double as the main floating number system.")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DOUBLE)
+else()
+    message(STATUS "Voxymore::Core is using Float as the main floating number system.")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_FLOAT)
+endif()
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 

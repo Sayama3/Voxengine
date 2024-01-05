@@ -24,4 +24,4 @@ ie. `VULKAN_SDK=C:\VulkanSDK\1.3.250.1`
 - [spriv-cross](https://github.com/KhronosGroup/SPIRV-Cross): practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.
 - [shaderc](https://github.com/google/shaderc): A collection of tools, libraries, and tests for Vulkan shader compilation.
 - [tinygltf](https://github.com/syoyo/tinygltf) (_2.8.17_) : Header only C++11 tiny glTF 2.0 library.
-- [tracy](https://github.com/wolfpld/tracy) (_0.10.0_): A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
+- [tracy](https://github.com/wolfpld/tracy) (_0.10.0_): A Real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.

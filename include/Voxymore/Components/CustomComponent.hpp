@@ -72,8 +72,8 @@ public:\
 	inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<COMP>();}\
 	inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddComponent<COMP>(); }\
 	inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<COMP>(); }\
-	static void DeserializeComponent(YAML::Node& componentNode, ::Voxymore::Core::Entity targetEntity); \
-	static void SerializeComponent(YAML::Emitter& Emitter, ::Voxymore::Core::Entity sourceEntity); \
+	static void DeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity); \
+	static void SerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity); \
 	static bool OnImGuiRender(::Voxymore::Core::Entity sourceEntity); \
 	inline static std::string GetName() { return #COMP; }
 
