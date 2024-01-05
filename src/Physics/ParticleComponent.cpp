@@ -31,6 +31,17 @@ namespace Voxymore::Core
 		DeserializeField(pc, node, Velocity, Vec3, Vec3(0.0));
 		DeserializeField(pc, node, Acceleration, Vec3, Vec3(0.0));
 		DeserializeField(pc, node, Damping, Real, 0.5);
+		DeserializeField(pc, node, InverseMass, Real, 1.0);
+	}
+
+	ParticleComponent::ParticleComponent(Vec3 acceleration, Vec3 velocity, Real damping, Real mass) : Acceleration(acceleration), Velocity(velocity), Damping(damping), InverseMass(1.0)
+	{
+		VXM_CORE_ASSERT(mass > 0.0, "The mass cannot be bellow 0.");
+		if(mass > 0)
+		{
+			InverseMass = 1.0 / mass;
+		}
+
 	}
 
 	void ParticleComponent::SerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity)
@@ -40,6 +51,7 @@ namespace Voxymore::Core
 		out << KEYVAL("Acceleration", pc.Acceleration);
 		out << KEYVAL("Velocity", pc.Velocity);
 		out << KEYVAL("Damping", pc.Damping);
+		out << KEYVAL("InverseMass", pc.InverseMass);
 	}
 
 	bool ParticleComponent::OnImGuiRender(::Voxymore::Core::Entity sourceEntity)
@@ -49,7 +61,13 @@ namespace Voxymore::Core
 		bool changed = false;
 		changed |= ImGuiLib::DrawVec3Control("Velocity", pc.Velocity);
 		changed |= ImGuiLib::DrawVec3Control("Acceleration", pc.Acceleration);
-		changed |= ImGui::DragFloat("Damping", &pc.Damping, 0.001, 0, 1);
+		changed |= ImGuiLib::DragReal("Damping", &pc.Damping, 0.001, 0, 1);
+		Real mass =  1.0 / pc.InverseMass;
+		changed |= ImGuiLib::DragReal("Mass", &mass, 0.01, 0.01);
+		if(changed && mass > 0)
+		{
+			pc.InverseMass = 1.0 / mass;
+		}
 		return changed;
 	}
 

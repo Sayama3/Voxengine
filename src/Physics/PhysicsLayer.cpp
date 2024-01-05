@@ -40,6 +40,8 @@ namespace Voxymore::Core
 			Particle p = pc.GetParticle(tc.GetPosition());
 			p.Integrate(ts);
 			tc.SetPosition(p.GetPosition());
+			pc.Velocity = p.GetVelocity();
+			pc.Acceleration = p.GetAcceleration();
 		}
 	}
 

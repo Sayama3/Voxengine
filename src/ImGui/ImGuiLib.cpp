@@ -153,5 +153,57 @@ namespace Voxymore
 			return changed;
 		}
 
+		bool ImGuiLib::DragReal(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalar(label.c_str(), IMGUI_SCALAR_TYPE, v, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal2(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 2, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal3(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 3, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal4(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 4, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragRealRange2(const std::string &label, Real *v_current_min, Real *v_current_max, float v_speed, Real v_min, Real v_max, const char *format, const char *format_max, ImGuiSliderFlags flags)
+		{
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			if (window->SkipItems)
+				return false;
+
+			ImGuiContext& g = *GImGui;
+			ImGui::PushID(label.c_str());
+			ImGui::BeginGroup();
+			ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+
+			float min_min = (v_min >= v_max) ? -FLT_MAX : v_min;
+			float min_max = (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max);
+			ImGuiSliderFlags min_flags = flags | ((min_min == min_max) ? ImGuiSliderFlags_ReadOnly : 0);
+			bool value_changed = ImGui::DragScalar("##min", IMGUI_SCALAR_TYPE, v_current_min, v_speed, &min_min, &min_max, format, min_flags);
+			ImGui::PopItemWidth();
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+
+			float max_min = (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min);
+			float max_max = (v_min >= v_max) ? FLT_MAX : v_max;
+			ImGuiSliderFlags max_flags = flags | ((max_min == max_max) ? ImGuiSliderFlags_ReadOnly : 0);
+			value_changed |= ImGui::DragScalar("##max", IMGUI_SCALAR_TYPE, v_current_max, v_speed, &max_min, &max_max, format_max ? format_max : format, max_flags);
+			ImGui::PopItemWidth();
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+
+			ImGui::TextEx(label.c_str(), ImGui::FindRenderedTextEnd(label.c_str()));
+			ImGui::EndGroup();
+			ImGui::PopID();
+
+			return value_changed;
+		}
+
 	}// namespace Core
 }// namespace Voxymore

@@ -14,9 +14,14 @@ namespace Voxymore::Core
 	{
 		VXM_IMPLEMENT_COMPONENT(ParticleComponent);
 	public:
+		inline ParticleComponent() = default;
+		inline ~ParticleComponent() = default;
+		inline ParticleComponent(Vec3 acceleration, Vec3 velocity, Real damping, Real mass);
+
 		Vec3 Acceleration = Vec3(0.0);
 		Vec3 Velocity = Vec3(0.0);
 		Real Damping = 0.5;
+		Real InverseMass = 1.0;
 
 		[[nodiscard]] Particle GetParticle(Entity e) const;
 		[[nodiscard]] Particle GetParticle(const Vec3& pos) const;
