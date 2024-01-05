@@ -12,6 +12,7 @@
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -22,6 +23,7 @@ namespace Voxymore::Core {
 		uint32_t height = 900;
 		std::vector<std::string> arguments;
 		bool addImGuiLayer = true;
+		bool addPhysicsLayer = true;
 	};
 
 	class Application {
@@ -55,6 +57,7 @@ namespace Voxymore::Core {
 		double m_LastFrameTime = 0.0;
 		Scope<Window> m_Window;
 		ImGUILayer* m_ImGUILayer;
+		PhysicsLayer* m_PhysicsLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		static Application* s_Instance;

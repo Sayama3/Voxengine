@@ -113,6 +113,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/ImGUI/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
+        src/Physics/PhysicsLayer.cpp
+        include/Voxymore/Physics/PhysicsLayer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

@@ -15,7 +15,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr) {
+    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr), m_PhysicsLayer(nullptr) {
         VXM_PROFILE_FUNCTION();
 
         if(s_Instance != nullptr){
@@ -37,8 +37,15 @@ namespace Voxymore::Core {
 
 		if(m_Parameters.addImGuiLayer)
 		{
+			// Will be delete by the LayerStack
 			m_ImGUILayer = new ImGUILayer();
 			PushOverlay(m_ImGUILayer);
+		}
+		if(m_Parameters.addPhysicsLayer)
+		{
+			// Will be delete by the LayerStack
+			m_PhysicsLayer = new PhysicsLayer();
+			PushLayer(m_PhysicsLayer);
 		}
     }
 
