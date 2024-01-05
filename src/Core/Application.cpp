@@ -15,8 +15,9 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)) {
+    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr) {
         VXM_PROFILE_FUNCTION();
+
         if(s_Instance != nullptr){
             VXM_CORE_ERROR("There should only be one application.");
         }
@@ -34,12 +35,16 @@ namespace Voxymore::Core {
 
         Renderer::Init();
 
-        m_ImGUILayer = new ImGUILayer();
-        PushOverlay(m_ImGUILayer);
+		if(m_Parameters.addImGuiLayer)
+		{
+			m_ImGUILayer = new ImGUILayer();
+			PushOverlay(m_ImGUILayer);
+		}
     }
 
-    Application::~Application() {
-
+    Application::~Application()
+	{
+		delete m_ImGUILayer;
     }
     void Application::OnEvent(Event& e){
 		VXM_PROFILE_FUNCTION();
@@ -78,6 +83,7 @@ namespace Voxymore::Core {
 				}
             }
 
+			if(m_ImGUILayer)
             {
                 VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
 				m_ImGUILayer->Begin();

@@ -21,6 +21,7 @@ namespace Voxymore::Core {
 		uint32_t width = 1600;
 		uint32_t height = 900;
 		std::vector<std::string> arguments;
+		bool addImGuiLayer = true;
 	};
 
 	class Application {
