@@ -16,8 +16,8 @@ namespace Voxymore::Core
 		VXM_IMPLEMENT_COMPONENT(PrimitiveComponent);
 	public:
 		inline PrimitiveComponent() = default;
-		inline PrimitiveComponent(Primitive::Type primitiveType);
 		inline ~PrimitiveComponent() = default;
+		PrimitiveComponent(Primitive::Type primitiveType);
 
 		void Load();
 		bool IsLoaded() const;
