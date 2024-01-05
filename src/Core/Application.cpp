@@ -44,7 +44,6 @@ namespace Voxymore::Core {
 
     Application::~Application()
 	{
-		delete m_ImGUILayer;
     }
     void Application::OnEvent(Event& e){
 		VXM_PROFILE_FUNCTION();
