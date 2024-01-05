@@ -30,7 +30,7 @@ namespace Voxymore::Core
 
 		DeserializeField(pc, node, Velocity, Vec3, Vec3(0.0));
 		DeserializeField(pc, node, Acceleration, Vec3, Vec3(0.0));
-		DeserializeField(pc, node, Damping, Real, 0.5);
+		DeserializeField(pc, node, Damping, Real, 0.9);
 		DeserializeField(pc, node, InverseMass, Real, 1.0);
 	}
 
