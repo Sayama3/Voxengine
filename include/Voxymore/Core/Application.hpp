@@ -40,7 +40,10 @@ namespace Voxymore::Core {
 
 		inline static Application& Get() {return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
+		inline bool HasImGuiLayer() {return m_ImGUILayer != nullptr; }
 		inline ImGUILayer* GetImGuiLayer() { return m_ImGUILayer; }
+		inline bool HasPhysicsLayer() {return m_PhysicsLayer != nullptr; }
+		inline PhysicsLayer* GetPhysicsLayer() { return m_PhysicsLayer; }
 		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
 
 		const std::string& GetArgument(const std::string& key) const;
