@@ -33,7 +33,7 @@ namespace Voxymore::Core
 
 		// Integrate all Particles
 		auto& reg = m_SceneHandle->GetRegistry();
-		auto particles = reg.view<ParticleComponent, TransformComponent>();
+		auto particles = reg.view<ParticleComponent, TransformComponent>(entt::exclude<DisableComponent>);
 		for (entt::entity e : particles)
 		{
 			auto&& [pc, tc] = particles.get<ParticleComponent, TransformComponent>(e);
