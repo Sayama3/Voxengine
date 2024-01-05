@@ -15,6 +15,10 @@ namespace Voxymore::Core
 	{
 		VXM_IMPLEMENT_COMPONENT(PrimitiveComponent);
 	public:
+		inline PrimitiveComponent() = default;
+		inline PrimitiveComponent(Primitive::Type primitiveType);
+		inline ~PrimitiveComponent() = default;
+
 		void Load();
 		bool IsLoaded() const;
 		Ref<Mesh> GetMesh();

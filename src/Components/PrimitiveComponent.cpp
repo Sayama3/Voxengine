@@ -102,4 +102,8 @@ namespace Voxymore::Core
 		m_IsDirty |= PrimitiveType != type;
 		PrimitiveType = type;
 	}
+
+	PrimitiveComponent::PrimitiveComponent(Primitive::Type primitiveType) : PrimitiveType(Primitive::Type::Cube), m_IsDirty(true)
+	{
+	}
 }
