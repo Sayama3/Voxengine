@@ -243,9 +243,7 @@ namespace Voxymore::Core
 			}
 		}
 
-#if VXM_DEBUG
-		VXM_CORE_WARNING("The scene '{0}' is updating but hasn't been started.", m_Name);
-#endif
+		VXM_CORE_CHECK(m_Started, "The scene '{0}' is updating but hasn't been started.", m_Name);
 
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");

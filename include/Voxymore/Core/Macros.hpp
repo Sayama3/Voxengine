@@ -74,9 +74,11 @@
 #endif
 
 #if VXM_DEBUG
-#define VXM_CHECK_WARN(condition, ...)  if(!(condition)) { VXM_CORE_WARNING(__VA_ARGS__); }
+#define VXM_CORE_CHECK(condition, ...)  if(!(condition)) { VXM_CORE_WARNING(__VA_ARGS__); }
+#define VXM_CHECK(condition, ...)  if(!(condition)) { VXM_WARNING(__VA_ARGS__); }
 #else
-#define VXM_CHECK_WARN(condition, ...)
+#define VXM_CORE_CHECK(condition, ...)
+#define VXM_CHECK(condition, ...)
 #endif
 
 #ifndef BIT

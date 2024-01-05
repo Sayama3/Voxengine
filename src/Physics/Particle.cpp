@@ -121,7 +121,7 @@ namespace Voxymore::Core
 		m_Velocity += acc * ts;
 
 		// Damping the velocity.
-		VXM_CHECK_WARN(m_Damping >= 1, "The Damping has the value {0}.", m_Damping);
+		VXM_CORE_CHECK(m_Damping >= 1, "The Damping has the value {0}.", m_Damping);
 		m_Velocity *= Math::Pow(m_Damping, ts);
 
 		// Clear the forces
