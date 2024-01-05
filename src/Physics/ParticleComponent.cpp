@@ -37,9 +37,9 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		auto& pc = sourceEntity.GetComponent<ParticleComponent>();
-		out << KEYVAL("m_Acceleration", pc.Acceleration);
-		out << KEYVAL("m_Velocity", pc.Velocity);
-		out << KEYVAL("m_Damping", pc.Damping);
+		out << KEYVAL("Acceleration", pc.Acceleration);
+		out << KEYVAL("Velocity", pc.Velocity);
+		out << KEYVAL("Damping", pc.Damping);
 	}
 
 	bool ParticleComponent::OnImGuiRender(::Voxymore::Core::Entity sourceEntity)
@@ -47,9 +47,9 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto& pc = sourceEntity.GetComponent<ParticleComponent>();
 		bool changed = false;
-		changed |= ImGuiLib::DrawVec3Control("m_Velocity", pc.Velocity);
-		changed |= ImGuiLib::DrawVec3Control("m_Acceleration", pc.Acceleration);
-		changed |= ImGui::DragFloat("m_Damping", &pc.Damping, 0.001, 0, 1);
+		changed |= ImGuiLib::DrawVec3Control("Velocity", pc.Velocity);
+		changed |= ImGuiLib::DrawVec3Control("Acceleration", pc.Acceleration);
+		changed |= ImGui::DragFloat("Damping", &pc.Damping, 0.001, 0, 1);
 		return changed;
 	}
 

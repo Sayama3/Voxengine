@@ -18,8 +18,8 @@ namespace Voxymore::Core
 		Vec3 Velocity = Vec3(0.0);
 		Real Damping = 0.5;
 
-		Particle GetParticle(Entity e) const;
-		Particle GetParticle(const Vec3& pos) const;
+		[[nodiscard]] Particle GetParticle(Entity e) const;
+		[[nodiscard]] Particle GetParticle(const Vec3& pos) const;
 	};
 
 } // namespace Voxymore::Core
