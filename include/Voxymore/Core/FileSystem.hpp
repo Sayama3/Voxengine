@@ -75,7 +75,7 @@ namespace Voxymore::Core
 		Path GetCachePath() const;
 		inline bool empty() const {return path.empty() || source == FileSource::None;}
 		std::string string() const;
-		inline std::string id() const;
+		std::string id() const;
 
 		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;
@@ -142,7 +142,7 @@ namespace std
 		{
 			VXM_PROFILE_FUNCTION();
 			//TODO: Check if I want to use the PathId or the FullPath to make the hash.
-			return hash<std::string>()(path.GetPathId());
+			return hash<std::string>()(path.id());
 		}
 	};
 } // namespace std

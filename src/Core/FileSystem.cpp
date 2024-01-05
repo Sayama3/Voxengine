@@ -165,7 +165,7 @@ namespace Voxymore::Core
 	Path Path::GetCachePath() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return {FileSource::Cache, GetPathId()};
+		return {FileSource::Cache, id()};
 	}
 
 	Path Path::GetPath(std::filesystem::path path)
