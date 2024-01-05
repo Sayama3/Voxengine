@@ -87,8 +87,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/SceneManager.hpp
         src/Components/CustomComponent.cpp
         include/Voxymore/Components/CustomComponent.hpp
-        include/Voxymore/Scene/GameplaySystem.hpp
-        src/Scene/GameplaySystem.cpp
+        include/Voxymore/Scene/Systems.hpp
+        src/Scene/Systems.cpp
         include/Voxymore/Core/YamlHelper.hpp
         include/Voxymore/Core/FileSystem.hpp
         src/Core/FileSystem.cpp
@@ -122,6 +122,10 @@ set(SRC_FILES src/Core/Application.cpp
         src/Physics/Particle.cpp
         src/Components/PrimitiveComponent.cpp
         include/Voxymore/Components/PrimitiveComponent.hpp
+        src/Physics/GravitySystem.cpp
+        include/Voxymore/Physics/GravitySystem.hpp
+        src/Physics/ParticleDragSystem.cpp
+        include/Voxymore/Physics/ParticleDragSystem.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

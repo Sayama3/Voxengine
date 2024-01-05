@@ -117,6 +117,7 @@ namespace Voxymore::Core
 
 		// Update the acceleartion later on so pre-creating a variable.
 		Vec3 acc = m_Acceleration;
+		acc += m_ForceAccumulate * m_InverseMass;
 
 		// Update linear velocity from acceleration
 		m_Velocity += acc * ts;
@@ -126,21 +127,17 @@ namespace Voxymore::Core
 		m_Velocity *= Math::Pow(m_Damping, ts);
 
 		// Clear the forces
-		//TODO: clearAccumulator();
+		ClearAccumulator();
 	}
 
-	Vec3 Particle::AddAcceleration(Vec3 acceleration)
+	void Particle::AddAcceleration(Vec3 acceleration)
 	{
 		VXM_PROFILE_FUNCTION();
-		Vec3 force = acceleration;
-		if(m_InverseMass > 0)
-		{
-			force *= GetMass();
-		}
+		Vec3 force = acceleration * GetMass();
 		m_ForceAccumulate += force;
 	}
 
-	Vec3 Particle::AddForce(Vec3 force)
+	void Particle::AddForce(Vec3 force)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_ForceAccumulate += force;

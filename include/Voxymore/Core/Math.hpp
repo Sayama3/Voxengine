@@ -75,6 +75,18 @@ namespace Voxymore::Core
 			return glm::identity<T>();
 		}
 
+		template<typename T>
+		inline static Real Magnitude(const T& value)
+		{
+			return glm::length(value);
+		}
+
+		template<typename T>
+		inline static void Normalize(T& value)
+		{
+			value = glm::normalize(value);
+		}
+
 		inline static Mat4 ToMat4(const Quat& q) { return glm::toMat4(q); }
 		inline static Mat3 ToMat3(const Quat& q) { return glm::toMat3(q); }
 

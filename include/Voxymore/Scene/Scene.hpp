@@ -21,7 +21,7 @@ namespace Voxymore::Core
 {
 	class SceneSerializer;
 	class Entity;
-	class GameplaySystem;
+	class System;
 
 	class Scene
 	{
@@ -29,7 +29,7 @@ namespace Voxymore::Core
 		friend class Voxymore::Editor::SceneHierarchyPanel;
 		friend class Entity;
 		friend class SceneSerializer;
-		friend class GameplaySystem;
+		friend class System;
 	public:
 		Scene();
 		Scene(std::string name);

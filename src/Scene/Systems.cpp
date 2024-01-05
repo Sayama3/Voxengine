@@ -4,9 +4,9 @@
 
 #include <utility>
 
-#include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Project/Project.hpp"
+#include "Voxymore/Scene/Systems.hpp"
 
 namespace Voxymore::Core
 {
@@ -23,7 +23,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		return {FileSource::System, name + VXM_SYSTEM_EXTENSION};
 	}
-	void SystemManager::AddSystem(std::string name, Ref<GameplaySystem> system)
+	void SystemManager::AddSystem(std::string name, Ref<System> system)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(!GetInstance().s_Systems.contains(name), "The System '{0}' already exist.", name);
@@ -44,7 +44,7 @@ namespace Voxymore::Core
 		
 	}
 
-	Ref<GameplaySystem> SystemManager::GetSystem(const std::string& name)
+	Ref<System> SystemManager::GetSystem(const std::string& name)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_Systems.contains(name), "The System '{0}' doesn't exist.", name);
@@ -73,7 +73,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		GetInstance().s_SystemEnabled[name] = true;
 		GetInstance().s_SystemToScene[name].clear();
-		Ref<GameplaySystem> system = GetSystem(name);
+		Ref<System> system = GetSystem(name);
 		system->ResetSystem();
 	}
 
@@ -87,7 +87,7 @@ namespace Voxymore::Core
 			return;
 		}
 
-		Ref<GameplaySystem> system = GetSystem(name);
+		Ref<System> system = GetSystem(name);
 
 		GetInstance().s_SystemEnabled[name] = systemNode["Enable"].as<bool>();
 		auto sceneNodes = systemNode["Scenes"];
@@ -187,18 +187,24 @@ namespace Voxymore::Core
 		if(containIndex != scenes.end()) scenes.erase(containIndex);
 	}
 
-	std::vector<Ref<GameplaySystem>> SystemManager::GetSystems(UUID sceneName)
+	std::vector<Ref<System>> SystemManager::GetSystems(UUID sceneName)
 	{
 		VXM_PROFILE_FUNCTION();
-		std::vector<Ref<GameplaySystem>> systems;
+		std::vector<Ref<System>> systems;
 		systems.reserve(GetInstance().s_Systems.size());
 		for (auto&& [systemName, system] : GetInstance().s_Systems)
 		{
-			auto& scenes = GetInstance().s_SystemToScene[systemName];
-			auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
-			if(containIndex != scenes.end())
+			if(system->RunOnAllScenes())
 			{
 				systems.push_back(system);
+			}
+			else
+			{
+				auto& scenes = GetInstance().s_SystemToScene[systemName];
+				auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
+				if (containIndex != scenes.end()) {
+					systems.push_back(system);
+				}
 			}
 		}
 		return systems;
@@ -243,10 +249,12 @@ VXM_CREATE_SYSTEM(CameraControllerSystem)
 
 void CameraControllerSystem::SerializeSystem(YAML::Emitter &emitter)
 {
+	System::SerializeSystem(emitter);
 	emitter << KEYVAL("Speed", m_Speed);
 }
 void CameraControllerSystem::DeserializeSystem(YAML::Node &componentNode)
 {
+	System::DeserializeSystem(componentNode);
 	m_Speed = componentNode["Speed"].as<float>();
 }
 void CameraControllerSystem::ResetSystem()

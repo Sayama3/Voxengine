@@ -37,11 +37,15 @@
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Physics/ParticleComponent.hpp"
 
+#include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Particle.hpp"
+#include "Voxymore/Physics/GravitySystem.hpp"
+#include "Voxymore/Physics/ParticleDragSystem.hpp"
+
 #include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
-#include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/SceneManager.hpp"
+#include "Voxymore/Scene/SceneSerializer.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"

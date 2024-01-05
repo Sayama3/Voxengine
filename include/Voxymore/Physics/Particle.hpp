@@ -34,8 +34,8 @@ namespace Voxymore::Core
 
 		void Integrate(Real ts);
 
-		[[nodiscard]] Vec3 AddAcceleration(Vec3 acceleration);
-		[[nodiscard]] Vec3 AddForce(Vec3 force);
+		void AddAcceleration(Vec3 acceleration);
+		void AddForce(Vec3 force);
 
 		void ClearAccumulator();
 	protected:

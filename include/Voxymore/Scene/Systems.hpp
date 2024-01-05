@@ -24,28 +24,52 @@ namespace Voxymore::Core
 {
 	class SystemManager;
 
-	class GameplaySystem
+	class System
 	{
 	private:
 		friend class SystemManager;
 	protected:
-		virtual void DeserializeSystem(YAML::Node& componentNode) = 0;
-		virtual void SerializeSystem(YAML::Emitter& Emitter) = 0;
-		virtual void ResetSystem() = 0;
+		/**
+		 * Deserialize from yaml to this system.
+		 * @param node The node of the current system.
+		 */
+		inline virtual void DeserializeSystem(YAML::Node& node) {
+			if(node["UUID"].IsDefined()) { m_ID = node["UUID"].as<uint64_t >(); }
+		}
+		/**
+		 * Serializing to yaml the current system.
+		 * @param out The emitter of the current system.
+		 */
+		inline virtual void SerializeSystem(YAML::Emitter& out) {
+			out << KEYVAL("UUID", m_ID);
+		}
+
+		/**
+		 * Reset the current system.
+		 */
+		inline virtual void ResetSystem() {}
 	public:
-		virtual bool OnImGuiRender() = 0;
-		virtual const std::string GetName() const = 0;
+		inline virtual bool RunOnAllScenes() {return false;}
+		inline virtual bool OnImGuiRender() {return false;}
+		inline virtual const std::string GetName() const {return "System";}
+
 		inline virtual void OnAttachToScene(Scene& scene) {}
 		inline virtual void OnDetachFromScene(Scene& scene) {}
-		virtual void Update(Scene& scene, TimeStep ts) = 0;
-		virtual void OnStart(Scene& scene) {};
-		virtual void OnStop(Scene& scene) {};
+		inline virtual void Update(Scene& scene, TimeStep ts) {}
+
+		inline virtual void OnStart(Scene& scene) {}
+		inline virtual void OnStop(Scene& scene) {}
+
+		inline UUID id() const {return m_ID;}
+	protected:
+		UUID m_ID;
 	};
 
 	class SystemManager
 	{
 	private:
-		std::unordered_map<std::string, Ref<GameplaySystem>> s_Systems;
+		//TODO: Replace the systems name by UUID.
+		std::unordered_map<std::string, Ref<System>> s_Systems;
 		std::unordered_map<std::string, std::vector<UUID>> s_SystemToScene;
 		std::unordered_map<std::string, bool> s_SystemEnabled;
 		UUID m_OnProjectLoadId;
@@ -61,7 +85,7 @@ namespace Voxymore::Core
 		static void ResetSystem(const std::string& name);
 		static Path GetPath(const std::string& name);
 	public:
-		static void AddSystem(std::string name, Ref<GameplaySystem> system);
+		static void AddSystem(std::string name, Ref<System> system);
 		static void SaveSystem(const std::string& name);
 		static void LoadSystem(const std::string& name);
 		static bool IsActive(const std::string& name);
@@ -72,8 +96,8 @@ namespace Voxymore::Core
 		static void RemoveSceneFromSystem(const std::string& systemName, UUID sceneId);
 
 		static std::vector<UUID>& GetSystemScenes(const std::string& name);
-		static Ref<GameplaySystem> GetSystem(const std::string& name);
-		static std::vector<Ref<GameplaySystem>> GetSystems(UUID sceneId);
+		static Ref<System> GetSystem(const std::string& name);
+		static std::vector<Ref<System>> GetSystems(UUID sceneId);
 		static std::vector<std::string> GetSystemsName();
 	private:
 		static void ReloadSystems();
@@ -89,7 +113,7 @@ public: \
 	{ \
         VXM_PROFILE_FUNCTION(); \
 		auto instance = ::Voxymore::Core::CreateRef<SYS>();\
-		::Voxymore::Core::SystemManager::AddSystem(instance->GetName(), std::static_pointer_cast<::Voxymore::Core::GameplaySystem>(instance));\
+		::Voxymore::Core::SystemManager::AddSystem(instance->GetName(), std::static_pointer_cast<::Voxymore::Core::System>(instance));\
 		return instance; \
 	}
 
@@ -98,7 +122,7 @@ public: \
 
 /*
 // ======== CameraControllerSystem ========
-class CameraControllerSystem : public ::Voxymore::Core::GameplaySystem
+class CameraControllerSystem : public ::Voxymore::Core::System
 {
 	VXM_IMPLEMENT_SYSTEM(CameraControllerSystem);
 protected:

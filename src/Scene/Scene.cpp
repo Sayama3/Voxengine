@@ -10,9 +10,9 @@
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
+#include "Voxymore/Scene/Systems.hpp"
 
 
 namespace Voxymore::Core
@@ -132,7 +132,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto systems = SystemManager::GetSystems(m_ID);
 		std::unordered_set<std::string> toStopSystems = m_StartedSystem;
-		for (Ref<GameplaySystem>& system : systems)
+		for (Ref<System>& system : systems)
 		{
 			std::string systemName = system->GetName();
 			if(SystemManager::IsActive(systemName))
@@ -249,7 +249,7 @@ namespace Voxymore::Core
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
 			auto systems = SystemManager::GetSystems(m_ID);
 			std::unordered_set<std::string> toStopSystems = m_StartedSystem;
-			for (Ref<GameplaySystem>& system : systems)
+			for (Ref<System>& system : systems)
 			{
 				std::string systemName = system->GetName();
 				if(SystemManager::IsActive(systemName))
