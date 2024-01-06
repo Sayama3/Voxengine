@@ -11,7 +11,8 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(HasComponent<IDComponent>(), "The entity ID: {0} must have an ID Component.", static_cast<uint32_t>(m_EntityID));
-		return GetComponent<IDComponent>();
+		if(!HasComponent<IDComponent>()) return 0
+				return GetComponent<IDComponent>();
 	}
 	UUID Entity::scene_id() const
 	{
