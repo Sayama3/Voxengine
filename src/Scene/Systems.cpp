@@ -245,7 +245,7 @@ namespace Voxymore::Core
 // ======== CameraControllerSystem ========
 using namespace Voxymore::Core;
 
-VXM_CREATE_SYSTEM(CameraControllerSystem)
+VXM_DECLARE_SYSTEM(CameraControllerSystem)
 
 void CameraControllerSystem::SerializeSystem(YAML::Emitter &emitter)
 {

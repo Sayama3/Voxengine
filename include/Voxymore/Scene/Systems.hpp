@@ -17,6 +17,7 @@
 #include <imgui.h>
 #include <string>
 #include <unordered_map>
+#include <static_block.hpp>
 
 #define VXM_SYSTEM_EXTENSION ".vxm"
 
@@ -115,14 +116,16 @@ public: \
     inline static ::Voxymore::Core::Ref<SYS> GetInstance() { return s_Instance; }\
 	inline static ::Voxymore::Core::Ref<SYS> CreateSystem() \
 	{ \
-        VXM_PROFILE_FUNCTION(); \
-		auto instance = ::Voxymore::Core::CreateRef<SYS>();\
-		::Voxymore::Core::SystemManager::AddSystem(instance->GetName(), std::static_pointer_cast<::Voxymore::Core::System>(instance));\
-		return instance; \
+        VXM_PROFILE_FUNCTION();            \
+        if(SYS::s_Instance != nullptr) return SYS::s_Instance;                                   \
+		SYS::s_Instance = ::Voxymore::Core::CreateRef<SYS>();\
+		::Voxymore::Core::SystemManager::AddSystem(SYS::s_Instance->GetName(), std::static_pointer_cast<::Voxymore::Core::System>(SYS::s_Instance));\
+		return SYS::s_Instance; \
 	}
 
 
-#define VXM_CREATE_SYSTEM(SYS) ::Voxymore::Core::Ref<SYS> SYS::s_Instance = SYS::CreateSystem();
+#define VXM_DECLARE_SYSTEM(SYS) ::Voxymore::Core::Ref<SYS> SYS::s_Instance = nullptr;
+#define VXM_CREATE_SYSTEM(SYS) static_block{ SYS::CreateSystem(); }
 
 /*
 // ======== CameraControllerSystem ========

@@ -9,14 +9,18 @@
 
 namespace Voxymore::Core
 {
-
 	class SpringForceSystem : public System
 	{
 		VXM_IMPLEMENT_SYSTEM(SpringForceSystem);
 	public:
+		SpringForceSystem() = default;
+		~SpringForceSystem() = default;
+	public:
 		void Update(Scene& scene, TimeStep ts) override;
-		inline bool RunOnAllScenes() override {return false;}
+		inline bool RunOnAllScenes() override {return true;}
 	};
+
+	static_block{ SpringForceSystem::CreateSystem(); };
 
 } // namespace Voxymore::Core
 

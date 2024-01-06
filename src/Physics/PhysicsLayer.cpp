@@ -16,9 +16,9 @@ namespace Voxymore::Core
 {
 	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer")
 	{
-		std::cout << GravitySystem::StaticGetName() << std::endl;
-		std::cout << ParticleDragSystem::StaticGetName() << std::endl;
-		std::cout << SpringForceSystem::StaticGetName() << std::endl;
+		std::cout << GravitySystem::GetInstance()->GetName() << std::endl;
+		std::cout << ParticleDragSystem::GetInstance()->GetName() << std::endl;
+		std::cout << SpringForceSystem::GetInstance()->GetName() << std::endl;
 	}
 
 	PhysicsLayer::~PhysicsLayer()

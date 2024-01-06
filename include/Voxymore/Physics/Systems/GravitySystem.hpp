@@ -6,6 +6,7 @@
 
 #include "Voxymore/Physics/Components/ParticleComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
+#include "static_block.hpp"
 
 namespace Voxymore::Core
 {
@@ -13,6 +14,9 @@ namespace Voxymore::Core
 	class GravitySystem : public System
 	{
 		VXM_IMPLEMENT_SYSTEM(GravitySystem);
+	public:
+		GravitySystem() = default;
+		~GravitySystem() = default;
 	protected:
 		virtual void DeserializeSystem(YAML::Node& node) override;
 		virtual void SerializeSystem(YAML::Emitter& out) override;
@@ -26,6 +30,8 @@ namespace Voxymore::Core
 		void UpdateParticle(entt::entity e, ParticleComponent& pc);
 		Vec3 m_Gravity = Vec3(0.0, -9.81, 0.0);
 	};
+
+	static_block{ GravitySystem::CreateSystem(); };
 
 } // namespace Voxymore::Core
 

@@ -8,7 +8,7 @@
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_SYSTEM(SpringForceSystem);
+	VXM_DECLARE_SYSTEM(SpringForceSystem);
 	void SpringForceSystem::Update(Scene& scene, TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();

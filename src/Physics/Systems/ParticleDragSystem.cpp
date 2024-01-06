@@ -9,7 +9,7 @@
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_SYSTEM(ParticleDragSystem);
+	VXM_DECLARE_SYSTEM(ParticleDragSystem);
 
 	void ParticleDragSystem::DeserializeSystem(YAML::Node &node)
 	{

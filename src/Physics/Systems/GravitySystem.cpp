@@ -10,7 +10,7 @@
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_SYSTEM(GravitySystem);
+	VXM_DECLARE_SYSTEM(GravitySystem);
 
 	void GravitySystem::DeserializeSystem(YAML::Node& node)
 	{
