@@ -34,13 +34,16 @@ namespace Voxymore::Core
 		 * @param node The node of the current system.
 		 */
 		inline virtual void DeserializeSystem(YAML::Node& node) {
+			VXM_PROFILE_FUNCTION();
 			if(node["UUID"].IsDefined()) { m_ID = node["UUID"].as<uint64_t >(); }
 		}
+
 		/**
 		 * Serializing to yaml the current system.
 		 * @param out The emitter of the current system.
 		 */
 		inline virtual void SerializeSystem(YAML::Emitter& out) {
+			VXM_PROFILE_FUNCTION();
 			out << KEYVAL("UUID", m_ID);
 		}
 

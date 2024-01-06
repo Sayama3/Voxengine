@@ -2,10 +2,10 @@
 // Created by ianpo on 05/01/2024.
 //
 
-#include "Voxymore/Physics/GravitySystem.hpp"
-#include "Voxymore/Physics/ParticleComponent.hpp"
+#include "Voxymore/Physics/Systems/GravitySystem.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/Physics/Components/ParticleComponent.hpp"
 
 
 namespace Voxymore::Core
@@ -14,6 +14,7 @@ namespace Voxymore::Core
 
 	void GravitySystem::DeserializeSystem(YAML::Node& node)
 	{
+		VXM_PROFILE_FUNCTION();
 		System::DeserializeSystem(node);
 
 		auto gravNode = node["Gravity"];
@@ -29,6 +30,7 @@ namespace Voxymore::Core
 
 	void GravitySystem::SerializeSystem(YAML::Emitter& out)
 	{
+		VXM_PROFILE_FUNCTION();
 		System::SerializeSystem(out);
 
 		out << KEYVAL("Gravity", m_Gravity);
@@ -36,11 +38,13 @@ namespace Voxymore::Core
 
 	void GravitySystem::ResetSystem()
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Gravity = Vec3(0.0, -9.81, 0.0);
 	}
 
 	bool GravitySystem::OnImGuiRender()
 	{
+		VXM_PROFILE_FUNCTION();
 		bool changed = System::OnImGuiRender();
 
 		changed |= ImGuiLib::DrawVec3Control("Gravity", m_Gravity);
@@ -50,12 +54,14 @@ namespace Voxymore::Core
 
 	void GravitySystem::Update(Scene &scene, TimeStep ts)
 	{
-		auto& reg = scene.GetRegistry();
-		auto view = reg.view<ParticleComponent>(entt::exclude<DisableComponent>);
-		for(auto e : view)
-		{
-			auto& pc = view.get<ParticleComponent>(e);
-			pc.AddAcceleration(m_Gravity);
-		}
+		VXM_PROFILE_FUNCTION();
+		scene.each<ParticleComponent>(exclude<DisableComponent>, VXM_BIND_EVENT_FN(UpdateParticle));
 	}
+
+	void GravitySystem::UpdateParticle(entt::entity e, ParticleComponent& pc)
+	{
+		VXM_PROFILE_FUNCTION();
+		pc.AddAcceleration(m_Gravity);
+	}
+
 } // namespace Voxymore::Core

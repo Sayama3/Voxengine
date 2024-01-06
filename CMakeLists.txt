@@ -117,15 +117,19 @@ set(SRC_FILES src/Core/Application.cpp
         src/Physics/PhysicsLayer.cpp
         include/Voxymore/Physics/PhysicsLayer.hpp
         include/Voxymore/Physics/Particle.hpp
-        src/Physics/ParticleComponent.cpp
-        include/Voxymore/Physics/ParticleComponent.hpp
+        src/Physics/Components/ParticleComponent.cpp
+        include/Voxymore/Physics/Components/ParticleComponent.hpp
         src/Physics/Particle.cpp
         src/Components/PrimitiveComponent.cpp
         include/Voxymore/Components/PrimitiveComponent.hpp
-        src/Physics/GravitySystem.cpp
-        include/Voxymore/Physics/GravitySystem.hpp
-        src/Physics/ParticleDragSystem.cpp
-        include/Voxymore/Physics/ParticleDragSystem.hpp
+        src/Physics/Systems/GravitySystem.cpp
+        include/Voxymore/Physics/Systems/GravitySystem.hpp
+        src/Physics/Systems/ParticleDragSystem.cpp
+        include/Voxymore/Physics/Systems/ParticleDragSystem.hpp
+        src/Physics/Components/AnchoredSpringComponent.cpp
+        include/Voxymore/Physics/Components/AnchoredSpringComponent.hpp
+        src/Physics/Systems/SpringForceSystem.cpp
+        include/Voxymore/Physics/Systems/SpringForceSystem.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

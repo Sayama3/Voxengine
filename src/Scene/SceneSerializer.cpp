@@ -9,6 +9,7 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Scene/Entity.hpp"
+#include<ranges>
 
 namespace Voxymore::Core
 {
@@ -102,7 +103,7 @@ namespace Voxymore::Core
 
 		auto entities = sceneNode["Entities"];
 		if (entities) {
-			for (YAML::Node yamlEntity: entities) {
+			for (YAML::Node yamlEntity : entities) {
 				UUID uuid = yamlEntity["Entity"].as<uint64_t>();
 
 				std::string name;

@@ -4,9 +4,9 @@
 
 #include <utility>
 
-#include "Voxymore/Physics/PhysicsLayer.hpp"
-#include "Voxymore/Physics/ParticleComponent.hpp"
 #include "Voxymore/Components/Components.hpp"
+#include "Voxymore/Physics/Components/ParticleComponent.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
 
 
 namespace Voxymore::Core

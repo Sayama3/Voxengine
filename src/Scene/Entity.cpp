@@ -60,4 +60,8 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(scene.id() == SceneId, "The right scene wasn't given.");
 		return scene.GetEntity(EntityId);
 	}
+	bool EntityField::Valid()
+	{
+		return EntityId != 0 || SceneId != 0;
+	}
 }

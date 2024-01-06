@@ -120,12 +120,14 @@ namespace Voxymore::Core
 
 	struct EntityField
 	{
+		EntityField();
 		EntityField(UUID entityId,UUID sceneId);
 		EntityField(Entity entity);
 		inline ~EntityField() = default;
 		UUID EntityId;
 		UUID SceneId;
 
+		bool Valid();
 		Entity GetEntity(Scene& scene);
 	};
 } // namespace Voxymore::Core

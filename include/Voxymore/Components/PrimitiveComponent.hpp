@@ -11,10 +11,14 @@
 
 namespace Voxymore::Core
 {
-	class PrimitiveComponent
+	class PrimitiveComponent : Component
 	{
 		VXM_IMPLEMENT_COMPONENT(PrimitiveComponent);
 	public:
+		virtual void DeserializeComponent(YAML::Node& node) override;
+		virtual void SerializeComponent(YAML::Emitter& out) override;
+		virtual bool OnImGuiRender() override;
+
 		inline PrimitiveComponent() = default;
 		inline ~PrimitiveComponent() = default;
 		PrimitiveComponent(Primitive::Type primitiveType);

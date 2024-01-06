@@ -9,9 +9,9 @@ namespace Voxymore::Core
 {
 	VXM_CREATE_LIGHT_COMPONENT(PrimitiveComponent);
 
-	void PrimitiveComponent::DeserializeComponent(YAML::Node &node, Entity targetEntity)
+	void PrimitiveComponent::DeserializeComponent(YAML::Node &node)
 	{
-		auto &pc = targetEntity.GetOrAddComponent<PrimitiveComponent>();
+		auto &pc = *this;
 
 		auto PrimitiveTypeNode = node["PrimitiveType"];
 		if (PrimitiveTypeNode.IsDefined())
@@ -25,19 +25,19 @@ namespace Voxymore::Core
 		}
 	}
 
-	void PrimitiveComponent::SerializeComponent(YAML::Emitter &out, Entity sourceEntity)
+	void PrimitiveComponent::SerializeComponent(YAML::Emitter &out)
 	{
-		auto& pc = sourceEntity.GetComponent<PrimitiveComponent>();
+		auto& pc = *this;
 
 		out << KEYVAL("PrimitiveType", pc.PrimitiveType);
 	}
 
-	bool PrimitiveComponent::OnImGuiRender(Entity sourceEntity)
+	bool PrimitiveComponent::OnImGuiRender()
 	{
 		VXM_PROFILE_FUNCTION();
 		bool changed = false;
 
-		auto& pc = sourceEntity.GetComponent<PrimitiveComponent>();
+		auto& pc = *this;
 
 		std::unordered_map<Primitive::Type, std::string> strings = Primitive::GetTypesString();
 		std::vector<Primitive::Type> types = Primitive::GetAllTypes();

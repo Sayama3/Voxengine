@@ -95,10 +95,10 @@ namespace Voxymore::Core
 		}
 
 		template<typename T>
-		inline static void Normalize(T& value)
+		inline static T Normalize(const T& value)
 		{
 			VXM_PROFILE_FUNCTION();
-			value = glm::normalize(value);
+			return glm::normalize(value);
 		}
 
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }

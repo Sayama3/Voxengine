@@ -9,20 +9,24 @@
 namespace Voxymore::Core
 {
 
-	class GravitySystem : public System
+	class ParticleDragSystem : public System
 	{
-		VXM_IMPLEMENT_SYSTEM(GravitySystem);
+		VXM_IMPLEMENT_SYSTEM(ParticleDragSystem);
 	protected:
 		virtual void DeserializeSystem(YAML::Node& node) override;
 		virtual void SerializeSystem(YAML::Emitter& out) override;
 		virtual void ResetSystem() override;
 	public:
+		inline ParticleDragSystem(Real dragCoef, Real dragCoefSqr) : m_DragCoef(dragCoef), m_DragCoefSqr(dragCoefSqr) {}
+		ParticleDragSystem() = default;
+		~ParticleDragSystem() = default;
 		virtual bool OnImGuiRender() override;
 		virtual void Update(Scene& scene, TimeStep ts) override;
 
 		inline virtual bool RunOnAllScenes() override { return true; }
 	private:
-		Vec3 m_Gravity = Vec3(0.0, -9.81, 0.0);
+		Real m_DragCoef = 0.9;
+		Real m_DragCoefSqr = 0.8;
 	};
 
 } // namespace Voxymore::Core

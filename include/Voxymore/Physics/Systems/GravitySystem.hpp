@@ -4,14 +4,15 @@
 
 #pragma once
 
+#include "Voxymore/Physics/Components/ParticleComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 
 namespace Voxymore::Core
 {
 
-	class ParticleDragSystem : public System
+	class GravitySystem : public System
 	{
-		VXM_IMPLEMENT_SYSTEM(ParticleDragSystem);
+		VXM_IMPLEMENT_SYSTEM(GravitySystem);
 	protected:
 		virtual void DeserializeSystem(YAML::Node& node) override;
 		virtual void SerializeSystem(YAML::Emitter& out) override;
@@ -22,8 +23,8 @@ namespace Voxymore::Core
 
 		inline virtual bool RunOnAllScenes() override { return true; }
 	private:
-		Real m_DragCoef = 0.9;
-		Real m_DragCoefSqr = 0.8;
+		void UpdateParticle(entt::entity e, ParticleComponent& pc);
+		Vec3 m_Gravity = Vec3(0.0, -9.81, 0.0);
 	};
 
 } // namespace Voxymore::Core
