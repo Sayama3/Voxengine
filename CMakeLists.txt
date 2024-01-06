@@ -156,6 +156,8 @@ set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
         PUBLIC_HEADER "include/Voxymore/Voxymore.hpp"
         PUBLIC cxx_std_20)
 
+set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES ENABLE_EXPORTS True)
+
 
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
