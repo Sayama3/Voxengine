@@ -7,11 +7,18 @@
 
 namespace Voxymore::Core
 {
-	UUID Entity::GetUUID() const
+	UUID Entity::id() const
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(HasComponent<IDComponent>(), "The entity ID: {0} must have an ID Component.", static_cast<uint32_t>(m_EntityID));
 		return GetComponent<IDComponent>();
+	}
+	UUID Entity::scene_id() const
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(m_Scene != nullptr, "The scene is not valid.");
+		if(!m_Scene) return 0;
+		return m_Scene->id();
 	}
 	bool Entity::IsValid() const {
 		VXM_PROFILE_FUNCTION();
@@ -42,4 +49,15 @@ namespace Voxymore::Core
 		}
 	}
 
+	EntityField::EntityField(UUID entityId,UUID sceneId) : EntityId(entityId), SceneId(sceneId)
+	{}
+
+	EntityField::EntityField(Entity entity) : EntityId(entity.id()), SceneId(entity.scene_id())
+	{}
+
+	Entity EntityField::GetEntity(Scene &scene)
+	{
+		VXM_CORE_ASSERT(scene.id() == SceneId, "The right scene wasn't given.");
+		return scene.GetEntity(EntityId);
+	}
 }

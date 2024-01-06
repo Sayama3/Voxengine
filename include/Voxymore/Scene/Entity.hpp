@@ -112,7 +112,21 @@ namespace Voxymore::Core
 		bool IsValid() const;
 		bool IsActive() const;
 		void SetActive(bool enable);
-		UUID GetUUID() const;
+		[[deprecated("Use id()")]]
+		inline UUID GetUUID() const {return id();}
+		UUID id() const;
+		UUID scene_id() const;
+	};
+
+	struct EntityField
+	{
+		EntityField(UUID entityId,UUID sceneId);
+		EntityField(Entity entity);
+		inline ~EntityField() = default;
+		UUID EntityId;
+		UUID SceneId;
+
+		Entity GetEntity(Scene& scene);
 	};
 } // namespace Voxymore::Core
 

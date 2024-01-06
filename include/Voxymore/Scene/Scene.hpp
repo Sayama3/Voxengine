@@ -59,7 +59,9 @@ namespace Voxymore::Core
 
 		inline const std::string& GetName() const {return m_Name;}
 		inline void SetName(const std::string& name) {m_Name = name;}
-		inline UUID GetID() const {return m_ID;}
+		[[deprecated("Use id()")]]
+		inline UUID GetID() const {return id();}
+		inline UUID id() const {return m_ID;}
 	private:
 		template<typename T>
 		inline void OnComponentAdded(entt::entity entity, T& component) {}
