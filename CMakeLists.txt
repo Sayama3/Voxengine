@@ -130,6 +130,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Physics/Components/AnchoredSpringComponent.hpp
         src/Physics/Systems/SpringForceSystem.cpp
         include/Voxymore/Physics/Systems/SpringForceSystem.hpp
+        vendor/static_block.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
