@@ -64,9 +64,10 @@ namespace Voxymore::Core
 		{
 			auto& pc = view.get<ParticleComponent>(e);
 			Vec3 force = pc.GetVelocity();
-			Real drag = Math::Magnitude(force);
+			Real drag = Math::SqrMagnitude(force);
+			if(drag == 0) continue;
+			drag = Math::Sqrt(drag);
 			drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
-
 			Math::Normalize(force);
 			force *= -drag;
 			pc.AddForce(force);

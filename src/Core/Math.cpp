@@ -3,20 +3,8 @@
 //
 
 #include "Voxymore/Core/Math.hpp"
-#include "Voxymore/Core/Core.hpp"
 
 namespace Voxymore::Core {
-// Old way
-// TODO: test which one is faster!
-//	Mat4 Math::TRS(const Vec3& position, const Quat& rotation, const Vec3& scale) {
-//		VXM_PROFILE_FUNCTION();
-//		Mat4 Identity(1.0f);
-//		Mat4 t = glm::translate(Identity, position); // Translation Matrix
-//		Mat4 r = glm::toMat4(rotation); // Rotation Matrix
-//		Mat4 s = glm::scale(Identity, scale); // Scale Matrix
-//		return t * r * s; // Translation * Rotation * Scale => TRS Matrix.
-//	}
-
 	Mat4 Math::TRS(const Vec3& position, const Quat& rotation, const Vec3& scale) {
 		VXM_PROFILE_FUNCTION();
 		Mat4 trs(1.0f);
@@ -196,5 +184,11 @@ namespace Voxymore::Core {
 		} // End if <= 0
 
 		return true;
+	}
+
+	Real Math::Sqrt(Real drag)
+	{
+		VXM_PROFILE_FUNCTION();
+		return glm::sqrt(drag);
 	}
 }

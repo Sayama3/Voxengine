@@ -18,6 +18,9 @@
 #include <cmath>
 #include <cstdint>
 
+#include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Debug/Profiling.hpp"
+
 namespace Voxymore::Core
 {
 	// Using Float for now. Adding 'typedef' to ease to transition if I ever want to go higher byte.
@@ -66,97 +69,125 @@ namespace Voxymore::Core
 		template<typename T>
 		inline static std::string to_string(T value)
 		{
+			VXM_PROFILE_FUNCTION();
 			return glm::to_string(value);
 		}
 
 		template<typename T>
 		inline static T Identity()
 		{
+			VXM_PROFILE_FUNCTION();
 			return glm::identity<T>();
+		}
+
+		template<typename T>
+		inline static Real SqrMagnitude(const T& value)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::length2(value);
 		}
 
 		template<typename T>
 		inline static Real Magnitude(const T& value)
 		{
+			VXM_PROFILE_FUNCTION();
 			return glm::length(value);
 		}
 
 		template<typename T>
 		inline static void Normalize(T& value)
 		{
+			VXM_PROFILE_FUNCTION();
 			value = glm::normalize(value);
 		}
 
-		inline static Mat4 ToMat4(const Quat& q) { return glm::toMat4(q); }
-		inline static Mat3 ToMat3(const Quat& q) { return glm::toMat3(q); }
+		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
+		inline static Mat3 ToMat3(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat3(q); }
 
-		inline static Mat4 Translate(const Mat4& mat, Vec3 translation) { return glm::translate(mat, translation); }
-		inline static Mat4 Scale(const Mat4& mat, Vec3 scale) { return glm::scale(mat, scale); }
+		inline static Mat4 Translate(const Mat4& mat, Vec3 translation) { VXM_PROFILE_FUNCTION(); return glm::translate(mat, translation); }
+		inline static Mat4 Scale(const Mat4& mat, Vec3 scale) { VXM_PROFILE_FUNCTION(); return glm::scale(mat, scale); }
 
-		inline static Real Pow(Real value, Real power) { return glm::pow(value, power); }
+		inline static Real Pow(Real value, Real power) { VXM_PROFILE_FUNCTION(); return glm::pow(value, power); }
+		static Real Sqrt(Real drag);
 	}; // Math
 
-	template<> inline std::string Math::to_string(float value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(double value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(long double value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned char value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned short value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned int value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned long int value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned long long int value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed char value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed short value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed int value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed long int value) { return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed long long int value) { return std::to_string(value); }
+	template<> inline std::string Math::to_string(float value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(long double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(unsigned char value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(unsigned short value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(unsigned int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(unsigned long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(unsigned long long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(signed char value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(signed short value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(signed int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(signed long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(signed long long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 
 } // Voxymore::Core
 
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat4 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat3 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat2 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec4 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec3 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec2 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec1 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Quat value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::ivec4 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::ivec3 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::ivec2 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::ivec1 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::bvec4 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::bvec3 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::bvec2 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 inline std::ostream& operator << (std::ostream & os, const glm::bvec1 value){
+	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
