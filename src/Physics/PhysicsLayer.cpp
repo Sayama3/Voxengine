@@ -7,12 +7,18 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Physics/Components/ParticleComponent.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Systems/GravitySystem.hpp"
+#include "Voxymore/Physics/Systems/ParticleDragSystem.hpp"
+#include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
 
 
 namespace Voxymore::Core
 {
 	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer")
 	{
+		std::cout << GravitySystem::StaticGetName() << std::endl;
+		std::cout << ParticleDragSystem::StaticGetName() << std::endl;
+		std::cout << SpringForceSystem::StaticGetName() << std::endl;
 	}
 
 	PhysicsLayer::~PhysicsLayer()
@@ -32,15 +38,12 @@ namespace Voxymore::Core
 		}
 
 		// Integrate all Particles
-		auto& reg = m_SceneHandle->GetRegistry();
-		auto particles = reg.view<ParticleComponent, TransformComponent>(entt::exclude<DisableComponent>);
-		for (entt::entity e : particles)
-		{
-			auto&& [pc, tc] = particles.get<ParticleComponent, TransformComponent>(e);
+		m_SceneHandle->each<ParticleComponent, TransformComponent>(exclude<DisableComponent>, [&](ParticleComponent& pc, TransformComponent& tc){
+			VXM_PROFILE_FUNCTION();
 			pc.SetPosition(tc.GetPosition());
 			pc.Integrate(ts);
 			tc.SetPosition(pc.GetPosition());
-		}
+		});
 	}
 
 	void PhysicsLayer::SetScene(Ref<Scene> scene)

@@ -111,6 +111,7 @@ namespace Voxymore::Core
     static ::Voxymore::Core::Ref<SYS> s_Instance; \
 public: \
 	inline virtual const std::string GetName() const override { return #SYS; }; \
+	inline static const std::string StaticGetName() { return #SYS; }; \
     inline static ::Voxymore::Core::Ref<SYS> GetInstance() { return s_Instance; }\
 	inline static ::Voxymore::Core::Ref<SYS> CreateSystem() \
 	{ \
