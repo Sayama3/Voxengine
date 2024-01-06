@@ -20,7 +20,7 @@ namespace Voxymore::Core
 		virtual bool OnImGuiRender() override;
 		virtual void Update(Scene& scene, TimeStep ts) override;
 
-		inline virtual bool RunOnAllScenes() override { return false; }
+		inline virtual bool RunOnAllScenes() override { return true; }
 	private:
 		Real m_DragCoef = 0.9;
 		Real m_DragCoefSqr = 0.8;
