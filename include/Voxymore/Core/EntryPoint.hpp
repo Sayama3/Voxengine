@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include "Application.hpp"
-#include "Logger.hpp"
-#include "Core.hpp"
+#include "Voxymore/Voxymore.hpp"
+
+#ifdef VXM_IMPLEMENT
+#include VXM_IMPLEMENT
+#endif
 
 namespace Voxymore::Core {
 	extern Voxymore::Core::Application* CreateApplication(const std::vector<std::string>& arguments);
