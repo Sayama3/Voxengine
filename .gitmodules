@@ -20,3 +20,6 @@
 [submodule "lib/ImGuizmo"]
 	path = lib/ImGuizmo
 	url = https://github.com/Sayama3/ImGuizmo
+[submodule "lib/clip"]
+	path = lib/clip
+	url = https://github.com/dacap/clip

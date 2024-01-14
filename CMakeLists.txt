@@ -178,6 +178,9 @@ target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
 target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp tracy)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE clip)
+target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE lib/clip)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
 
 find_package(Vulkan REQUIRED COMPONENTS SPIRV-Tools spirv-cross-core spirv-cross-glsl shaderc_combined)
