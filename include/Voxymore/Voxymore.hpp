@@ -35,12 +35,14 @@
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
-#include "Voxymore/Physics/Components/ParticleComponent.hpp"
 
 #include "Voxymore/Physics/Particle.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Components/ParticleComponent.hpp"
+#include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/Physics/Systems/GravitySystem.hpp"
 #include "Voxymore/Physics/Systems/ParticleDragSystem.hpp"
+#include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
