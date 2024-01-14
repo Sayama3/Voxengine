@@ -5,6 +5,7 @@
 #include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 #include "Voxymore/Utils/Platform.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 
 #define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\
 auto VXM_COMBINE(fieldVariable, Node) = node[fieldName]; 																			\
