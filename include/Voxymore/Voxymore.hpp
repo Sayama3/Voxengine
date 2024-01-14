@@ -71,5 +71,6 @@
 #include "Voxymore/Events/ApplicationEvent.hpp"
 
 #include "Voxymore/Assets/Assets.hpp"
+#include "Voxymore/Utils/Platform.hpp"
 
 //#include "Voxymore/Core/EntryPoint.hpp"
