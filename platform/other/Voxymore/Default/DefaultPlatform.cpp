@@ -5,9 +5,10 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 #include "portable-file-dialogs.h"
-#include <clip.h>
 
 namespace Voxymore::Core {
+
+	std::string Clipboard::s_StrBuffer = "";
 
 	std::string FileDialogs::OpenFile(const std::vector<std::string>& filter)
 	{
@@ -24,27 +25,16 @@ namespace Voxymore::Core {
 
 	void Clipboard::Set(const std::string& str)
 	{
-		if(!clip::set_text(str))
-		{
-			VXM_CORE_ERROR("Could not Set data to the Clipboard.");
-		}
+		s_StrBuffer = str;
 	}
 
 	std::string Clipboard::Get()
 	{
-		std::string str;
-		if(!clip::get_text(str))
-		{
-			VXM_CORE_ERROR("Could not Get data from the Clipboard.");
-		}
-		return str;
+		return s_StrBuffer;
 	}
 
 	void Clipboard::Clear()
 	{
-		if(!clip::clear())
-		{
-			VXM_CORE_ERROR("Could not Clear the Clipboard.");
-		}
+		s_StrBuffer.clear();
 	}
 }

@@ -27,9 +27,10 @@ namespace Voxymore::Core {
 	class Clipboard
 	{
 	public:
-
 		static void Set(const std::string& str);
 		static std::string Get();
 		static void Clear();
+	private:
+		static std::string s_StrBuffer;
 	};
 }

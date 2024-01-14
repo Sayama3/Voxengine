@@ -26,7 +26,3 @@ option(TRACY_ENABLE "" ON)
 option(TRACY_ON_DEMAND "" ON)
 add_subdirectory(tracy)
 
-set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples")
-set(CLIP_TESTS OFF CACHE BOOL "Compile clip tests")
-add_subdirectory(clip)
-
