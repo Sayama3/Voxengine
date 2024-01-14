@@ -4,6 +4,7 @@
 
 #include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/Utils/Platform.hpp"
 
 #define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\
 auto VXM_COMBINE(fieldVariable, Node) = node[fieldName]; 																			\
@@ -79,6 +80,34 @@ namespace Voxymore::Core
 		bool changed = false;
 		changed |= ImGuiLib::DragReal("Spring Constant", &SpringConstant, 0.01, 0.0, 0.0, "%.2f");
 		changed |= ImGuiLib::DragReal("Rest Length", &RestLength, 0.01, 0.0, 0.0, "%.2f");
+
+		std::string clipContent = Clipboard::Get();
+		uint64_t index = clipContent.find(',');
+		bool clipContentValid = index != std::string::npos;
+		EntityField clipEntity;
+		if(clipContentValid)
+		{
+			try {
+				std::string scene = clipContent.substr(0, index);
+				std::string entity = clipContent.substr(index + 1, clipContent.size() - (index + 2));
+				char *sceneEnd = nullptr;
+				char *entityEnd = nullptr;
+				UUID sceneId = std::strtoull(scene.c_str(), &sceneEnd, 10);
+				UUID entityId = std::strtoull(entity.c_str(), &entityEnd, 10);
+				clipEntity = EntityField(entityId, sceneId);
+			}
+			catch (...) {
+				VXM_CORE_ERROR("No valid entity in cliboard.");
+				clipContentValid = false;
+			}
+		}
+
+		ImGui::BeginDisabled(!clipContentValid);
+		if(ImGui::Button("Add Copied Entity"))
+		{
+			EntitiesConnected.push_back(clipEntity);
+		}
+		ImGui::EndDisabled();
 
 		if(ImGui::BeginListBox("Entities Connected"))
 		{

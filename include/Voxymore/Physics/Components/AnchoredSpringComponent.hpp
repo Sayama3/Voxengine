@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "static_block.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Components/Components.hpp"
@@ -29,4 +30,6 @@ namespace Voxymore::Core
 	private:
 		std::vector<std::string> EntitiesNameHelper;
 	};
+
+	static_block{ AnchoredSpringComponent asc; };
 }
