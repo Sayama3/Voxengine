@@ -120,9 +120,9 @@ namespace Voxymore::Core
 
 	struct EntityField
 	{
-		EntityField();
-		EntityField(UUID entityId,UUID sceneId);
-		EntityField(Entity entity);
+		EntityField(UUID entityId, UUID sceneId);
+		explicit EntityField(Entity entity);
+		inline EntityField() = default;
 		inline ~EntityField() = default;
 		UUID EntityId;
 		UUID SceneId;

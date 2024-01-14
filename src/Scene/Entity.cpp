@@ -50,7 +50,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	EntityField::EntityField(UUID entityId,UUID sceneId) : EntityId(entityId), SceneId(sceneId)
+	EntityField::EntityField(UUID entityId, UUID sceneId) : EntityId(entityId), SceneId(sceneId)
 	{}
 
 	EntityField::EntityField(Entity entity) : EntityId(entity.id()), SceneId(entity.scene_id())
