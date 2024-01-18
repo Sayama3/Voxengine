@@ -24,6 +24,7 @@ namespace Voxymore
 			// ==================== START ====================
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
+			ImGui::BeginGroup();
 			ImGui::PushID(label.c_str());
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, columnWidth);
@@ -85,6 +86,7 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+
 			changed |= ImGui::DragScalar("##Z", IMGUI_SCALAR_TYPE, &values.z, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::PopStyleVar();
@@ -92,6 +94,7 @@ namespace Voxymore
 			// ==================== END ====================
 			ImGui::Columns(1);
 			ImGui::PopID();
+			ImGui::EndGroup();
 			return changed;
 		}
 
@@ -101,6 +104,7 @@ namespace Voxymore
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
 			ImGui::PushID(label.c_str());
+			ImGui::BeginGroup();
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, columnWidth);
 			ImGui::Text("%s", label.c_str());
@@ -143,12 +147,14 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+
 			changed |= ImGui::DragScalar("##Y", IMGUI_SCALAR_TYPE, &values.y, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 
 			// ==================== END ====================
 			ImGui::PopStyleVar();
 			ImGui::Columns(1);
+			ImGui::EndGroup();
 			ImGui::PopID();
 			return changed;
 		}
@@ -180,8 +186,8 @@ namespace Voxymore
 				return false;
 
 			ImGuiContext& g = *GImGui;
-			ImGui::PushID(label.c_str());
 			ImGui::BeginGroup();
+			ImGui::PushID(label.c_str());
 			ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 			float min_min = (v_min >= v_max) ? -FLT_MAX : v_min;
@@ -199,8 +205,8 @@ namespace Voxymore
 			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
 
 			ImGui::TextEx(label.c_str(), ImGui::FindRenderedTextEnd(label.c_str()));
-			ImGui::EndGroup();
 			ImGui::PopID();
+			ImGui::EndGroup();
 
 			return value_changed;
 		}

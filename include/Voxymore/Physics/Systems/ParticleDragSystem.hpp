@@ -7,6 +7,9 @@
 #include "Voxymore/Scene/Systems.hpp"
 #include "static_block.hpp"
 
+#define VXM_DEFAULT_DRAG_COEF 0.01f
+#define VXM_DEFAULT_DRAG_COEF_SQR 0.02f
+
 namespace Voxymore::Core
 {
 
@@ -27,8 +30,8 @@ namespace Voxymore::Core
 
 		inline virtual bool RunOnAllScenes() override { return true; }
 	private:
-		Real m_DragCoef = 0.9;
-		Real m_DragCoefSqr = 0.8;
+		Real m_DragCoef = VXM_DEFAULT_DRAG_COEF;
+		Real m_DragCoefSqr = VXM_DEFAULT_DRAG_COEF_SQR;
 	};
 
 	static_block{ ParticleDragSystem::CreateSystem(); };

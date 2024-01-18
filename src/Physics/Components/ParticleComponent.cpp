@@ -54,7 +54,18 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		bool changed = false;
+
+		auto region = ImGui::GetContentRegionAvail();
 		changed |= ImGuiLib::DrawVec3Control("Velocity", m_Velocity);
+		ImVec2 min = ImGui::GetItemRectMin();
+		ImVec2 max = ImGui::GetItemRectMax();
+		max.x += region.x;
+		auto mouse = ImGui::GetMousePos();
+		if (ImGui::IsMouseHoveringRect(min, max))
+		{
+			ImGui::SetTooltip("Speed : %f m/s", Math::Magnitude(m_Velocity));
+		}
+
 		changed |= ImGuiLib::DrawVec3Control("Acceleration", m_Acceleration);
 		changed |= ImGuiLib::DragReal("Damping", &m_Damping, 0.001, 0, 1);
 		Real mass =  1.0 / m_InverseMass;

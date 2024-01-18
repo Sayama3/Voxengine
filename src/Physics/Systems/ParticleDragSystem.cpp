@@ -22,7 +22,7 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			m_DragCoef = 0.9;
+			m_DragCoef = VXM_DEFAULT_DRAG_COEF;
 		}
 
 		auto DragCoefSqrNode = node["DragCoefSqr"];
@@ -32,7 +32,7 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			m_DragCoefSqr = 0.8;
+			m_DragCoefSqr = VXM_DEFAULT_DRAG_COEF_SQR;
 		}
 	}
 
@@ -47,8 +47,8 @@ namespace Voxymore::Core
 	void ParticleDragSystem::ResetSystem()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_DragCoef = 0.9;
-		m_DragCoefSqr = 0.8;
+		m_DragCoef = VXM_DEFAULT_DRAG_COEF;
+		m_DragCoefSqr = VXM_DEFAULT_DRAG_COEF_SQR;
 	}
 
 	bool ParticleDragSystem::OnImGuiRender()
@@ -64,8 +64,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		scene.each<ParticleComponent>(exclude<DisableComponent>,
-		        [=, this](auto entity, ParticleComponent& pc)
-			    {
+		        [=, this](auto entity, ParticleComponent& pc) {
 				  VXM_PROFILE_FUNCTION();
 				    Vec3 force = pc.GetVelocity();
 				    Real drag = Math::SqrMagnitude(force);
