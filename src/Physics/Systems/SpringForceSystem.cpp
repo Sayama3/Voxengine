@@ -29,9 +29,9 @@ namespace Voxymore::Core
 					return;
 				}
 
-				float forceLength = (asc.RestLength - magnitude) * asc.SpringConstant;
+				float forceMagnitude = (asc.RestLength - magnitude) * asc.SpringConstant;
 
-				Vec3 force = Math::Normalize(springForce) * (-forceLength);
+				Vec3 force = Math::Normalize(springForce) * (forceMagnitude);
 				e.GetComponent<ParticleComponent>().AddForce(force);
 			}
 		});
