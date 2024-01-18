@@ -23,11 +23,15 @@ namespace Voxymore::Core
 				if(!e.HasComponent<ParticleComponent>()) continue;
 
 				Vec3 posE = e.GetComponent<TransformComponent>().GetPosition();
-				Vec3 currToE = posE - anchorPos;
-				float distance = Math::Magnitude(currToE);
-				float forceLength = (asc.RestLength - distance) * asc.SpringConstant;
+				Vec3 springForce = posE - anchorPos;
+				float magnitude = Math::Magnitude(springForce);
+				if(magnitude <= asc.RestLength) {
+					return;
+				}
 
-				Vec3 force = Math::Normalize(currToE) * (-forceLength);
+				float forceLength = (asc.RestLength - magnitude) * asc.SpringConstant;
+
+				Vec3 force = Math::Normalize(springForce) * (-forceLength);
 				e.GetComponent<ParticleComponent>().AddForce(force);
 			}
 		});
