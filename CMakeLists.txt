@@ -131,6 +131,10 @@ set(SRC_FILES src/Core/Application.cpp
         src/Physics/Systems/SpringForceSystem.cpp
         include/Voxymore/Physics/Systems/SpringForceSystem.hpp
         vendor/static_block.hpp
+        src/Physics/Systems/BuoyancyForceSystem.cpp
+        include/Voxymore/Physics/Systems/BuoyancyForceSystem.hpp
+        src/Physics/Components/FloatingComponent.cpp
+        include/Voxymore/Physics/Components/FloatingComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
