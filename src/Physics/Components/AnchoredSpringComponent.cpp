@@ -40,9 +40,9 @@ namespace Voxymore::Core
 
 		EntitiesNameHelper.clear();
 		auto EntitiesNameHelperNode = node["EntitiesNameHelper"];
-		if(EntitiesConnectedNode.IsSequence())
+		if(EntitiesNameHelperNode.IsSequence())
 		{
-			for(auto child : EntitiesConnectedNode)
+			for(auto child : EntitiesNameHelperNode)
 			{
 				EntitiesNameHelper.emplace_back(child.as<std::string>());
 			}
@@ -53,7 +53,7 @@ namespace Voxymore::Core
 	{
 		out << KEYVAL("SpringConstant", SpringConstant);
 		out << KEYVAL("RestLength", RestLength);
-		out << YAML::BeginSeq;
+		out << KEYVAL("EntitiesConnected", YAML::BeginSeq);
 		{
 			for (auto& field: EntitiesConnected)
 			{
@@ -66,7 +66,7 @@ namespace Voxymore::Core
 			}
 			out << YAML::EndSeq;
 		}
-		out << YAML::BeginSeq;
+		out << KEYVAL("EntitiesNameHelper", YAML::BeginSeq);
 		{
 			for (auto& name: EntitiesNameHelper)
 			{
@@ -107,6 +107,7 @@ namespace Voxymore::Core
 		if(ImGui::Button("Add Copied Entity"))
 		{
 			EntitiesConnected.push_back(clipEntity);
+			EntitiesNameHelper.push_back(clipContent);
 		}
 		ImGui::EndDisabled();
 
