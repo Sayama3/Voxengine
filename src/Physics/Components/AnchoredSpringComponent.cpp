@@ -83,14 +83,28 @@ namespace Voxymore::Core
 		changed |= ImGuiLib::DragReal("Rest Length", &RestLength, 0.01, 0.0, 0.0, "%.2f");
 
 		std::string clipContent = Clipboard::Get();
-		uint64_t index = clipContent.find(',');
-		bool clipContentValid = index != std::string::npos;
+		uint64_t indexSceneEntity = clipContent.find(',');
+		bool clipContentValid = indexSceneEntity != std::string::npos;
 		EntityField clipEntity;
+		std::string entityName;
 		if(clipContentValid)
 		{
 			try {
-				std::string scene = clipContent.substr(0, index);
-				std::string entity = clipContent.substr(index + 1, clipContent.size() - (index + 2));
+				std::string scene = clipContent.substr(0, indexSceneEntity);
+				std::string entity = clipContent.substr(indexSceneEntity + 1, clipContent.size() - (indexSceneEntity + 2));
+
+				uint64_t indexEntityName = entity.find(',');
+				if(indexEntityName != std::string::npos)
+				{
+					entityName = entity.substr(indexEntityName + 1, entity.size() - (indexEntityName + 2));
+					entity = entity.substr(0, indexEntityName);
+					entityName += " - (" + entity + ")";
+				}
+				else
+				{
+					entityName = entity;
+				}
+
 				char *sceneEnd = nullptr;
 				char *entityEnd = nullptr;
 				UUID sceneId = std::strtoull(scene.c_str(), &sceneEnd, 10);
@@ -107,7 +121,7 @@ namespace Voxymore::Core
 		if(ImGui::Button("Add Copied Entity"))
 		{
 			EntitiesConnected.push_back(clipEntity);
-			EntitiesNameHelper.push_back(clipContent);
+			EntitiesNameHelper.push_back(entityName);
 		}
 		ImGui::EndDisabled();
 
