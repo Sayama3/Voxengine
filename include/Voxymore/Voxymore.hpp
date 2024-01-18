@@ -44,7 +44,7 @@
 #include "Voxymore/Physics/Systems/GravitySystem.hpp"
 #include "Voxymore/Physics/Systems/ParticleDragSystem.hpp"
 #include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
-#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp.hpp"
+#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
