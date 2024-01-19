@@ -85,16 +85,16 @@ namespace Voxymore::Core
 		Real liquidDensity = fc.LiquidDensity.has_value() ? fc.LiquidDensity.value() : m_LiquidDensity;
 
 		// Above water, don't touch any forces
-		if(depth >= waterHeight) {
+		if(depth >= (waterHeight + fc.MaxDepth)) {
 			return;
 		}
 
 		Vec3 force = Vec3(0,liquidDensity * fc.Volume,0);
 
-		// not bellow max depth, modulling the force.
 		if(depth > waterHeight - fc.MaxDepth)
 		{
-			force.y *= (depth - waterHeight) / (fc.MaxDepth - waterHeight);
+			auto t = (-depth + fc.MaxDepth + waterHeight) / (fc.MaxDepth * 2.0);
+			force.y *= t;
 		}
 
 		pc.AddForce(force);

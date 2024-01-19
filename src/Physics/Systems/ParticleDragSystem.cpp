@@ -55,8 +55,8 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		bool changed = System::OnImGuiRender();
-		changed |= ImGuiLib::DragReal("DragCoef", &m_DragCoef);
-		changed |= ImGuiLib::DragReal("DragCoefSqr", &m_DragCoefSqr);
+		changed |= ImGuiLib::DragReal("DragCoef", &m_DragCoef, 0.001, 0, REAL_MAX);
+		changed |= ImGuiLib::DragReal("DragCoefSqr", &m_DragCoefSqr, 0.001, 0, REAL_MAX);
 		return changed;
 	}
 
@@ -64,17 +64,18 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		scene.each<ParticleComponent>(exclude<DisableComponent>,
-		        [=, this](auto entity, ParticleComponent& pc) {
-				  VXM_PROFILE_FUNCTION();
-				    Vec3 force = pc.GetVelocity();
-				    Real drag = Math::SqrMagnitude(force);
-				    if(drag == 0) return;
-				    drag = Math::Sqrt(drag);
-				    drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
-					force = Math::Normalize(force);
-				    force *= -drag;
-				    pc.AddForce(force);
-			    });
+			[=, this](auto entity, ParticleComponent& pc) {
+				VXM_PROFILE_FUNCTION();
+				Vec3 force = pc.GetVelocity();
+				Real drag = Math::SqrMagnitude(force);
+				if(drag == 0) return;
+				drag = Math::Sqrt(drag);
+				drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
+				force = Math::Normalize(force);
+				force *= -drag;
+				pc.AddForce(force);
+			}
+		);
 	}
 } // namespace Voxymore::Core
 

@@ -7,8 +7,8 @@
 #include "Voxymore/Scene/Systems.hpp"
 #include "static_block.hpp"
 
-#define VXM_DEFAULT_DRAG_COEF 0.01f
-#define VXM_DEFAULT_DRAG_COEF_SQR 0.02f
+#define VXM_DEFAULT_DRAG_COEF 0.05f
+#define VXM_DEFAULT_DRAG_COEF_SQR 0.025f
 
 namespace Voxymore::Core
 {

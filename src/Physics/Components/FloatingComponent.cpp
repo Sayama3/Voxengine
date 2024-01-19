@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Physics/Components/FloatingComponent.hpp"
+#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 
 
@@ -14,22 +15,22 @@ namespace Voxymore::Core
 		if(node["MaxDepth"].IsDefined()) {
 			MaxDepth = node["MaxDepth"].as<Real>();
 		} else{
-			MaxDepth = 1;
+			MaxDepth = VXM_DEFAULT_MAX_DEPTH;
 		}
 		if(node["Volume"].IsDefined()) {
 			Volume = node["Volume"].as<Real>();
 		} else{
-			Volume = 1;
+			Volume = VXM_DEFAULT_VOLUME;
 		}
 		if(node["WaterHeight"].IsDefined()) {
 			WaterHeight = node["WaterHeight"].as<Real>();
 		} else{
-			WaterHeight = {};
+			WaterHeight = VXM_DEFAULT_WATER_HEIGHT;
 		}
 		if(node["LiquidDensity"].IsDefined()) {
 			LiquidDensity = node["LiquidDensity"].as<Real>();
 		} else{
-			LiquidDensity = {};
+			LiquidDensity = VXM_DEFAULT_LIQUID_DENSITY;
 		}
 	}
 	void FloatingComponent::SerializeComponent(YAML::Emitter& out) {
@@ -44,57 +45,57 @@ namespace Voxymore::Core
 	}
 	bool FloatingComponent::OnImGuiRender() {
 		bool changed = false;
-		changed |= ImGuiLib::DragReal("Max Depth", &MaxDepth);
+		changed |= ImGuiLib::DragReal("Max Depth", &MaxDepth, 0.001, 0, REAL_MAX);
 		if(ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 		{
 			ImGui::SetTooltip("The maximum submersion depth of an object before it generates its maximum buoyancy force.");
 		}
-		changed |= ImGuiLib::DragReal("Volume", &Volume);
+		changed |= ImGuiLib::DragReal("Volume", &Volume, 0.001, 0, REAL_MAX);
 		if(ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 		{
 			ImGui::SetTooltip("The volume of the object.");
 		}
 
 		bool hasWaterHeight = WaterHeight.has_value();
-		if(ImGui::Checkbox("##HasWaterHeight", &hasWaterHeight))
+		if(ImGui::Checkbox("Water Height", &hasWaterHeight))
 		{
 			changed = true;
 			if(!hasWaterHeight) {
 				WaterHeight = {};
 			} else {
-				WaterHeight = 0.0;
+				WaterHeight = VXM_DEFAULT_WATER_HEIGHT;
 			}
 		}
-		ImGui::SameLine();
-		ImGui::BeginDisabled(!hasWaterHeight);
-		changed |= ImGuiLib::DragReal("Water Height", &WaterHeight.value());
-		if(ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-		{
-			ImGui::SetTooltip("The height (on the global Y axis) of the water of this object.\n"
-							  "Can be override to use this one instead of the global one..");
+		if(hasWaterHeight) {
+			ImGui::SameLine();
+			//			ImGui::BeginDisabled(!hasWaterHeight);
+			changed |= ImGuiLib::DragReal("##Water_Height_Value", &WaterHeight.value(), 0.01);
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+				ImGui::SetTooltip("The height (on the global Y axis) of the water of this object.\n"
+								  "Can be override to use this one instead of the global one..");
+			}
+			//			ImGui::EndDisabled();
 		}
-		ImGui::EndDisabled();
-
 		bool hasLiquidDensity = LiquidDensity.has_value();
-		if(ImGui::Checkbox("##HasLiquidDensity", &hasLiquidDensity))
+		if(ImGui::Checkbox("Liquid Density", &hasLiquidDensity))
 		{
 			changed = true;
 			if(!hasLiquidDensity) {
 				LiquidDensity = {};
 			} else {
-				LiquidDensity = 1000.0;
+				LiquidDensity = VXM_DEFAULT_LIQUID_DENSITY;
 			}
 		}
-		ImGui::SameLine();
-		ImGui::BeginDisabled(!hasLiquidDensity);
-		changed |= ImGuiLib::DragReal("Liquid Density", &LiquidDensity.value());
-		if(ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-		{
-			ImGui::SetTooltip("The density of the liquid. Pure water has a density of 1000 (kg/m3).\n"
-							  "Can be override to use this one instead of the global one.");
+		if(hasLiquidDensity) {
+			ImGui::SameLine();
+			//			ImGui::BeginDisabled(!hasLiquidDensity);
+			changed |= ImGuiLib::DragReal("##Liquid_Density_Value", &LiquidDensity.value());
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+				ImGui::SetTooltip("The density of the liquid. Pure water has a density of 1000 (kg/m3).\n"
+								  "Can be override to use this one instead of the global one.");
+			}
+			//			ImGui::EndDisabled();
 		}
-		ImGui::EndDisabled();
-
 		return changed;
 	}
 } // namespace Voxymore::Core
