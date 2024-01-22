@@ -61,7 +61,7 @@ namespace Voxymore::Core
 	void GravitySystem::UpdateParticle(entt::entity e, ParticleComponent& pc)
 	{
 		VXM_PROFILE_FUNCTION();
-		pc.AddAcceleration(m_Gravity);
+		pc.AccumulateAcceleration(m_Gravity);
 	}
 
 } // namespace Voxymore::Core

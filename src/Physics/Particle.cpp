@@ -28,6 +28,12 @@ namespace Voxymore::Core
 		m_Position = position;
 	}
 
+	void Particle::AddMovement(const Vec3& movement)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Position += movement;
+	}
+
 	const Vec3& Particle::GetVelocity() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -38,6 +44,12 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Velocity = velocity;
+	}
+
+	void Particle::AddVelocity(const Vec3& velocity)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Velocity += velocity;
 	}
 
 	const Vec3& Particle::GetAcceleration() const
@@ -130,14 +142,14 @@ namespace Voxymore::Core
 		ClearAccumulator();
 	}
 
-	void Particle::AddAcceleration(Vec3 acceleration)
+	void Particle::AccumulateAcceleration(Vec3 acceleration)
 	{
 		VXM_PROFILE_FUNCTION();
 		Vec3 force = acceleration * GetMass();
 		m_ForceAccumulate += force;
 	}
 
-	void Particle::AddForce(Vec3 force)
+	void Particle::AccumulateForce(Vec3 force)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_ForceAccumulate += force;

@@ -97,7 +97,7 @@ namespace Voxymore::Core
 			force.y *= t;
 		}
 
-		pc.AddForce(force);
+		pc.AccumulateForce(force);
 	}
 
 

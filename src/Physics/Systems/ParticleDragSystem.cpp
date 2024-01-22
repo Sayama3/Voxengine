@@ -73,7 +73,7 @@ namespace Voxymore::Core
 				drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
 				force = Math::Normalize(force);
 				force *= -drag;
-				pc.AddForce(force);
+				pc.AccumulateForce(force);
 			}
 		);
 	}

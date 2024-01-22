@@ -185,10 +185,4 @@ namespace Voxymore::Core {
 
 		return true;
 	}
-
-	Real Math::Sqrt(Real drag)
-	{
-		VXM_PROFILE_FUNCTION();
-		return glm::sqrt(drag);
-	}
 }

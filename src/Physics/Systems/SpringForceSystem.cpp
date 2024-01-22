@@ -32,7 +32,7 @@ namespace Voxymore::Core
 				float forceMagnitude = (asc.RestLength - magnitude) * asc.SpringConstant;
 
 				Vec3 force = Math::Normalize(springForce) * (forceMagnitude);
-				e.GetComponent<ParticleComponent>().AddForce(force);
+				e.GetComponent<ParticleComponent>().AccumulateForce(force);
 			}
 		});
 	}

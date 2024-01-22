@@ -36,8 +36,9 @@
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 
-#include "Voxymore/Physics/Particle.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Particle.hpp"
+#include "Voxymore/Physics/ParticleContact.hpp"
 #include "Voxymore/Physics/Components/ParticleComponent.hpp"
 #include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/Physics/Components/FloatingComponent.hpp"

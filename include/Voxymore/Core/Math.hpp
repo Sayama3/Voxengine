@@ -65,29 +65,19 @@ namespace Voxymore::Core
 	//TODO: Search and replace the whole engine with this values.
 #ifdef VXM_DOUBLE
 	typedef double Real;
-
-	typedef glm::dquat Quat;
-	typedef glm::dvec4 Vec4;
-	typedef glm::dvec3 Vec3;
-	typedef glm::dvec2 Vec2;
-	typedef glm::dvec1 Vec1;
-
-	typedef glm::dmat4 Mat4;
-	typedef glm::dmat3 Mat3;
-	typedef glm::dmat2 Mat2;
 #else // VXM_FLOAT
 	typedef float Real;
-
-	typedef glm::quat Quat;
-	typedef glm::vec4 Vec4;
-	typedef glm::vec3 Vec3;
-	typedef glm::vec2 Vec2;
-	typedef glm::vec1 Vec1;
-
-	typedef glm::mat4 Mat4;
-	typedef glm::mat3 Mat3;
-	typedef glm::mat2 Mat2;
 #endif
+
+	typedef glm::qua<Real> Quat;
+	typedef glm::vec<4, Real> Vec4;
+	typedef glm::vec<3, Real> Vec3;
+	typedef glm::vec<2, Real> Vec2;
+	typedef glm::vec<1, Real> Vec1;
+
+	typedef glm::mat<4, 4, Real> Mat4;
+	typedef glm::mat<3, 3, Real> Mat3;
+	typedef glm::mat<2, 2, Real> Mat2;
 
 	class Math {
 	public:
@@ -146,22 +136,82 @@ namespace Voxymore::Core
 		inline static Mat4 Scale(const Mat4& mat, Vec3 scale) { VXM_PROFILE_FUNCTION(); return glm::scale(mat, scale); }
 
 		inline static Real Pow(Real value, Real power) { VXM_PROFILE_FUNCTION(); return glm::pow(value, power); }
-		static Real Sqrt(Real drag);
+
+		/**
+		 * Calculate the power of a value.
+		 *
+		 * This function calculates the power of a value to the given exponent.
+		 * The function accepts a value of any type T and the exponent as an int64_t.
+		 * It returns the result of the power operation.
+		 *
+		 * @tparam T The type of the value.
+		 * @param value The value to calculate the power of.
+		 * @param pow The exponent to raise the value to.
+		 * @return The result of the power operation.
+		 */
+		template<typename T>
+		inline static T Pow(const T& value, int64_t pow) {
+			VXM_PROFILE_FUNCTION();
+			T result = T(1);
+
+			bool isNegative = pow < 0;
+			auto power = isNegative ? -pow : pow;
+			for (int i = 0; i < power; ++i) {
+				result *= value;
+			}
+
+			return isNegative ? static_cast<T>(1) / result : result;
+		}
+
+		template<typename T>
+		inline static T Pow2(const T& value) {
+			VXM_PROFILE_FUNCTION();
+			return value * value;
+		}
+
+		inline static Real Sqrt(Real value)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::sqrt(value);
+		}
+
+
+		/**
+		 * Calculates the dot product (also known as scalar product) of two vectors.
+		 *
+		 * Calculates the dot product of the two input vectors `vec1` and `vec2` and returns the result.
+		 * This calculation is done using the `glm::dot` function.
+		 *
+		 * @tparam L The length of the vectors.
+		 * @tparam T The type of the vector elements.
+		 * @tparam Q The qualifier of the vector elements. It defaults to `glm::defaultp`.
+		 * @param vec1 The first input vector.
+		 * @param vec2 The second input vector.
+		 * @return The dot product of the two input vectors.
+		 *
+		 * @see glm::dot
+		 */
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		static T Dot(const glm::vec<L,T,Q>& vec1, const glm::vec<L,T,Q>& vec2)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::dot(vec1, vec2);
+		}
+
+		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
 	template<> inline std::string Math::to_string(float value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(long double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned char value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned short value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(unsigned long long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed char value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed short value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(signed long long int value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(uint8_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(uint16_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(uint32_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(uint64_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(int8_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(int16_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(int32_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(int64_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 
 } // Voxymore::Core
 
