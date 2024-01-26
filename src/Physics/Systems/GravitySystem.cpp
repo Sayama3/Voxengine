@@ -24,7 +24,7 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			ResetSystem();
+			m_Gravity = Math::Gravity;
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace Voxymore::Core
 	void GravitySystem::ResetSystem()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Gravity = Vec3(0.0, -9.81, 0.0);
+		m_Gravity = Math::Gravity;
 	}
 
 	bool GravitySystem::OnImGuiRender()
@@ -55,7 +55,8 @@ namespace Voxymore::Core
 	void GravitySystem::Update(Scene &scene, TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
-		scene.each<ParticleComponent>(exclude<DisableComponent>, VXM_BIND_EVENT_FN(UpdateParticle));
+		auto func = VXM_BIND_EVENT_FN(UpdateParticle);
+		scene.each<ParticleComponent>(exclude<DisableComponent>, MultiThreading::ExecutionPolicy::Parallel_Unsequenced, func);
 	}
 
 	void GravitySystem::UpdateParticle(entt::entity e, ParticleComponent& pc)

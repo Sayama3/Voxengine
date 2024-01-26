@@ -40,12 +40,14 @@ namespace Voxymore::Core
 		}
 
 		// Integrate all Particles
-		m_SceneHandle->each<ParticleComponent, TransformComponent>(exclude<DisableComponent>, [&](ParticleComponent& pc, TransformComponent& tc){
+		auto func = [&ts](entt::entity e, ParticleComponent& pc, TransformComponent& tc){
 			VXM_PROFILE_FUNCTION();
 			pc.SetPosition(tc.GetPosition());
 			pc.Integrate(ts);
 			tc.SetPosition(pc.GetPosition());
-		});
+		};
+
+		m_SceneHandle->each<ParticleComponent, TransformComponent>(exclude<DisableComponent>, func);
 	}
 
 	void PhysicsLayer::SetScene(Ref<Scene> scene)

@@ -9,7 +9,10 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Renderer/EditorCamera.hpp"
+#include "Voxymore/Core/MultiThreading.hpp"
 #include <entt/entt.hpp>
+#include <algorithm>
+#include <execution>
 #include <unordered_set>
 
 // TODO: find a better way?
@@ -66,19 +69,128 @@ namespace Voxymore::Core
 		inline UUID GetID() const {return id();}
 		inline UUID id() const {return m_ID;}
 	public:
+
+		/**
+		 * @brief Executes a function on each entity in the registry.
+		 *
+		 * This template function executes a provided function on each entity in the registry.
+		 * The specified components are extracted from the registry using the view method.
+		 * The function takes the callable object as a parameter.
+		 * The callable object is applied to each entity in the registry.
+		 *
+		 * @tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 * @tparam Func The type of the callable object to apply to each entity.
+		 * @param func The callable object to apply to each entity.
+		 */
 		template<typename... Get, typename Func>
-		void each(Func func)
+		inline void each(Func& func)
 		{
-			auto view = m_Registry.view<Get ...>();
-			view.each(func);
+			each<Get...>(MultiThreading::ExecutionPolicy::None, func);
 		}
 
+		/**
+		 * @brief Executes a function on each entity in the registry that has the specified components.
+		 *
+		 * This template function executes a provided function on each entity in the registry that
+		 * has the specified components. The specified components are extracted from the registry
+		 * using the view method. The function takes the callable object as a parameter.
+		 * The callable object is applied to each entity that matches the specified components.
+		 *
+		 * @tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 * @tparam Func The type of the callable object to apply to each entity.
+		 * @param func The callable object to apply to each entity.
+		 */
 		template<typename... Get, typename... Exclude, typename Func>
-		void each(entt::exclude_t<Exclude...> ex, Func func)
+		inline void each(entt::exclude_t<Exclude...> ex, Func& func)
+		{
+			each<Get...>(ex, MultiThreading::ExecutionPolicy::None, func);
+		}
+
+		/**
+		 * @brief Executes a function on each entity in the registry that has the specified components.
+		 *
+		 * This template function executes a provided function on each entity in the registry that
+		 * has the specified components. The specified components are extracted from the registry
+		 * using the view method. The function takes an execution policy and a callable object
+		 * as parameters. The execution policy determines how the function is executed.
+		 * The callable object is applied to each entity that matches the specified components.
+		 *
+		 * @tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 * @tparam Func The type of the callable object to apply to each entity.
+		 * @param exec The execution policy to control how the function is executed.
+		 * @param func The callable object to apply to each entity.
+		 */
+		template<typename... Get, typename Func>
+		inline void each(MultiThreading::ExecutionPolicy exec, Func& func)
+		{
+			auto view = m_Registry.view<Get ...>();
+			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
+			{
+				std::tuple<Get...> comps = view.get<Get...>(e);
+				auto cs = std::tuple_cat(std::tie(e), comps);
+				std::apply(func, cs);
+			});
+		}
+
+		/**
+		 * @brief Executes a function on each entity in the registry that has the specified components.
+		 *
+		 * This template function executes a provided function on each entity in the registry that
+		 * has the specified components. The specified components are extracted from the registry
+		 * using the view method. The function takes an execution policy and a callable object
+		 * as parameters. The execution policy determines how the function is executed.
+		 * The callable object is applied to each entity that matches the specified components.
+		 *
+		 * @tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 * @tparam Exclude Variadic template parameter pack for the types of components to exclude from each entity.
+		 * @tparam Func The type of the callable object to apply to each entity.
+		 * @param ex The components to exclude from each entity.
+		 * @param exec The execution policy to control how the function is executed.
+		 * @param func The callable object to apply to each entity.
+		 */
+		template<typename... Get, typename... Exclude, typename Func>
+		inline void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
 		{
 			auto view = m_Registry.view<Get ...>(ex);
-			view.each(func);
+			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
+			{
+				std::tuple<Get...> comps = view.get<Get...>(e);
+				auto cs = std::tuple_cat(std::tie(e), comps);
+				std::apply(func, cs);
+			});
 		}
+
+		/**
+		 * @brief Creates a view of entities with specified components.
+		 *
+		 * This template function creates a view of entities in the registry that have the specified components.
+		 * The specified components are retrieved from the registry using the view method.
+		 * The returned view can be used to iterate over entities with the specified components.
+		 *
+		 * @tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 * @return entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>>
+		 */
+		template<typename... Get>
+		[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>> view()
+		{
+			return m_Registry.view<Get ...>();
+		}
+
+		/**
+		 *@brief Creates a view of entities with specified components.
+		 *
+		 *This template function creates a view of entities in the registry that have the specified components. The specified components are retrieved from the registry using the view method
+		*. The returned view can be used to iterate over entities with the specified components.
+		 *
+		 *@tparam Get Variadic template parameter pack for the types of components to retrieve from each entity.
+		 *@return entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>>
+		 */
+		template<typename... Get, typename... Exclude>
+		[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<entt::storage_for_t<Exclude>...>> view(entt::exclude_t<Exclude...> ex)
+		{
+			return m_Registry.view<Get ...>(ex);
+		}
+
 	private:
 		template<typename T>
 		inline void OnComponentAdded(entt::entity entity, T& component) {}

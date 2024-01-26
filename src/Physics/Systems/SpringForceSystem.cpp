@@ -12,7 +12,7 @@ namespace Voxymore::Core
 	void SpringForceSystem::Update(Scene& scene, TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
-		scene.each<AnchoredSpringComponent, TransformComponent>(exclude<DisableComponent>, [&](auto entity, AnchoredSpringComponent& asc, TransformComponent& tc)
+		auto func = [&](auto entity, AnchoredSpringComponent& asc, TransformComponent& tc)
 		{
 			VXM_PROFILE_FUNCTION();
 			Vec3 anchorPos = tc.GetPosition();
@@ -34,6 +34,7 @@ namespace Voxymore::Core
 				Vec3 force = Math::Normalize(springForce) * (forceMagnitude);
 				e.GetComponent<ParticleComponent>().AccumulateForce(force);
 			}
-		});
+		};
+		scene.each<AnchoredSpringComponent, TransformComponent>(exclude<DisableComponent>, func);
 	}
 } // namespace Voxymore::Core

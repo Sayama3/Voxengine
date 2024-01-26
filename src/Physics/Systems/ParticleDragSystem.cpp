@@ -63,19 +63,18 @@ namespace Voxymore::Core
 	void ParticleDragSystem::Update(Scene &scene, TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
-		scene.each<ParticleComponent>(exclude<DisableComponent>,
-			[=, this](auto entity, ParticleComponent& pc) {
-				VXM_PROFILE_FUNCTION();
-				Vec3 force = pc.GetVelocity();
-				Real drag = Math::SqrMagnitude(force);
-				if(drag == 0) return;
-				drag = Math::Sqrt(drag);
-				drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
-				force = Math::Normalize(force);
-				force *= -drag;
-				pc.AccumulateForce(force);
-			}
-		);
+		auto func = [=, this](auto entity, ParticleComponent& pc) {
+			VXM_PROFILE_FUNCTION();
+			Vec3 force = pc.GetVelocity();
+			Real drag = Math::SqrMagnitude(force);
+			if(drag == 0) return;
+			drag = Math::Sqrt(drag);
+			drag = m_DragCoef * drag + m_DragCoefSqr * drag * drag;
+			force = Math::Normalize(force);
+			force *= -drag;
+			pc.AccumulateForce(force);
+		};
+		scene.each<ParticleComponent>(exclude<DisableComponent>, MultiThreading::ExecutionPolicy::Parallel_Unsequenced, func);
 	}
 } // namespace Voxymore::Core
 

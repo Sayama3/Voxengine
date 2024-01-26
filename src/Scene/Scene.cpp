@@ -116,7 +116,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		Entity entity(e, this);
-		auto it = m_Entities.find(entity.GetUUID());
+		auto it = m_Entities.find(entity.id());
 		if(it != m_Entities.end())
 		{
 			m_Entities.erase(it);

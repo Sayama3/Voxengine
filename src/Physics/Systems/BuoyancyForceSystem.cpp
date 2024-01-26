@@ -74,7 +74,9 @@ namespace Voxymore::Core
 	void BuoyancyForceSystem::Update(Scene &scene, TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
-		scene.each<ParticleComponent, FloatingComponent, TransformComponent>(exclude<DisableComponent>, VXM_BIND_EVENT_FN(UpdateParticle));
+		auto view = scene.view<ParticleComponent, FloatingComponent, TransformComponent>();
+		auto func= VXM_BIND_EVENT_FN(UpdateParticle);
+		scene.each<ParticleComponent, FloatingComponent, TransformComponent>(exclude<DisableComponent>, MultiThreading::ExecutionPolicy::Parallel_Unsequenced, func);
 	}
 
 	void BuoyancyForceSystem::UpdateParticle(entt::entity e, ParticleComponent& pc, FloatingComponent& fc, TransformComponent& tc)

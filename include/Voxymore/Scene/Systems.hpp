@@ -64,6 +64,8 @@ namespace Voxymore::Core
 		inline virtual void OnStart(Scene& scene) {}
 		inline virtual void OnStop(Scene& scene) {}
 
+		inline virtual MultiThreading::ExecutionPolicy GetExecutionPolicy() { return MultiThreading::ExecutionPolicy::None; }
+
 		inline UUID id() const {return m_ID;}
 	protected:
 		UUID m_ID;
