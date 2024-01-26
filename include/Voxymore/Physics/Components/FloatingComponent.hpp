@@ -9,7 +9,7 @@
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
-#include "Voxymore/Scene/Entity.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 
 #define VXM_DEFAULT_MAX_DEPTH 0.5
 #define VXM_DEFAULT_VOLUME 0.015

@@ -73,7 +73,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Scene/Scene.cpp
         include/Voxymore/Scene/Scene.hpp
         include/Voxymore/Components/Components.hpp
-        include/Voxymore/Scene/Entity.hpp
         src/Scene/SceneCamera.cpp
         include/Voxymore/Scene/SceneCamera.hpp
         include/Voxymore/Scene/ScriptableEntity.hpp

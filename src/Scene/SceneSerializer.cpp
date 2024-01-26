@@ -2,14 +2,14 @@
 // Created by ianpo on 29/08/2023.
 //
 
+#include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
-#include "Voxymore/Scene/Entity.hpp"
-#include<ranges>
+#include <ranges>
 
 namespace Voxymore::Core
 {

@@ -6,7 +6,7 @@
 
 #include "Voxymore/Physics/Particle.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
-#include "Voxymore/Scene/Entity.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 
 namespace Voxymore::Core
 {

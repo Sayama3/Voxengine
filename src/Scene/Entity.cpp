@@ -2,7 +2,7 @@
 // Created by ianpo on 11/11/2023.
 //
 
-#include "Voxymore/Scene/Entity.hpp"
+#include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Components/Components.hpp"
 
 namespace Voxymore::Core

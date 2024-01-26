@@ -45,7 +45,6 @@
 #include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
 
-#include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneManager.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
