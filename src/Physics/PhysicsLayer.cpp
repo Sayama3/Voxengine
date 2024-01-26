@@ -7,8 +7,6 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Physics/Components/ParticleComponent.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
-#include "Voxymore/Physics/Systems/GravitySystem.hpp"
-#include "Voxymore/Physics/Systems/ParticleDragSystem.hpp"
 #include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
 #include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
 
@@ -17,8 +15,6 @@ namespace Voxymore::Core
 {
 	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer")
 	{
-		std::cout << GravitySystem::GetInstance()->GetName() << std::endl;
-		std::cout << ParticleDragSystem::GetInstance()->GetName() << std::endl;
 		std::cout << SpringForceSystem::GetInstance()->GetName() << std::endl;
 		std::cout << BuoyancyForceSystem::GetInstance()->GetName() << std::endl;
 	}

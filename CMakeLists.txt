@@ -122,10 +122,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Physics/Particle.cpp
         src/Components/PrimitiveComponent.cpp
         include/Voxymore/Components/PrimitiveComponent.hpp
-        src/Physics/Systems/GravitySystem.cpp
-        include/Voxymore/Physics/Systems/GravitySystem.hpp
-        src/Physics/Systems/ParticleDragSystem.cpp
-        include/Voxymore/Physics/Systems/ParticleDragSystem.hpp
         src/Physics/Components/AnchoredSpringComponent.cpp
         include/Voxymore/Physics/Components/AnchoredSpringComponent.hpp
         src/Physics/Systems/SpringForceSystem.cpp
