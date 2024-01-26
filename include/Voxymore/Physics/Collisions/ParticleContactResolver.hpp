@@ -17,6 +17,7 @@ namespace Voxymore::Core
 		uint32_t iterations;
 		uint32_t iterationsUsed;
 	public:
+		ParticleContactResolver();
 		ParticleContactResolver(uint32_t iterations);
 		inline ~ParticleContactResolver() = default;
 

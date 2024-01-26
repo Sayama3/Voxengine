@@ -13,7 +13,7 @@
 
 namespace Voxymore::Core
 {
-	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer")
+	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer"), m_Resolver(0)
 	{
 		std::cout << SpringForceSystem::GetInstance()->GetName() << std::endl;
 		std::cout << BuoyancyForceSystem::GetInstance()->GetName() << std::endl;
