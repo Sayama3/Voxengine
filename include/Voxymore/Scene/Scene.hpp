@@ -123,10 +123,10 @@ namespace Voxymore::Core
 		template<typename... Get, typename Func>
 		inline void each(MultiThreading::ExecutionPolicy exec, Func& func)
 		{
-			auto view = m_Registry.view<Get ...>();
+			auto view = m_Registry.view<Get...>();
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
-				std::tuple<Get...> comps = view.get<Get...>(e);
+				std::tuple<Get&...> comps = view.get<Get...>(e);
 				auto cs = std::tuple_cat(std::tie(e), comps);
 				std::apply(func, cs);
 			});
@@ -151,10 +151,10 @@ namespace Voxymore::Core
 		template<typename... Get, typename... Exclude, typename Func>
 		inline void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
 		{
-			auto view = m_Registry.view<Get ...>(ex);
+			auto view = m_Registry.view<Get...>(ex);
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
-				std::tuple<Get...> comps = view.get<Get...>(e);
+				std::tuple<Get&...> comps = view.get<Get...>(e);
 				auto cs = std::tuple_cat(std::tie(e), comps);
 				std::apply(func, cs);
 			});
