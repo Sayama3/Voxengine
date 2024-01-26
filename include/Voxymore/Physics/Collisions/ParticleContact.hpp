@@ -43,7 +43,7 @@ namespace Voxymore::Core
 		 * The depth of penetration at the contact.
 		 */
 		Real penetration;
-	protected:
+	public:
 
 		/**
 		 * Resolve this contact for both velocity and interpenetration.

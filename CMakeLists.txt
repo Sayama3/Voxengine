@@ -131,9 +131,11 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Physics/Systems/BuoyancyForceSystem.hpp
         src/Physics/Components/FloatingComponent.cpp
         include/Voxymore/Physics/Components/FloatingComponent.hpp
-        src/Physics/ParticleContact.cpp
-        include/Voxymore/Physics/ParticleContact.hpp
+        src/Physics/Collisions/ParticleContact.cpp
+        include/Voxymore/Physics/Collisions/ParticleContact.hpp
         include/Voxymore/Core/MultiThreading.hpp
+        src/Physics/Collisions/ParticleContactResolver.cpp
+        include/Voxymore/Physics/Collisions/ParticleContactResolver.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
