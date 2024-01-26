@@ -16,6 +16,8 @@
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 
+#include "Voxymore/Physics/Collisions/ParticleContact.hpp"
+#include "Voxymore/Physics/Collisions/ParticleContactResolver.hpp"
 namespace Voxymore::Core
 {
 
@@ -32,11 +34,16 @@ namespace Voxymore::Core
 	public:
 		const Vec3& GetGravity() const;
 		void SetGravity(const Vec3& g);
+
+		void AddContact(const ParticleContact& contact);
+		void AddContacts(const std::vector<ParticleContact>& contacts);
 	private:
 		[[nodiscard]] bool HasScene() const;
 	private:
 		Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
 		Ref<Scene> m_SceneHandle = nullptr;
+		std::vector<ParticleContact> m_Contacts;
+		ParticleContactResolver m_Resolver;
 	};
 
 } // namespace Voxymore::Core

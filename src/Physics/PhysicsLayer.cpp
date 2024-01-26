@@ -44,6 +44,14 @@ namespace Voxymore::Core
 		};
 
 		m_SceneHandle->each<ParticleComponent, TransformComponent>(exclude<DisableComponent>, func);
+
+		if(!m_Contacts.empty())
+		{
+			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} iterations.",m_Contacts.size() , m_Contacts.size() * 2);
+			m_Resolver.SetIterations(m_Contacts.size() * 2);
+			m_Resolver.ResolveContacts(ts, m_Contacts);
+			m_Contacts.clear();
+		}
 	}
 
 	void PhysicsLayer::SetScene(Ref<Scene> scene)
@@ -73,5 +81,16 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Gravity = g;
+	}
+	void PhysicsLayer::AddContact(const ParticleContact& contact)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Contacts.push_back(contact);
+	}
+
+	void PhysicsLayer::AddContacts(const std::vector<ParticleContact>& contacts)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Contacts.insert(m_Contacts.end(), contacts.begin(), contacts.end());
 	}
 } // namespace Voxymore::Core

@@ -123,6 +123,7 @@ namespace Voxymore::Core
 		template<typename... Get, typename Func>
 		inline void each(MultiThreading::ExecutionPolicy exec, Func& func)
 		{
+			VXM_PROFILE_FUNCTION();
 			auto view = m_Registry.view<Get...>();
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
@@ -151,6 +152,7 @@ namespace Voxymore::Core
 		template<typename... Get, typename... Exclude, typename Func>
 		inline void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
 		{
+			VXM_PROFILE_FUNCTION();
 			auto view = m_Registry.view<Get...>(ex);
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
@@ -173,6 +175,7 @@ namespace Voxymore::Core
 		template<typename... Get>
 		[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>> view()
 		{
+			VXM_PROFILE_FUNCTION();
 			return m_Registry.view<Get ...>();
 		}
 
@@ -188,6 +191,7 @@ namespace Voxymore::Core
 		template<typename... Get, typename... Exclude>
 		[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<entt::storage_for_t<Exclude>...>> view(entt::exclude_t<Exclude...> ex)
 		{
+			VXM_PROFILE_FUNCTION();
 			return m_Registry.view<Get ...>(ex);
 		}
 
