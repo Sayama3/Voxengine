@@ -4,8 +4,15 @@
 
 #pragma once
 
-#include <execution>
+#include "Voxymore/Core/PlatformDetection.hpp"
+#include "Voxymore/Core/Logger.hpp"
+#include <algorithm>
+#include <cstdint>
 #include <thread>
+
+#if !(defined(__APPLE__) || defined(__MACH__))
+#include <execution>
+#endif
 
 namespace Voxymore::Core
 {
@@ -25,6 +32,11 @@ namespace Voxymore::Core
 		template <class _FwdIt, class _Fn>
 		inline static void for_each(ExecutionPolicy exec, _FwdIt _First, _FwdIt _Last, _Fn _Func) noexcept
 		{
+#if defined(__APPLE__) || defined(__MACH__)
+			// Macos doesn't support std::for_each in multithreading
+			VXM_CORE_WARNING("No multithreading on IOS.");
+			std::for_each(_First, _Last, _Func);
+#else
 			switch (exec) {
 				case ExecutionPolicy::Sequenced:
 				{
@@ -48,16 +60,16 @@ namespace Voxymore::Core
 				}
 				default:
 				{
+					VXM_CORE_WARNING("Execution policy is none or undefined. Using standard std::for_each.");
 					std::for_each(_First, _Last, _Func);
 				}
 			}
+#endif
 		}
 	};
 
-
-	inline static unsigned int thread_count() noexcept
+	inline static uint32_t thread_count() noexcept
 	{
 		return std::thread::hardware_concurrency();
 	}
-
 }
