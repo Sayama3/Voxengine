@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/YamlHelper.hpp"
-#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 #include "imgui.h"
 #include <string>
 #include <vector>

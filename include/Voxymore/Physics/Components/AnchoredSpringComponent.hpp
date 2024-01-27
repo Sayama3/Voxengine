@@ -9,7 +9,7 @@
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
-#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 
 namespace Voxymore::Core
 {

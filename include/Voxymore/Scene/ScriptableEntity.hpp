@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 
 namespace Voxymore::Core
 {

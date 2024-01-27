@@ -9,6 +9,7 @@
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
+#include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/Systems.hpp"

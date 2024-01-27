@@ -23,67 +23,8 @@ namespace Voxymore::Editor {
 namespace Voxymore::Core
 {
 	class SceneSerializer;
-	class Scene;
+	class Entity;
 	class System;
-
-	class Entity
-	{
-	private:
-		entt::entity m_EntityID{entt::null};
-		Scene* m_Scene = nullptr;
-	public:
-		inline Entity() = default;
-		inline Entity(const Entity&) = default;
-		inline Entity(entt::entity entityID, Scene* scene) : m_EntityID(entityID), m_Scene(scene) {}
-
-		template<typename T>
-		inline bool HasComponent() const;
-
-		template<typename T>
-		inline T& GetComponent();
-
-		template<typename T>
-		inline const T& GetComponent() const;
-
-		template<typename T,  typename... Args>
-		inline T& AddComponent(Args &&...args);
-
-		template<typename T>
-		inline void AddEmptyComponent();
-
-		template<typename T,  typename... Args>
-		inline T& GetOrAddComponent(Args &&...args);
-
-		template<typename T>
-		inline void RemoveComponent();
-
-
-
-		inline operator bool() const { return IsValid(); }
-		inline operator entt::entity() const { return m_EntityID; }
-		inline operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
-
-		inline bool operator==(const Entity& other) const
-		{
-			VXM_PROFILE_FUNCTION();
-			return m_EntityID == other.m_EntityID && m_Scene == other.m_Scene;
-		}
-
-		inline bool operator!=(const Entity& other) const
-		{
-			VXM_PROFILE_FUNCTION();
-			return !(*this == other);
-		}
-
-
-		bool IsValid() const;
-		bool IsActive() const;
-		void SetActive(bool enable);
-		[[deprecated("Use id()")]]
-		inline UUID GetUUID() const {return id();}
-		UUID id() const;
-		UUID scene_id() const;
-	};
 
 	template<typename... Type>
 	inline constexpr entt::exclude_t<Type...> exclude{};
@@ -186,7 +127,7 @@ namespace Voxymore::Core
 			auto view = m_Registry.view<Get...>();
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
-				std::tuple<Get&...> comps = view.template get<Get...>(e);
+				std::tuple<Get&...> comps = view.get<Get...>(e);
 				auto cs = std::tuple_cat(std::tie(e), comps);
 				std::apply(func, cs);
 			});
@@ -209,13 +150,13 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 		template<typename... Get, typename... Exclude, typename Func>
-		inline void each(entt::exclude_t<Exclude ...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
+		inline void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
 		{
 			VXM_PROFILE_FUNCTION();
-			auto view = m_Registry.view<Get ...>(ex);
+			auto view = m_Registry.view<Get...>(ex);
 			MultiThreading::for_each(exec, view.begin(), view.end(), [&view, &func](auto e)
 			{
-				std::tuple<Get&...> comps = view.template get<Get ...>(e);
+				std::tuple<Get&...> comps = view.get<Get...>(e);
 				auto cs = std::tuple_cat(std::tie(e), comps);
 				std::apply(func, cs);
 			});
@@ -279,86 +220,6 @@ namespace Voxymore::Core
 		[[deprecated("Use the 'each<>()' function to get the desire result.")]]
 		inline const entt::registry& GetRegistry() const { return m_Registry; }
 	};
-
-
-	struct EntityField
-	{
-		EntityField(UUID entityId, UUID sceneId);
-		explicit EntityField(Entity entity);
-		inline EntityField() = default;
-		inline ~EntityField() = default;
-		UUID EntityId;
-		UUID SceneId;
-
-		bool Valid();
-		Entity GetEntity(Scene& scene);
-	};
-
-	template<typename T>
-	inline bool Entity::HasComponent() const
-	{
-		VXM_PROFILE_FUNCTION();
-		return m_Scene->m_Registry.any_of<T>(m_EntityID);
-	}
-
-	template<typename T>
-	inline T& Entity::GetComponent()
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
-		return m_Scene->m_Registry.get<T>(m_EntityID);
-	}
-
-	template<typename T>
-	inline const T& Entity::GetComponent() const
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
-		return m_Scene->m_Registry.get<T>(m_EntityID);
-	}
-
-	template<typename T,  typename... Args>
-	inline T& Entity::AddComponent(Args &&...args)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
-		T& component = m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
-		// Using the operator in case later on we change this to take our Entity
-		m_Scene->OnComponentAdded<T>(*this, component);
-		return component;
-	}
-
-	template<typename T>
-	inline void Entity::AddEmptyComponent()
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
-		m_Scene->m_Registry.emplace<T>(m_EntityID);
-		// Using the operator in case later on we change this to take our Entity
-		m_Scene->OnEmptyComponentAdded<T>(*this);
-	}
-
-	template<typename T,  typename... Args>
-	inline T& Entity::GetOrAddComponent(Args &&...args)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(HasComponent<T>())
-		{
-			return GetComponent<T>();
-		}
-		else
-		{
-			return AddComponent<T>(std::forward<Args>(args)...);
-		}
-	}
-
-	template<typename T>
-	inline void Entity::RemoveComponent()
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
-		m_Scene->m_Registry.remove<T>(m_EntityID);
-	}
 
 } // Voxymore
 // Core
