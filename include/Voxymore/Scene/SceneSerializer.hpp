@@ -8,6 +8,7 @@
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "yaml-cpp/emitter.h"
+#include <optional>
 
 namespace Voxymore::Core
 {

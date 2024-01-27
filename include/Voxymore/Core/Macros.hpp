@@ -2,8 +2,7 @@
 // Created by ianpo on 16/07/2023.
 //
 
-#ifndef VOXYMORE_MACROS_HPP
-#define VOXYMORE_MACROS_HPP
+#pragma once
 
 #include "Voxymore/Core/PlatformDetection.hpp"
 #include <csignal>
@@ -85,4 +84,3 @@
 #define BIT(X) (1 << X)
 #endif
 
-#endif //VOXYMORE_MACROS_HPP

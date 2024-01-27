@@ -2,8 +2,6 @@
 // Created by ianpo on 04/07/2023.
 //
 
-#include <utility>
-
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"

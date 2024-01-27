@@ -49,6 +49,18 @@ namespace Voxymore::Core
 			AddEmptyComponent<DisableComponent>();
 		}
 	}
+	bool Entity::operator==(const Entity &other) const
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_EntityID == other.m_EntityID && m_Scene == other.m_Scene;
+	}
+	bool Entity::operator!=(const Entity &other) const
+	{
+		VXM_PROFILE_FUNCTION();
+		return !(*this == other);
+	}
+	Entity::operator uint32_t() const { return static_cast<uint32_t>(m_EntityID); }
+	Entity::operator entt::entity() const { return m_EntityID; }
 
 	EntityField::EntityField(UUID entityId, UUID sceneId) : EntityId(entityId), SceneId(sceneId)
 	{}

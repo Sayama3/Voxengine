@@ -187,7 +187,7 @@ namespace Voxymore::Core
 	{
         VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		s_ActiveProject->m_Config.startSceneId = scene.GetID();
+		s_ActiveProject->m_Config.startSceneId = scene.id();
 	}
 
 	void Project::SetMainScene(const Ref<Scene>& scene)

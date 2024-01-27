@@ -136,6 +136,12 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/MultiThreading.hpp
         src/Physics/Collisions/ParticleContactResolver.cpp
         include/Voxymore/Physics/Collisions/ParticleContactResolver.hpp
+        include/Voxymore/Scene/Entity.forward.hpp
+        include/Voxymore/Scene/Entity.decl.hpp
+        include/Voxymore/Scene/Entity.impl.hpp
+        include/Voxymore/Scene/Scene.forward.hpp
+        include/Voxymore/Scene/Scene.decl.hpp
+        include/Voxymore/Scene/Scene.impl.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

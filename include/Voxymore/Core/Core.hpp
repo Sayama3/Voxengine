@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <optional>
 
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
