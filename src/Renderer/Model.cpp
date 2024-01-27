@@ -122,7 +122,7 @@ namespace Voxymore::Core
 		auto path = p.GetFullPath();
 		VXM_CORE_ASSERT(std::filesystem::exists(path), "The file {0} doesn't exist", path.string());
 
-		//TODO: replace this with a real UUID of the model (that should be store somewhere I don't know).
+		//TODO: replace this with a Real UUID of the model (that should be store somewhere I don't know).
 		uint64_t modelId = std::hash<Path>()(p);
 
 		UnflipStbi();

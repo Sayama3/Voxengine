@@ -1,3 +1,7 @@
+//
+// Created by ianpo on 08/10/2023.
+//
+
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Assets/Assets.hpp"
 #include <cmath>
@@ -8,27 +12,27 @@ namespace Voxymore::Core
 {
 	VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
 
-	void ModelComponent::DeserializeComponent(YAML::Node &componentNode, Entity targetEntity)
+	void ModelComponent::DeserializeComponent(YAML::Node &componentNode)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &model = targetEntity.GetOrAddComponent<ModelComponent>();
+		auto &model = *this;
 		model.m_ModelPath = componentNode["Path"].as<Path>();
 		model.m_ShaderName = componentNode["ShaderName"].as<std::string>();
 	}
 
-	void ModelComponent::SerializeComponent(YAML::Emitter &emitter, Entity sourceEntity)
+	void ModelComponent::SerializeComponent(YAML::Emitter &emitter)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto& model = sourceEntity.GetComponent<ModelComponent>();
+		auto& model = *this;
 		emitter << KEYVAL("Path", model.m_ModelPath);
 		emitter << KEYVAL("ShaderName", model.m_ShaderName);
 	}
 
-	bool ModelComponent::OnImGuiRender(Entity sourceEntity)
+	bool ModelComponent::OnImGuiRender()
 	{
 		VXM_PROFILE_FUNCTION();
 		bool componentChanged = false;
-		auto& model = sourceEntity.GetComponent<ModelComponent>();
+		auto& model = *this;
 		auto& p = model.m_ModelPath;
 
 		std::vector<std::string> PossibleFileSources = GetFileSourceNames();

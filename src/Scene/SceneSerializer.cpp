@@ -9,6 +9,7 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Scene/Entity.hpp"
+#include<ranges>
 
 namespace Voxymore::Core
 {
@@ -36,6 +37,11 @@ namespace Voxymore::Core
 
 	SceneSerializer::~SceneSerializer()
 	{
+	}
+
+	bool SceneSerializer::Serialize(const Path &filePath) const
+	{
+		return Serialize(filePath.GetFullPath());
 	}
 
 	bool SceneSerializer::Serialize(const std::filesystem::path &filePath) const
@@ -74,6 +80,11 @@ namespace Voxymore::Core
 		return true;
 	}
 
+	bool SceneSerializer::Deserialize(const Path &filePath, bool deserializeId)
+	{
+		return Deserialize(filePath.GetFullPath(), deserializeId);
+	}
+
 	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath, bool deserializeId)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -92,7 +103,7 @@ namespace Voxymore::Core
 
 		auto entities = sceneNode["Entities"];
 		if (entities) {
-			for (YAML::Node yamlEntity: entities) {
+			for (YAML::Node yamlEntity : entities) {
 				UUID uuid = yamlEntity["Entity"].as<uint64_t>();
 
 				std::string name;

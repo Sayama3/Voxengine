@@ -103,6 +103,9 @@ namespace Voxymore::Core
 			Square,
 			Cube,
 		};
+		static std::string GetTypeString(Primitive::Type type);
+		inline static std::unordered_map<Type, std::string> GetTypesString() { return {{Type::Square, "Square"}, {Type::Cube, "Cube"}};}
+		inline static std::vector<Type> GetAllTypes() { return {Type::Square, Type::Cube};}
 	private:
 		static Primitive* GetInstance();
 	public:

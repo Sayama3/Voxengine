@@ -18,7 +18,7 @@ namespace Voxymore::Core {
         inline float GetX() const { return m_MouseX; }
         inline float GetY() const { return m_MouseY; }
 
-        inline std::string ToString() const override
+        inline std::string string() const override
         {
             std::stringstream ss;
             ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
@@ -39,7 +39,7 @@ namespace Voxymore::Core {
         inline float GetXOffset() const { return m_XOffset; }
         inline float GetYOffset() const { return m_YOffset; }
 
-        inline std::string ToString() const override
+        inline std::string string() const override
         {
             std::stringstream ss;
             ss << "MouseScrolledEvent: " << GetXOffset() << ", " << GetYOffset();
@@ -71,7 +71,7 @@ namespace Voxymore::Core {
         inline MouseButtonPressedEvent(const int button) : MouseButtonEvent(button) {}
         inline MouseButtonPressedEvent(const Mouse button) : MouseButtonEvent(button) {}
 
-        inline std::string ToString() const override
+        inline std::string string() const override
         {
             std::stringstream ss;
             ss << "MouseButtonPressedEvent: " << static_cast<int>(m_Button);
@@ -87,7 +87,7 @@ namespace Voxymore::Core {
         inline MouseButtonReleasedEvent(const int button) : MouseButtonEvent(button) {}
         inline MouseButtonReleasedEvent(const Mouse button) : MouseButtonEvent(button) {}
 
-        inline std::string ToString() const override
+        inline std::string string() const override
         {
             std::stringstream ss;
             ss << "MouseButtonReleasedEvent: " << static_cast<int>(m_Button);

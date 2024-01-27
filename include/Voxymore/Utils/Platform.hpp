@@ -23,4 +23,14 @@ namespace Voxymore::Core {
 		static std::string OpenFile(const std::vector<std::string>& filter);
 		static std::string SaveFile(const std::vector<std::string>& filter);
 	};
+
+	class Clipboard
+	{
+	public:
+		static void Set(const std::string& str);
+		static std::string Get();
+		static void Clear();
+	private:
+		static std::string s_StrBuffer;
+	};
 }

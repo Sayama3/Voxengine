@@ -4,20 +4,29 @@
 
 #pragma once
 
-namespace Voxymore {
-    namespace Core {
+#ifdef VXM_DOUBLE
+	typedef double TimeType;
+#else
+	typedef float TimeType;
+#endif
 
+namespace Voxymore::Core {
         struct TimeStep {
         public:
-            TimeStep(float timeInSeconds = 1.0f);
+            TimeStep(TimeType timeInSeconds = 1.0);
 
-            inline operator float() const { return m_Time; }
+            inline operator TimeType () const { return m_Time; }
 
-            inline float GetSeconds() const {return m_Time;}
-            inline float GetMilliSeconds() const {return m_Time * 1000.0f;}
+            inline TimeType GetSeconds() const {return m_Time;}
+            inline TimeType GetMilliSeconds() const {return m_Time * 1000.0;}
+
+			template<typename T>
+			inline T as() const
+			{
+				return T(m_Time);
+			}
         private:
-            float m_Time;
+            TimeType m_Time;
         };
 
-    } // Voxymore
-} // Core
+} // Voxymore::Core

@@ -5,17 +5,26 @@
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 #include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Voxymore/Core/Application.hpp"
+#include "imgui.h"
 #include "imgui_internal.h"
+
+#ifdef VXM_DOUBLE
+#define IMGUI_SCALAR_TYPE ImGuiDataType_Double
+#else //FLOAT
+#define IMGUI_SCALAR_TYPE ImGuiDataType_Float
+#endif
+
 
 namespace Voxymore
 {
 	namespace Core
 	{
-		bool ImGuiLib::DrawVec3ControlAdvanced(const std::string& label, glm::vec3& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+		bool ImGuiLib::DrawVec3ControlAdvanced(const std::string& label, Vec3& values, float step, Real min, Real max, const std::string& format, float resetValue, float columnWidth) {
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
+			ImGui::BeginGroup();
 			ImGui::PushID(label.c_str());
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, columnWidth);
@@ -43,7 +52,7 @@ namespace Voxymore
 			ImGui::PopStyleColor(3);
 
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##X", &values.x, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##X", IMGUI_SCALAR_TYPE, &values.x, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -60,7 +69,7 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Y", &values.y, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##Y", IMGUI_SCALAR_TYPE, &values.y, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -77,21 +86,25 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Z", &values.z, step, min, max, format.c_str());
+
+			changed |= ImGui::DragScalar("##Z", IMGUI_SCALAR_TYPE, &values.z, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::PopStyleVar();
 
 			// ==================== END ====================
 			ImGui::Columns(1);
 			ImGui::PopID();
+			ImGui::EndGroup();
 			return changed;
 		}
-		bool ImGuiLib::DrawVec2ControlAdvanced(const std::string& label, glm::vec2& values, float step, float min, float max, const std::string& format, float resetValue, float columnWidth) {
+
+		bool ImGuiLib::DrawVec2ControlAdvanced(const std::string& label, Vec2& values, float step, Real min, Real max, const std::string& format, float resetValue, float columnWidth) {
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
 			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
 			ImGui::PushID(label.c_str());
+			ImGui::BeginGroup();
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, columnWidth);
 			ImGui::Text("%s", label.c_str());
@@ -117,7 +130,7 @@ namespace Voxymore
 			ImGui::PopStyleColor(3);
 
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##X", &values.x, step, min, max, format.c_str());
+			changed |= ImGui::DragScalar("##X", IMGUI_SCALAR_TYPE, &values.x, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
@@ -134,14 +147,68 @@ namespace Voxymore
 			ImGui::PopFont();
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
-			changed |= ImGui::DragFloat("##Y", &values.y, step, min, max, format.c_str());
+
+			changed |= ImGui::DragScalar("##Y", IMGUI_SCALAR_TYPE, &values.y, step, &min, &max, format.c_str());
 			ImGui::PopItemWidth();
 
 			// ==================== END ====================
 			ImGui::PopStyleVar();
 			ImGui::Columns(1);
+			ImGui::EndGroup();
 			ImGui::PopID();
 			return changed;
+		}
+
+		bool ImGuiLib::DragReal(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalar(label.c_str(), IMGUI_SCALAR_TYPE, v, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal2(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 2, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal3(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 3, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragReal4(const std::string &label, Real *v, float v_speed, Real v_min, Real v_max, const char *format, ImGuiSliderFlags flags)
+		{
+			return ImGui::DragScalarN(label.c_str(), IMGUI_SCALAR_TYPE, v, 4, v_speed, &v_min, &v_max, format, flags);
+		}
+
+		bool ImGuiLib::DragRealRange2(const std::string &label, Real *v_current_min, Real *v_current_max, float v_speed, Real v_min, Real v_max, const char *format, const char *format_max, ImGuiSliderFlags flags)
+		{
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			if (window->SkipItems)
+				return false;
+
+			ImGuiContext& g = *GImGui;
+			ImGui::BeginGroup();
+			ImGui::PushID(label.c_str());
+			ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+
+			float min_min = (v_min >= v_max) ? -FLT_MAX : v_min;
+			float min_max = (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max);
+			ImGuiSliderFlags min_flags = flags | ((min_min == min_max) ? ImGuiSliderFlags_ReadOnly : 0);
+			bool value_changed = ImGui::DragScalar("##min", IMGUI_SCALAR_TYPE, v_current_min, v_speed, &min_min, &min_max, format, min_flags);
+			ImGui::PopItemWidth();
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+
+			float max_min = (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min);
+			float max_max = (v_min >= v_max) ? FLT_MAX : v_max;
+			ImGuiSliderFlags max_flags = flags | ((max_min == max_max) ? ImGuiSliderFlags_ReadOnly : 0);
+			value_changed |= ImGui::DragScalar("##max", IMGUI_SCALAR_TYPE, v_current_max, v_speed, &max_min, &max_max, format_max ? format_max : format, max_flags);
+			ImGui::PopItemWidth();
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+
+			ImGui::TextEx(label.c_str(), ImGui::FindRenderedTextEnd(label.c_str()));
+			ImGui::PopID();
+			ImGui::EndGroup();
+
+			return value_changed;
 		}
 
 	}// namespace Core

@@ -2,8 +2,6 @@
 // Created by ianpo on 04/07/2023.
 //
 
-#include <utility>
-
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
@@ -15,7 +13,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr) {
+    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr), m_PhysicsLayer(nullptr) {
         VXM_PROFILE_FUNCTION();
 
         if(s_Instance != nullptr){
@@ -37,8 +35,15 @@ namespace Voxymore::Core {
 
 		if(m_Parameters.addImGuiLayer)
 		{
+			// Will be deleted by the LayerStack
 			m_ImGUILayer = new ImGUILayer();
 			PushOverlay(m_ImGUILayer);
+		}
+		if(m_Parameters.addPhysicsLayer)
+		{
+			// Will be deleted by the LayerStack
+			m_PhysicsLayer = new PhysicsLayer();
+			PushOverlay(m_PhysicsLayer);
 		}
     }
 
@@ -51,7 +56,7 @@ namespace Voxymore::Core {
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
-//        VXM_CORE_INFO(e.ToString());
+//        VXM_CORE_INFO(e.string());
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
             (*--it)->OnEvent(e);{

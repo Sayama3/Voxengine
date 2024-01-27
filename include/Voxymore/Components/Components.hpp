@@ -41,37 +41,33 @@ namespace Voxymore::Core
 	{
 		public:
 	private:
-		glm::vec3 Position = glm::vec3(0.0f);
-		glm::quat Rotation = glm::identity<glm::quat>();
-		glm::vec3 EulerRotation = glm::vec3(0.0f);
-		glm::vec3 Scale = glm::vec3(1.0f);
+		Vec3 Position = Vec3(0.0f);
+		Quat Rotation = Math::Identity<Quat>();
+		Vec3 EulerRotation = Vec3(0.0f);
+		Vec3 Scale = Vec3(1.0f);
 	public:
 
 		inline TransformComponent() = default;
 		inline TransformComponent(const TransformComponent&) = default;
-		inline TransformComponent(const glm::vec3& position, const glm::quat& rotation = glm::identity<glm::quat>(), const glm::vec3& scale = glm::vec3(1.0f)) : Position(position), Rotation(rotation), EulerRotation(glm::eulerAngles(rotation)), Scale(scale) {}
+		inline TransformComponent(const Vec3& position, const Quat& rotation = Math::Identity<Quat>(), const Vec3& scale = Vec3(1.0f)) : Position(position), Rotation(rotation), EulerRotation(glm::eulerAngles(rotation)), Scale(scale) {}
 	public:
-		inline glm::vec3 GetPosition() const { return Position; }
-		inline void SetPosition(const glm::vec3& position) { Position = position; }
+		inline Vec3 GetPosition() const { return Position; }
+		inline void SetPosition(const Vec3& position) { Position = position; }
+		inline void AddMovement(const Vec3& movement) { Position += movement; }
 
-		inline glm::vec3 GetScale() const { return Scale; }
-		inline void SetScale(const glm::vec3& scale) { Scale = scale; }
+		inline Vec3 GetScale() const { return Scale; }
+		inline void SetScale(const Vec3& scale) { Scale = scale; }
 
-		inline glm::quat GetRotation() const { return Rotation; }
-		inline void SetRotation(const glm::quat& rotation) {Rotation = rotation; EulerRotation = glm::eulerAngles(rotation);}
+		inline Quat GetRotation() const { return Rotation; }
+		inline void SetRotation(const Quat& rotation) {Rotation = rotation; EulerRotation = glm::eulerAngles(rotation);}
 
-		inline glm::vec3 GetEulerRotation() const { return EulerRotation; }
-		inline void SetEulerRotation(const glm::vec3& rotation) {EulerRotation = rotation; Rotation = glm::quat(rotation); }
+		inline Vec3 GetEulerRotation() const { return EulerRotation; }
+		inline void SetEulerRotation(const Vec3& rotation) {EulerRotation = rotation; Rotation = Quat(rotation); }
 	public:
-		inline glm::mat4 GetTransform() const
+		inline Mat4 GetTransform() const
 		{
-			// Not using Math::TRS because I don't have to pass reference this way, so it should therefore be faster... I think... Need to be verified.
 			VXM_PROFILE_FUNCTION();
-			glm::mat4 trs(1.0f);
-			trs = glm::translate(trs, Position); // Translation Matrix
-			trs = trs * glm::toMat4(Rotation); // Rotation Matrix
-			trs = glm::scale(trs, Scale); // Scale Matrix
-			return trs; // Translation * Rotation * Scale => TRS Matrix.
+			return Math::TRS(Position, Rotation, Scale); // Translation * Rotation * Scale => TRS Matrix.
 		}
 	};
 

@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_COMPUTED_DEFAULT "20")
 
 option(VoxymoreCore_SHARED_BUILD "The ${VoxymoreCore} lib in shared mode" OFF)
 option(VXM_DONT_PROFILE "Stop the profiling of the application" OFF)
+option(VXM_USE_DOUBLE "Set the application to use double as default" OFF)
 
 set(SRC_FILES src/Core/Application.cpp
         src/Core/Math.cpp
@@ -86,8 +87,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/SceneManager.hpp
         src/Components/CustomComponent.cpp
         include/Voxymore/Components/CustomComponent.hpp
-        include/Voxymore/Scene/GameplaySystem.hpp
-        src/Scene/GameplaySystem.cpp
+        include/Voxymore/Scene/Systems.hpp
+        src/Scene/Systems.cpp
         include/Voxymore/Core/YamlHelper.hpp
         include/Voxymore/Core/FileSystem.hpp
         src/Core/FileSystem.cpp
@@ -113,6 +114,34 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/ImGUI/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
+        src/Physics/PhysicsLayer.cpp
+        include/Voxymore/Physics/PhysicsLayer.hpp
+        include/Voxymore/Physics/Particle.hpp
+        src/Physics/Components/ParticleComponent.cpp
+        include/Voxymore/Physics/Components/ParticleComponent.hpp
+        src/Physics/Particle.cpp
+        src/Components/PrimitiveComponent.cpp
+        include/Voxymore/Components/PrimitiveComponent.hpp
+        src/Physics/Components/AnchoredSpringComponent.cpp
+        include/Voxymore/Physics/Components/AnchoredSpringComponent.hpp
+        src/Physics/Systems/SpringForceSystem.cpp
+        include/Voxymore/Physics/Systems/SpringForceSystem.hpp
+        vendor/static_block.hpp
+        src/Physics/Systems/BuoyancyForceSystem.cpp
+        include/Voxymore/Physics/Systems/BuoyancyForceSystem.hpp
+        src/Physics/Components/FloatingComponent.cpp
+        include/Voxymore/Physics/Components/FloatingComponent.hpp
+        src/Physics/Collisions/ParticleContact.cpp
+        include/Voxymore/Physics/Collisions/ParticleContact.hpp
+        include/Voxymore/Core/MultiThreading.hpp
+        src/Physics/Collisions/ParticleContactResolver.cpp
+        include/Voxymore/Physics/Collisions/ParticleContactResolver.hpp
+        include/Voxymore/Scene/Entity.forward.hpp
+        include/Voxymore/Scene/Entity.decl.hpp
+        include/Voxymore/Scene/Entity.impl.hpp
+        include/Voxymore/Scene/Scene.forward.hpp
+        include/Voxymore/Scene/Scene.decl.hpp
+        include/Voxymore/Scene/Scene.impl.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -126,6 +155,13 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
 endif()
 
 target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
+if(VXM_USE_DOUBLE)
+    message(STATUS "Voxymore::Core is using Double as the main floating number system.")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DOUBLE)
+else()
+    message(STATUS "Voxymore::Core is using Float as the main floating number system.")
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_FLOAT)
+endif()
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 
@@ -135,6 +171,8 @@ set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
         VERSION       ${${PROJECT_NAME}_VERSION}
         PUBLIC_HEADER "include/Voxymore/Voxymore.hpp"
         PUBLIC cxx_std_20)
+
+set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES ENABLE_EXPORTS True)
 
 
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC

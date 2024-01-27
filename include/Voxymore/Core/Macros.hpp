@@ -2,8 +2,7 @@
 // Created by ianpo on 16/07/2023.
 //
 
-#ifndef VOXYMORE_MACROS_HPP
-#define VOXYMORE_MACROS_HPP
+#pragma once
 
 #include "Voxymore/Core/PlatformDetection.hpp"
 #include <csignal>
@@ -73,8 +72,15 @@
     #define VXM_ASSERT(condition, ...)
 #endif
 
+#if VXM_DEBUG
+#define VXM_CORE_CHECK(condition, ...)  if(!(condition)) { VXM_CORE_WARNING(__VA_ARGS__); }
+#define VXM_CHECK(condition, ...)  if(!(condition)) { VXM_WARNING(__VA_ARGS__); }
+#else
+#define VXM_CORE_CHECK(condition, ...)
+#define VXM_CHECK(condition, ...)
+#endif
+
 #ifndef BIT
 #define BIT(X) (1 << X)
 #endif
 
-#endif //VOXYMORE_MACROS_HPP

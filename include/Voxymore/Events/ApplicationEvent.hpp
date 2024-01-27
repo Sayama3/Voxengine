@@ -18,7 +18,7 @@ namespace Voxymore::Core {
         unsigned int GetWidth() const { return m_Width; }
         unsigned int GetHeight() const { return m_Height; }
 
-        std::string ToString() const override
+        std::string string() const override
         {
             std::stringstream ss;
             ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
@@ -39,7 +39,7 @@ namespace Voxymore::Core {
 
         bool GetMinify() const { return m_Minify; }
 
-        std::string ToString() const override
+        std::string string() const override
         {
             std::stringstream ss;
             ss << "WindowMinifyEvent: " << m_Minify ;

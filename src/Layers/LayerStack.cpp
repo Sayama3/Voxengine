@@ -5,8 +5,7 @@
 #include "Voxymore/Layers/LayerStack.hpp"
 
 namespace Voxymore::Core {
-    LayerStack::LayerStack() {
-    }
+    LayerStack::LayerStack() = default;
 
     LayerStack::~LayerStack() {
         for (Layer* layer : m_Layers) {

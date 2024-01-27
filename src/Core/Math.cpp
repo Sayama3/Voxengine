@@ -3,37 +3,25 @@
 //
 
 #include "Voxymore/Core/Math.hpp"
-#include "Voxymore/Core/Core.hpp"
 
 namespace Voxymore::Core {
-// Old way
-// TODO: test which one is faster!
-//	glm::mat4 Math::TRS(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) {
-//		VXM_PROFILE_FUNCTION();
-//		glm::mat4 identity(1.0f);
-//		glm::mat4 t = glm::translate(identity, position); // Translation Matrix
-//		glm::mat4 r = glm::toMat4(rotation); // Rotation Matrix
-//		glm::mat4 s = glm::scale(identity, scale); // Scale Matrix
-//		return t * r * s; // Translation * Rotation * Scale => TRS Matrix.
-//	}
-
-	glm::mat4 Math::TRS(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) {
+	Mat4 Math::TRS(const Vec3& position, const Quat& rotation, const Vec3& scale) {
 		VXM_PROFILE_FUNCTION();
-		glm::mat4 trs(1.0f);
+		Mat4 trs(1.0f);
 		trs = glm::translate(trs, position); // Translation Matrix
 		trs = trs * glm::toMat4(rotation); // Rotation Matrix
 		trs = glm::scale(trs, scale); // Scale Matrix
 		return trs; // Translation * Rotation * Scale => TRS Matrix.
 	}
 
-	void Math::TRS(glm::mat4& trs, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) {
+	void Math::TRS(Mat4& trs, const Vec3& position, const Quat& rotation, const Vec3& scale) {
 		VXM_PROFILE_FUNCTION();
 		trs = glm::translate(trs, position); // Translation Matrix
 		trs = trs * glm::toMat4(rotation); // Rotation Matrix
 		trs = glm::scale(trs, scale); // Scale Matrix
 	}
 
-	bool Math::DecomposeTransform(const glm::mat4 &transform, glm::vec3 &position, glm::vec3 &rotation, glm::vec3 &scale)
+	bool Math::DecomposeTransform(const Mat4 &transform, Vec3 &position, Vec3 &rotation, Vec3 &scale)
 	{
 		VXM_PROFILE_FUNCTION();
 		// from glm::decompose in matrix_decompose
@@ -103,7 +91,7 @@ namespace Voxymore::Core {
 		return true;
 	}
 
-	bool Math::DecomposeTransform(const glm::mat4 &transform, glm::vec3 &position, glm::quat &rotation, glm::vec3 &scale)
+	bool Math::DecomposeTransform(const Mat4 &transform, Vec3 &position, Quat &rotation, Vec3 &scale)
 	{
 		VXM_PROFILE_FUNCTION();
 		// from glm::decompose in matrix_decompose

@@ -34,12 +34,21 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
+#include "Voxymore/Components/PrimitiveComponent.hpp"
+
+#include "Voxymore/Physics/Collisions/ParticleContact.hpp"
+#include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
+#include "Voxymore/Physics/Components/FloatingComponent.hpp"
+#include "Voxymore/Physics/Components/ParticleComponent.hpp"
+#include "Voxymore/Physics/Particle.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
-#include "Voxymore/Scene/GameplaySystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
-#include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/SceneManager.hpp"
+#include "Voxymore/Scene/SceneSerializer.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"
@@ -63,5 +72,6 @@
 #include "Voxymore/Events/ApplicationEvent.hpp"
 
 #include "Voxymore/Assets/Assets.hpp"
+#include "Voxymore/Utils/Platform.hpp"
 
 //#include "Voxymore/Core/EntryPoint.hpp"
