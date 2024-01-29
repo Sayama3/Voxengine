@@ -1,0 +1,6 @@
+Project:
+  Name: TestProject
+  AssetDirectory: Asset
+  CacheDirectory: Cache
+  SystemDirectory: Systems
+  StartSceneId: 2479769007492436712
