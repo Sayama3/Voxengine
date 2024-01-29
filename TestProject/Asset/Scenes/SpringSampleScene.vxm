@@ -1,0 +1,84 @@
+Scene:
+  Name: Spring Sample Scene
+  UUID: 2479769007492436712
+  Entities:
+    - Entity: 6197672930199883822
+      IsActive: true
+      TagComponent:
+        Tag: Cube black
+      TransformComponent:
+        Position: [-5, -6.00703061e-08, -2.5]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ParticleComponent:
+        Position: [0, 0, 0]
+        Acceleration: [0, -10, 0]
+        Velocity: [-5, 0, 15]
+        Damping: 0.99000001
+        InverseMass: 1
+      ModelComponent:
+        Path: {Source: 2, Path: Models/Cube_B.glb}
+        ShaderName: Default
+    - Entity: 7275291884409962700
+      IsActive: true
+      TagComponent:
+        Tag: Cube White
+      TransformComponent:
+        Position: [5, 0, 2.5]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ParticleComponent:
+        Position: [0, 0, 0]
+        Acceleration: [0, -10, 0]
+        Velocity: [0, 0, 25]
+        Damping: 0.850000024
+        InverseMass: 1
+      ModelComponent:
+        Path: {Source: 2, Path: Models/Cube_W.glb}
+        ShaderName: Default
+    - Entity: 7934402640759719094
+      IsActive: true
+      TagComponent:
+        Tag: Cube Color
+      TransformComponent:
+        Position: [0, 4.6203084, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      AnchoredSpringComponent:
+        SpringConstant: 5
+        RestLength: 2
+        EntitiesConnected:
+          - SceneId: 2479769007492436712
+            EntityId: 7275291884409962700
+          - SceneId: 2479769007492436712
+            EntityId: 6197672930199883822
+        EntitiesNameHelper:
+          - Cube Whi - (7275291884409962700)
+          - Cube bla - (6197672930199883822)
+      ModelComponent:
+        Path: {Source: 2, Path: Models/Cube_Color.gltf}
+        ShaderName: Default
+    - Entity: 1514572497277624835
+      IsActive: true
+      TagComponent:
+        Tag: Camera
+      TransformComponent:
+        Position: [0, 10, 20]
+        Rotation: [-0.194234639, 0, 0, 0.980955064]
+        EulerRotation: [-0.390954375, 0, 0]
+        Scale: [1, 0.999999881, 0.999999881]
+      CameraComponent:
+        Primary: true
+        FixedAspectRatio: false
+        Camera:
+          IsOrthographic: false
+          AspectRatio: 1.14841497
+          OrthographicSize: 10
+          OrthographicNear: -1
+          OrthographicFar: 1
+          PerspectiveVerticalFOV: 1.04719758
+          PerspectiveNear: 0.00999999978
+          PerspectiveFar: 1000
