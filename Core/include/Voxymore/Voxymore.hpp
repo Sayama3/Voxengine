@@ -40,7 +40,7 @@
 #include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/Physics/Components/FloatingComponent.hpp"
 #include "Voxymore/Physics/Components/ParticleComponent.hpp"
-#include "Voxymore/Physics/Particle.hpp"
+#include "Voxymore/Physics/Particles/Particle.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/Physics/Systems/SpringForceSystem.hpp"

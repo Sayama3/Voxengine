@@ -88,8 +88,8 @@ namespace Voxymore::Core
 		 * @param scale The scale as a 3D vector.
 		 * @return A 4x4 matrix representation of the Transform matrix.
 		 */
-		static Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale);
-		static void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale);
+		static Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
+		static void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
 
 		static bool DecomposeTransform(const Mat4& transform, Vec3& position, Vec3& rotation, Vec3& scale);
 		static bool DecomposeTransform(const Mat4& transform, Vec3& position, glm::quat& rotation, Vec3& scale);
