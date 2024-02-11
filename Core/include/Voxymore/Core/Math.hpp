@@ -129,6 +129,12 @@ namespace Voxymore::Core
 			return glm::normalize(value);
 		}
 
+		template<int C, int R, typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::mat<C,R,T,Q> Inverse(const glm::mat<C,R,T,Q>& mat)
+		{
+			return glm::inverse(mat);
+		}
+
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
 		inline static Mat3 ToMat3(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat3(q); }
 
@@ -173,6 +179,11 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			return glm::sqrt(value);
+		}
+
+		inline static Vec3 Cross(const Vec3& a, const Vec3& b)
+		{
+			return glm::cross(a,b);
 		}
 
 
