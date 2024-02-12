@@ -1,8 +1,23 @@
 [![build](https://github.com/Sayama3/VoxymoreCore/actions/workflows/cmake.yml/badge.svg)](https://github.com/Sayama3/VoxymoreCore/actions/workflows/cmake.yml)
 
 # Voxengine
- 
-The Voxengine repository. This repository contains the Voxengine solution (*made with CMake*) and two project. Respectively "*Core*" and "*Voxymore*".
+
+The Voxengine is currently a general purpose Game Engine with it's own tech. Inside there is :
+- a Renderer made with OpenGL.
+- a physic engine
+- an editor (made with [ImGui](https://github.com/ocornut/imgui))
+- scripting in C++
+
+And will have later on :
+
+- [ ] Audio Engine
+- [ ] Lua Scritping
+- [ ] Nodal Scripting
+- [ ] Nodal Shader Creation
+
+---
+
+The renderer support the GLTF 2.0 format for the 3D model and will support import of other format later on.
 
 ## Core
 
