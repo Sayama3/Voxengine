@@ -18,6 +18,9 @@
 
 #include "Voxymore/Physics/Particles/Collisions/ParticleContact.hpp"
 #include "Voxymore/Physics/Particles/Collisions/ParticleContactResolver.hpp"
+
+#include "Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp"
+#include "Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp"
 namespace Voxymore::Core
 {
 

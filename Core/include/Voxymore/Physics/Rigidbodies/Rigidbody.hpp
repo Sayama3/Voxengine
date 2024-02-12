@@ -23,6 +23,10 @@ namespace Voxymore::Core
 	class Rigidbody
 	{
 	public:
+		inline Rigidbody() = default;
+		inline ~Rigidbody() = default;
+		Rigidbody(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
+	public:
 		Mat4 CalculateTransformMatrix() const;
 		Mat3 CalculateWorldInverseInertiaTensor() const;
 

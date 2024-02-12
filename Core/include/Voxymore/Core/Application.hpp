@@ -5,13 +5,13 @@
 #pragma once
 
 #include "Core.hpp"
-#include "Voxymore/Core/TimeStep.hpp"
-#include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
-#include "Voxymore/Events/Event.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
+#include "Voxymore/Events/Event.hpp"
+#include "Voxymore/ImGUI/ImGuiLayer.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
-#include "Voxymore/ImGUI/ImGUILayer.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Window.hpp"
 
@@ -41,7 +41,7 @@ namespace Voxymore::Core {
 		inline static Application& Get() {return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
 		inline bool HasImGuiLayer() {return m_ImGUILayer != nullptr; }
-		inline ImGUILayer* GetImGuiLayer() { return m_ImGUILayer; }
+		inline ImGuiLayer * GetImGuiLayer() { return m_ImGUILayer; }
 		inline bool HasPhysicsLayer() {return m_PhysicsLayer != nullptr; }
 		inline PhysicsLayer* GetPhysicsLayer() { return m_PhysicsLayer; }
 		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
@@ -59,7 +59,7 @@ namespace Voxymore::Core {
 		ApplicationParameters m_Parameters;
 		double m_LastFrameTime = 0.0;
 		Scope<Window> m_Window;
-		ImGUILayer* m_ImGUILayer;
+		ImGuiLayer * m_ImGUILayer;
 		PhysicsLayer* m_PhysicsLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;

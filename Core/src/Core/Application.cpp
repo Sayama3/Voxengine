@@ -36,7 +36,7 @@ namespace Voxymore::Core {
 		if(m_Parameters.addImGuiLayer)
 		{
 			// Will be deleted by the LayerStack
-			m_ImGUILayer = new ImGUILayer();
+			m_ImGUILayer = new ImGuiLayer();
 			PushOverlay(m_ImGUILayer);
 		}
 		if(m_Parameters.addPhysicsLayer)

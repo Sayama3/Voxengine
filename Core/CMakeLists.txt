@@ -24,8 +24,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Layers/Layer.hpp
         src/Layers/LayerStack.cpp
         include/Voxymore/Layers/LayerStack.hpp
-        src/ImGui/ImGUILayer.cpp
-        include/Voxymore/ImGUI/ImGUILayer.hpp
+        src/ImGui/ImGuiLayer.cpp
+        include/Voxymore/ImGui/ImGuiLayer.hpp
         include/Voxymore/Core/Input.hpp
         include/Voxymore/Core/Core.hpp
         include/Voxymore/Core/KeyCodes.hpp
@@ -100,7 +100,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/UUID.hpp
         src/Scene/Entity.cpp
         src/ImGui/ImGuiLib.cpp
-        include/Voxymore/ImGUI/ImGuiLib.hpp
+        include/Voxymore/ImGui/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
         src/Physics/PhysicsLayer.cpp
@@ -133,6 +133,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/Scene.impl.hpp
         src/Physics/Rigidbodies/Rigidbody.cpp
         include/Voxymore/Physics/Rigidbodies/Rigidbody.hpp
+        src/Physics/Rigidbodies/Systems/RBGravitySystem.cpp
+        include/Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp
+        src/Physics/Rigidbodies/Components/RigidbodyComponent.cpp
+        include/Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

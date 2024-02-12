@@ -3,9 +3,9 @@
 //
 
 
-#include <Voxymore/ImGUI/ImGUILayer.hpp>
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include <Voxymore/ImGUI/ImGuiLayer.hpp>
 #include <glad/glad.h>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
@@ -24,20 +24,20 @@
 #include <ImGuizmo.h>
 
 namespace Voxymore::Core {
-    ImGUILayer::ImGUILayer() : Layer("ImGUILayer") {
+	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {
 		VXM_PROFILE_FUNCTION();
-        VXM_CORE_INFO("Create ImGUILayer");
+        VXM_CORE_INFO("Create ImGuiLayer");
 		m_Fonts.reserve((uint8_t )FontType::Count);
     }
 
-    ImGUILayer::~ImGUILayer() {
-        VXM_CORE_INFO("Destroy ImGUILayer");
+	ImGuiLayer::~ImGuiLayer() {
+        VXM_CORE_INFO("Destroy ImGuiLayer");
     }
 
-    void ImGUILayer::OnAttach() {
+    void ImGuiLayer::OnAttach() {
         VXM_PROFILE_FUNCTION();
 
-        VXM_CORE_INFO("Attach ImGUILayer");
+        VXM_CORE_INFO("Attach ImGuiLayer");
 
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -73,18 +73,18 @@ namespace Voxymore::Core {
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
-    void ImGUILayer::OnDetach() {
+    void ImGuiLayer::OnDetach() {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_INFO("Detach ImGUILayer");
+        VXM_CORE_INFO("Detach ImGuiLayer");
         // Cleanup
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
-    void ImGUILayer::Begin() {
+    void ImGuiLayer::Begin() {
         VXM_PROFILE_FUNCTION();
-//        VXM_CORE_INFO("Begin ImGUILayer");
+//        VXM_CORE_INFO("Begin ImGuiLayer");
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -93,9 +93,9 @@ namespace Voxymore::Core {
 //        VXM_CORE_INFO("Add every new Frames");
     }
 
-    void ImGUILayer::End() {
+    void ImGuiLayer::End() {
         VXM_PROFILE_FUNCTION();
-//        VXM_CORE_INFO("End ImGUILayer");
+//        VXM_CORE_INFO("End ImGuiLayer");
 
         // Rendering
         ImGui::Render();
@@ -118,14 +118,14 @@ namespace Voxymore::Core {
         }
     }
 
-    void ImGUILayer::OnImGuiRender() {
+    void ImGuiLayer::OnImGuiRender() {
         VXM_PROFILE_FUNCTION();
-//        VXM_CORE_INFO("ImGUILayer -> OnImGuiRender");
+//        VXM_CORE_INFO("ImGuiLayer -> OnImGuiRender");
 //        static bool showDemoWindow = true;
 //        if(showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
     }
 
-    void ImGUILayer::OnEvent(Event &e) {
+    void ImGuiLayer::OnEvent(Event &e) {
 		VXM_PROFILE_FUNCTION();
         if(m_BlockEvents) {
             ImGuiIO &io = ImGui::GetIO();
@@ -134,7 +134,7 @@ namespace Voxymore::Core {
         }
     }
 
-	void ImGUILayer::AddFont(const std::string &path, float size, FontType fontType, bool isDefault)
+	void ImGuiLayer::AddFont(const std::string &path, float size, FontType fontType, bool isDefault)
 	{
 		VXM_PROFILE_FUNCTION();
 		ImGuiIO &io = ImGui::GetIO();
@@ -143,20 +143,20 @@ namespace Voxymore::Core {
 		m_Fonts[fontType] = fontPtr;
 	}
 
-	ImFont* ImGUILayer::GetFont(FontType fontType)
+	ImFont*ImGuiLayer::GetFont(FontType fontType)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
+		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGuiLayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
 		return m_Fonts[fontType];
 	}
 
-	void ImGUILayer::PushFont(FontType fontType)
+	void ImGuiLayer::PushFont(FontType fontType)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGUILayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
+		VXM_CORE_ASSERT(m_Fonts.contains(fontType), "The ImGuiLayer doesn't not contain the FontType {0}", static_cast<uint8_t>(fontType));
 		ImGui::PushFont(m_Fonts[fontType]);
 	}
-	void ImGUILayer::SetDarkThemeColors()
+	void ImGuiLayer::SetDarkThemeColors()
 	{
 		VXM_PROFILE_FUNCTION();
 		m_IsDarkTheme = true;
@@ -192,7 +192,7 @@ namespace Voxymore::Core {
 		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	}
-	void ImGUILayer::SetLightThemeColors()
+	void ImGuiLayer::SetLightThemeColors()
 	{
 		VXM_PROFILE_FUNCTION();
 		m_IsDarkTheme = false;

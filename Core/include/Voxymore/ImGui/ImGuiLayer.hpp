@@ -38,10 +38,10 @@ namespace Voxymore::Core {
 		Count,
 	};
 
-    class ImGUILayer : public Layer {
+    class ImGuiLayer : public Layer {
     public:
-        ImGUILayer();
-        virtual ~ImGUILayer() override;
+		ImGuiLayer();
+        virtual ~ImGuiLayer() override;
 
         virtual void OnAttach() override;
         virtual void OnDetach() override;

@@ -212,6 +212,7 @@ namespace Voxymore::Core
 		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
+	template<> inline std::string Math::to_string(bool value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(float value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(long double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }

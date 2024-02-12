@@ -6,6 +6,12 @@
 
 namespace Voxymore::Core
 {
+	Rigidbody::Rigidbody(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor)
+		: m_InverseMass(inverseMass), m_LinearDamping(linearDamping), m_Position(position), m_Orientation(orientation), m_InverseInertiaTensor(inverseInertiaTensor)
+	{
+
+	}
+
 	Mat4 Rigidbody::CalculateTransformMatrix() const
 	{
 		return Math::TRS(m_Position, m_Orientation);

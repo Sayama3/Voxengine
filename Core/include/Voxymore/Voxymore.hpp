@@ -25,7 +25,7 @@
 
 #include "Voxymore/Layers/Layer.hpp"
 
-#include "Voxymore/ImGUI/ImGUILayer.hpp"
+#include "Voxymore/ImGUI/ImGuiLayer.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 
 #include "Voxymore/Project/Project.hpp"
@@ -43,6 +43,9 @@
 #include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
 #include "Voxymore/Physics/Particles/Particle.hpp"
+#include "Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp"
+#include "Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp"
+#include "Voxymore/Physics/Rigidbodies/Rigidbody.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
