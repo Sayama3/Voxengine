@@ -2,7 +2,7 @@
 // Created by ianpo on 06/01/2024.
 //
 
-#include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
+#include "Voxymore/Physics/Particles/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 #include "Voxymore/Scene/Entity.hpp"

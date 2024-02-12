@@ -2,7 +2,7 @@
 // Created by ianpo on 26/01/2024.
 //
 
-#include "Voxymore/Physics/Collisions/ParticleContactResolver.hpp"
+#include "Voxymore/Physics/Particles/Collisions/ParticleContactResolver.hpp"
 
 namespace Voxymore::Core
 {

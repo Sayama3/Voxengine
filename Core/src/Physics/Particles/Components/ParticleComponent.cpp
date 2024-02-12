@@ -2,7 +2,7 @@
 // Created by ianpo on 05/01/2024.
 //
 
-#include "Voxymore/Physics/Components/ParticleComponent.hpp"
+#include "Voxymore/Physics/Particles/Components/ParticleComponent.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/ImGUI/ImGuiLib.hpp"
 

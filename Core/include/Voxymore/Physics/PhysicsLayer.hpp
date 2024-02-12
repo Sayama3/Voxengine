@@ -16,8 +16,8 @@
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 
-#include "Voxymore/Physics/Collisions/ParticleContact.hpp"
-#include "Voxymore/Physics/Collisions/ParticleContactResolver.hpp"
+#include "Voxymore/Physics/Particles/Collisions/ParticleContact.hpp"
+#include "Voxymore/Physics/Particles/Collisions/ParticleContactResolver.hpp"
 namespace Voxymore::Core
 {
 

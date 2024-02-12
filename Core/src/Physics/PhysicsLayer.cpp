@@ -5,10 +5,10 @@
 #include <utility>
 
 #include "Voxymore/Components/Components.hpp"
-#include "Voxymore/Physics/Components/ParticleComponent.hpp"
+#include "Voxymore/Physics/Particles/Components/ParticleComponent.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
-#include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
-#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
+#include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
 
 
 namespace Voxymore::Core
