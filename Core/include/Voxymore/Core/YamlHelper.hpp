@@ -37,12 +37,14 @@ namespace Voxymore::Core
 	template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
 	inline YAML::Emitter &operator<<(YAML::Emitter &out, const glm::mat<C,R,T,Q> &v)
 	{
-		out << YAML::Flow;
 		out << YAML::BeginSeq;
-		for (int x = 0; x < C; ++x) {
-			for (int y = 0; y < R; ++y) {
-				out << v[x][y];
+		for (int r = 0; r < R; ++r) {
+			out << YAML::BeginSeq;
+			out << YAML::Flow;
+			for (int c = 0; c < C; ++c) {
+				out << v[r][c];
 			}
+			out << YAML::EndSeq;
 		}
 		out << YAML::EndSeq;
 		return out;
@@ -101,19 +103,23 @@ namespace YAML
 		inline static Node encode(const glm::mat<C,R,T,Q>& rhs)
 		{
 			Node node;
-			for (int x = 0; x < C; ++x) {
-				for (int y = 0; y < R; ++y) {
-					node.push_back(rhs[x][y]);
+			for (int r = 0; r < R; ++r) {
+				Node rowNode;
+				for (int c = 0; c < C; ++c) {
+					rowNode.push_back(rhs[r][c]);
 				}
+				node.push_back(rowNode);
 			}
 			return node;
 		}
 		inline static bool decode(const Node& node, glm::mat<C,R,T,Q>& rhs)
 		{
-			if(!node.IsSequence() || node.size() != C*R) return false;
-			for (int x = 0; x < C; ++x) {
-				for (int y = 0; y < R; ++y) {
-					rhs[x][y] = node[x * R + y].as<T>();
+			if(!node.IsSequence() || node.size() != R) return false;
+			for (int r = 0; r < R; ++r) {
+				Node rowNode = node[r];
+				if(!rowNode.IsSequence() || rowNode.size() != C) return false;
+				for (int c = 0; c < C; ++c) {
+					rhs[r][c] = rowNode[c].as<T>();
 				}
 			}
 			return true;
