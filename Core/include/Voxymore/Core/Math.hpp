@@ -227,67 +227,20 @@ namespace Voxymore::Core
 
 } // Voxymore::Core
 
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat4 value){
+template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat3 value){
+
+template<typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::qua<T,Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec1 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Quat value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec1 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec1 value){
+
+template<glm::length_t L, typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::vec<L, T, Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
