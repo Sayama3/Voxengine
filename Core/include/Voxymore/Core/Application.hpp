@@ -10,7 +10,7 @@
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 #include "Voxymore/Events/Event.hpp"
-#include "Voxymore/ImGUI/ImGuiLayer.hpp"
+#include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Window.hpp"
