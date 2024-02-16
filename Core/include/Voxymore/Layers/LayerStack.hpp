@@ -29,7 +29,39 @@ namespace Voxymore::Core {
         inline std::vector<Layer*>::const_reverse_iterator rbegin() const {return m_Layers.rbegin();}
         inline std::vector<Layer*>::const_reverse_iterator rend() const {return m_Layers.rend();}
 
-    private:
+		template<typename T>
+		inline T* FindLayer()
+		{
+			for (Layer *layer: m_Layers) {
+				if (typeid(*layer) == typeid(T))
+					return static_cast<T *>(layer);
+			}
+			return nullptr;
+		}
+
+		template<typename T>
+		inline const T* FindLayer() const
+		{
+			for (Layer* layer: m_Layers) {
+				if (typeid(*layer) == typeid(T))
+					return static_cast<const T *>(layer);
+			}
+			return nullptr;
+		}
+
+		template<typename T>
+		inline size_t FindLayerIndex() const
+		{
+			for (size_t i = 0; i < m_Layers.size(); ++i) {
+				if (typeid(*(m_Layers[i])) == typeid(T))
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		private:
         std::vector<Layer*> m_Layers;
         unsigned int m_LayerInsertIndex = 0;
     };
