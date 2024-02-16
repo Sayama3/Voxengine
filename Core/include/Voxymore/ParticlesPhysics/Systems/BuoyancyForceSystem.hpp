@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Voxymore/ParticlePhysic/Components/FloatingComponent.hpp"
-#include "Voxymore/ParticlePhysic/Components/ParticleComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 #include "static_block.hpp"
 

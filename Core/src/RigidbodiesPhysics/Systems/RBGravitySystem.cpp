@@ -2,7 +2,7 @@
 // Created by Iannis on 12/02/2024.
 //
 
-#include "Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RBGravitySystem.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
 
 #define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\

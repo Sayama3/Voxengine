@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
-#include "Voxymore/ParticlePhysic/Particle.hpp"
+#include "Voxymore/ParticlesPhysics/Particle.hpp"
 
 namespace Voxymore::Core
 {

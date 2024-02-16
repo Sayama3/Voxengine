@@ -2,9 +2,9 @@
 // Created by ianpo on 18/01/2024.
 //
 
-#include "Voxymore/Physics/Particles/Components/FloatingComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
-#include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp"
 
 
 namespace Voxymore::Core

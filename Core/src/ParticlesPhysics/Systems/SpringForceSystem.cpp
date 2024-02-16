@@ -2,8 +2,8 @@
 // Created by ianpo on 06/01/2024.
 //
 
-#include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
-#include "Voxymore/Physics/Particles/Components/ParticleComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Systems/SpringForceSystem.hpp"
+#include "Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp"
 
 
 namespace Voxymore::Core

@@ -16,11 +16,11 @@
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 
-#include "Voxymore/ParticlePhysic/Collisions/ParticleContact.hpp"
-#include "Voxymore/ParticlePhysic/Collisions/ParticleContactResolver.hpp"
+#include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
+#include "Voxymore/ParticlesPhysics/Collisions/ParticleContactResolver.hpp"
 
-#include "Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp"
-#include "Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RBGravitySystem.hpp"
 namespace Voxymore::Core
 {
 

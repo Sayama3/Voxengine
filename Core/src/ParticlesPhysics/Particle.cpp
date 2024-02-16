@@ -2,7 +2,7 @@
 // Created by ianpo on 05/01/2024.
 //
 
-#include "Voxymore/ParticlePhysic/Particle.hpp"
+#include "Voxymore/ParticlesPhysics/Particle.hpp"
 
 namespace Voxymore::Core
 {

@@ -2,7 +2,7 @@
 // Created by ianpo on 18/01/2024.
 //
 
-#include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
 
 namespace Voxymore::Core

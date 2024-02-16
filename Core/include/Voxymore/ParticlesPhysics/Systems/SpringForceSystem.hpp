@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/ParticlePhysic/Components/AnchoredSpringComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 
 namespace Voxymore::Core
