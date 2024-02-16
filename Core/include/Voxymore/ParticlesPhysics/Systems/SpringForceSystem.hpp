@@ -20,7 +20,5 @@ namespace Voxymore::Core
 		inline bool RunOnAllScenes() override {return true;}
 	};
 
-	static_block{ SpringForceSystem::CreateSystem(); };
-
 } // namespace Voxymore::Core
 

@@ -96,6 +96,7 @@ namespace Voxymore::Core
 		static void LoadSystem(const std::string& name);
 		static bool IsActive(const std::string& name);
 		static void SetActive(const std::string& systemName, bool enable);
+		static void DeleteSystem(const std::string& systemName);
 
 		static void AddSceneToSystem(const std::string& systemName, UUID sceneId);
 		static void AddSceneToSystemIfNotExist(const std::string& systemName, UUID sceneId);
@@ -123,6 +124,13 @@ public: \
 		SYS::s_Instance = ::Voxymore::Core::CreateRef<SYS>();\
 		::Voxymore::Core::SystemManager::AddSystem(SYS::s_Instance->GetName(), std::static_pointer_cast<::Voxymore::Core::System>(SYS::s_Instance));\
 		return SYS::s_Instance; \
+	} \
+	inline static void DeleteSystem() \
+	{ \
+        VXM_PROFILE_FUNCTION(); \
+        if(SYS::s_Instance != nullptr) return; \
+		::Voxymore::Core::SystemManager::DeleteSystem(SYS::s_Instance->GetName()); \
+		SYS::s_Instance = nullptr; \
 	}
 
 

@@ -27,6 +27,16 @@ namespace Voxymore::Core
 		inline ~Rigidbody() = default;
 		Rigidbody(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
 	public:
+		/**
+		 * @brief Integrate the rigid body over a specified time step.
+		 *
+		 * This method updates the position and orientation of the rigid body based on
+		 * its current state and the specified time step.
+		 *
+		 * @param ts The time step for integration.
+		 */
+		void Integrate(Real ts);
+	public:
 		Mat4 CalculateTransformMatrix() const;
 		Mat3 CalculateWorldInverseInertiaTensor() const;
 
@@ -59,6 +69,7 @@ namespace Voxymore::Core
 		[[nodiscard]] const Vec3& GetPosition() const;
 		Vec3& GetPosition();
 		void SetPosition(const Vec3& position);
+		void AddMovement(const Vec3& movement);
 
 		[[nodiscard]] const Quat& GetOrientation() const;
 		Quat& GetOrientation();
@@ -67,10 +78,12 @@ namespace Voxymore::Core
 		[[nodiscard]] const Vec3& GetLinearVelocity() const;
 		Vec3& GetLinearVelocity();
 		void SetLinearVelocity(const Vec3& linearVelocity);
+		void AddLinearVelocity(const Vec3& linearVelocity);
 
 		[[nodiscard]] const Vec3& GetAngularVelocity() const;
 		Vec3& GetAngularVelocity();
 		void SetAngularVelocity(const Vec3& angularVelocity);
+		void AddAngularVelocity(const Vec3& angularVelocity);
 
 	protected:
 		/**

@@ -17,12 +17,12 @@
 
 namespace Voxymore::Core
 {
-	class RBGravitySystem : public System
+	class RigidbodyGravitySystem : public System
 	{
-		VXM_IMPLEMENT_SYSTEM(RBGravitySystem);
+		VXM_IMPLEMENT_SYSTEM(RigidbodyGravitySystem);
 	public:
-		RBGravitySystem() = default;
-		~RBGravitySystem() = default;
+		RigidbodyGravitySystem() = default;
+		~RigidbodyGravitySystem() = default;
 	protected:
 		virtual void DeserializeSystem(YAML::Node& node) override;
 		virtual void SerializeSystem(YAML::Emitter& out) override;
@@ -37,8 +37,6 @@ namespace Voxymore::Core
 
 		Vec3 m_Gravity = VXM_GRAVITY;
 	};
-
-	static_block{ RBGravitySystem::CreateSystem(); };
 } // namespace Voxymore::Core
 
 

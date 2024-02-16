@@ -15,12 +15,24 @@ namespace Voxymore::Core
 {
 	ParticlePhysicsLayer::ParticlePhysicsLayer() : Layer("ParticlePhysicsLayer"), m_Resolver(0)
 	{
-		std::cout << SpringForceSystem::GetInstance()->GetName() << std::endl;
-		std::cout << BuoyancyForceSystem::GetInstance()->GetName() << std::endl;
 	}
 
 	ParticlePhysicsLayer::~ParticlePhysicsLayer()
 	{
+	}
+
+	void ParticlePhysicsLayer::OnAttach()
+	{
+		VXM_PROFILE_FUNCTION();
+		BuoyancyForceSystem::CreateSystem();
+		SpringForceSystem::CreateSystem();
+	}
+
+	void ParticlePhysicsLayer::OnDetach()
+	{
+		VXM_PROFILE_FUNCTION();
+		BuoyancyForceSystem::DeleteSystem();
+		SpringForceSystem::DeleteSystem();
 	}
 
 	void ParticlePhysicsLayer::OnUpdate(TimeStep ts)

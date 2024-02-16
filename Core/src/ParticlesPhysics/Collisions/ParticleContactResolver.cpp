@@ -43,5 +43,6 @@ namespace Voxymore::Core
 
 	void ParticleContactResolver::SetIterations(uint32_t iterations)
 	{
+		this->iterations = iterations;
 	}
 }// namespace Voxymore::Core

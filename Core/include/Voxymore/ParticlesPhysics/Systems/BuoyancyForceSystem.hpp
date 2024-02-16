@@ -45,7 +45,5 @@ namespace Voxymore::Core
 	Real m_LiquidDensity = VXM_DefaultLiquidDensity;
 	};
 
-	static_block{ BuoyancyForceSystem::CreateSystem(); };
-
 } // namespace Voxymore::Core
 

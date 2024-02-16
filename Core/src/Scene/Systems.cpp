@@ -44,6 +44,15 @@ namespace Voxymore::Core
 		
 	}
 
+	void SystemManager::DeleteSystem(const std::string &systemName)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto& sys = GetInstance().s_Systems;
+		auto it = sys.find(systemName);
+		if(it == sys.end()) return;
+		sys.erase(it);
+	}
+
 	Ref<System> SystemManager::GetSystem(const std::string& name)
 	{
 		VXM_PROFILE_FUNCTION();

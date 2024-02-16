@@ -11,6 +11,35 @@ namespace Voxymore::Core
 	{
 
 	}
+	void Rigidbody::Integrate(Real ts)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		if(m_InverseMass <= 0) {
+			VXM_CORE_WARNING("The inverse mass of {0} is not valid, not integrating.", m_InverseMass);
+			return;
+		}
+
+		VXM_CORE_ASSERT(ts != 0, "The timestep is supposed to be different from 0.");
+
+		// Update position from velocity (and acceleration)
+		m_Position += m_AngularVelocity * ts;
+//		m_Position += m_Acceleration * ((ts * ts) * ((Real)0.5));
+
+		// Update the acceleartion later on so pre-creating a variable.
+		Vec3 acc = {0,0,0};
+		acc += m_ForceAccumulate * m_InverseMass;
+
+		// Update linear velocity from acceleration
+		m_AngularVelocity += acc * ts;
+
+		// Damping the velocity.
+		VXM_CORE_CHECK(m_LinearDamping <= 1, "The Damping has the value {0}.", m_LinearDamping);
+		m_AngularVelocity *= Math::Pow(m_LinearDamping, ts);
+
+		// Clear the forces
+		ClearAccumulator();
+	}
 
 	Mat4 Rigidbody::CalculateTransformMatrix() const
 	{
@@ -140,6 +169,10 @@ namespace Voxymore::Core
 	{
 		m_Position = position;
 	}
+	void Rigidbody::AddMovement(const Vec3& movement)
+	{
+		m_Position += movement;
+	}
 
 	const Quat& Rigidbody::GetOrientation() const
 	{
@@ -170,6 +203,10 @@ namespace Voxymore::Core
 	{
 		m_LinearVelocity = linearVelocity;
 	}
+	void Rigidbody::AddLinearVelocity(const Vec3& linearVelocity)
+	{
+		m_LinearVelocity += linearVelocity;
+	}
 
 	const Vec3& Rigidbody::GetAngularVelocity() const
 	{
@@ -184,6 +221,11 @@ namespace Voxymore::Core
 	void Rigidbody::SetAngularVelocity(const Vec3& angularVelocity)
 	{
 		m_AngularVelocity = angularVelocity;
+	}
+
+	void Rigidbody::AddAngularVelocity(const Vec3& angularVelocity)
+	{
+		m_AngularVelocity += angularVelocity;
 	}
 
 } // namespace Voxymore::Core

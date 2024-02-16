@@ -18,9 +18,6 @@
 
 #include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
 #include "Voxymore/ParticlesPhysics/Collisions/ParticleContactResolver.hpp"
-
-#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
-#include "Voxymore/RigidbodiesPhysics/Systems/RBGravitySystem.hpp"
 namespace Voxymore::Core
 {
 
@@ -31,6 +28,8 @@ namespace Voxymore::Core
 		~ParticlePhysicsLayer() override;
 
 		virtual void OnUpdate(TimeStep ts) override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
 	public:
 		void SetScene(Ref<Scene> scene);
 		void ResetScene();

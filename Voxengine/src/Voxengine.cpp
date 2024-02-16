@@ -9,9 +9,9 @@ namespace Voxymore::Editor {
 class Voxengine : public Voxymore::Core::Application {
     public:
         Voxengine(const ApplicationParameters& parameters) : Voxymore::Core::Application(parameters) {
-            PushOverlay(new ImGuiLayer());
-            PushLayer(new EditorLayer());
-            PushLayer(new ParticlePhysicsLayer());
+			PushOverlay(new ParticlePhysicsLayer());
+			PushOverlay(new ImGuiLayer());
+			PushLayer(new EditorLayer());
         }
 
         ~Voxengine() {}
