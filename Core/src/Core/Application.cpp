@@ -42,7 +42,7 @@ namespace Voxymore::Core {
 		if(m_Parameters.addPhysicsLayer)
 		{
 			// Will be deleted by the LayerStack
-			m_PhysicsLayer = new PhysicsLayer();
+			m_PhysicsLayer = new ParticlePhysicsLayer();
 			PushOverlay(m_PhysicsLayer);
 		}
     }

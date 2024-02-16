@@ -10,11 +10,11 @@
 
 namespace Voxymore::Core
 {
-	class PhysicsLayer;
+	class ParticlePhysicsLayer;
 
 	class ParticleComponent : public Particle, public Component
 	{
-		friend class PhysicsLayer;
+		friend class ParticlePhysicsLayer;
 		VXM_IMPLEMENT_COMPONENT(ParticleComponent);
 	public:
 		virtual void DeserializeComponent(YAML::Node& node) override;

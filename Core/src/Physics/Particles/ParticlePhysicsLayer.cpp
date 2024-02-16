@@ -6,24 +6,24 @@
 
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Physics/Particles/Components/ParticleComponent.hpp"
-#include "Voxymore/Physics/PhysicsLayer.hpp"
-#include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
+#include "Voxymore/Physics/Particles/ParticlePhysicsLayer.hpp"
 #include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
 
 
 namespace Voxymore::Core
 {
-	PhysicsLayer::PhysicsLayer() : Layer("PhysicsLayer"), m_Resolver(0)
+	ParticlePhysicsLayer::ParticlePhysicsLayer() : Layer("ParticlePhysicsLayer"), m_Resolver(0)
 	{
 		std::cout << SpringForceSystem::GetInstance()->GetName() << std::endl;
 		std::cout << BuoyancyForceSystem::GetInstance()->GetName() << std::endl;
 	}
 
-	PhysicsLayer::~PhysicsLayer()
+	ParticlePhysicsLayer::~ParticlePhysicsLayer()
 	{
 	}
 
-	void PhysicsLayer::OnUpdate(TimeStep ts)
+	void ParticlePhysicsLayer::OnUpdate(TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -54,41 +54,41 @@ namespace Voxymore::Core
 		}
 	}
 
-	void PhysicsLayer::SetScene(Ref<Scene> scene)
+	void ParticlePhysicsLayer::SetScene(Ref<Scene> scene)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_SceneHandle = std::move(scene);
 	}
 
-	void PhysicsLayer::ResetScene()
+	void ParticlePhysicsLayer::ResetScene()
 	{
 		VXM_PROFILE_FUNCTION();
 		m_SceneHandle = nullptr;
 	}
 
-	bool PhysicsLayer::HasScene() const
+	bool ParticlePhysicsLayer::HasScene() const
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_SceneHandle != nullptr;
 	}
 
-	const Vec3& PhysicsLayer::GetGravity() const
+	const Vec3&ParticlePhysicsLayer::GetGravity() const
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_Gravity;
 	}
-	void PhysicsLayer::SetGravity(const Vec3& g)
+	void ParticlePhysicsLayer::SetGravity(const Vec3& g)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Gravity = g;
 	}
-	void PhysicsLayer::AddContact(const ParticleContact& contact)
+	void ParticlePhysicsLayer::AddContact(const ParticleContact& contact)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Contacts.push_back(contact);
 	}
 
-	void PhysicsLayer::AddContacts(const std::vector<ParticleContact>& contacts)
+	void ParticlePhysicsLayer::AddContacts(const std::vector<ParticleContact>& contacts)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Contacts.insert(m_Contacts.end(), contacts.begin(), contacts.end());

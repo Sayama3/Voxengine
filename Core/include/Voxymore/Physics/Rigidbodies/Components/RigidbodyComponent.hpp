@@ -14,7 +14,6 @@ namespace Voxymore::Core
 
 	class RigidbodyComponent : public Rigidbody, public Component
 	{
-		friend class PhysicsLayer;
 		VXM_IMPLEMENT_COMPONENT(RigidbodyComponent);
 	public:
 		virtual void DeserializeComponent(YAML::Node& node) override;
@@ -24,7 +23,6 @@ namespace Voxymore::Core
 		inline RigidbodyComponent() = default;
 		inline ~RigidbodyComponent() = default;
 		RigidbodyComponent(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
-
 	};
 
 } // namespace Voxymore::Core

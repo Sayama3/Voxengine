@@ -103,8 +103,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/ImGui/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
-        src/Physics/PhysicsLayer.cpp
-        include/Voxymore/Physics/PhysicsLayer.hpp
+        src/Physics/Particles/ParticlePhysicsLayer.cpp
+        include/Voxymore/Physics/Particles/ParticlePhysicsLayer.hpp
         include/Voxymore/Physics/Particles/Particle.hpp
         src/Physics/Particles/Components/ParticleComponent.cpp
         include/Voxymore/Physics/Particles/Components/ParticleComponent.hpp

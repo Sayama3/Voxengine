@@ -12,7 +12,7 @@
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
-#include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/Particles/ParticlePhysicsLayer.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -43,7 +43,7 @@ namespace Voxymore::Core {
 		inline bool HasImGuiLayer() {return m_ImGUILayer != nullptr; }
 		inline ImGuiLayer * GetImGuiLayer() { return m_ImGUILayer; }
 		inline bool HasPhysicsLayer() {return m_PhysicsLayer != nullptr; }
-		inline PhysicsLayer* GetPhysicsLayer() { return m_PhysicsLayer; }
+		inline ParticlePhysicsLayer * GetPhysicsLayer() { return m_PhysicsLayer; }
 		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
 
 		const std::string& GetArgument(const std::string& key) const;
@@ -60,7 +60,7 @@ namespace Voxymore::Core {
 		double m_LastFrameTime = 0.0;
 		Scope<Window> m_Window;
 		ImGuiLayer * m_ImGUILayer;
-		PhysicsLayer* m_PhysicsLayer;
+		ParticlePhysicsLayer * m_PhysicsLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		static Application* s_Instance;

@@ -24,11 +24,11 @@
 namespace Voxymore::Core
 {
 
-	class PhysicsLayer : public Layer
+	class ParticlePhysicsLayer : public Layer
 	{
 	public:
-		PhysicsLayer();
-		~PhysicsLayer() override;
+		ParticlePhysicsLayer();
+		~ParticlePhysicsLayer() override;
 
 		virtual void OnUpdate(TimeStep ts) override;
 	public:
