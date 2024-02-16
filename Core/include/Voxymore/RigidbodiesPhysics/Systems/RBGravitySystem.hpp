@@ -7,8 +7,8 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
-#include "Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp"
 #include "static_block.hpp"
 
 #ifndef VXM_GRAVITY

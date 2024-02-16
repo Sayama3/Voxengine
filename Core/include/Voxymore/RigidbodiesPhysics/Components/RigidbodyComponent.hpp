@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Voxymore/Physics/Rigidbodies/Rigidbody.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 
 

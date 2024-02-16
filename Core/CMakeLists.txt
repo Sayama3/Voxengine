@@ -131,12 +131,12 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/Scene.forward.hpp
         include/Voxymore/Scene/Scene.decl.hpp
         include/Voxymore/Scene/Scene.impl.hpp
-        src/Physics/Rigidbodies/Rigidbody.cpp
-        include/Voxymore/Physics/Rigidbodies/Rigidbody.hpp
-        src/Physics/Rigidbodies/Systems/RBGravitySystem.cpp
-        include/Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp
-        src/Physics/Rigidbodies/Components/RigidbodyComponent.cpp
-        include/Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp
+        src/RigidbodiesPhysics/Rigidbody.cpp
+        include/Voxymore/RigidbodiesPhysics/Rigidbody.hpp
+        src/RigidbodiesPhysics/Systems/RBGravitySystem.cpp
+        include/Voxymore/RigidbodiesPhysics/Systems/RBGravitySystem.hpp
+        src/RigidbodiesPhysics/Components/RigidbodyComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

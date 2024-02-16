@@ -45,8 +45,8 @@
 #include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
 #include "Voxymore/Physics/Particles/Systems/SpringForceSystem.hpp"
 #include "Voxymore/Physics/Rigidbodies/Components/RigidbodyComponent.hpp"
-#include "Voxymore/Physics/Rigidbodies/Rigidbody.hpp"
 #include "Voxymore/Physics/Rigidbodies/Systems/RBGravitySystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"

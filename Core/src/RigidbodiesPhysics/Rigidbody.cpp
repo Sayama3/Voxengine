@@ -2,7 +2,7 @@
 // Created by ianpo on 11/02/2024.
 //
 
-#include "Voxymore/Physics/Rigidbodies/Rigidbody.hpp"
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
 namespace Voxymore::Core
 {
