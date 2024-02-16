@@ -19,9 +19,13 @@ namespace Voxymore::Editor {
     {
         VXM_PROFILE_FUNCTION();
 
-        auto& imguiLayer = *Application::Get().GetImGuiLayer();
-        imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
-        imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
+        auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
+		VXM_CORE_CHECK(imgui, "ImGui must be set before adding the EditorLayer.")
+		if(imgui) {
+			auto &imguiLayer = *imgui;
+			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
+			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
+		}
 
         m_OnProjectReloadId = Project::AddOnLoad(VXM_BIND_EVENT_FN(ReloadAssets));
 
@@ -616,7 +620,10 @@ namespace Voxymore::Editor {
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+		auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
+		if(imgui) {
+			imgui->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+		}
         m_EditorCamera.SetViewportFocused(m_ViewportFocused);
         m_EditorCamera.SetViewportHovered(m_ViewportHovered);
 
@@ -764,10 +771,10 @@ namespace Voxymore::Editor {
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         m_ActiveScene->StartScene();
-		auto& app = Application::Get();
-		if(app.HasPhysicsLayer())
+		ParticlePhysicsLayer* ppl;
+		if(Application::Get().TryGetLayer<ParticlePhysicsLayer>(ppl))
 		{
-			app.GetPhysicsLayer()->SetScene(m_ActiveScene);
+			ppl->SetScene(m_ActiveScene);
 		}
     }
 
@@ -776,11 +783,13 @@ namespace Voxymore::Editor {
         if(m_SceneState == SceneState::Edit) return;
         m_SceneState = SceneState::Edit;
         m_CacheScene->StopScene();
-		auto& app = Application::Get();
-		if(app.HasPhysicsLayer())
+
+		ParticlePhysicsLayer* ppl;
+		if(Application::Get().TryGetLayer<ParticlePhysicsLayer>(ppl))
 		{
-			app.GetPhysicsLayer()->ResetScene();
+			ppl->ResetScene();
 		}
+
         m_ActiveScene = m_CacheScene;
         m_CacheScene = nullptr;
 

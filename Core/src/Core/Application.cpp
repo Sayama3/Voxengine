@@ -13,7 +13,7 @@
 namespace Voxymore::Core {
 
     Application* Application::s_Instance = nullptr;
-    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)), m_ImGUILayer(nullptr), m_PhysicsLayer(nullptr) {
+    Application::Application(ApplicationParameters  parameters) : m_Parameters(std::move(parameters)){
         VXM_PROFILE_FUNCTION();
 
         if(s_Instance != nullptr){
@@ -33,18 +33,24 @@ namespace Voxymore::Core {
 
         Renderer::Init();
 
-		if(m_Parameters.addImGuiLayer)
-		{
-			// Will be deleted by the LayerStack
-			m_ImGUILayer = new ImGuiLayer();
-			PushOverlay(m_ImGUILayer);
-		}
-		if(m_Parameters.addPhysicsLayer)
-		{
-			// Will be deleted by the LayerStack
-			m_PhysicsLayer = new ParticlePhysicsLayer();
-			PushOverlay(m_PhysicsLayer);
-		}
+//		if(m_Parameters.addImGuiLayer)
+//		{
+//			// Will be deleted by the LayerStack
+//			m_ImGUILayer = new ImGuiLayer();
+//			PushOverlay(m_ImGUILayer);
+//		}
+//		if(m_Parameters.addParticlePhysicsLayer)
+//		{
+//			// Will be deleted by the LayerStack
+//			m_ParticlePhysicsLayer = new ParticlePhysicsLayer();
+//			PushOverlay(m_ParticlePhysicsLayer);
+//		}
+//		if(m_Parameters.addRBPhysicsLayer)
+//		{
+//			// Will be deleted by the LayerStack
+//			m_RBPhysicsLayer = new RigidbodyPhysicsLayer();
+//			PushOverlay(m_RBPhysicsLayer);
+//		}
     }
 
     Application::~Application()
@@ -87,15 +93,16 @@ namespace Voxymore::Core {
 				}
             }
 
-			if(m_ImGUILayer)
+			auto* imgui = FindLayer<ImGuiLayer>();
+			if(imgui)
             {
                 VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer");
-				m_ImGUILayer->Begin();
+				imgui->Begin();
                 for (Layer *layer: m_LayerStack) {
 					VXM_PROFILE_SCOPE("Application::Run -> ImGuiRender Layer -> Render a layer");
                     layer->OnImGuiRender();
                 }
-				m_ImGUILayer->End();
+				imgui->End();
             }
 
             m_Window->OnUpdate();

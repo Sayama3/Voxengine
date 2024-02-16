@@ -23,7 +23,8 @@ namespace Voxymore::Core {
 		uint32_t height = 900;
 		std::vector<std::string> arguments;
 		bool addImGuiLayer = true;
-		bool addPhysicsLayer = true;
+		bool addParticlePhysicsLayer = true;
+		bool addRigidbodyPhysicsLayer = true;
 	};
 
 	class Application {
@@ -40,10 +41,6 @@ namespace Voxymore::Core {
 
 		inline static Application& Get() {return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
-		inline bool HasImGuiLayer() {return m_ImGUILayer != nullptr; }
-		inline ImGuiLayer * GetImGuiLayer() { return m_ImGUILayer; }
-		inline bool HasPhysicsLayer() {return m_PhysicsLayer != nullptr; }
-		inline ParticlePhysicsLayer * GetPhysicsLayer() { return m_PhysicsLayer; }
 		inline const ApplicationParameters& GetParameters() const {return m_Parameters;}
 
 		const std::string& GetArgument(const std::string& key) const;
@@ -51,6 +48,18 @@ namespace Voxymore::Core {
 		bool HasArgument(int key) const;
 
 		void Close();
+
+		template<typename T>
+		T* FindLayer();
+
+		template<typename T>
+		const T* FindLayer() const;
+
+		template<typename T>
+		bool TryGetLayer(T*& ptr);
+
+		template<typename T>
+		const bool TryGetLayer(const T*& ptr) const;
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -59,11 +68,37 @@ namespace Voxymore::Core {
 		ApplicationParameters m_Parameters;
 		double m_LastFrameTime = 0.0;
 		Scope<Window> m_Window;
-		ImGuiLayer * m_ImGUILayer;
-		ParticlePhysicsLayer * m_PhysicsLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		static Application* s_Instance;
 	};
+
+	template<typename T>
+	inline T* Application::FindLayer()
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_LayerStack.GetLayer<T>();
+	}
+
+	template<typename T>
+	inline const T* Application::FindLayer() const
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_LayerStack.GetLayer<T>();
+	}
+
+	template<typename T>
+	inline bool Application::TryGetLayer(T*& ptr)
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_LayerStack.TryGetLayer(ptr);
+	}
+
+	template<typename T>
+	inline const bool Application::TryGetLayer(const T*& ptr) const
+	{
+		VXM_PROFILE_FUNCTION();
+		return m_LayerStack.TryGetLayer(ptr);
+	}
 
 } // Core
