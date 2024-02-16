@@ -3,7 +3,7 @@
 //
 
 #include "Voxymore/Physics/Particles/Systems/BuoyancyForceSystem.hpp"
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 
 namespace Voxymore::Core
 {

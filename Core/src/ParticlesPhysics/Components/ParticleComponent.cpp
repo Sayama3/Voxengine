@@ -4,7 +4,7 @@
 
 #include "Voxymore/Physics/Particles/Components/ParticleComponent.hpp"
 #include "Voxymore/Components/Components.hpp"
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 
 #define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\
 auto VXM_COMBINE(fieldVariable, Node) = node[fieldName]; 																			\

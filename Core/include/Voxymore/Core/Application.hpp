@@ -12,7 +12,7 @@
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
-#include "Voxymore/Physics/Particles/ParticlePhysicsLayer.hpp"
+#include "Voxymore/ParticlePhysic/ParticlePhysicsLayer.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
