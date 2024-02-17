@@ -35,7 +35,7 @@ struct MaterialParams
     NormalTextureInfo NormalTexture;
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
-    vec3 EmissiveFactor;
+    vec4 EmissiveFactor;
     int AlphaMode;
     float AlphaCutoff;
     int DoubleSided;
@@ -45,8 +45,8 @@ struct MaterialParams
 struct Light
 {
     vec4 Color;
-    vec3 Position;
-    vec3 Direction;
+    vec4 Position;
+    vec4 Direction;
     float Range;
     float Intensity;
     int Type; //0 = Directional ; 2 = Spot ; 1 = Point
@@ -55,14 +55,15 @@ struct Light
 struct LightData
 {
     Light lights[MAX_LIGHT_COUNT];
+//    Light lights;
     int lightCount;
 };
 
 layout(std140, binding = 0) uniform Camera
 {
     mat4 u_ViewProjectionMatrix;
-    vec3 u_CameraPosition;
-    vec3 u_CameraDirection;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
 };
 
 layout(std140, binding = 1) uniform Model
@@ -98,6 +99,7 @@ void main() {
     gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
     v_Position = (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
     v_Normal = (u_NormalMatrix * vec4(a_Normal, 1.0)).xyz;
+//    v_Normal = a_Normal;
     v_TexCoord = a_TexCoord;
     v_Color = a_Color;
     v_EntityId = u_EntityId;

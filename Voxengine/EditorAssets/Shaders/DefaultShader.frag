@@ -35,7 +35,7 @@ struct MaterialParams
     NormalTextureInfo NormalTexture;
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
-    vec3 EmissiveFactor;
+    vec4 EmissiveFactor;
     int AlphaMode;
     float AlphaCutoff;
     int DoubleSided;
@@ -45,8 +45,8 @@ struct MaterialParams
 struct Light
 {
     vec4 Color;
-    vec3 Position;
-    vec3 Direction;
+    vec4 Position;
+    vec4 Direction;
     float Range;
     float Intensity;
     int Type; //0 = Directional ; 1 = Point ; 2 = Spot
@@ -55,14 +55,15 @@ struct Light
 struct LightData
 {
     Light lights[MAX_LIGHT_COUNT];
+//    Light lights;
     int lightCount;
 };
 
 layout(std140, binding = 0) uniform Camera
 {
     mat4 u_ViewProjectionMatrix;
-    vec3 u_CameraPosition;
-    vec3 u_CameraDirection;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
 };
 
 layout(std140, binding = 1) uniform Model
@@ -92,6 +93,15 @@ layout (location = 3) in vec4 v_Color;
 layout (location = 4) in flat int v_EntityId;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
+
+//bool approx(float a, float b)
+//{
+//    return abs(b-a) < 0.5;
+//}
+bool approx(int a, int b)
+{
+    return abs(b-a) < 0.5;
+}
 
 vec4 SampleTexture(int texIndex)
 {
@@ -149,18 +159,19 @@ void main()
         }
     }
 
-
     vec3 result = vec3(0);
 
-    for(int i = 0; i < lights.lightCount; i++)
+
+    for(int i = 0; i < int(max(lights.lightCount, 1)); i++)
     {
         Light light = lights.lights[i];
         vec3 lightColor = light.Color.rgb;
-        vec3 lightPos = light.Position;
-        vec3 lightDir = light.Direction;
+        vec3 lightPos = light.Position.xyz;
+        vec3 lightDir = normalize(light.Direction.xyz);
+
         if(light.Type == 1)
         {
-            vec3 lightDir = normalize(lightPos - v_Position);
+            lightDir = normalize(lightPos - v_Position);
         }
 
         float attenuation = 1;
@@ -169,7 +180,7 @@ void main()
             float distance = distance(v_Position, lightPos);
             attenuation = clamp(1 - distance / light.Range, 0, 1);
         }
-        float lightIntensity = lights.lights[i].Intensity * attenuation;
+        float lightIntensity = light.Intensity * attenuation;
 
         // ambient
         float ambientStrength = 0.05 * lightIntensity;
@@ -177,20 +188,18 @@ void main()
 
         // diffuse
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightIntensity * lightColor;
+        vec3 diffuse = diff * lightColor * lightIntensity;
 
-        // specular
-        float specularStrength = 0.5 * lightIntensity;
-        vec3 viewDir = normalize(u_CameraPosition - v_Position);
-        vec3 reflectDir = -lightDir;
-        reflectDir = reflect(reflectDir, norm);
+//        // specular
+        float specularStrength = 0.5;
+        vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
+        vec3 reflectDir = normalize(reflect(-lightDir, norm));
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-        vec3 specular = specularStrength * spec * lightColor;
+        vec3 specular = specularStrength * spec * lightColor * lightIntensity;
 
         result += (ambient + diffuse + specular) * o_Color.rgb;
     }
 
     o_Color = vec4(result, 1);
-
     o_Entity = v_EntityId;
 }

@@ -32,8 +32,8 @@ namespace Voxymore {
 			struct CameraData
 			{
 				glm::mat4 ViewProjectionMatrix;
-				glm::vec3 CameraPosition;
-				glm::vec3 CameraDirection;
+				glm::vec4 CameraPosition;
+				glm::vec4 CameraDirection;
 			};
 			struct ModelData
 			{

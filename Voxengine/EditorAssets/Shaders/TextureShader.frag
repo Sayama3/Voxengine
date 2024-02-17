@@ -34,25 +34,47 @@ struct MaterialParams
     NormalTextureInfo NormalTexture;
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
-    vec3 EmissiveFactor;
+    vec4 EmissiveFactor;
     int AlphaMode;
     float AlphaCutoff;
     int DoubleSided;
 };
 
+#define MAX_LIGHT_COUNT 20
+struct Light
+{
+    vec4 Color;
+    vec4 Position;
+    vec4 Direction;
+    float Range;
+    float Intensity;
+    int Type; //0 = Directional ; 1 = Point ; 2 = Spot
+};
+
+struct LightData
+{
+    Light lights[MAX_LIGHT_COUNT];
+//    Light lights;
+    int lightCount;
+};
+
 layout(std140, binding = 0) uniform Camera
 {
     mat4 u_ViewProjectionMatrix;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
 };
+
 layout(std140, binding = 1) uniform Model
 {
-    mat4 u_Transform;
+    mat4 u_ModelMatrix;
+    mat4 u_NormalMatrix;
     int u_EntityId;
 };
 
 layout(std140, binding = 2) uniform Lights
 {
-    vec3 lightDir;
+    LightData lights;
 };
 
 layout(std140, binding = 3) uniform MaterialParameters

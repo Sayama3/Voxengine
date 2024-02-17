@@ -618,6 +618,9 @@ namespace Voxymore::Core
 					{
 						VXM_CORE_INFO("Reusing previous version.");
 						shaderData[stage] = FileSystem::ReadFile<uint32_t>(cachedPath);
+						// It doesn't correspond anymore, but we will load the same one if the same failed shader is started.
+						// Better for the hot reload too.
+						FileSystem::Write(hashPath, sourceHash);
 					}
 					continue;
 				}
@@ -655,6 +658,12 @@ namespace Voxymore::Core
 				filename = shaderFilePath.filename().string();
 			}
 
+			if(spirv.empty())
+			{
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this pass in OpenGl.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+				continue;
+			}
+
 			// Fetch the hash of the source.
 			std::string sourceHash = Utils::HashSrc(spirv);
 
@@ -679,6 +688,9 @@ namespace Voxymore::Core
 					{
 						VXM_CORE_INFO("Reusing previous version.");
 						shaderData[stage] = FileSystem::ReadFile<uint32_t>(cachedPath);
+						// It doesn't correspond anymore, but we will load the same one if the same failed shader is started.
+						// Better for the hot reload too.
+						FileSystem::Write(hashPath, sourceHash);
 					}
 					continue;
 				}
@@ -698,6 +710,11 @@ namespace Voxymore::Core
 
 		std::vector<GLuint> shaderIDs;
 		for (auto &&[stage, spirv]: m_OpenGLSPIRV) {
+			if (spirv.empty())
+			{
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this stage during the shader creation.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+ 				continue;
+			}
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(Utils::ShaderTypeToOpenGL(stage)));
 			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
 			glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);

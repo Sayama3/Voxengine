@@ -130,8 +130,15 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		std::vector<T> result;
 		std::ifstream file(path.GetFullPath(), std::ios::binary);
+		char buffer [sizeof(T)];
 		if(file) {
-			std::copy(std::istream_iterator<T>(file), std::istream_iterator<T>(), std::back_inserter(result));
+			do {
+				std::memset(buffer, 0, sizeof(T));
+				file.read(buffer, sizeof(T));
+				if (file.tellg() > 0) {
+					result.push_back(*(T *) buffer);
+				}
+			} while (file.good());
 		} else {
 			VXM_CORE_ERROR("Could not open file '{0}'.", path.GetFullPath().string());
 		}

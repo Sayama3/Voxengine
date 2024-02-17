@@ -21,14 +21,14 @@ namespace Voxymore::Core
 	{
 		inline Light() = default;
 		inline ~Light() = default;
-		inline Light(glm::vec4 color, glm::vec3 position, glm::vec3 direction, float range, float intensity, LightType type) : Color(color), Position(position), Direction(direction), Range(range), Intensity(intensity), Type(type) {}
+		inline Light(glm::vec4 color, glm::vec3 position, glm::vec3 direction, float range, float intensity, LightType type) : Color(color), Position(glm::vec4(position, 1)), Direction(glm::vec4(direction, 0)), Range(range), Intensity(intensity), Type((float)(int)type) {}
 
 		glm::vec4 Color;
-		glm::vec3 Position;
-		glm::vec3 Direction;
+		glm::vec4 Position;
+		glm::vec4 Direction;
 		float Range;
 		float Intensity;
-		LightType Type;
+		int Type;
 	};
 
 }// namespace Voxymore

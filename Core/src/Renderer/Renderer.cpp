@@ -32,8 +32,8 @@ namespace Voxymore::Core {
 
 		s_BindedShader = "";
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
-		s_Data.CameraBuffer.CameraPosition = camera.GetPosition();
-		s_Data.CameraBuffer.CameraDirection = camera.GetForwardDirection();
+		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
+		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
 		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
@@ -48,7 +48,7 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
 		auto p = transform * glm::vec4{0,0,0,1};
-		s_Data.CameraBuffer.CameraPosition = glm::vec3(p) / p.w;
+		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);
 		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
@@ -71,6 +71,7 @@ namespace Voxymore::Core {
 
 
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
@@ -93,6 +94,7 @@ namespace Voxymore::Core {
 
 
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
@@ -111,6 +113,7 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
@@ -138,6 +141,7 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = transform;
+		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
