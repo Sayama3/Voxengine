@@ -149,6 +149,7 @@ void main()
         }
     }
 
+
     vec3 result = vec3(0);
 
     for(int i = 0; i < lights.lightCount; i++)
@@ -190,5 +191,6 @@ void main()
     }
 
     o_Color = vec4(result, 1);
+
     o_Entity = v_EntityId;
 }
