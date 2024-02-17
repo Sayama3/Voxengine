@@ -6,7 +6,20 @@
 
 #include "md5.h"
 
-#ifndef _MSC_VER
+// big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
+#if defined(OS_MACOSX)
+#include <machine/endian.h>
+#elif defined(OS_SOLARIS)
+#include <sys/isa_defs.h>
+#ifdef _LITTLE_ENDIAN
+#define LITTLE_ENDIAN
+#else
+#define BIG_ENDIAN
+#endif
+#elif defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLYBSD)
+#include <sys/types.h>
+#include <sys/endian.h>
+#elif !defined(_MSC_VER)
 #include <endian.h>
 #endif
 
