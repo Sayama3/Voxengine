@@ -7,7 +7,7 @@
 #include "sha3.h"
 
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
-#if defined(OS_MACOSX)
+#if defined(__APPLE__) || defined(__MACH__) || defined(OS_MACOSX)
 #include <machine/endian.h>
 #elif defined(OS_SOLARIS)
 #include <sys/isa_defs.h>
