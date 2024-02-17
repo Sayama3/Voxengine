@@ -13,10 +13,14 @@ namespace Voxymore::Editor
 		VXM_PROFILE_FUNCTION();
 		if(m_Open) {
 			if (ImGui::Begin("Shader Panel", &m_Open)) {
+				ImGui::Checkbox("Auto Reload", &m_AutoReload);
+
+				// Reloading one by one
 				auto library = ShaderLibrary::GetInstance();
 				for (auto &&[name, shader]: library) {
 					std::string buttonName = "Reload " + name;
-					if (ImGui::Button(buttonName.c_str())) {
+					if (ImGui::Button(buttonName.c_str()) || (m_AutoReload && shader->ShouldReload()))
+					{
 						shader->Reload();
 					}
 				}

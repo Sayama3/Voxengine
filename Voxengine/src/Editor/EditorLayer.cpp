@@ -809,8 +809,8 @@ namespace Voxymore::Editor {
 
     void EditorLayer::ReloadAssets()
     {
-        ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.glsl"});
-        ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.glsl"});
+        ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.vert"}, {FileSource::EditorAsset, "Shaders/FlatColor.frag"});
+        ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.vert"}, {FileSource::EditorAsset, "Shaders/TextureShader.frag"});
         ShaderLibrary::GetInstance().Load("Default", {FileSource::EditorAsset, "Shaders/DefaultShader.vert"}, {FileSource::EditorAsset, "Shaders/DefaultShader.frag"});
 
         Assets::ReloadAll();

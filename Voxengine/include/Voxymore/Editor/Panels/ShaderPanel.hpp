@@ -14,6 +14,8 @@ namespace Voxymore::Editor
 	{
 	public:
 		virtual void OnImGuiRender() override;
+	private:
+		bool m_AutoReload = false;
 	};
 
 } // namespace Voxymore::Editor

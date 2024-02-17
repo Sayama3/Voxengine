@@ -207,6 +207,7 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) = 0;
 
 		virtual void Reload() = 0;
+		virtual bool ShouldReload() const = 0;
     };
 
     class ShaderLibrary

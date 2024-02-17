@@ -61,7 +61,7 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) override;
 
 		virtual void Reload() override;
-		bool ShouldReload() const;
+		virtual bool ShouldReload() const override;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const Path& path);
 
