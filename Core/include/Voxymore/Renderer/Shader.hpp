@@ -205,10 +205,17 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) = 0;
 		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) = 0;
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) = 0;
+
+		virtual void Reload() = 0;
     };
 
     class ShaderLibrary
     {
+	private:
+		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+	public:
+		typedef std::unordered_map<std::string, Ref<Shader>>::iterator iter;
+		typedef std::unordered_map<std::string, Ref<Shader>>::const_iterator  const_iter;
 	private:
 		static ShaderLibrary* s_Instance;
     public:
@@ -222,8 +229,12 @@ namespace Voxymore::Core {
 		Ref<Shader> Load(std::unordered_map<ShaderType, Path> paths);
         Ref<Shader> Get(const std::string& name);
         bool Exists(const std::string& name) const;
-    private:
-        std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+
+		iter begin() { return m_Shaders.begin();}
+		const_iter begin() const { return m_Shaders.begin(); }
+
+		iter end() { return m_Shaders.end();}
+		const_iter end() const { return m_Shaders.end(); }
     };
 
 

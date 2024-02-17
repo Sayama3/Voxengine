@@ -11,6 +11,15 @@
 namespace Voxymore::Core {
     // TODO: Analyse shaders to get the different uniform inside.
     class OpenGLShader : public Shader {
+	private:
+		enum Target
+		{
+			None,
+			Vulkan,
+			OpenGl,
+			HashVulkan,
+			HashOpenGl,
+		};
     public:
         OpenGLShader(const std::string& name, const Path& path);
         OpenGLShader(const Path& path);
@@ -50,6 +59,9 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) override;
 		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) override;
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) override;
+
+		virtual void Reload() override;
+		bool ShouldReload() const;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const Path& path);
 
@@ -57,11 +69,14 @@ namespace Voxymore::Core {
 		void CompileOrGetOpenGLBinaries();
 		void CreateProgram();
 		void Reflect(ShaderType stage, const std::vector<uint32_t>& shaderData);
+		void DeleteProgram();
 
+		Path GetCachePath(ShaderType shaderType, Target target) const;
     private:
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_OpenGLSPIRV;
-		std::unordered_map<ShaderType, bool> m_HashesChanged;
+
+//		std::unordered_map<ShaderType, bool> m_HashesChanged;
 
 		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
     private:

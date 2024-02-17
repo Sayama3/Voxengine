@@ -237,11 +237,7 @@ namespace Voxymore::Editor {
 
         if (ImGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
-            {
-                RenderMenuBar();
-                ImGui::EndMenu();
-            }
+			RenderMenuBar();
 
             // Disabling the following option menu but keeping it for reference.
 //                if (ImGui::BeginMenu("Options"))
@@ -280,53 +276,72 @@ namespace Voxymore::Editor {
 
     void EditorLayer::RenderMenuBar()
     {
-        if (m_SceneState == SceneState::Edit && ImGui::BeginMenu("Project")) {
-            if (ImGui::MenuItem("New")) {
-                NewProject();
-            }
 
-            if (ImGui::MenuItem("Open...")) {
-                OpenProject();
-            }
+		if (ImGui::BeginMenu("File"))
+		{
+			if (m_SceneState == SceneState::Edit && ImGui::BeginMenu("Project")) {
+				if (ImGui::MenuItem("New")) {
+					NewProject();
+				}
 
-            if (ImGui::MenuItem("Save as...")) {
-                SaveProjectAs();
-            }
+				if (ImGui::MenuItem("Open...")) {
+					OpenProject();
+				}
 
-            if (ImGui::MenuItem("Save")) {
-                SaveProject();
-            }
-            ImGui::EndMenu();
-        }
+				if (ImGui::MenuItem("Save as...")) {
+					SaveProjectAs();
+				}
 
-        if (m_SceneState == SceneState::Edit && ImGui::BeginMenu("Scene")) {
-            if (ImGui::MenuItem("New", "Ctr+N")) {
-                CreateNewScene();
-            }
+				if (ImGui::MenuItem("Save")) {
+					SaveProject();
+				}
+				ImGui::EndMenu();
+			}
 
-            if (ImGui::MenuItem("Open...", "Ctr+O")) {
-                OpenScene();
-            }
+			if (m_SceneState == SceneState::Edit && ImGui::BeginMenu("Scene")) {
+				if (ImGui::MenuItem("New", "Ctr+N")) {
+					CreateNewScene();
+				}
 
-            if (ImGui::MenuItem("Save as...", "Ctr+Shift+S")) {
-                SaveSceneAs();
-            }
+				if (ImGui::MenuItem("Open...", "Ctr+O")) {
+					OpenScene();
+				}
 
-            if (ImGui::MenuItem("Save", "Ctr+S")) {
-                SaveScene();
-            }
+				if (ImGui::MenuItem("Save as...", "Ctr+Shift+S")) {
+					SaveSceneAs();
+				}
 
-            if(m_ActiveScene != nullptr && ImGui::MenuItem("Make Scene main scene"))
-            {
-                Project::SetMainScene(m_ActiveScene->GetID());
-            }
+				if (ImGui::MenuItem("Save", "Ctr+S")) {
+					SaveScene();
+				}
 
-            ImGui::EndMenu();
-        }
+				if(m_ActiveScene != nullptr && ImGui::MenuItem("Make Scene main scene"))
+				{
+					Project::SetMainScene(m_ActiveScene->GetID());
+				}
 
-        if (ImGui::MenuItem("Exit", "Alt+F4")) {
-            Application::Get().Close();
-        }
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Exit", "Alt+F4")) {
+				Application::Get().Close();
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("Panels"))
+		{
+			if (ImGui::MenuItem("Shader Panel")) {
+				m_ShaderPanel.Open();
+			}
+
+			if (ImGui::MenuItem("Systems")) {
+				m_SystemPanel.Open();
+			}
+
+			ImGui::EndMenu();
+		}
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -597,6 +612,7 @@ namespace Voxymore::Editor {
 
         m_SceneHierarchyPanel.OnImGuiRender();
         m_SystemPanel.OnImGuiRender();
+		m_ShaderPanel.OnImGuiRender();
 
         DrawImGuiViewport();
 

@@ -2,6 +2,8 @@
 
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
+#include "Voxymore/Core/UUID.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include <filesystem>
 
@@ -99,14 +101,93 @@ namespace Voxymore::Core
 		static std::stringstream ReadFileAsStringStream(const Path& path);
 		static std::string ReadFileAsString(const Path& path);
 		static YAML::Node ReadFileAsYAML(const Path& path);
-		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);
-		// static bool WriteFile(const path& path, const std::string& content);
-		// static bool WriteFile(const path& path, std::vector<uint8_t> content);
+
+		template<typename T>
+		static std::vector<T> ReadFile(const Path& path);
+
+		static std::string ReadFileHash(const Path& path);
+		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);\
+
+		template <class _Elem, class _Traits = std::char_traits<_Elem>, class _Alloc = std::allocator<_Elem>>
+		static bool Write(const Path& path, const std::basic_string<_Elem, _Traits, _Alloc>& content);
+
+		template<typename T>
+		static bool Write(const Path& path, const std::vector<T>& content);
+
+		template<typename T>
+		static bool Write(const Path& path, const T* content, size_t count);
+
 		static std::filesystem::path GetPath(const Path& path);
 		static bool Exist(const Path& path);
 	};
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p);
+
+
+	template<typename T>
+	inline std::vector<T> FileSystem::ReadFile(const Path &path)
+	{
+		VXM_PROFILE_FUNCTION();
+		std::vector<T> result;
+		std::ifstream file(path.GetFullPath(), std::ios::binary);
+		if(file) {
+			std::copy(std::istream_iterator<T>(file), std::istream_iterator<T>(), std::back_inserter(result));
+		} else {
+			VXM_CORE_ERROR("Could not open file '{0}'.", path.GetFullPath().string());
+		}
+		return result;
+	}
+
+	template <class _Elem, class _Traits, class _Alloc>
+	inline bool FileSystem::Write(const Path& path, const std::basic_string<_Elem, _Traits, _Alloc>& content)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto fullPath = path.GetFullPath();
+		if(fullPath.has_parent_path()) {
+			std::filesystem::create_directories(fullPath.parent_path());
+		}
+
+		std::ofstream file(fullPath, std::ios::binary);
+		if(!file) return false;
+
+		file.write(reinterpret_cast<const char *>(content.data()), content.size() * sizeof(_Elem));
+		file.close();
+		return file.good();
+	}
+
+	template<typename T>
+	inline bool FileSystem::Write(const Path &path, const T *content, size_t count)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto fullPath = path.GetFullPath();
+		if(fullPath.has_parent_path()) {
+			std::filesystem::create_directories(fullPath.parent_path());
+		}
+
+		std::ofstream file(fullPath, std::ios::binary);
+		if(!file) return false;
+
+		file.write(reinterpret_cast<const char *>(content), count * sizeof(T));
+		file.close();
+		return file.good();
+	}
+
+	template<typename T>
+	inline bool FileSystem::Write(const Path &path, const std::vector<T> &content)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto fullPath = path.GetFullPath();
+		if(fullPath.has_parent_path()) {
+			std::filesystem::create_directories(fullPath.parent_path());
+		}
+
+		std::ofstream file(fullPath, std::ios::binary);
+		if(!file) return false;
+
+		file.write(reinterpret_cast<const char *>(content.data()), content.size() * sizeof(T));
+		file.close();
+		return file.good();
+	}
 } // namespace Voxymore::Core
 
 namespace YAML
