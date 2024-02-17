@@ -25,8 +25,8 @@
 
 #include "Voxymore/Layers/Layer.hpp"
 
-#include "Voxymore/ImGUI/ImGuiLayer.hpp"
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/ImGui/ImGuiLayer.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"

@@ -5,7 +5,7 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
-#include <Voxymore/ImGUI/ImGuiLayer.hpp>
+#include <Voxymore/ImGui/ImGuiLayer.hpp>
 #include <glad/glad.h>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM

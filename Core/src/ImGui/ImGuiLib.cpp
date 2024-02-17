@@ -2,9 +2,9 @@
 // Created by ianpo on 11/11/2023.
 //
 
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 #include "Voxymore/Core/Application.hpp"
-#include "Voxymore/ImGUI/ImGuiLayer.hpp"
+#include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "imgui.h"
 #include "imgui_internal.h"
 
