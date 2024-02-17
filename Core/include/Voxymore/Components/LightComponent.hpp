@@ -31,6 +31,7 @@ namespace Voxymore::Core
 		glm::vec4 m_Color = {1,1,1,1};
 		float m_Intensity = 1;
 		float m_Range = 10;
+		float m_Cutoff = 45;
 		LightType m_LightType;
 	};
 

@@ -744,6 +744,7 @@ namespace Voxymore::Core
 			glDetachShader(program, id);
 			glDeleteShader(id);
 		}
+		VXM_CORE_INFO("Shader '{0}' Successfully created.", m_Name);
 
 		m_RendererID = program;
 	}

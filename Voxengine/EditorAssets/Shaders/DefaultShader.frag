@@ -49,6 +49,7 @@ struct Light
     vec4 Direction;
     float Range;
     float Intensity;
+    float Cutoff;
     int Type; //0 = Directional ; 1 = Point ; 2 = Spot
 };
 
@@ -162,42 +163,51 @@ void main()
     vec3 result = vec3(0);
 
 
-    for(int i = 0; i < int(max(lights.lightCount, 1)); i++)
+    for(int i = 0; i < int(lights.lightCount); i++)
     {
         Light light = lights.lights[i];
         vec3 lightColor = light.Color.rgb;
         vec3 lightPos = light.Position.xyz;
         vec3 lightDir = normalize(light.Direction.xyz);
 
-        if(light.Type == 1)
+        if(light.Type == 2 && dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
         {
-            lightDir = normalize(lightPos - v_Position);
+            continue;
         }
-
-        float attenuation = 1;
-        if(light.Type != 0)
+        else
         {
-            float distance = distance(v_Position, lightPos);
-            attenuation = clamp(1 - distance / light.Range, 0, 1);
+            if(light.Type != 0)
+            {
+                lightDir = normalize(lightPos - v_Position);
+            }
+
+            float lightIntensity = light.Intensity * sign(dot(norm, lightDir));
+            if(light.Type != 0)
+            {
+                float distance = distance(v_Position, lightPos);
+                lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
+
+                lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
+            }
+
+            // ambient
+            float ambientStrength = 0.05 * lightIntensity;
+            vec3 ambient = ambientStrength * lightColor;
+
+            // diffuse
+            float diff = max(dot(norm, lightDir), 0.0);
+            vec3 diffuse = diff * lightColor * lightIntensity;
+
+    //        // specular
+            float specularStrength = 0.5;
+            vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
+            vec3 reflectDir = normalize(reflect(-lightDir, norm));
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+            vec3 specular = specularStrength * spec * lightColor * lightIntensity;
+
+            result += (ambient + diffuse + specular) * o_Color.rgb;
+//            result = norm;
         }
-        float lightIntensity = light.Intensity * attenuation;
-
-        // ambient
-        float ambientStrength = 0.05 * lightIntensity;
-        vec3 ambient = ambientStrength * lightColor;
-
-        // diffuse
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor * lightIntensity;
-
-//        // specular
-        float specularStrength = 0.5;
-        vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
-        vec3 reflectDir = normalize(reflect(-lightDir, norm));
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-        vec3 specular = specularStrength * spec * lightColor * lightIntensity;
-
-        result += (ambient + diffuse + specular) * o_Color.rgb;
     }
 
     o_Color = vec4(result, 1);
