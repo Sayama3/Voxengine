@@ -393,7 +393,7 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_opengl.comp";
+				case ShaderType::COMPUTE_SHADER: return ".cached_opengl.T";
 				case ShaderType::VERTEX_SHADER: return ".cached_opengl.vert";
 				case ShaderType::TESS_CONTROL_SHADER: return ".cached_opengl.tessco";
 				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_opengl.tessev";
@@ -409,7 +409,7 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_vulkan.comp";
+				case ShaderType::COMPUTE_SHADER: return ".cached_vulkan.T";
 				case ShaderType::VERTEX_SHADER: return ".cached_vulkan.vert";
 				case ShaderType::TESS_CONTROL_SHADER: return ".cached_vulkan.tessco";
 				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_vulkan.tessev";
@@ -425,7 +425,7 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_hash.comp";
+				case ShaderType::COMPUTE_SHADER: return ".cached_hash.T";
 				case ShaderType::VERTEX_SHADER: return ".cached_hash.vert";
 				case ShaderType::TESS_CONTROL_SHADER: return ".cached_hash.tessco";
 				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_hash.tessev";
@@ -439,13 +439,15 @@ namespace Voxymore::Core
 	}// namespace Utils
 
 	OpenGLShader::OpenGLShader(const std::string &name, const Path &path)
-		: m_FilePath(path)
-		, m_Name(name)
+		: m_Name(name)
 	{
 		VXM_PROFILE_FUNCTION();
 		Utils::CreateCacheDirectoryIfNeeded();
 
 		auto shaderSources = PreProcess(path);
+		for (auto& shader : shaderSources) {
+			m_FilePaths[shader.first] = path;
+		}
 		//		bool compiled = Compile(shaderSources);
 
 		CompileOrGetVulkanBinaries(shaderSources);
@@ -454,7 +456,6 @@ namespace Voxymore::Core
 	}
 
 	OpenGLShader::OpenGLShader(const Path &path)
-		: m_FilePath(path)
 	{
 		VXM_PROFILE_FUNCTION();
 		Utils::CreateCacheDirectoryIfNeeded();
@@ -463,7 +464,62 @@ namespace Voxymore::Core
 		m_Name = p.stem().string();
 
 		auto shaderSources = PreProcess(path);
+		for (auto& shader : shaderSources) {
+			m_FilePaths[shader.first] = path;
+		}
 		//		bool compiled = Compile(shaderSources);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& name, const Path& vertexPath, const Path& fragmentPath)
+	: m_Name(name), m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
+	{
+		VXM_PROFILE_FUNCTION();
+		Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+
+		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
+		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(const Path& vertexPath, const Path& fragmentPath) : m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
+	{
+		VXM_PROFILE_FUNCTION();
+		Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+
+		std::filesystem::path p = vertexPath.GetFullPath();
+		m_Name = p.stem().string();
+
+		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
+		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(std::unordered_map<ShaderType, Path> paths)
+	{
+		VXM_PROFILE_FUNCTION();
+		Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+		if (!paths.empty()) {
+			m_Name = paths.begin()->second.GetFullPath().stem().string();
+			for (auto &p: paths) {
+				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
+			}
+		}
 
 		CompileOrGetVulkanBinaries(shaderSources);
 		CompileOrGetOpenGLBinaries();
@@ -538,8 +594,8 @@ namespace Voxymore::Core
 		auto &shaderData = m_VulkanSPIRV;
 		for (auto &&[stage, source]: shaders) {
 			std::string filename = m_Name;
-			if (!m_FilePath.empty()) {
-				std::filesystem::path shaderFilePath = m_FilePath.GetFullPath();
+			if (!m_FilePaths.contains(stage)) {
+				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
 				filename = shaderFilePath.filename().string();
 			}
 			std::hash<std::string> hash;
@@ -583,10 +639,10 @@ namespace Voxymore::Core
 			}
 
 			if (!cacheValid) {
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.GetFullPath().string().c_str(), options);
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					VXM_CORE_ASSERT(false, "Shader ({0}) - Pass {1}\n{2}", m_FilePath.path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					VXM_CORE_ASSERT(false, "Shader ({0}) - Pass {1}\n{2}", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -628,8 +684,8 @@ namespace Voxymore::Core
 
 		for (auto &&[stage, spirv]: m_VulkanSPIRV) {
 			std::string filename = m_Name;
-			if (!m_FilePath.empty()) {
-				std::filesystem::path shaderFilePath = m_FilePath.GetFullPath();
+			if (!m_FilePaths.contains(stage)) {
+				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
 				filename = shaderFilePath.filename().string();
 			}
 			bool hashChanged = m_HashesChanged[stage];
@@ -660,7 +716,7 @@ namespace Voxymore::Core
 				spirv_cross::CompilerGLSL compilerGlsl(spirv);
 				m_OpenGLSourceCode[stage] = compilerGlsl.compile();
 				std::string& source = m_OpenGLSourceCode[stage];
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.GetFullPath().string().c_str(), options);
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
 
 				VXM_CORE_ASSERT(module.GetCompilationStatus() == shaderc_compilation_status_success, module.GetErrorMessage());
 
@@ -719,8 +775,8 @@ namespace Voxymore::Core
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			if (maxLength > 0) VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_FilePath.path.string(), infoLog.data());
-			else VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_FilePath.path.string());
+			if (maxLength > 0) VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_Name, infoLog.data());
+			else VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_Name);
 
 			glDeleteProgram(program);
 			for (auto shaderID: shaderIDs) {
@@ -796,7 +852,7 @@ namespace Voxymore::Core
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_FilePath.path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
 
 		VXM_CORE_TRACE("Uniform buffers:");
 		analyzedShaderData.m_Uniform.reserve(resources.uniform_buffers.size());
@@ -820,7 +876,7 @@ namespace Voxymore::Core
 			analyzedShaderData.m_Constants.push_back(member);
 			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
 		}
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePath.path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
 	}
 
 	void OpenGLShader::Bind() const

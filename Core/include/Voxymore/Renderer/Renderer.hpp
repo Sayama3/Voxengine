@@ -15,6 +15,9 @@
 #include "Voxymore/Renderer/UniformBuffer.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Model.hpp"
+#include "Voxymore/Renderer/Light.hpp"
+
+#define MAX_LIGHT_COUNT 20
 
 namespace Voxymore {
 	namespace Core {
@@ -29,14 +32,25 @@ namespace Voxymore {
 			struct CameraData
 			{
 				glm::mat4 ViewProjectionMatrix;
+				glm::vec3 CameraPosition;
+				glm::vec3 CameraDirection;
 			};
 			struct ModelData
 			{
 				glm::mat4 TransformMatrix;
+				glm::mat4 NormalMatrix;
 				int EntityId;
 			};
+
+			struct LightData
+			{
+				Light lights[MAX_LIGHT_COUNT];
+				int lightCount;
+			};
+
 			CameraData CameraBuffer;
 			ModelData ModelBuffer;
+			LightData LightBuffer;
 			Ref<UniformBuffer> CameraUniformBuffer;
 			Ref<UniformBuffer> ModelUniformBuffer;
 			Ref<UniformBuffer> LightUniformBuffer;
@@ -51,9 +65,8 @@ namespace Voxymore {
 			static void Shutdown();
 			static void OnWindowResize(uint32_t width, uint32_t height);
 
-			static void BeginScene(const Camera& camera, const glm::mat4& transform);
-			static void BeginScene(const EditorCamera& camera);
-			static void BeginScene(const PerspectiveCamera& camera);
+			static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
+			static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {});
 			static void EndScene();
 
 			static void Submit(Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);

@@ -63,6 +63,11 @@ namespace Voxymore::Core
 
 		inline Vec3 GetEulerRotation() const { return EulerRotation; }
 		inline void SetEulerRotation(const Vec3& rotation) {EulerRotation = rotation; Rotation = Quat(rotation); }
+
+		inline Vec3 GetForward() const { return Rotation * Vec3{0,0,1}; }
+		inline Vec3 GetRight() const { return Rotation * Vec3{1,0,0}; }
+		inline Vec3 GetUp() const { return Rotation * Vec3{0,1,0}; }
+
 	public:
 		inline Mat4 GetTransform() const
 		{

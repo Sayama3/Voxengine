@@ -14,6 +14,9 @@ namespace Voxymore::Core {
     public:
         OpenGLShader(const std::string& name, const Path& path);
         OpenGLShader(const Path& path);
+        OpenGLShader(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
+        OpenGLShader(const Path& vertexPath, const Path& fragmentPath);
+        OpenGLShader(std::unordered_map<ShaderType, Path> paths);
         OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
 
@@ -62,7 +65,8 @@ namespace Voxymore::Core {
 
 		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
     private:
-		Path m_FilePath;
+//		Path m_FilePath;
+		std::unordered_map<ShaderType, Path> m_FilePaths;
         std::string m_Name;
         unsigned int m_RendererID;
     };

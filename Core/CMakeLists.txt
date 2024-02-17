@@ -131,6 +131,9 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Scene/Scene.forward.hpp
         include/Voxymore/Scene/Scene.decl.hpp
         include/Voxymore/Scene/Scene.impl.hpp
+        src/Components/LightComponent.cpp
+        include/Voxymore/Components/LightComponent.hpp
+        include/Voxymore/Renderer/Light.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

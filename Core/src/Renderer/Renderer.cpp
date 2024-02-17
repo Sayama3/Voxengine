@@ -14,7 +14,7 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ModelUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ModelData), 1);
-		s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(glm::vec3), 2);
+		s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(RendererData::LightData), 2);
 		s_Data.MaterialUniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), 3);
 
 		RenderCommand::Init();
@@ -26,27 +26,37 @@ namespace Voxymore::Core {
 		RenderCommand::Shutdown();
 	}
 
-	void Renderer::BeginScene(const PerspectiveCamera& camera) {
-		VXM_PROFILE_FUNCTION();
-
-		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
-	}
-
-	void Renderer::BeginScene(const EditorCamera &camera)
+	void Renderer::BeginScene(const EditorCamera &camera, std::vector<Light> lights)
 	{
 		VXM_PROFILE_FUNCTION();
 
 		s_BindedShader = "";
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
+		s_Data.CameraBuffer.CameraPosition = camera.GetPosition();
+		s_Data.CameraBuffer.CameraDirection = camera.GetForwardDirection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
+		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
+		{
+			s_Data.LightBuffer.lights[i] = lights[i];
+		}
+		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
 	}
 
-	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform)
+	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights)
 	{
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
+		auto p = transform * glm::vec4{0,0,0,1};
+		s_Data.CameraBuffer.CameraPosition = glm::vec3(p) / p.w;
+		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
+		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
+		{
+			s_Data.LightBuffer.lights[i] = lights[i];
+		}
+		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
 	}
 
 	void Renderer::EndScene() {

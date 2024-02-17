@@ -13,16 +13,16 @@
 
 namespace Voxymore::Core
 {
-	class AnchoredSpringComponent : public Component
+	class AnchoredSpringComponent : public Component<AnchoredSpringComponent>
 	{
 		VXM_IMPLEMENT_COMPONENT(AnchoredSpringComponent);
 	public:
 		AnchoredSpringComponent() = default;
 		~AnchoredSpringComponent() = default;
 
-		void DeserializeComponent(YAML::Node& node) override;
-		void SerializeComponent(YAML::Emitter& out) override;
-		bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 
 		Real SpringConstant = 1.0;
 		Real RestLength = 2.0;
