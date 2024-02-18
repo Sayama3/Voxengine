@@ -4,9 +4,12 @@
 
 #include <utility>
 
-#include "Voxymore/Components/Components.hpp"
-#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
+#include "Voxymore/Components/Components.hpp"
+#include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
 #include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp"
 
 
@@ -24,14 +27,18 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		RigidbodyGravitySystem::CreateSystem();
+		RigidbodySpringSystem::CreateSystem();
 		RigidbodyComponent::RegisterComponent();
+		RigidbodySpringComponent::RegisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
 		RigidbodyGravitySystem::DeleteSystem();
+		RigidbodySpringSystem::DeleteSystem();
 		RigidbodyComponent::UnregisterComponent();
+		RigidbodySpringComponent::UnregisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnUpdate(TimeStep ts)
@@ -49,9 +56,14 @@ namespace Voxymore::Core
 		// Integrate all Rigidbodies
 		auto func = [&ts](entt::entity e, RigidbodyComponent& pc, TransformComponent& tc){
 			VXM_PROFILE_FUNCTION();
+
 			pc.SetPosition(tc.GetPosition());
+			pc.SetOrientation(tc.GetRotation());
+
 			pc.Integrate(ts);
+
 			tc.SetPosition(pc.GetPosition());
+			tc.SetRotation(pc.GetOrientation());
 		};
 
 		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent>, func);

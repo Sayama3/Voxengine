@@ -792,6 +792,12 @@ namespace Voxymore::Editor {
 		{
 			ppl->SetScene(m_ActiveScene);
 		}
+
+		RigidbodyPhysicsLayer* rpl;
+		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		{
+			rpl->SetScene(m_ActiveScene);
+		}
     }
 
     void EditorLayer::OnSceneStop()
@@ -804,6 +810,12 @@ namespace Voxymore::Editor {
 		if(Application::Get().TryGetLayer<ParticlePhysicsLayer>(ppl))
 		{
 			ppl->ResetScene();
+		}
+
+		RigidbodyPhysicsLayer* rpl;
+		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		{
+			rpl->ResetScene();
 		}
 
         m_ActiveScene = m_CacheScene;

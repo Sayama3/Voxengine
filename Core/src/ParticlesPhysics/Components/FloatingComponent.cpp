@@ -9,8 +9,6 @@
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_LIGHT_COMPONENT(FloatingComponent);
-
 	void FloatingComponent::DeserializeComponent(YAML::Node& node) {
 		if(node["MaxDepth"].IsDefined()) {
 			MaxDepth = node["MaxDepth"].as<Real>();

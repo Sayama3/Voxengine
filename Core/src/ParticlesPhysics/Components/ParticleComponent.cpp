@@ -20,8 +20,6 @@ else {																																	\
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_LIGHT_COMPONENT(ParticleComponent)
-
 	ParticleComponent::ParticleComponent() : Particle()
 	{}
 	ParticleComponent::~ParticleComponent() = default;

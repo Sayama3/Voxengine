@@ -7,6 +7,7 @@
 #endif
 
 #include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
+#include "Voxymore/Components/LightComponent.hpp"
 
 
 namespace Voxymore::Editor {
@@ -108,7 +109,14 @@ namespace Voxymore::Editor {
 			static uint64_t entityCubeCount = 0;
 			auto e = m_Context->CreateEntity("Cube - " + std::to_string(entityCubeCount++));
 			e.AddComponent<PrimitiveComponent>(Primitive::Type::Cube);
-			e.AddComponent<ParticleComponent>();
+			m_PropertyPanel.m_SelectedEntity = e;
+		}
+
+		if(ImGui::MenuItem("Create Light"))
+		{
+			static uint64_t entityLightCount = 0;
+			auto e = m_Context->CreateEntity("Light - " + std::to_string(entityLightCount++));
+			e.AddComponent<LightComponent>();
 			m_PropertyPanel.m_SelectedEntity = e;
 		}
 	}

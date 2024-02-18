@@ -20,7 +20,6 @@ else {																																	\
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_LIGHT_COMPONENT(AnchoredSpringComponent);
 	void AnchoredSpringComponent::DeserializeComponent(YAML::Node& node)
 	{
 		DeserializeField(node, SpringConstant, "SpringConstant", Real, 1.0);

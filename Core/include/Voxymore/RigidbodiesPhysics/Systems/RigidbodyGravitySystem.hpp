@@ -11,10 +11,6 @@
 #include "Voxymore/Scene/Systems.hpp"
 #include "static_block.hpp"
 
-#ifndef VXM_GRAVITY
-#define VXM_GRAVITY {0, -9.81, 0}
-#endif
-
 namespace Voxymore::Core
 {
 	class RigidbodyGravitySystem : public System
@@ -35,7 +31,7 @@ namespace Voxymore::Core
 	private:
 		void UpdateParticle(entt::entity e, RigidbodyComponent& pc);
 
-		Vec3 m_Gravity = VXM_GRAVITY;
+		Vec3 m_Gravity = Math::Gravity;
 	};
 } // namespace Voxymore::Core
 

@@ -1,0 +1,6 @@
+RigidbodyGravitySystem:
+  Enable: false
+  Scenes:
+    []
+  UUID: 11336816420102382292
+  Gravity: [0, -9.81000042, 0]

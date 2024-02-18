@@ -146,6 +146,10 @@ set(SRC_FILES src/Core/Application.cpp
         src/Components/LightComponent.cpp
         include/Voxymore/Components/LightComponent.hpp
         include/Voxymore/Renderer/Light.hpp
+        src/RigidbodiesPhysics/Systems/RigidbodySpringSystem.cpp
+        include/Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp
+        src/RigidbodiesPhysics/Components/RigidbodySpringComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

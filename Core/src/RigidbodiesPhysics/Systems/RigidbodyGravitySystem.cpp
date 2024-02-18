@@ -23,7 +23,7 @@ namespace Voxymore::Core
 	void RigidbodyGravitySystem::DeserializeSystem(YAML::Node &node)
 	{
 		System::DeserializeSystem(node);
-		DeserializeField(node, m_Gravity, "Gravity", Vec3, VXM_GRAVITY);
+		DeserializeField(node, m_Gravity, "Gravity", Vec3, Math::Gravity);
 	}
 
 	void RigidbodyGravitySystem::SerializeSystem(YAML::Emitter &out)
@@ -34,7 +34,7 @@ namespace Voxymore::Core
 
 	void RigidbodyGravitySystem::ResetSystem()
 	{
-		m_Gravity = VXM_GRAVITY;
+		m_Gravity = Math::Gravity;
 	}
 
 	bool RigidbodyGravitySystem::OnImGuiRender()
@@ -56,6 +56,6 @@ namespace Voxymore::Core
 	void RigidbodyGravitySystem::UpdateParticle(entt::entity e, RigidbodyComponent& pc)
 	{
 		VXM_PROFILE_FUNCTION();
-		pc.AddAcceleration(m_Gravity);
+		if (pc.HasFiniteMass()) pc.AddAcceleration(m_Gravity);
 	}
 } // namespace Voxymore::Core

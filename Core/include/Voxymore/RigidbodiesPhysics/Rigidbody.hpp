@@ -12,13 +12,10 @@ namespace Voxymore::Core
 {
 	/**
 	 * @class Rigidbody
-	 *
 	 * @brief Represents a rigid body in a physics simulation.
 	 *
-	 * The Rigidbody class is used to represent a physical object in a physics simulation.
-	 * It stores various properties of the object such as its mass, position, orientation,
-	 * velocity, and acceleration. It also provides methods for applying forces, calculating
-	 * the transformation matrix, and manipulating the body's inertia tensor.
+	 * The Rigidbody class stores and updates the position, orientation, velocities, forces, and other properties
+	 * of a rigid body. It also provides methods to perform various calculations and operations on the body.
 	 */
 	class Rigidbody
 	{
@@ -86,41 +83,6 @@ namespace Voxymore::Core
 		void AddAngularVelocity(const Vec3& angularVelocity);
 
 	protected:
-		/**
-		 * Hold the inverse of the mass of the rigidbody. It is
-		 * more useful to hold the inverse mass because integration is
-		 * simpler, and because in real time simulation it is more useful
-		 * to have bodies with infinite mass (immovable) than zero mass
-		 * (unstable in numerical simulation)
-		 */
-		Real m_InverseMass;
-
-		/**
-		 * Holds the amount of damping applied to linear
-		 * motion. Damping is required to remove energy added
-		 * through numerical instability in the integrator.
-		 */
-		Real m_LinearDamping;
-
-		/**
-		 * Linear position in world space.
-		 */
-		Vec3 m_Position;
-
-		/**
-		 * Angular orientation in world space.
-		 */
-		Quat m_Orientation;
-
-		/**
-		 * Linear velocity in world space.
-		 */
-		Vec3 m_LinearVelocity;
-
-		/***
-		 * Angular velocity (or rotation) in world space.
-		 */
-		Vec3 m_AngularVelocity;
 
 		/**
 		 * Holds the inverse of the body's inertia tensor. The
@@ -134,8 +96,37 @@ namespace Voxymore::Core
 		 * The inertia tensor, unlike the other variable that
 		 * define the rigidbody, is given in body space (local space).
 		 */
-		Mat3 m_InverseInertiaTensor;
+		Mat3 m_InverseInertiaTensor = Math::Identity<Mat3>();
 
+		/**
+		 * Angular orientation in world space.
+		 */
+		Quat m_Orientation = Math::Identity<Quat>();
+
+		/**
+		 * Linear position in world space.
+		 */
+		Vec3 m_Position = Vec3(0.0);
+
+		/**
+		* @brief Holds the acceleration vector applied to the rigid body.
+		*
+		* Acceleration is a vector quantity that represents the change in velocity of a body per unit of time.
+		* This could result from any force or impulse applied to the body.
+		* The more the value of acceleration, the faster the velocity of an object will change.
+		* This is a vector value defined in the terms of distance travelled per unit of time squared.
+		*/
+		Vec3 m_Acceleration = Math::Gravity;
+
+		/**
+		 * Linear velocity in world space.
+		 */
+		Vec3 m_LinearVelocity = Vec3(0.0);
+
+		/***
+		 * Angular velocity (or rotation) in world space.
+		 */
+		Vec3 m_AngularVelocity = Vec3(0.0);
 		/**
 		 *   @brief Used to accumulate forces applied on the Rigidbody during a physics simulation step.
 		 *
@@ -153,7 +144,7 @@ namespace Voxymore::Core
 		 *   Typically, after each simulation step, m_ForceAccumulate is cleared to accept a new set of forces
 		 *   for the next simulation step.
 		 */
-		Vec3 m_ForceAccumulate;
+		Vec3 m_ForceAccumulate = Vec3(0.0);
 
 		/**
 		 * @brief Accumulation of torques applied to the Rigidbody during a physics simulation step.
@@ -167,7 +158,34 @@ namespace Voxymore::Core
 		 * Typically, m_TorqueAccumulate is cleared after each simulation step so it can accept and accumulate new torques in the next step.
 		 * The clearing is done by calling the 'ClearAccumulator()' method in the physics engine updates.
 		 */
-		Vec3 m_TorqueAccumulate;
+		Vec3 m_TorqueAccumulate = Vec3(0.0);
+
+		/**
+		 * Hold the inverse of the mass of the rigidbody. It is
+		 * more useful to hold the inverse mass because integration is
+		 * simpler, and because in real time simulation it is more useful
+		 * to have bodies with infinite mass (immovable) than zero mass
+		 * (unstable in numerical simulation)
+		 */
+		Real m_InverseMass = 1.0;
+
+		/**
+		 * Holds the amount of damping applied to linear
+		 * motion. Damping is required to remove energy added
+		 * through numerical instability in the integrator.
+		 */
+		Real m_LinearDamping = 0.9;
+
+		/**
+		* @brief Holds the amount of angular damping applied to the rigid body.
+		*
+		* Angular damping is a force that reduces angular velocity over time, simulating the effects of resistance or friction.
+		* This is necessary to prevent bodies from perpetually rotating due to applied forces and torques.
+		* This damping helps remove energy that might be added through numerical instability in the simulations.
+		* The more the value of angular damping, the faster an object will cease spinning after an applied force is removed.
+		* This is a scalar value, with its unit being force time per radian.
+		*/
+		Real m_AngularDamping = 0.9;
 
 		/**
 		 * @brief Flag to check if the Rigidbody is awake in the simulation.
@@ -181,7 +199,7 @@ namespace Voxymore::Core
 		 * If m_IsAwake is set to false, the physics engine may choose to omit this Rigidbody from certain computations, improving performance.
 		 * Note: The specific behavior may vary depending on the physics engine's design and implementation.
 		 */
-		bool m_IsAwake;
+		bool m_IsAwake = true;
 	};
 
 } // namespace Voxymore::Core

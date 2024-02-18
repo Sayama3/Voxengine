@@ -68,12 +68,13 @@ namespace Voxymore::Core
 		inline Vec3 GetRight() const { return Rotation * Vec3{1,0,0}; }
 		inline Vec3 GetUp() const { return Rotation * Vec3{0,1,0}; }
 
-	public:
 		inline Mat4 GetTransform() const
 		{
 			VXM_PROFILE_FUNCTION();
 			return Math::TRS(Position, Rotation, Scale); // Translation * Rotation * Scale => TRS Matrix.
 		}
+		inline Vec3 GetWorldPoint(const Vec3& localPoint) { VXM_PROFILE_FUNCTION(); return GetTransform() * Vec4(localPoint, 1); }
+
 	};
 
 //	struct MeshComponent

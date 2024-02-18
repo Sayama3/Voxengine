@@ -1,0 +1,107 @@
+Scene:
+  Name: TestSceneRigidbody
+  UUID: 4380963536971847205
+  Entities:
+    - Entity: 17080088828523795998
+      IsActive: true
+      TagComponent:
+        Tag: Cube - 0
+      TransformComponent:
+        Position: [0, -16.8680763, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [100, 0.00999999978, 100]
+      PrimitiveComponent:
+        PrimitiveType: 1
+    - Entity: 3148286475663210932
+      IsActive: true
+      TagComponent:
+        Tag: Camera - 0
+      TransformComponent:
+        Position: [0, 0, 15.1616735]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      CameraComponent:
+        Primary: true
+        FixedAspectRatio: false
+        Camera:
+          IsOrthographic: false
+          AspectRatio: 1.47694528
+          OrthographicSize: 10
+          OrthographicNear: -1
+          OrthographicFar: 1
+          PerspectiveVerticalFOV: 1.04719758
+          PerspectiveNear: 0.00999999978
+          PerspectiveFar: 1000
+    - Entity: 4188056978430315733
+      IsActive: true
+      TagComponent:
+        Tag: Cube - Anchor
+      TransformComponent:
+        Position: [0, 5.68324757, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      PrimitiveComponent:
+        PrimitiveType: 1
+      RigidbodySpringComponent:
+        SpringConstant: 5
+        RestLength: 2
+        EntitiesConnected:
+          - SceneId: 4380963536971847205
+            EntityId: 14317567100082948352
+            Position: [0.5, 0.5, 0.5]
+        EntitiesNameHelper:
+          - Cube - - (14317567100082948352)
+    - Entity: 14317567100082948352
+      IsActive: true
+      TagComponent:
+        Tag: Cube - RB
+      TransformComponent:
+        Position: [4, 2, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      PrimitiveComponent:
+        PrimitiveType: 1
+      RigidbodyComponent:
+        InverseMass: 1
+        LinearDamping: 0.899999976
+        AngularDamping: 0.899999976
+        Position: [0, 0, 0]
+        Orientation: [0, 0, 0, 1]
+        LinearVelocity: [0, 0, 0]
+        AngularVelocity: [0, 0, 0]
+        InverseInertiaTensor:
+          -
+            - 5.88235569
+            - -0
+            - 0
+          -
+            - -0
+            - 5.88235426
+            - -0
+          -
+            - 0
+            - -0
+            - 5.88235283
+        ForceAccumulate: [0, 0, 0]
+        TorqueAccumulate: [0, 0, 0]
+        Acceleration: [0, -9.81000042, 0]
+        IsAwake: false
+    - Entity: 16769641754460419530
+      IsActive: true
+      TagComponent:
+        Tag: Light - 0
+      TransformComponent:
+        Position: [10, 15, 10]
+        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
+        EulerRotation: [-0.785398185, 0.785398245, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 1
+        Range: 10
+        Cutoff: 45
+        LightType: 0

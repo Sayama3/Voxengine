@@ -3,13 +3,15 @@
 #include "Voxymore/Voxymore.hpp"
 #include "Voxymore/Core/EntryPoint.hpp"
 #include "Voxymore/Editor/EditorLayer.hpp"
+#include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
 
 namespace Voxymore::Editor {
 
 class Voxengine : public Voxymore::Core::Application {
     public:
         Voxengine(const ApplicationParameters& parameters) : Voxymore::Core::Application(parameters) {
-			PushOverlay(new ParticlePhysicsLayer());
+//			PushOverlay(new ParticlePhysicsLayer());
+			PushOverlay(new RigidbodyPhysicsLayer());
 			PushOverlay(new ImGuiLayer());
 			PushLayer(new EditorLayer());
         }
