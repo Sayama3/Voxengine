@@ -98,7 +98,7 @@ layout (location = 4) out flat int v_EntityId;
 void main() {
     gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
     v_Position = (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
-    v_Normal = (u_NormalMatrix * vec4(a_Normal, 1.0)).xyz;
+    v_Normal = normalize((u_NormalMatrix * vec4(a_Normal, 1.0)).xyz);
 //    v_Normal = a_Normal;
     v_TexCoord = a_TexCoord;
     v_Color = a_Color;

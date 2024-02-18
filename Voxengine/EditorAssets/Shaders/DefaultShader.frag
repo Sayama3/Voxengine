@@ -1,5 +1,8 @@
 #version 450 core
 
+#define MAX_LIGHT_COUNT 20
+#define EPSILON 0.1
+
 struct TextureInfo
 {
     int Index;
@@ -41,7 +44,6 @@ struct MaterialParams
     int DoubleSided;
 };
 
-#define MAX_LIGHT_COUNT 20
 struct Light
 {
     vec4 Color;
@@ -95,13 +97,9 @@ layout (location = 4) in flat int v_EntityId;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
-//bool approx(float a, float b)
-//{
-//    return abs(b-a) < 0.5;
-//}
-bool approx(int a, int b)
+bool approx(float a, float b)
 {
-    return abs(b-a) < 0.5;
+    return abs(b-a) < EPSILON;
 }
 
 vec4 SampleTexture(int texIndex)
@@ -146,9 +144,72 @@ vec4 SampleTexture(int texIndex)
     return texColor;
 }
 
+vec3 CalculateLighting(vec3 lightColor, vec3 lightPos, vec3 lightDir, float lightIntensity)
+{
+    // ambient
+    float ambientStrength = 0.05 * lightIntensity;
+    vec3 ambient = ambientStrength * lightColor;
+
+    // diffuse
+    float diff = max(dot(v_Normal, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor * lightIntensity;
+
+    //        // specular
+    float specularStrength = 0.5;
+    vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
+    vec3 reflectDir = normalize(reflect(-lightDir, v_Normal));
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * lightColor * lightIntensity;
+
+    return (ambient + diffuse + specular) * o_Color.rgb;
+}
+
+vec3 AddDirectionalLight(Light light)
+{
+    vec3 lightColor = light.Color.rgb;
+    vec3 lightPos = light.Position.xyz;
+    vec3 lightDir = normalize(light.Direction.xyz);
+    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+
+    return CalculateLighting(lightColor, lightPos, lightDir, lightIntensity);
+}
+
+vec3 AddPointLight(Light light)
+{
+    vec3 lightColor = light.Color.rgb;
+    vec3 lightPos = light.Position.xyz;
+    vec3 lightDir = normalize(lightPos - v_Position);
+    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+
+    float distance = distance(v_Position, lightPos);
+    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+    lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
+    lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
+
+
+    return CalculateLighting(lightColor, lightPos, lightDir, lightIntensity);
+}
+
+vec3 AddSpotLight(Light light)
+{
+    vec3 lightColor = light.Color.rgb;
+    vec3 lightPos = light.Position.xyz;
+    vec3 lightDir = normalize(lightPos - v_Position);
+    if(light.Type == 2 && dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
+    {
+        return vec3(0);
+    }
+
+    float distance = distance(v_Position, lightPos);
+    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+    lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
+    lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
+
+    return CalculateLighting(lightColor, lightPos, lightDir, lightIntensity);
+}
+
 void main()
 {
-    vec3 norm = normalize(v_Normal);
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
 
     if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
@@ -156,57 +217,27 @@ void main()
         o_Color *= SampleTexture(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index);
         if(materialParameters.PbrMetallicRoughness.BaseColorTexture.TexCoord > 0)
         {
-            o_Color = vec4(0.8,0.2,0.3,1.0);
+            o_Color = vec4(0.8, 0.2, 0.3, 1.0);
         }
     }
 
     vec3 result = vec3(0);
 
-
     for(int i = 0; i < int(lights.lightCount); i++)
     {
         Light light = lights.lights[i];
-        vec3 lightColor = light.Color.rgb;
-        vec3 lightPos = light.Position.xyz;
-        vec3 lightDir = normalize(light.Direction.xyz);
 
-        if(light.Type == 2 && dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
+        if(light.Type == 0)
         {
-            continue;
+            result += AddDirectionalLight(light);
         }
-        else
+        else if(light.Type == 1)
         {
-            if(light.Type != 0)
-            {
-                lightDir = normalize(lightPos - v_Position);
-            }
-
-            float lightIntensity = light.Intensity * sign(dot(norm, lightDir));
-            if(light.Type != 0)
-            {
-                float distance = distance(v_Position, lightPos);
-                lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
-
-                lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
-            }
-
-            // ambient
-            float ambientStrength = 0.05 * lightIntensity;
-            vec3 ambient = ambientStrength * lightColor;
-
-            // diffuse
-            float diff = max(dot(norm, lightDir), 0.0);
-            vec3 diffuse = diff * lightColor * lightIntensity;
-
-    //        // specular
-            float specularStrength = 0.5;
-            vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
-            vec3 reflectDir = normalize(reflect(-lightDir, norm));
-            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-            vec3 specular = specularStrength * spec * lightColor * lightIntensity;
-
-            result += (ambient + diffuse + specular) * o_Color.rgb;
-//            result = norm;
+            result += AddPointLight(light);
+        }
+        else if(light.Type == 2)
+        {
+            result += AddSpotLight(light);
         }
     }
 
