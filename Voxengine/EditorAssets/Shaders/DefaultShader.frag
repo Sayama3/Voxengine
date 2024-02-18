@@ -195,7 +195,8 @@ vec3 AddSpotLight(Light light)
     vec3 lightColor = light.Color.rgb;
     vec3 lightPos = light.Position.xyz;
     vec3 lightDir = normalize(lightPos - v_Position);
-    if(light.Type == 2 && dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
+
+    if(dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
     {
         return vec3(0);
     }
