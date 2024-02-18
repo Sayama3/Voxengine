@@ -88,8 +88,8 @@ namespace Voxymore::Core
 		 * @param scale The scale as a 3D vector.
 		 * @return A 4x4 matrix representation of the Transform matrix.
 		 */
-		static Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale);
-		static void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale);
+		static Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
+		static void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
 
 		static bool DecomposeTransform(const Mat4& transform, Vec3& position, Vec3& rotation, Vec3& scale);
 		static bool DecomposeTransform(const Mat4& transform, Vec3& position, glm::quat& rotation, Vec3& scale);
@@ -127,6 +127,12 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			return glm::normalize(value);
+		}
+
+		template<int C, int R, typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::mat<C,R,T,Q> Inverse(const glm::mat<C,R,T,Q>& mat)
+		{
+			return glm::inverse(mat);
 		}
 
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
@@ -175,6 +181,11 @@ namespace Voxymore::Core
 			return glm::sqrt(value);
 		}
 
+		inline static Vec3 Cross(const Vec3& a, const Vec3& b)
+		{
+			return glm::cross(a,b);
+		}
+
 
 		/**
 		 * Calculates the dot product (also known as scalar product) of two vectors.
@@ -201,6 +212,7 @@ namespace Voxymore::Core
 		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
+	template<> inline std::string Math::to_string(bool value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(float value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::to_string(long double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
@@ -215,67 +227,20 @@ namespace Voxymore::Core
 
 } // Voxymore::Core
 
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat4 value){
+template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat3 value){
+
+template<typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::qua<T,Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Mat2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Vec1 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const ::Voxymore::Core::Quat value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::ivec1 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec4 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec3 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec2 value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
-}
-inline std::ostream& operator << (std::ostream & os, const glm::bvec1 value){
+
+template<glm::length_t L, typename T, glm::qualifier Q>
+inline std::ostream& operator << (std::ostream & os, const glm::vec<L, T, Q> value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }

@@ -25,8 +25,8 @@
 
 #include "Voxymore/Layers/Layer.hpp"
 
-#include "Voxymore/ImGUI/ImGUILayer.hpp"
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
+#include "Voxymore/ImGui/ImGuiLayer.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
@@ -36,14 +36,23 @@
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 
-#include "Voxymore/Physics/Collisions/ParticleContact.hpp"
-#include "Voxymore/Physics/Components/AnchoredSpringComponent.hpp"
-#include "Voxymore/Physics/Components/FloatingComponent.hpp"
-#include "Voxymore/Physics/Components/ParticleComponent.hpp"
-#include "Voxymore/Physics/Particle.hpp"
-#include "Voxymore/Physics/PhysicsLayer.hpp"
-#include "Voxymore/Physics/Systems/BuoyancyForceSystem.hpp"
-#include "Voxymore/Physics/Systems/SpringForceSystem.hpp"
+#include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
+#include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp"
+#include "Voxymore/ParticlesPhysics/Particle.hpp"
+#include "Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp"
+#include "Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp"
+#include "Voxymore/ParticlesPhysics/Systems/SpringForceSystem.hpp"
+
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
+#include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"

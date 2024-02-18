@@ -24,8 +24,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Layers/Layer.hpp
         src/Layers/LayerStack.cpp
         include/Voxymore/Layers/LayerStack.hpp
-        src/ImGui/ImGUILayer.cpp
-        include/Voxymore/ImGUI/ImGUILayer.hpp
+        src/ImGui/ImGuiLayer.cpp
+        include/Voxymore/ImGui/ImGuiLayer.hpp
         include/Voxymore/Core/Input.hpp
         include/Voxymore/Core/Core.hpp
         include/Voxymore/Core/KeyCodes.hpp
@@ -100,40 +100,56 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/UUID.hpp
         src/Scene/Entity.cpp
         src/ImGui/ImGuiLib.cpp
-        include/Voxymore/ImGUI/ImGuiLib.hpp
+        include/Voxymore/ImGui/ImGuiLib.hpp
         src/Assets/Assets.cpp
         include/Voxymore/Assets/Assets.hpp
-        src/Physics/PhysicsLayer.cpp
-        include/Voxymore/Physics/PhysicsLayer.hpp
-        include/Voxymore/Physics/Particle.hpp
-        src/Physics/Components/ParticleComponent.cpp
-        include/Voxymore/Physics/Components/ParticleComponent.hpp
-        src/Physics/Particle.cpp
+        src/ParticlesPhysics/ParticlePhysicsLayer.cpp
+        include/Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp
+        include/Voxymore/ParticlesPhysics/Particle.hpp
+        src/ParticlesPhysics/Components/ParticleComponent.cpp
+        include/Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp
+        src/ParticlesPhysics/Particle.cpp
         src/Components/PrimitiveComponent.cpp
         include/Voxymore/Components/PrimitiveComponent.hpp
-        src/Physics/Components/AnchoredSpringComponent.cpp
-        include/Voxymore/Physics/Components/AnchoredSpringComponent.hpp
-        src/Physics/Systems/SpringForceSystem.cpp
-        include/Voxymore/Physics/Systems/SpringForceSystem.hpp
+        src/ParticlesPhysics/Components/AnchoredSpringComponent.cpp
+        include/Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp
+        src/ParticlesPhysics/Systems/SpringForceSystem.cpp
+        include/Voxymore/ParticlesPhysics/Systems/SpringForceSystem.hpp
         vendor/static_block.hpp
-        src/Physics/Systems/BuoyancyForceSystem.cpp
-        include/Voxymore/Physics/Systems/BuoyancyForceSystem.hpp
-        src/Physics/Components/FloatingComponent.cpp
-        include/Voxymore/Physics/Components/FloatingComponent.hpp
-        src/Physics/Collisions/ParticleContact.cpp
-        include/Voxymore/Physics/Collisions/ParticleContact.hpp
+        src/ParticlesPhysics/Systems/BuoyancyForceSystem.cpp
+        include/Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp
+        src/ParticlesPhysics/Components/FloatingComponent.cpp
+        include/Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp
+        src/ParticlesPhysics/Collisions/ParticleContact.cpp
+        include/Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp
         include/Voxymore/Core/MultiThreading.hpp
-        src/Physics/Collisions/ParticleContactResolver.cpp
-        include/Voxymore/Physics/Collisions/ParticleContactResolver.hpp
+        src/ParticlesPhysics/Collisions/ParticleContactResolver.cpp
+        include/Voxymore/ParticlesPhysics/Collisions/ParticleContactResolver.hpp
         include/Voxymore/Scene/Entity.forward.hpp
         include/Voxymore/Scene/Entity.decl.hpp
         include/Voxymore/Scene/Entity.impl.hpp
         include/Voxymore/Scene/Scene.forward.hpp
         include/Voxymore/Scene/Scene.decl.hpp
         include/Voxymore/Scene/Scene.impl.hpp
+        src/RigidbodiesPhysics/Rigidbody.cpp
+        include/Voxymore/RigidbodiesPhysics/Rigidbody.hpp
+        src/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.cpp
+        include/Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp
+        src/RigidbodiesPhysics/Components/RigidbodyComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp
+        src/RigidbodiesPhysics/RigidbodyPhysicsLayer.cpp
+        include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp
+        src/RigidbodiesPhysics/Collisions/RigidbodyContact.cpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp
+        src/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.cpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp
         src/Components/LightComponent.cpp
         include/Voxymore/Components/LightComponent.hpp
         include/Voxymore/Renderer/Light.hpp
+        src/RigidbodiesPhysics/Systems/RigidbodySpringSystem.cpp
+        include/Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp
+        src/RigidbodiesPhysics/Components/RigidbodySpringComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

@@ -2,9 +2,9 @@
 // Created by ianpo on 11/11/2023.
 //
 
-#include "Voxymore/ImGUI/ImGuiLib.hpp"
-#include "Voxymore/ImGUI/ImGUILayer.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 #include "Voxymore/Core/Application.hpp"
+#include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "imgui.h"
 #include "imgui_internal.h"
 
@@ -23,7 +23,9 @@ namespace Voxymore
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
-			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
+			auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
+			VXM_CORE_ASSERT(imgui, "The layer ImGui is not present.");
+			ImFont* boldFont = imgui->GetFont(FontType::Bold);
 			ImGui::BeginGroup();
 			ImGui::PushID(label.c_str());
 			ImGui::Columns(2);
@@ -102,7 +104,9 @@ namespace Voxymore
 			VXM_PROFILE_FUNCTION();
 			// ==================== START ====================
 			bool changed = false;
-			ImFont* boldFont = Application::Get().GetImGuiLayer()->GetFont(FontType::Bold);
+			auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
+			VXM_CORE_ASSERT(imgui, "The layer ImGui is not present.");
+			ImFont* boldFont = imgui->GetFont(FontType::Bold);
 			ImGui::PushID(label.c_str());
 			ImGui::BeginGroup();
 			ImGui::Columns(2);

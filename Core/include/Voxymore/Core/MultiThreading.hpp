@@ -58,9 +58,14 @@ namespace Voxymore::Core
 					std::for_each(std::execution::par_unseq, _First, _Last, _Func);
 					break;
 				}
+				case ExecutionPolicy::None:
+				{
+					std::for_each(_First, _Last, _Func);
+					break;
+				}
 				default:
 				{
-					VXM_CORE_WARNING("Execution policy is none or undefined. Using standard std::for_each.");
+					VXM_CORE_WARNING("Execution policy is undefined. Using standard std::for_each.");
 					std::for_each(_First, _Last, _Func);
 				}
 			}

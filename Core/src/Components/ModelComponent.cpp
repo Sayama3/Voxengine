@@ -120,7 +120,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		return !m_ModelPath.empty()
-			   && std::filesystem::exists(m_ModelPath.GetFullPath())
+			   && FileSystem::Exist(m_ModelPath)
 			   && ShaderLibrary::GetInstance().Exists(m_ShaderName);
 	}
 
