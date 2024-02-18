@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 
 namespace Voxymore::Core
 {
@@ -17,6 +18,7 @@ namespace Voxymore::Core
 		UUID(const UUID&) = default;
 
 		inline operator uint64_t() const { return m_UUID; }
+		static UUID FromString(const std::string&);
 	private:
 		uint64_t m_UUID;
 	};

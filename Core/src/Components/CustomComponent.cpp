@@ -41,8 +41,18 @@ namespace Voxymore::Core
 		return false;
 	}
 
-	template<typename T>
-	bool ComponentCreator<T>::s_Created = false;
+	void ComponentManager::RemoveComponent(const std::string &componentName)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto& components = GetInstance().s_Components;
+		for (int i = 0; i < components.size(); ++i) {
+			if(components[i].ComponentName == componentName) {
+				components.erase(components.begin() + i);
+				break;
+			}
+		}
+	}
+
 }
 //// ======== BoatComponent ========
 //using namespace Voxymore::Core;

@@ -11,9 +11,21 @@
 namespace Voxymore::Core {
     // TODO: Analyse shaders to get the different uniform inside.
     class OpenGLShader : public Shader {
+	private:
+		enum Target
+		{
+			None,
+			Vulkan,
+			OpenGl,
+			HashVulkan,
+			HashOpenGl,
+		};
     public:
         OpenGLShader(const std::string& name, const Path& path);
         OpenGLShader(const Path& path);
+        OpenGLShader(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
+        OpenGLShader(const Path& vertexPath, const Path& fragmentPath);
+        OpenGLShader(std::unordered_map<ShaderType, Path> paths);
         OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
         virtual ~OpenGLShader() override;
 
@@ -47,6 +59,9 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) override;
 		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) override;
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) override;
+
+		virtual void Reload() override;
+		virtual bool ShouldReload() const override;
 	private:
         std::unordered_map<ShaderType, std::string> PreProcess(const Path& path);
 
@@ -54,15 +69,19 @@ namespace Voxymore::Core {
 		void CompileOrGetOpenGLBinaries();
 		void CreateProgram();
 		void Reflect(ShaderType stage, const std::vector<uint32_t>& shaderData);
+		void DeleteProgram();
 
+		Path GetCachePath(ShaderType shaderType, Target target) const;
     private:
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_OpenGLSPIRV;
-		std::unordered_map<ShaderType, bool> m_HashesChanged;
+
+//		std::unordered_map<ShaderType, bool> m_HashesChanged;
 
 		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
     private:
-		Path m_FilePath;
+//		Path m_FilePath;
+		std::unordered_map<ShaderType, Path> m_FilePaths;
         std::string m_Name;
         unsigned int m_RendererID;
     };

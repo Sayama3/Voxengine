@@ -12,6 +12,7 @@
 #include <spirv_cross/spirv_cross.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
 #include <string>
+#include <sha256.h>
 
 #ifndef NEWLINE
 #define NEWLINE "\n"
@@ -373,79 +374,78 @@ namespace Voxymore::Core
 			return (shaderc_shader_kind) -1;
 		}
 
-		static std::filesystem::path GetCacheDirectory()
-		{
-			VXM_PROFILE_FUNCTION();
-			// TODO: make sure the assets directory is valid
-			Path cacheDir = {FileSource::Cache, "./shader/opengl/"};
-			return cacheDir;
-		}
-
-		static void CreateCacheDirectoryIfNeeded()
-		{
-			VXM_PROFILE_FUNCTION();
-			std::filesystem::path cacheDirectory = GetCacheDirectory();
-			if (!std::filesystem::exists(cacheDirectory))
-				std::filesystem::create_directories(cacheDirectory);
-		}
-
-		static const char *ShaderTypeToCachedVulkanFileExtension(ShaderType type)
+		static std::string ShaderTypeToFileExtension(ShaderType type)
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_opengl.comp";
-				case ShaderType::VERTEX_SHADER: return ".cached_opengl.vert";
-				case ShaderType::TESS_CONTROL_SHADER: return ".cached_opengl.tessco";
-				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_opengl.tessev";
-				case ShaderType::GEOMETRY_SHADER: return ".cached_opengl.geom";
-				case ShaderType::FRAGMENT_SHADER: return ".cached_opengl.frag";
+				case ShaderType::COMPUTE_SHADER: return ".compute";
+				case ShaderType::VERTEX_SHADER: return ".vert";
+				case ShaderType::TESS_CONTROL_SHADER: return ".tessco";
+				case ShaderType::TESS_EVALUATION_SHADER: return ".tessev";
+				case ShaderType::GEOMETRY_SHADER: return ".geom";
+				case ShaderType::FRAGMENT_SHADER: return ".frag";
 				default: break;
 			}
-			VXM_CORE_ASSERT(false, "The ShaderType {0} is not handled.", ShaderTypeToString(type));
-			return ".cached_opengl.glsl";
+			VXM_CORE_WARNING("The ShaderType {0} is not handled.", ShaderTypeToString(type));
+			return ".glsl";
 		}
 
-		static const char *ShaderTypeToCachedOpenGLFileExtension(ShaderType type)
+		static std::string HashSrc(const std::string& str)
 		{
-			VXM_PROFILE_FUNCTION();
-			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_vulkan.comp";
-				case ShaderType::VERTEX_SHADER: return ".cached_vulkan.vert";
-				case ShaderType::TESS_CONTROL_SHADER: return ".cached_vulkan.tessco";
-				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_vulkan.tessev";
-				case ShaderType::GEOMETRY_SHADER: return ".cached_vulkan.geom";
-				case ShaderType::FRAGMENT_SHADER: return ".cached_vulkan.frag";
-				default: break;
-			}
-			VXM_CORE_ASSERT(false, "The ShaderType {0} is not handled.", ShaderTypeToString(type));
-			return ".cached_vulkan.glsl";
+			SHA256 sha;
+			return sha(str);
 		}
 
-		static const char *ShaderTypeToCachedHashFileExtension(ShaderType type)
+		template<typename T>
+		static std::string HashSrc(const std::vector<T>& src)
 		{
-			VXM_PROFILE_FUNCTION();
-			switch (type) {
-				case ShaderType::COMPUTE_SHADER: return ".cached_hash.comp";
-				case ShaderType::VERTEX_SHADER: return ".cached_hash.vert";
-				case ShaderType::TESS_CONTROL_SHADER: return ".cached_hash.tessco";
-				case ShaderType::TESS_EVALUATION_SHADER: return ".cached_hash.tessev";
-				case ShaderType::GEOMETRY_SHADER: return ".cached_hash.geom";
-				case ShaderType::FRAGMENT_SHADER: return ".cached_hash.frag";
-				default: break;
-			}
-			VXM_CORE_ASSERT(false, "The ShaderType {0} is not handled.", ShaderTypeToString(type));
-			return ".cached_hash.glsl";
+			SHA256 sha;
+			sha.add(src.data(), src.size() * sizeof(T));
+			return sha.getHash();
 		}
 	}// namespace Utils
 
+	Path OpenGLShader::GetCachePath(ShaderType shaderType, Target target) const
+	{
+		Path p;
+		if(m_FilePaths.contains(shaderType))
+		{
+			p = m_FilePaths.at(shaderType).GetCachePath();
+			p.path = p.path.parent_path() / p.path.stem() / p.path.filename();
+		}
+		else
+		{
+			p = {FileSource::Cache, "./shader/opengl/" + m_Name + "/" + m_Name  + ".glsl"};
+		}
+
+		switch (target) {
+			case Vulkan:
+				p.path += (".vulkan");
+				break;
+			case OpenGl:
+				p.path += (".opengl");
+				break;
+			case HashVulkan:
+				p.path += (".hash.vulkan");
+				break;
+			case HashOpenGl:
+				p.path += (".hash.opengl");
+				break;
+		}
+		p.path += (Utils::ShaderTypeToFileExtension(shaderType));
+		return p;
+	}
+
 	OpenGLShader::OpenGLShader(const std::string &name, const Path &path)
-		: m_FilePath(path)
-		, m_Name(name)
+		: m_Name(name)
 	{
 		VXM_PROFILE_FUNCTION();
-		Utils::CreateCacheDirectoryIfNeeded();
+		//Utils::CreateCacheDirectoryIfNeeded();
 
 		auto shaderSources = PreProcess(path);
+		for (auto& shader : shaderSources) {
+			m_FilePaths[shader.first] = path;
+		}
 		//		bool compiled = Compile(shaderSources);
 
 		CompileOrGetVulkanBinaries(shaderSources);
@@ -454,16 +454,70 @@ namespace Voxymore::Core
 	}
 
 	OpenGLShader::OpenGLShader(const Path &path)
-		: m_FilePath(path)
 	{
 		VXM_PROFILE_FUNCTION();
-		Utils::CreateCacheDirectoryIfNeeded();
+		//Utils::CreateCacheDirectoryIfNeeded();
 
 		std::filesystem::path p = path.GetFullPath();
 		m_Name = p.stem().string();
 
 		auto shaderSources = PreProcess(path);
+		for (auto& shader : shaderSources) {
+			m_FilePaths[shader.first] = path;
+		}
 		//		bool compiled = Compile(shaderSources);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& name, const Path& vertexPath, const Path& fragmentPath)
+	: m_Name(name), m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
+	{
+		VXM_PROFILE_FUNCTION();
+		//Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+
+		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
+		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(const Path& vertexPath, const Path& fragmentPath) : m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
+	{
+		VXM_PROFILE_FUNCTION();
+		//Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+
+		std::filesystem::path p = vertexPath.GetFullPath();
+		m_Name = p.stem().string();
+
+		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
+		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	OpenGLShader::OpenGLShader(std::unordered_map<ShaderType, Path> paths) : m_FilePaths(paths)
+	{
+		VXM_PROFILE_FUNCTION();
+		//Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+		if (!m_FilePaths.empty()) {
+			m_Name = m_FilePaths.begin()->second.GetFullPath().stem().string();
+			for (auto &p: m_FilePaths) {
+				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
+			}
+		}
 
 		CompileOrGetVulkanBinaries(shaderSources);
 		CompileOrGetOpenGLBinaries();
@@ -473,7 +527,7 @@ namespace Voxymore::Core
 	OpenGLShader::OpenGLShader(const std::string &name, const std::string &srcVertex, const std::string &srcFragment) : m_Name(name)
 	{
 		VXM_PROFILE_FUNCTION();
-		Utils::CreateCacheDirectoryIfNeeded();
+		//Utils::CreateCacheDirectoryIfNeeded();
 
 		CompileOrGetVulkanBinaries({
 				{ShaderType::VERTEX_SHADER, srcVertex},
@@ -517,13 +571,15 @@ namespace Voxymore::Core
 
 	OpenGLShader::~OpenGLShader()
 	{
-		VXM_PROFILE_FUNCTION();
-		glDeleteProgram(m_RendererID);
+		DeleteProgram();
 	}
 
 	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string> &shaders)
 	{
+		//Profiling
 		VXM_PROFILE_FUNCTION();
+
+		// Setup of the shader compiler to compile the glsl to spirv
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
@@ -533,84 +589,54 @@ namespace Voxymore::Core
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 		}
 
-		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
-
 		auto &shaderData = m_VulkanSPIRV;
 		for (auto &&[stage, source]: shaders) {
+
+			// Fetch the filename we can give.
 			std::string filename = m_Name;
-			if (!m_FilePath.empty()) {
-				std::filesystem::path shaderFilePath = m_FilePath.GetFullPath();
+			if (!m_FilePaths.contains(stage)) {
+				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
 				filename = shaderFilePath.filename().string();
 			}
-			std::hash<std::string> hash;
-			uint64_t sourceHash = hash(source);
 
-			std::filesystem::path hashPath = cacheDirectory / (filename + Utils::ShaderTypeToCachedHashFileExtension(stage));
-			std::filesystem::path cachedPath = cacheDirectory / (filename + Utils::ShaderTypeToCachedVulkanFileExtension(stage));
+			// Fetch the hash of the source.
+			std::string sourceHash = Utils::HashSrc(source);
 
-			std::ifstream hashIn(hashPath, std::ios::in | std::ios::binary);
+			Path hashPath = GetCachePath(stage, Target::HashVulkan);
+			Path cachedPath = GetCachePath(stage, Target::Vulkan);
 
-			bool cacheValid = false;
-			bool sameHash = false;
-			if (hashIn.is_open()) {
-				uint64_t storedHash = 0;
+			std::string storedHash = FileSystem::ReadFileAsString(hashPath);
+			bool sameHash = (storedHash == sourceHash);
+			shaderData[stage] = sameHash ? FileSystem::ReadFile<uint32_t>(cachedPath) : std::vector<uint32_t>();
 
-				hashIn.seekg(0, std::ios::end);
-				int64_t hashInSize = hashIn.tellg();
-				int64_t size = hashInSize > sizeof(uint64_t) ? sizeof(uint64_t) : hashInSize;
-				hashIn.seekg(0, std::ios::beg);
-				hashIn.read((char *) &storedHash, size);
-				hashIn.close();
-
-				sameHash = sourceHash == storedHash;
-			}
-			m_HashesChanged[stage] = !sameHash;
-			//TODO: Re-use cache shader if the new one is invalid.
-			//TODO: Extract 3 part to be reused ?
-
-			if (sameHash) {
-				std::ifstream cachedIn(cachedPath, std::ios::in | std::ios::binary);
-				cacheValid = cachedIn.is_open();
-				if (cacheValid) {
-					cachedIn.seekg(0, std::ios::end);
-					auto size = cachedIn.tellg();
-					cachedIn.seekg(0, std::ios::beg);
-					auto &data = shaderData[stage];
-					data.resize(size / sizeof(uint32_t));
-					cachedIn.read((char *) data.data(), size);
-					cachedIn.close();
-				}
-			}
-
-			if (!cacheValid) {
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.GetFullPath().string().c_str(), options);
+			if (shaderData[stage].empty()) {
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					VXM_CORE_ASSERT(false, "Shader ({0}) - Pass {1}\n{2}", m_FilePath.path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					if(FileSystem::Exist(cachedPath))
+					{
+						VXM_CORE_INFO("Reusing previous version.");
+						shaderData[stage] = FileSystem::ReadFile<uint32_t>(cachedPath);
+						// It doesn't correspond anymore, but we will load the same one if the same failed shader is started.
+						// Better for the hot reload too.
+						FileSystem::Write(hashPath, sourceHash);
+					}
+					continue;
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
 
-				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-				if (out.is_open()) {
-					auto &data = shaderData[stage];
-					out.write((char *) data.data(), data.size() * sizeof(uint32_t));
-					out.flush();
-					out.close();
-				}
-
-				std::ofstream hashOut(hashPath, std::ios::out | std::ios::binary);
-				if (hashOut.is_open()) {
-					hashOut.write((char *) &sourceHash, sizeof(sourceHash));
-					hashOut.flush();
-					hashOut.close();
-				}
+				FileSystem::Write(cachedPath, shaderData[stage]);
+				FileSystem::Write(hashPath, sourceHash);
 			}
 		}
 
-		for (auto &&[stage, data]: shaderData)
-			Reflect(stage, data);
+		// Useless as no reflection is done yet...
+//		for (auto &&[stage, data]: shaderData)
+//			Reflect(stage, data);
 	}
+
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
 	{
 		VXM_PROFILE_FUNCTION();
@@ -624,79 +650,59 @@ namespace Voxymore::Core
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 		}
 
-		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
-
 		for (auto &&[stage, spirv]: m_VulkanSPIRV) {
+			// Fetch the filename we can give.
 			std::string filename = m_Name;
-			if (!m_FilePath.empty()) {
-				std::filesystem::path shaderFilePath = m_FilePath.GetFullPath();
+			if (!m_FilePaths.contains(stage)) {
+				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
 				filename = shaderFilePath.filename().string();
 			}
-			bool hashChanged = m_HashesChanged[stage];
 
-			std::filesystem::path cachedPath = cacheDirectory / (filename + Utils::ShaderTypeToCachedOpenGLFileExtension(stage));
-
-			bool cacheValid = false;
-
-
-			//TODO: Re-use cache shader if the new one is invalid.
-			//TODO: Extract 3 part to be reused ?
-
-			if (!hashChanged) {
-				std::ifstream cachedIn(cachedPath, std::ios::in | std::ios::binary);
-				cacheValid = cachedIn.is_open();
-				if (cacheValid) {
-					cachedIn.seekg(0, std::ios::end);
-					auto size = cachedIn.tellg();
-					cachedIn.seekg(0, std::ios::beg);
-					auto &data = shaderData[stage];
-					data.resize(size / sizeof(uint32_t));
-					cachedIn.read((char *) data.data(), size);
-					cachedIn.close();
-				}
+			if(spirv.empty())
+			{
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this pass in OpenGl.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+				continue;
 			}
 
-			if (!cacheValid) {
+			// Fetch the hash of the source.
+			std::string sourceHash = Utils::HashSrc(spirv);
+
+			Path hashPath = GetCachePath(stage, Target::HashOpenGl);
+			Path cachedPath = GetCachePath(stage, Target::OpenGl);
+
+			std::string storedHash = FileSystem::ReadFileAsString(hashPath);
+
+			bool sameHash = (storedHash == sourceHash);
+			shaderData[stage] = sameHash ? FileSystem::ReadFile<uint32_t>(cachedPath) : std::vector<uint32_t>();
+
+			if (shaderData[stage].empty()) {
 				spirv_cross::CompilerGLSL compilerGlsl(spirv);
 				m_OpenGLSourceCode[stage] = compilerGlsl.compile();
-				std::string& source = m_OpenGLSourceCode[stage];
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePath.GetFullPath().string().c_str(), options);
+				std::string &source = m_OpenGLSourceCode[stage];
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
 
-				VXM_CORE_ASSERT(module.GetCompilationStatus() == shaderc_compilation_status_success, module.GetErrorMessage());
+				if(module.GetCompilationStatus() != shaderc_compilation_status_success)
+				{
+					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					if(FileSystem::Exist(cachedPath))
+					{
+						VXM_CORE_INFO("Reusing previous version.");
+						shaderData[stage] = FileSystem::ReadFile<uint32_t>(cachedPath);
+						// It doesn't correspond anymore, but we will load the same one if the same failed shader is started.
+						// Better for the hot reload too.
+						FileSystem::Write(hashPath, sourceHash);
+					}
+					continue;
+				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
 
-				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-				if (out.is_open()) {
-					auto &data = shaderData[stage];
-					out.write((char *) data.data(), data.size() * sizeof(uint32_t));
-					out.flush();
-					out.close();
-				}
+				FileSystem::Write(cachedPath, shaderData[stage]);
+				FileSystem::Write(hashPath, sourceHash);
 			}
 		}
 	}
 
-	//    void DebugUniforms(uint32_t ID)
-	//    {
-	//        VXM_CORE_INFO("Debug Uniforms");
-	//        int count = 0;
-	//        int bufSize = 0;
-	//        glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
-	//        glGetProgramiv(ID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufSize);
-	//        std::vector<char> name(bufSize);
-	//        memset(name.data(), 0, bufSize);
-	//        for (uint32_t index = 0; index < count; ++index)
-	//        {
-	//            GLsizei length;
-	//            GLint size;
-	//            GLenum type;
-	//            glGetActiveUniform(ID, index, bufSize, &length, &size, &type, name.data());
-	//            VXM_CORE_INFO("Uniform named '{0}': size = {1}", name.data(), size);
-	//            memset(name.data(), 0, bufSize);
-	//
-	//        }
-	//    }
 	void OpenGLShader::CreateProgram()
 	{
 		VXM_PROFILE_FUNCTION();
@@ -704,6 +710,11 @@ namespace Voxymore::Core
 
 		std::vector<GLuint> shaderIDs;
 		for (auto &&[stage, spirv]: m_OpenGLSPIRV) {
+			if (spirv.empty())
+			{
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this stage during the shader creation.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+ 				continue;
+			}
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(Utils::ShaderTypeToOpenGL(stage)));
 			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
 			glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
@@ -719,8 +730,8 @@ namespace Voxymore::Core
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			if (maxLength > 0) VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_FilePath.path.string(), infoLog.data());
-			else VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_FilePath.path.string());
+			if (maxLength > 0) VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_Name, infoLog.data());
+			else VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_Name);
 
 			glDeleteProgram(program);
 			for (auto shaderID: shaderIDs) {
@@ -733,8 +744,16 @@ namespace Voxymore::Core
 			glDetachShader(program, id);
 			glDeleteShader(id);
 		}
+		VXM_CORE_INFO("Shader '{0}' Successfully created.", m_Name);
 
 		m_RendererID = program;
+	}
+
+	void OpenGLShader::DeleteProgram()
+	{
+		VXM_PROFILE_FUNCTION();
+		glDeleteProgram(m_RendererID);
+		m_RendererID = 0;
 	}
 
 	Test::ShaderDataMember GetShaderDataMember(const spirv_cross::Compiler &compiler, const spirv_cross::SPIRType &type, const std::string &name)
@@ -796,7 +815,7 @@ namespace Voxymore::Core
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_FilePath.path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
 
 		VXM_CORE_TRACE("Uniform buffers:");
 		analyzedShaderData.m_Uniform.reserve(resources.uniform_buffers.size());
@@ -820,7 +839,7 @@ namespace Voxymore::Core
 			analyzedShaderData.m_Constants.push_back(member);
 			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
 		}
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePath.path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
 	}
 
 	void OpenGLShader::Bind() const
@@ -835,41 +854,47 @@ namespace Voxymore::Core
 		glUseProgram(0);
 	}
 
-	//	void OpenGLShader::SetUniform(const std::string &name, const void *valuePtr, uint32_t size)
-	//	{
-	//		VXM_PROFILE_FUNCTION();
-	//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-	//		VXM_CORE_ASSERT(m_Uniforms[name].Size == size, "The value size doesn't match the size found of the uniform.", name);
-	//		switch (m_Uniforms[name].Type) {
-	//			case ShaderDataType::Float: SetUniformFloat(name, *(float *) valuePtr); break;
-	//			case ShaderDataType::Float2: SetUniformFloat2(name, *(glm::vec2 *) valuePtr); break;
-	//			case ShaderDataType::Float3: SetUniformFloat3(name, *(glm::vec3 *) valuePtr); break;
-	//			case ShaderDataType::Float4:
-	//				SetUniformFloat4(name, *(glm::vec4 *) valuePtr);
-	//				break;
-	//				//            case ShaderDataType::Mat2: SetUniformMat2(name, *(glm::mat2*)valuePtr); break;
-	//			case ShaderDataType::Mat3: SetUniformMat3(name, *(glm::mat3 *) valuePtr); break;
-	//			case ShaderDataType::Mat4: SetUniformMat4(name, *(glm::mat4 *) valuePtr); break;
-	//			case ShaderDataType::Int:
-	//				SetUniformInt(name, *(int *) valuePtr);
-	//				break;
-	//				//            case ShaderDataType::Int2: SetUniformInt2(name, *(glm::ivec2*)valuePtr); break;
-	//				//            case ShaderDataType::Int3: SetUniformInt3(name, *(glm::ivec3*)valuePtr); break;
-	//				//            case ShaderDataType::Int4: SetUniformInt4(name, *(glm::ivec4*)valuePtr); break;
-	//				//            case ShaderDataType::UInt: SetUniformUInt(name, *(uint32_t *)valuePtr); break;
-	//				//            case ShaderDataType::UInt2: SetUniformUInt2(name, *(glm::uvec2*)valuePtr); break;
-	//				//            case ShaderDataType::UInt3: SetUniformUInt3(name, *(glm::uvec3*)valuePtr); break;
-	//				//            case ShaderDataType::UInt4: SetUniformUInt4(name, *(glm::uvec4*)valuePtr); break;
-	//				//            case ShaderDataType::Bool: SetUniformBool(name, *(bool*)valuePtr); break;
-	//				//            case ShaderDataType::Bool2: SetUniformBool2(name, *(glm::bool2*)valuePtr); break;
-	//				//            case ShaderDataType::Bool3: SetUniformBool3(name, *(glm::bool3*)valuePtr); break;
-	//				//            case ShaderDataType::Bool4: SetUniformBool4(name, *(glm::bool4*)valuePtr); break;
-	//			case ShaderDataType::Sampler1D: SetUniformInt(name, *(int *) valuePtr); break;
-	//			case ShaderDataType::Sampler2D: SetUniformInt(name, *(int *) valuePtr); break;
-	//			case ShaderDataType::Sampler3D: SetUniformInt(name, *(int *) valuePtr); break;
-	//			default: VXM_CORE_ASSERT(false, "The ShaderDataType '{0}' is currently not handled by OpenGLShader.", ShaderDataTypeToString(m_Uniforms[name].Type)); break;
-	//		}
-	//	}
+	void OpenGLShader::Reload()
+	{
+		VXM_PROFILE_FUNCTION();
+		if(m_FilePaths.empty())
+		{
+			VXM_CORE_WARNING("No path to a shader, hot reloading impossible.");
+			return;
+		}
+
+		DeleteProgram();
+		std::unordered_map<ShaderType, std::string> shaderSources;
+		if (!m_FilePaths.empty()) {
+			for (auto &p: m_FilePaths) {
+				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
+			}
+		}
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
+	bool OpenGLShader::ShouldReload() const
+	{
+		VXM_PROFILE_FUNCTION();
+		for (auto&& [stage, path] : m_FilePaths)
+		{
+			std::string source = FileSystem::ReadFileAsString(path);
+			// Fetch the hash of the source.
+			std::string sourceHash = Utils::HashSrc(source);
+
+			Path hashPath = GetCachePath(stage, Target::HashVulkan);
+			Path cachedPath = GetCachePath(stage, Target::Vulkan);
+
+			std::string storedHash = FileSystem::ReadFileAsString(hashPath);
+			if(storedHash != sourceHash) return true;
+		}
+
+		return false;
+	}
+
 
 	void OpenGLShader::SetUniformInt(const std::string &name, int value)
 	{
@@ -1041,5 +1066,4 @@ namespace Voxymore::Core
 		if(location < 0) return;
 		glUniform1ui(location, value);
 	}
-
 }// namespace Voxymore::Core

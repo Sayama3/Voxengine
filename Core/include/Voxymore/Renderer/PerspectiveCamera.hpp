@@ -19,6 +19,7 @@ namespace Voxymore::Core {
 		virtual glm::mat4 GetProjectionMatrix() const;
 		glm::mat4 GetViewMatrix() const;
 
+
         void SetProjectionMatrix(float width, float height, float fov = 60.0f, float nearClip = 0.01f, float farClip = 1000.0f);
         void SetViewMatrix(glm::vec3 position, glm::quat rotation);
     private:

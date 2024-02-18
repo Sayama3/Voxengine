@@ -70,7 +70,7 @@ namespace Voxymore::Core {
 		NormalTextureInfo NormalTexture;
 		OcclusionTextureInfo OcclusionTexture;
 		TextureInfo EmissiveTexture;
-		glm::vec3 EmissiveFactor = {0,0,0};
+		glm::vec4 EmissiveFactor = {0,0,0,1};
 		int AlphaMode = AlphaMode::Opaque;
 		float AlphaCutoff = 0.5f;
 		int DoubleSided = false;

@@ -176,6 +176,10 @@ namespace Voxymore::Core {
         static Ref<Shader> Create(const Path& path);
         static Ref<Shader> Create(const std::string& name, const Path& path);
         static Ref<Shader> Create(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
+		static Ref<Shader> Create(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
+		static Ref<Shader> Create(const Path& vertexPath, const Path& fragmentPath);
+		static Ref<Shader> Create(std::unordered_map<ShaderType, Path> paths);
+
 
 //        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
 
@@ -201,10 +205,18 @@ namespace Voxymore::Core {
 		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) = 0;
 		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) = 0;
 		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) = 0;
+
+		virtual void Reload() = 0;
+		virtual bool ShouldReload() const = 0;
     };
 
     class ShaderLibrary
     {
+	private:
+		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+	public:
+		typedef std::unordered_map<std::string, Ref<Shader>>::iterator iter;
+		typedef std::unordered_map<std::string, Ref<Shader>>::const_iterator  const_iter;
 	private:
 		static ShaderLibrary* s_Instance;
     public:
@@ -213,10 +225,17 @@ namespace Voxymore::Core {
         void Add(const std::string& name, const Ref<Shader>& shader);
         Ref<Shader> Load(const Path& path);
         Ref<Shader> Load(const std::string& name, const Path& path);
+		Ref<Shader> Load(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
+		Ref<Shader> Load(const Path& vertexPath, const Path& fragmentPath);
+		Ref<Shader> Load(std::unordered_map<ShaderType, Path> paths);
         Ref<Shader> Get(const std::string& name);
         bool Exists(const std::string& name) const;
-    private:
-        std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+
+		iter begin() { return m_Shaders.begin();}
+		const_iter begin() const { return m_Shaders.begin(); }
+
+		iter end() { return m_Shaders.end();}
+		const_iter end() const { return m_Shaders.end(); }
     };
 
 

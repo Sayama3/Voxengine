@@ -8,9 +8,9 @@
 #include "Voxymore/Core/Logger.hpp"
 
 // Defining the "_USE_MATH_DEFINES" for visual studio in the main hpp
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES 1
-#endif
+//#ifndef _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES 1
+//#endif
 
 
 #include "Voxymore/Core/Application.hpp"

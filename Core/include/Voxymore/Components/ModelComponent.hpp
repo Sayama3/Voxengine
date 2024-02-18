@@ -14,13 +14,13 @@ namespace Voxymore::Core
 {
     
     // ======== ModelComponent ========
-    class ModelComponent : public Component
+    class ModelComponent : public Component<ModelComponent>
 	{
     	VXM_IMPLEMENT_COMPONENT(ModelComponent);
     public:
-		virtual void DeserializeComponent(YAML::Node& node) override;
-		virtual void SerializeComponent(YAML::Emitter& out) override;
-		virtual bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 
         inline const Path& GetPath() const {return m_ModelPath;}
         inline const std::filesystem::path& GetLocalPath() const {return m_ModelPath.path;}
@@ -39,4 +39,6 @@ namespace Voxymore::Core
         Ref<Model> m_Model;
 		bool m_IsLoaded = false;
     };
+
+	VXM_CREATE_COMPONENT(ModelComponent)
 }
