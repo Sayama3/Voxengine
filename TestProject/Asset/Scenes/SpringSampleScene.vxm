@@ -2,22 +2,97 @@ Scene:
   Name: Spring Sample Scene
   UUID: 2479769007492436712
   Entities:
-    - Entity: 12871091865698669980
+    - Entity: 18200071664355732571
       IsActive: true
       TagComponent:
-        Tag: Cube - 0
+        Tag: Sun
       TransformComponent:
-        Position: [-5, 0, -2.5]
-        Rotation: [-0.58070296, 0, 0, 0.814115524]
-        EulerRotation: [-1.23918378, 0, 0]
-        Scale: [100, 100, 1]
-      PrimitiveComponent:
-        PrimitiveType: 1
+        Position: [0, 0, 63.2257042]
+        Rotation: [-0.438693464, 0, 0, 0.898636758]
+        EulerRotation: [-0.908288479, 0, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 0.507000029
+        Range: 0
+        Cutoff: 0
+        LightType: 0
+    - Entity: 2933517516171204825
+      IsActive: true
+      TagComponent:
+        Tag: FlashLight
+      TransformComponent:
+        Position: [-2.15404439, 6.27478123, 16.7340794]
+        Rotation: [0.91504848, -0.141356647, 0.206631973, 0.316240162]
+        EulerRotation: [2.51221991, -0.486530542, -0.145320266]
+        Scale: [1.00005341, 1.00002456, 1.00005615]
+      LightComponent:
+        Color: [0.0477976687, 0.218994305, 0.265402853, 1]
+        Intensity: 19.5030003
+        Range: 43.9000015
+        Cutoff: 53.2000008
+        LightType: 2
+    - Entity: 1514572497277624835
+      IsActive: true
+      TagComponent:
+        Tag: Camera
+      TransformComponent:
+        Position: [0, 10, 50]
+        Rotation: [-0.194234639, 0, 0, 0.980955064]
+        EulerRotation: [-0.390954375, 0, 0]
+        Scale: [1, 0.999999881, 0.999999881]
+      CameraComponent:
+        Primary: true
+        FixedAspectRatio: false
+        Camera:
+          IsOrthographic: false
+          AspectRatio: 1.14841497
+          OrthographicSize: 10
+          OrthographicNear: -1
+          OrthographicFar: 1
+          PerspectiveVerticalFOV: 1.04719758
+          PerspectiveNear: 0.00999999978
+          PerspectiveFar: 1000
+    - Entity: 7934402640759719094
+      IsActive: true
+      TagComponent:
+        Tag: Cube Color
+      TransformComponent:
+        Position: [0.954650879, 6.7852397, 2.96990204]
+        Rotation: [0, -0.432141662, 0, 0.901805758]
+        EulerRotation: [0, -0.893732607, 0]
+        Scale: [1.00000012, 1, 1.00000012]
+      ModelComponent:
+        Path: {Source: 2, Path: Models/Cube_Color.gltf}
+        ShaderName: Default
+      AnchoredSpringComponent:
+        SpringConstant: 5
+        RestLength: 2
+        EntitiesConnected:
+          - SceneId: 2479769007492436712
+            EntityId: 6197672930199883822
+          - SceneId: 2479769007492436712
+            EntityId: 7275291884409962700
+        EntitiesNameHelper:
+          - Cube bla - (6197672930199883822)
+          - Cube Whi - (7275291884409962700)
+    - Entity: 7275291884409962700
+      IsActive: true
+      TagComponent:
+        Tag: Cube White
+      TransformComponent:
+        Position: [8.5965271, 0.468902588, 5.9175415]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 0.999999404]
+      ModelComponent:
+        Path: {Source: 2, Path: Models/Cube_W.glb}
+        ShaderName: Default
       ParticleComponent:
         Position: [0, 0, 0]
-        Acceleration: [0, -9.81000042, 0]
-        Velocity: [0, 0, 0]
-        Damping: 0.899999976
+        Acceleration: [0, -10, 0]
+        Velocity: [0, 0, 25]
+        Damping: 0.850000024
         InverseMass: 1
     - Entity: 6197672930199883822
       IsActive: true
@@ -37,84 +112,14 @@ Scene:
         Velocity: [-5, 0, 15]
         Damping: 0.99000001
         InverseMass: 1
-    - Entity: 7275291884409962700
+    - Entity: 12871091865698669980
       IsActive: true
       TagComponent:
-        Tag: Cube White
+        Tag: Cube - 0
       TransformComponent:
-        Position: [8.5965271, 0.468902588, 5.9175415]
+        Position: [-5, -10, -2.5]
         Rotation: [0, 0, 0, 1]
-        EulerRotation: [0, -0, 0]
-        Scale: [1, 1, 0.999999404]
-      ModelComponent:
-        Path: {Source: 2, Path: Models/Cube_W.glb}
-        ShaderName: Default
-      ParticleComponent:
-        Position: [0, 0, 0]
-        Acceleration: [0, -10, 0]
-        Velocity: [0, 0, 25]
-        Damping: 0.850000024
-        InverseMass: 1
-    - Entity: 7934402640759719094
-      IsActive: true
-      TagComponent:
-        Tag: Cube Color
-      TransformComponent:
-        Position: [0.954650879, 6.7852397, 2.96990204]
-        Rotation: [0, -0.432141662, 0, 0.901805758]
-        EulerRotation: [0, -0.893732607, 0]
-        Scale: [1.00000012, 1, 1.00000012]
-      ModelComponent:
-        Path: {Source: 2, Path: Models/Cube_Color.gltf}
-        ShaderName: Default
-    - Entity: 1514572497277624835
-      IsActive: true
-      TagComponent:
-        Tag: Camera
-      TransformComponent:
-        Position: [0, 10, 20]
-        Rotation: [-0.194234639, 0, 0, 0.980955064]
-        EulerRotation: [-0.390954375, 0, 0]
-        Scale: [1, 0.999999881, 0.999999881]
-      CameraComponent:
-        Primary: true
-        FixedAspectRatio: false
-        Camera:
-          IsOrthographic: false
-          AspectRatio: 0.623050272
-          OrthographicSize: 10
-          OrthographicNear: -1
-          OrthographicFar: 1
-          PerspectiveVerticalFOV: 1.04719758
-          PerspectiveNear: 0.00999999978
-          PerspectiveFar: 1000
-    - Entity: 2933517516171204825
-      IsActive: true
-      TagComponent:
-        Tag: FlashLight
-      TransformComponent:
-        Position: [3.19002104, 12.6522493, 8.48318672]
-        Rotation: [0.794793189, -0.19215481, 0.16048339, 0.552833974]
-        EulerRotation: [1.9622252, -0.486530304, -0.14531979]
-        Scale: [1.00005341, 1.00002456, 1.00005651]
-      LightComponent:
-        Color: [0.0477976687, 0.218994305, 0.265402853, 1]
-        Intensity: 19.5030003
-        Range: 43.9000015
-        Cutoff: 53.2000008
-        LightType: 2
-    - Entity: 18200071664355732571
-      IsActive: true
-      TagComponent:
-        Tag: Sun
-      TransformComponent:
-        Position: [0, 0, 63.2257042]
-        Rotation: [-0.438693464, 0, 0, 0.898636758]
-        EulerRotation: [-0.908288479, 0, 0]
-        Scale: [1, 1, 1]
-      LightComponent:
-        Color: [1, 1, 1, 1]
-        Intensity: 0.507000029
-        Range: 0
-        Cutoff: 0
-        LightType: 0
+        EulerRotation: [0, 0, 0]
+        Scale: [100, 1, 100]
+      PrimitiveComponent:
+        PrimitiveType: 1

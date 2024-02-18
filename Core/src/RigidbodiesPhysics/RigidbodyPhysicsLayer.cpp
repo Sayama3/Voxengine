@@ -24,12 +24,14 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		RigidbodyGravitySystem::CreateSystem();
+		RigidbodyComponent::RegisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
 		RigidbodyGravitySystem::DeleteSystem();
+		RigidbodyComponent::UnregisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnUpdate(TimeStep ts)

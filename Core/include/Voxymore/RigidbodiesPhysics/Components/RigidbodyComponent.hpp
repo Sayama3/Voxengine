@@ -12,13 +12,13 @@
 namespace Voxymore::Core
 {
 
-	class RigidbodyComponent : public Rigidbody, public Component
+	class RigidbodyComponent : public Rigidbody, public Component<RigidbodyComponent>
 	{
 		VXM_IMPLEMENT_COMPONENT(RigidbodyComponent);
 	public:
-		virtual void DeserializeComponent(YAML::Node& node) override;
-		virtual void SerializeComponent(YAML::Emitter& out) override;
-		virtual bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 
 		inline RigidbodyComponent() = default;
 		inline ~RigidbodyComponent() = default;

@@ -111,6 +111,7 @@ namespace Voxymore::Core
 	};
 }
 
+// TODO: Replace the macro with a self implementing templated inheritance
 #define VXM_IMPLEMENT_SYSTEM(SYS) private: \
     static ::Voxymore::Core::Ref<SYS> s_Instance; \
 public: \

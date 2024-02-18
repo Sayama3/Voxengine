@@ -137,7 +137,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp
         src/RigidbodiesPhysics/Components/RigidbodyComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp
-        include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.cpp
+        src/RigidbodiesPhysics/RigidbodyPhysicsLayer.cpp
         include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp
         src/RigidbodiesPhysics/Collisions/RigidbodyContact.cpp
         include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp

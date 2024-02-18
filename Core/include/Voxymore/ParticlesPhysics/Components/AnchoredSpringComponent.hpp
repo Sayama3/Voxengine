@@ -30,6 +30,4 @@ namespace Voxymore::Core
 	private:
 		std::vector<std::string> EntitiesNameHelper;
 	};
-
-	static_block{ AnchoredSpringComponent asc; };
 }

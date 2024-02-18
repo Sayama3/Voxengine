@@ -53,7 +53,5 @@ namespace Voxymore::Core
 
 
 	};
-
-	static_block{ FloatingComponent fc; };
 } // namespace Voxymore::Core
 

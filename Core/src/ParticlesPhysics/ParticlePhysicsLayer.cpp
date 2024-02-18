@@ -24,6 +24,9 @@ namespace Voxymore::Core
 	void ParticlePhysicsLayer::OnAttach()
 	{
 		VXM_PROFILE_FUNCTION();
+		AnchoredSpringComponent::RegisterComponent();
+		FloatingComponent::RegisterComponent();
+		ParticleComponent::RegisterComponent();
 		BuoyancyForceSystem::CreateSystem();
 		SpringForceSystem::CreateSystem();
 	}
@@ -33,6 +36,9 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		BuoyancyForceSystem::DeleteSystem();
 		SpringForceSystem::DeleteSystem();
+		AnchoredSpringComponent::UnregisterComponent();
+		FloatingComponent::UnregisterComponent();
+		ParticleComponent::UnregisterComponent();
 	}
 
 	void ParticlePhysicsLayer::OnUpdate(TimeStep ts)

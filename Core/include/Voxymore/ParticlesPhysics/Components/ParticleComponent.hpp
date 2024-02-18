@@ -24,6 +24,5 @@ namespace Voxymore::Core
 		~ParticleComponent();
 		ParticleComponent(Vec3 acceleration, Vec3 velocity, Real damping, Real mass);
 	};
-
 } // namespace Voxymore::Core
 
