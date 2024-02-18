@@ -66,7 +66,7 @@ namespace Voxymore::Core
 			tc.SetRotation(pc.GetOrientation());
 		};
 
-		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent>, func);
+		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent>,  MultiThreading::ExecutionPolicy::Parallel, func);
 
 		if(!m_Contacts.empty())
 		{
@@ -81,6 +81,13 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_SceneHandle = std::move(scene);
+		// Integrate all Rigidbodies
+		auto func = [](entt::entity e, RigidbodyComponent& pc, TransformComponent& tc){
+			pc.SetPosition(tc.GetPosition());
+			pc.SetOrientation(tc.GetRotation());
+		};
+
+		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent>, MultiThreading::ExecutionPolicy::Parallel, func);
 	}
 
 	void RigidbodyPhysicsLayer::ResetScene()

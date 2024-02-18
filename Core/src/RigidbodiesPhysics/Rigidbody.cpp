@@ -37,7 +37,7 @@ namespace Voxymore::Core
 		qua.w = 0;
 		qua *= m_Orientation;
 		m_Orientation += qua * (Real)0.5;
-//		m_Orientation = glm::normalize(m_Orientation);
+		m_Orientation = glm::normalize(m_Orientation);
 		ClearAccumulator();
 	}
 
