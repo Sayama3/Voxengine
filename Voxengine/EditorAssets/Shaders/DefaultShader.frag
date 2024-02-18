@@ -154,7 +154,7 @@ vec3 CalculateLighting(vec3 lightColor, vec3 lightPos, vec3 lightDir, float ligh
     float diff = max(dot(v_Normal, lightDir), 0.0);
     vec3 diffuse = diff * lightColor * lightIntensity;
 
-    //        // specular
+    // specular
     float specularStrength = 0.5;
     vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
     vec3 reflectDir = normalize(reflect(-lightDir, v_Normal));
@@ -169,7 +169,7 @@ vec3 AddDirectionalLight(Light light)
     vec3 lightColor = light.Color.rgb;
     vec3 lightPos = light.Position.xyz;
     vec3 lightDir = normalize(light.Direction.xyz);
-    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+    float lightIntensity = light.Intensity;
 
     return CalculateLighting(lightColor, lightPos, lightDir, lightIntensity);
 }
@@ -179,10 +179,8 @@ vec3 AddPointLight(Light light)
     vec3 lightColor = light.Color.rgb;
     vec3 lightPos = light.Position.xyz;
     vec3 lightDir = normalize(lightPos - v_Position);
-    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
-
     float distance = distance(v_Position, lightPos);
-    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+    float lightIntensity = light.Intensity * max(sign(dot(v_Normal, lightDir)), 0);
     lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
     lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
 
@@ -202,7 +200,7 @@ vec3 AddSpotLight(Light light)
     }
 
     float distance = distance(v_Position, lightPos);
-    float lightIntensity = light.Intensity * sign(dot(v_Normal, lightDir));
+    float lightIntensity = light.Intensity * max(sign(dot(v_Normal, lightDir)), 0);
     lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
     lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
 
@@ -222,7 +220,7 @@ void main()
         }
     }
 
-    vec3 result = vec3(0);
+    vec3 result = vec3(0.0);
 
     for(int i = 0; i < int(lights.lightCount); i++)
     {
