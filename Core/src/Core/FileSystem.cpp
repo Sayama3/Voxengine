@@ -1,6 +1,7 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
+#include <sha256.h>
 
 namespace Voxymore::Core
 {
@@ -87,12 +88,6 @@ namespace Voxymore::Core
 		data = YAML::Load(stringstream.str());
 		return data;
 	}
-	// bool FileSystem::WriteFile(const path& path, const std::string& content)
-	// {
-	// }
-	// bool FileSystem::WriteFile(const path& path, std::vector<uint8_t> content)
-	// {
-	// }
 	std::filesystem::path FileSystem::GetPath(const Path& path)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -106,6 +101,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		return std::filesystem::exists(GetPath(path));
 	}
+
 	std::string FileSystem::ReadFileAsString(const Path &path)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -124,6 +120,37 @@ namespace Voxymore::Core
 			VXM_CORE_ERROR("Could not open file '{0}'.", path.GetFullPath().string());
 		}
 		return result;
+	}
+
+	std::string FileSystem::ReadFileHash(const Path &path)
+	{
+		VXM_PROFILE_FUNCTION();
+		SHA256 sha256;
+		std::string result;
+		std::ifstream fileStream(GetPath(path), std::ios::in | std::ios::binary);
+		if(fileStream)
+		{
+			char buffer[SHA256::BlockSize];
+			do {
+				fileStream.read(buffer, SHA256::BlockSize);
+				if(fileStream.good())
+				{
+					sha256.add(buffer, SHA256::BlockSize);
+				}
+				else if(fileStream.eof())
+				{
+					sha256.add(buffer, fileStream.gcount());
+					break;
+				}
+			} while (fileStream.good());
+			fileStream.close();
+			return sha256.getHash();
+		}
+		else
+		{
+			VXM_CORE_ERROR("Could not open file '{0}'.", path.GetFullPath().string());
+			return "";
+		}
 	}
 
 	std::filesystem::path Path::GetFullPath() const
@@ -188,6 +215,7 @@ namespace Voxymore::Core
 		}
 		return {};
 	}
+
 	std::string Path::string() const
 	{
 		return GetFullPath().string();

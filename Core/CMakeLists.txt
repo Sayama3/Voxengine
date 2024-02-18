@@ -143,6 +143,9 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp
         src/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.cpp
         include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp
+        src/Components/LightComponent.cpp
+        include/Voxymore/Components/LightComponent.hpp
+        include/Voxymore/Renderer/Light.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -187,7 +190,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp tracy)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp tracy hash-library)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 # REQUIRED to find vulkan correctly.

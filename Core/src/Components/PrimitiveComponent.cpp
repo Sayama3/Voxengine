@@ -7,10 +7,9 @@
 
 namespace Voxymore::Core
 {
-	VXM_CREATE_LIGHT_COMPONENT(PrimitiveComponent);
-
 	void PrimitiveComponent::DeserializeComponent(YAML::Node &node)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto &pc = *this;
 
 		auto PrimitiveTypeNode = node["PrimitiveType"];
@@ -27,6 +26,7 @@ namespace Voxymore::Core
 
 	void PrimitiveComponent::SerializeComponent(YAML::Emitter &out)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto& pc = *this;
 
 		out << KEYVAL("PrimitiveType", pc.PrimitiveType);

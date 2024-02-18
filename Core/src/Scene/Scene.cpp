@@ -13,6 +13,7 @@
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/Systems.hpp"
+#include "Voxymore/Components/LightComponent.hpp"
 
 
 namespace Voxymore::Core
@@ -189,7 +190,17 @@ namespace Voxymore::Core
 			}
 		}
 
-		Renderer::BeginScene(camera);
+		std::vector<Light> lights;
+		{
+			auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : lightsComps)
+			{
+				auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
+				lights.push_back(lc.AsLight(tc));
+			}
+		}
+
+		Renderer::BeginScene(camera, lights);
 		{
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
@@ -306,7 +317,17 @@ namespace Voxymore::Core
 
 		if(mainCamera)
 		{
-			Renderer::BeginScene(*mainCamera, cameraTransform);
+			std::vector<Light> lights;
+			{
+				auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
+				for (entt::entity entity : lightsComps)
+				{
+					auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
+					lights.push_back(lc.AsLight(tc));
+				}
+			}
+
+			Renderer::BeginScene(*mainCamera, cameraTransform, lights);
 
 			{
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);

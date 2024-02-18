@@ -1,4 +1,3 @@
-#define __TYPE_VERTEX_SHADER__
 #version 450 core
 
 struct TextureInfo
@@ -36,109 +35,48 @@ struct MaterialParams
     NormalTextureInfo NormalTexture;
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
-    vec3 EmissiveFactor;
+    vec4 EmissiveFactor;
     int AlphaMode;
     float AlphaCutoff;
     int DoubleSided;
 };
 
-layout(std140, binding = 0) uniform Camera
+#define MAX_LIGHT_COUNT 20
+struct Light
 {
-    mat4 u_ViewProjectionMatrix;
-};
-layout(std140, binding = 1) uniform Model
-{
-    mat4 u_Transform;
-    int u_EntityId;
-};
-
-layout(std140, binding = 2) uniform Lights
-{
-    vec3 lightDir;
+    vec4 Color;
+    vec4 Position;
+    vec4 Direction;
+    float Range;
+    float Intensity;
+    float Cutoff;
+    int Type; //0 = Directional ; 1 = Point ; 2 = Spot
 };
 
-layout(std140, binding = 3) uniform MaterialParameters
+struct LightData
 {
-    MaterialParams materialParameters;
-};
-
-
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in vec4 a_Color;
-
-layout (location = 0) out vec3 v_Position;
-layout (location = 1) out vec2 v_TexCoord;
-layout (location = 2) out vec4 v_Color;
-layout (location = 3) out flat int v_EntityId;
-
-void main() {
-    gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0);
-
-    v_Position = (u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0)).xyz;
-    v_TexCoord = a_TexCoord;
-    v_Color = a_Color;
-    v_EntityId = u_EntityId;
-}
-
-#define __TYPE_FRAGMENT_SHADER__
-#version 450 core
-
-struct TextureInfo
-{
-    int Index;
-    int TexCoord;
-};
-
-struct NormalTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Scale;
-};
-
-struct OcclusionTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Strenght;
-};
-
-struct MetallicRoughtness
-{
-    vec4 BaseColorFactor;
-    TextureInfo BaseColorTexture;
-    float MetallicFactor;
-    float RoughtnessFactor;
-    TextureInfo MetallicRoughnessTexture;
-};
-
-struct MaterialParams
-{
-    MetallicRoughtness PbrMetallicRoughness;
-    NormalTextureInfo NormalTexture;
-    OcclusionTextureInfo OcclusionTexture;
-    TextureInfo EmissiveTexture;
-    vec3 EmissiveFactor;
-    int AlphaMode;
-    float AlphaCutoff;
-    int DoubleSided;
+    Light lights[MAX_LIGHT_COUNT];
+//    Light lights;
+    int lightCount;
 };
 
 layout(std140, binding = 0) uniform Camera
 {
     mat4 u_ViewProjectionMatrix;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
 };
+
 layout(std140, binding = 1) uniform Model
 {
-    mat4 u_Transform;
+    mat4 u_ModelMatrix;
+    mat4 u_NormalMatrix;
     int u_EntityId;
 };
 
 layout(std140, binding = 2) uniform Lights
 {
-    vec3 lightDir;
+    LightData lights;
 };
 
 layout(std140, binding = 3) uniform MaterialParameters
@@ -150,11 +88,21 @@ layout (location = 0) out vec4 o_Color;
 layout (location = 1) out int o_Entity; // -1 = no entity. (for now.)
 
 layout (location = 0) in vec3 v_Position;
-layout (location = 1) in vec2 v_TexCoord;
-layout (location = 2) in vec4 v_Color;
-layout (location = 3) in flat int v_EntityId;
+layout (location = 1) in vec3 v_Normal;
+layout (location = 2) in vec2 v_TexCoord;
+layout (location = 3) in vec4 v_Color;
+layout (location = 4) in flat int v_EntityId;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
+
+//bool approx(float a, float b)
+//{
+//    return abs(b-a) < 0.5;
+//}
+bool approx(int a, int b)
+{
+    return abs(b-a) < 0.5;
+}
 
 vec4 SampleTexture(int texIndex)
 {
@@ -200,6 +148,7 @@ vec4 SampleTexture(int texIndex)
 
 void main()
 {
+    vec3 norm = normalize(v_Normal);
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
 
     if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
@@ -211,5 +160,56 @@ void main()
         }
     }
 
+    vec3 result = vec3(0);
+
+
+    for(int i = 0; i < int(lights.lightCount); i++)
+    {
+        Light light = lights.lights[i];
+        vec3 lightColor = light.Color.rgb;
+        vec3 lightPos = light.Position.xyz;
+        vec3 lightDir = normalize(light.Direction.xyz);
+
+        if(light.Type == 2 && dot(normalize(lightPos - v_Position) , normalize(-light.Direction.xyz)) <= cos(light.Cutoff))
+        {
+            continue;
+        }
+        else
+        {
+            if(light.Type != 0)
+            {
+                lightDir = normalize(lightPos - v_Position);
+            }
+
+            float lightIntensity = light.Intensity * sign(dot(norm, lightDir));
+            if(light.Type != 0)
+            {
+                float distance = distance(v_Position, lightPos);
+                lightIntensity =  lightIntensity / ((1) + (0.09) * distance + (0.032) * (distance * distance));
+
+                lightIntensity = lightIntensity * clamp((1-(distance / light.Range)) * 10, 0., 1.);
+            }
+
+            // ambient
+            float ambientStrength = 0.05 * lightIntensity;
+            vec3 ambient = ambientStrength * lightColor;
+
+            // diffuse
+            float diff = max(dot(norm, lightDir), 0.0);
+            vec3 diffuse = diff * lightColor * lightIntensity;
+
+    //        // specular
+            float specularStrength = 0.5;
+            vec3 viewDir = normalize(u_CameraPosition.xyz - v_Position);
+            vec3 reflectDir = normalize(reflect(-lightDir, norm));
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+            vec3 specular = specularStrength * spec * lightColor * lightIntensity;
+
+            result += (ambient + diffuse + specular) * o_Color.rgb;
+//            result = norm;
+        }
+    }
+
+    o_Color = vec4(result, 1);
     o_Entity = v_EntityId;
 }

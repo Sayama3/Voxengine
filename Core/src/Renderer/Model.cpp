@@ -348,7 +348,7 @@ namespace Voxymore::Core
 
 
 								// classical parameters
-								materialParams.EmissiveFactor = {mat.emissiveFactor[0], mat.emissiveFactor[1], mat.emissiveFactor[2]};
+								materialParams.EmissiveFactor = {mat.emissiveFactor[0], mat.emissiveFactor[1], mat.emissiveFactor[2], 1};
 								//							materialParams.SetAlphaMode(mat.alphaMode);
 								materialParams.AlphaCutoff = mat.alphaCutoff;
 								materialParams.DoubleSided = mat.doubleSided;

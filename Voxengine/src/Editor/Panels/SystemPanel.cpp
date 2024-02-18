@@ -8,20 +8,22 @@ namespace Voxymore::Editor
     void SystemPanel::OnImGuiRender()
     {
 		VXM_PROFILE_FUNCTION();
-        m_SceneIds = SceneManager::GetSceneIds();
-        m_SceneNames.clear();
-        m_SceneNames.reserve(m_SceneIds.size());
-        for(auto id : m_SceneIds)
-        {
-            m_SceneNames.push_back(SceneManager::GetScene(id)->GetName());
-        }
-        auto systemNames = SystemManager::GetSystemsName();
-        ImGui::Begin("Systems");
-        for (const auto& name : systemNames)
-        {
-            DrawSystem(name);
-        }
-        ImGui::End();
+		if(m_Open) {
+			if (ImGui::Begin("Systems", &m_Open)) {
+				m_SceneIds = SceneManager::GetSceneIds();
+				m_SceneNames.clear();
+				m_SceneNames.reserve(m_SceneIds.size());
+				for (auto id: m_SceneIds) {
+					m_SceneNames.push_back(SceneManager::GetScene(id)->GetName());
+				}
+				auto systemNames = SystemManager::GetSystemsName();
+
+				for (const auto &name: systemNames) {
+					DrawSystem(name);
+				}
+			}
+			ImGui::End();
+		}
     }
 
     void SystemPanel::DrawSystem(const std::string &name)

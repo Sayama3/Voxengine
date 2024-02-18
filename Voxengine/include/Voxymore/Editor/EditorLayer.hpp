@@ -3,14 +3,15 @@
 //
 
 #pragma once
-#include "Voxymore/Voxymore.hpp"
+#include "Voxymore/Core/PerspectiveCameraController.hpp"
+#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
+#include "Voxymore/Editor/Panels/ShaderPanel.hpp"
+#include "Voxymore/Editor/Panels/SystemPanel.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Renderer/Framebuffer.hpp"
 #include "Voxymore/Renderer/Model.hpp"
-#include "Voxymore/Renderer/EditorCamera.hpp"
-#include "Voxymore/Core/PerspectiveCameraController.hpp"
-#include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
-#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
-#include "Voxymore/Editor/Panels/SystemPanel.hpp"
+#include "Voxymore/Voxymore.hpp"
 
 using namespace Voxymore::Core;
 
@@ -70,8 +71,12 @@ namespace Voxymore::Editor {
     private:
         std::array<glm::vec2, 2> m_ViewportBounds;
     private:
-        SceneHierarchyPanel m_SceneHierarchyPanel;
+		// TODO: Create a panel system. (openable, closable, etc.)
+        // Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
         SystemPanel m_SystemPanel;
+		ShaderPanel m_ShaderPanel;
+
         Ref<Scene> m_ActiveScene;
         Ref<Scene> m_CacheScene = nullptr;
         Entity m_HoveredEntity;

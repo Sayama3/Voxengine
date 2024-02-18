@@ -12,14 +12,14 @@ namespace Voxymore::Core
 {
 	class ParticlePhysicsLayer;
 
-	class ParticleComponent : public Particle, public Component
+	class ParticleComponent : public Particle, public Component<ParticleComponent>
 	{
 		friend class ParticlePhysicsLayer;
 		VXM_IMPLEMENT_COMPONENT(ParticleComponent);
 	public:
-		virtual void DeserializeComponent(YAML::Node& node) override;
-		virtual void SerializeComponent(YAML::Emitter& out) override;
-		virtual bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 		ParticleComponent();
 		~ParticleComponent();
 		ParticleComponent(Vec3 acceleration, Vec3 velocity, Real damping, Real mass);

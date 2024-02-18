@@ -18,16 +18,16 @@
 
 namespace Voxymore::Core
 {
-	class FloatingComponent : Component
+	class FloatingComponent : public Component<FloatingComponent>
 	{
 		VXM_IMPLEMENT_COMPONENT(FloatingComponent);
 	public:
 		FloatingComponent() = default;
 		~FloatingComponent() = default;
 
-		void DeserializeComponent(YAML::Node& node) override;
-		void SerializeComponent(YAML::Emitter& out) override;
-		bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 
 		/**
 		 * The maximum submersion depth of an object before it generates its maximum buoyancy force.

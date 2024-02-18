@@ -11,13 +11,13 @@
 
 namespace Voxymore::Core
 {
-	class PrimitiveComponent : Component
+	class PrimitiveComponent : public Component<PrimitiveComponent>
 	{
 		VXM_IMPLEMENT_COMPONENT(PrimitiveComponent);
 	public:
-		virtual void DeserializeComponent(YAML::Node& node) override;
-		virtual void SerializeComponent(YAML::Emitter& out) override;
-		virtual bool OnImGuiRender() override;
+		void DeserializeComponent(YAML::Node& node);
+		void SerializeComponent(YAML::Emitter& out);
+		bool OnImGuiRender();
 
 		inline PrimitiveComponent() = default;
 		inline ~PrimitiveComponent() = default;
@@ -35,4 +35,6 @@ namespace Voxymore::Core
 		Ref<Mesh> m_Mesh = nullptr;
 		bool m_IsDirty = true;
 	};
+
+	VXM_CREATE_COMPONENT(PrimitiveComponent);
 }

@@ -20,4 +20,11 @@ namespace Voxymore::Core
 	UUID::UUID(uint64_t id) : m_UUID(id)
 	{
 	}
+
+	UUID UUID::FromString(const std::string& str)
+	{
+		std::hash<std::string> hash_fn;
+		auto hash = hash_fn(str);
+		return {*(uint64_t*)&hash};
+	}
 }// namespace Voxymore::Core

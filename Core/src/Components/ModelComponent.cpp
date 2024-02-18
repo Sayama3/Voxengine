@@ -10,8 +10,6 @@
 // ======== ModelComponent ========
 namespace Voxymore::Core
 {
-	VXM_CREATE_LIGHT_COMPONENT(ModelComponent);
-
 	void ModelComponent::DeserializeComponent(YAML::Node &componentNode)
 	{
 		VXM_PROFILE_FUNCTION();

@@ -6,9 +6,10 @@
 
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Scene/Entity.hpp"
-#include "imgui.h"
+#include <imgui.h>
 #include <string>
 #include <vector>
+#include <static_block.hpp>
 
 // ======== CustomComponent ========
 namespace Voxymore::Core
@@ -36,19 +37,25 @@ public:
 	public:
 		static void AddComponent(const ComponentChecker& component);
 		static bool HasComponent(const std::string&componentName);
+		static void RemoveComponent(const std::string&componentName);
 		static const std::vector<ComponentChecker>& GetComponents();
 	};
 
-	template<typename T>
-	class ComponentCreator
+	template<class T>
+	class Component
 	{
-	private:
-		static bool s_Created;
 	public:
-		inline ComponentCreator()
+		inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<T>();}
+		inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddComponent<T>(); }
+		inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<T>(); }
+		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<T>().DeserializeComponent(node);}
+		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out);}
+		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender();}
+		inline static std::string StaticGetName() { return T::GetName(); }
+
+		inline static void RegisterComponent()
 		{
-			VXM_CORE_ASSERT(!s_Created, "The Component {0} has already been created.", typeid(T).name())
-			std::string name = T::GetName();
+			std::string name = StaticGetName();
 			if(ComponentManager::HasComponent(name)) return;
 			ComponentChecker cc;
 			cc.ComponentName = name;
@@ -60,38 +67,22 @@ public:
 			cc.DeserializeComponent = T::StaticDeserializeComponent;
 			cc.OnImGuiRender = T::StaticOnImGuiRender;
 			ComponentManager::AddComponent(cc);
-			s_Created = true;
+		}
+
+		inline static void UnregisterComponent()
+		{
+			std::string name = StaticGetName();
+			ComponentManager::RemoveComponent(name);
 		}
 	};
-
-	struct Component {
-		virtual void DeserializeComponent(YAML::Node& node) = 0;
-		virtual void SerializeComponent(YAML::Emitter& out) = 0;
-		virtual bool OnImGuiRender() = 0;
-	};
-
 }
 
-#define VXM_IMPLEMENT_COMPONENT(COMP) private:\
-	static ::Voxymore::Core::ComponentCreator<COMP> s_ComponentCreator;\
-public:\
-	inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<COMP>();}\
-	inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddComponent<COMP>(); }\
-	inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<COMP>(); }\
-	inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<COMP>().DeserializeComponent(node);} \
-	inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<COMP>().SerializeComponent(out);} \
-	inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<COMP>().OnImGuiRender();} \
-	inline static std::string GetName() { return #COMP; }
+#define VXM_IMPLEMENT_COMPONENT(COMP) public: inline static std::string GetName() { return #COMP;}
 
-#define VXM_CREATE_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \
-template<> \
-void ::Voxymore::Core::Scene::OnComponentAdded<COMP>(entt::entity entity, COMP& component){} \
-template<> \
-bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
 
-#define VXM_CREATE_LIGHT_COMPONENT(COMP) ::Voxymore::Core::ComponentCreator<COMP> COMP::s_ComponentCreator; \
-template<> \
-bool ::Voxymore::Core::ComponentCreator<COMP>::s_Created = false;
+#define VXM_CREATE_COMPONENT(COMP) static_block{COMP::RegisterComponent();}
+
+#define VXM_CREATE_LIGHT_COMPONENT(COMP) VXM_CREATE_COMPONENT(COMP)
 
 //// ======== BoatComponent ========
 //class BoatComponent
