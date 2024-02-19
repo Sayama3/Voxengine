@@ -129,7 +129,7 @@ namespace Voxymore::Core
 					tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					auto rotation = transformComponent["Rotation"].as<glm::quat>();
 					auto eulerRotation = transformComponent["EulerRotation"].as<glm::vec3>();
-					if (rotation != glm::quat(eulerRotation)) {
+					if (rotation != glm::quat(glm::radians(eulerRotation))) {
 						tc.SetRotation(rotation);
 					}
 					else {

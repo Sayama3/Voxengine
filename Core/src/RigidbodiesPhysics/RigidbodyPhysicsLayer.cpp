@@ -9,8 +9,9 @@
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
-#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp"
+#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyBuoyancySystem.hpp"
 
 
 namespace Voxymore::Core
@@ -26,19 +27,21 @@ namespace Voxymore::Core
 	void RigidbodyPhysicsLayer::OnAttach()
 	{
 		VXM_PROFILE_FUNCTION();
-		RigidbodyGravitySystem::CreateSystem();
 		RigidbodySpringSystem::CreateSystem();
+		RigidbodyBuoyancySystem::CreateSystem();
 		RigidbodyComponent::RegisterComponent();
 		RigidbodySpringComponent::RegisterComponent();
+		RigidbodyFloatingComponent::RegisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
-		RigidbodyGravitySystem::DeleteSystem();
 		RigidbodySpringSystem::DeleteSystem();
+		RigidbodyBuoyancySystem::DeleteSystem();
 		RigidbodyComponent::UnregisterComponent();
 		RigidbodySpringComponent::UnregisterComponent();
+		RigidbodyFloatingComponent::UnregisterComponent();
 	}
 
 	void RigidbodyPhysicsLayer::OnUpdate(TimeStep ts)

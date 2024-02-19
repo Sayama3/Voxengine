@@ -55,9 +55,9 @@ namespace Voxymore::Editor {
 												  transformComponent.SetPosition(pos);
 											  }
 
-											  glm::vec3 rot = glm::degrees(transformComponent.GetEulerRotation());
+											  glm::vec3 rot = transformComponent.GetEulerRotation();
 											  if (ImGuiLib::DrawVec3Control("Rotation", rot)) {
-												  transformComponent.SetEulerRotation(glm::radians(rot));
+												  transformComponent.SetEulerRotation(rot);
 											  }
 
 											  glm::vec3 scale = transformComponent.GetScale();

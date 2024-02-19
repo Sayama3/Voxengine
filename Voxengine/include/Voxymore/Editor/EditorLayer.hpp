@@ -61,7 +61,7 @@ namespace Voxymore::Editor {
     {
         Edit = 0,
         Play = 1,
-//		Pause = 2,
+		Pause = 2,
     };
 
     class EditorLayer : public Layer {
@@ -142,6 +142,8 @@ namespace Voxymore::Editor {
 
         void OnScenePlay();
         void OnSceneStop();
+		void OnScenePause();
+		void OnSceneResume();
 
         void ReloadAssets();
     };

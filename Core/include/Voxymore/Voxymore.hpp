@@ -35,6 +35,7 @@
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
+#include "Voxymore/Components/LightComponent.hpp"
 
 #include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
 #include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"
@@ -48,7 +49,6 @@
 #include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 #include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
-#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"

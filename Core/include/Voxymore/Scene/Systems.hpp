@@ -53,7 +53,7 @@ namespace Voxymore::Core
 		 */
 		inline virtual void ResetSystem() {}
 	public:
-		inline virtual bool RunOnAllScenes() {return false;}
+		inline virtual bool RunOnAllScenes() {return true;}
 		inline virtual bool OnImGuiRender() {return false;}
 		inline virtual const std::string GetName() const {return "System";}
 

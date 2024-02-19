@@ -73,7 +73,7 @@ namespace Voxymore::Core
 		}
 
 		Real mass = HasFiniteMass() ? GetMass() : 0;
-		if(ImGuiLib::DragReal("Mass", &mass, 0, REAL_MAX))
+		if(ImGuiLib::DragReal("Mass", &mass, 1, 0, REAL_MAX))
 		{
 			changed = true;
 			if(mass <= glm::epsilon<Real>())

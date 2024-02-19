@@ -19,7 +19,6 @@
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
-#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodyGravitySystem.hpp"
 
 namespace Voxymore
 {

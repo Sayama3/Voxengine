@@ -15,6 +15,7 @@
 namespace Voxymore::Core
 {
 
+	// TODO: find a path using an UUID.
 	class Assets
 	{
 	private:

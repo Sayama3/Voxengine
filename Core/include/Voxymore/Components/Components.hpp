@@ -17,7 +17,7 @@ namespace Voxymore::Core
 {
 	struct IDComponent
 	{
-		public:
+	public:
 		UUID ID;
 
 		inline IDComponent() = default;
@@ -29,7 +29,7 @@ namespace Voxymore::Core
 
 	struct TagComponent
 	{
-		public:
+	public:
 		std::string Tag;
 
 		inline TagComponent() = default;
@@ -37,19 +37,54 @@ namespace Voxymore::Core
 		inline TagComponent(const std::string& tag) : Tag(tag) {}
 	};
 
+	/**
+	 * @brief The TransformComponent struct represents the transform information of an entity.
+	 */
 	struct TransformComponent
 	{
-		public:
 	private:
-		Vec3 Position = Vec3(0.0f);
+
+		/**
+		 * @brief Rotation of the transform component (in radians).
+		 *
+		 * This attribute represents the rotation of this component in
+		 * the world space. Use Math::Identity<Quat>() to set it to no rotation. The Quat type
+		 * represents the quaternion.
+		 */
 		Quat Rotation = Math::Identity<Quat>();
+
+		/**
+		 * @brief Position of the transform component.
+		 *
+		 * This attribute stores the 3D coordinates (x, y, z) using Vec3 type which
+		 * defines the position of this component in the world space.
+		 */
+		Vec3 Position = Vec3(0.0f);
+
+		/**
+		 * @brief Euler rotation of the transform component (in degrees).
+		 *
+		 * This attribute aids in handling rotation of this component in an easy-to-understand manner
+		 * by storing the euler angles of rotation. Although internally, rotation might be
+		 * stored as a quaternion for performance benefits, this Vec3 EulerRotation serves as a helper
+		 * to provide a more intuitive interface for rotation manipulations.
+		 */
 		Vec3 EulerRotation = Vec3(0.0f);
+
+		/**
+		 * @brief Scale of the transform component.
+		 *
+		 * This attribute represents the scale applied to this component along the x, y,
+		 * and z axes using Vec3 type. A value of Vec3(1.0f) denotes the original size
+		 * of the component.
+		 */
 		Vec3 Scale = Vec3(1.0f);
 	public:
 
 		inline TransformComponent() = default;
 		inline TransformComponent(const TransformComponent&) = default;
-		inline TransformComponent(const Vec3& position, const Quat& rotation = Math::Identity<Quat>(), const Vec3& scale = Vec3(1.0f)) : Position(position), Rotation(rotation), EulerRotation(glm::eulerAngles(rotation)), Scale(scale) {}
+		inline TransformComponent(const Vec3& position, const Quat& rotation = Math::Identity<Quat>(), const Vec3& scale = Vec3(1.0f)) : Position(position), Rotation(rotation), EulerRotation(glm::degrees(glm::eulerAngles(rotation))), Scale(scale) {}
+		inline TransformComponent(const Vec3& position, const Vec3& rotation = Vec3(0,0,0), const Vec3& scale = Vec3(1.0f)) : Position(position), Rotation(glm::radians(rotation)), EulerRotation(rotation), Scale(scale) {}
 	public:
 		inline Vec3 GetPosition() const { return Position; }
 		inline void SetPosition(const Vec3& position) { Position = position; }
@@ -59,10 +94,29 @@ namespace Voxymore::Core
 		inline void SetScale(const Vec3& scale) { Scale = scale; }
 
 		inline Quat GetRotation() const { return Rotation; }
-		inline void SetRotation(const Quat& rotation) {Rotation = rotation; EulerRotation = glm::eulerAngles(rotation);}
+		inline void SetRotation(const Quat& rotation) {Rotation = rotation; EulerRotation = glm::degrees(glm::eulerAngles(rotation));}
 
+		/**
+		 * @brief : Get the Euler rotation of the transform component.
+		 *
+		 * This function retrieves the Euler rotation angles of the component in degrees.
+		 * The returned Vec3 contains the rotation angles around the x, y, and z axes in that order.
+		 *
+		 * @return Vec3 : This is the current Euler rotation of the component in degrees.
+		 */
 		inline Vec3 GetEulerRotation() const { return EulerRotation; }
-		inline void SetEulerRotation(const Vec3& rotation) {EulerRotation = rotation; Rotation = Quat(rotation); }
+
+		/**
+		 * @brief : Set the Euler rotation of the transform component.
+		 *
+		 * This function sets the Euler rotation angles of the component in degrees.
+		 * The input Vec3 should contain the desired rotation angles around the x, y, and z axes in that order.
+		 * It also updates the rotation quaternion of the component internally.
+		 *
+		 * @param rotation: The new desired Euler rotation angles in degrees.
+		 * @return void
+		 */
+		inline void SetEulerRotation(const Vec3& rotation) {EulerRotation = rotation; Rotation = Quat(glm::radians(rotation)); }
 
 		inline Vec3 GetForward() const { return Rotation * Vec3{0,0,1}; }
 		inline Vec3 GetRight() const { return Rotation * Vec3{1,0,0}; }

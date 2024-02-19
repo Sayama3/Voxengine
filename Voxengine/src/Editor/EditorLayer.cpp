@@ -90,9 +90,12 @@ namespace Voxymore::Editor {
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        if(m_SceneState == SceneState::Edit) m_EditorCamera.OnUpdate(timeStep);
+        if(m_SceneState == SceneState::Edit || m_SceneState == SceneState::Pause)
+		{
+			m_EditorCamera.OnUpdate(timeStep);
+		}
 
-        {
+		{
             VXM_PROFILE_SCOPE("Rendering Preparation.");
             m_Framebuffer->Bind();
             RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
@@ -105,6 +108,7 @@ namespace Voxymore::Editor {
 
             switch (m_SceneState)
             {
+				case SceneState::Pause:
                 case SceneState::Edit:
                 {
                     m_ActiveScene->OnUpdateEditor(timeStep, m_EditorCamera);
@@ -115,7 +119,7 @@ namespace Voxymore::Editor {
                     m_ActiveScene->OnUpdateRuntime(timeStep);
                     break;
                 }
-                default:
+				default:
                 {
                     VXM_CORE_ASSERT(false, "State {0} not handled yet.", static_cast<int>(m_SceneState));
                     break;
@@ -346,6 +350,16 @@ namespace Voxymore::Editor {
 
 			ImGui::EndMenu();
 		}
+
+		if(ImGui::BeginMenu("Views"))
+		{
+			if (ImGui::MenuItem("Reset Camera")) {
+				m_EditorCamera.SetFocusTarget({0,0,0});
+				m_EditorCamera.SetDistance(10);
+			}
+
+			ImGui::EndMenu();
+		}
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -538,6 +552,12 @@ namespace Voxymore::Editor {
         m_ActiveScene = SceneManager::CreateScene();
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		// Creating a default light on the empty scenes.
+		auto e = m_ActiveScene->CreateEntity("Directional Light");
+		auto& light = e.AddComponent<LightComponent>();
+		light.m_LightType = LightType::Directional;
+		e.GetComponent<TransformComponent>().SetEulerRotation({-45, 45, 0});
     }
 
     void EditorLayer::SaveScene()
@@ -649,7 +669,7 @@ namespace Voxymore::Editor {
         uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-        if(m_SceneState == SceneState::Edit) DrawGizmos();
+        if(m_SceneState == SceneState::Edit || m_SceneState == SceneState::Pause) DrawGizmos();
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -667,23 +687,50 @@ namespace Voxymore::Editor {
 
         ImGui::Begin("toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-        Ref<Texture2D> imageTex;
-        if(m_SceneState == SceneState::Edit) imageTex = m_PlayTexture;
-        else if(m_SceneState == SceneState::Play) imageTex = m_StopTexture;
+        Ref<Texture2D> imageTex =  m_SceneState == SceneState::Edit ? m_PlayTexture : m_StopTexture;
+		Ref<Texture2D> pauseTex = m_SceneState == SceneState::Play ? m_PauseTexture : m_PlayTexture;
 
         auto size = ImGui::GetWindowSize();
         float buttonSize = glm::max(glm::min(size.x, size.y) - 4.0f, 20.0f);
-        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - (buttonSize * 0.5f));
+		auto offset = m_SceneState == SceneState::Edit ? buttonSize * 0.5f : buttonSize + 4.f;
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - offset);
+		// Play/stop button
         if(ImGui::ImageButton((ImTextureID)(uint64_t)imageTex->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1,1), 0))
         {
-            if(m_SceneState == SceneState::Edit)
-            {
-                OnScenePlay();
-            }
-            else if(m_SceneState == SceneState::Play)
-            {
-                OnSceneStop();
-            }
+			switch (m_SceneState) {
+				case SceneState::Edit:
+				{
+                	OnScenePlay();
+					break;
+				}
+				case SceneState::Pause:
+				case SceneState::Play:
+				{
+					OnSceneStop();
+					break;
+				}
+			}
+        }
+
+		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f + 4.f);
+
+		// pause resume button
+		bool isPlaying = m_SceneState == SceneState::Play || m_SceneState == SceneState::Pause;
+        if(isPlaying && ImGui::ImageButton((ImTextureID)(uint64_t)pauseTex->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1,1), 0))
+        {
+//			m_SceneState = m_SceneState == SceneState::Play ? SceneState::Pause : SceneState::Play;
+			switch (m_SceneState) {
+				case SceneState::Play:
+				{
+					OnScenePause();
+					break;
+				}
+				case SceneState::Pause:
+				{
+					OnSceneResume();
+					break;
+				}
+        	}
         }
 
         ImGui::End();
@@ -776,7 +823,7 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OnScenePlay()
     {
-        if(m_SceneState == SceneState::Play) return;
+        if(m_SceneState == SceneState::Play || m_SceneState == SceneState::Pause) return;
         m_SceneState = SceneState::Play;
         m_CacheScene = m_ActiveScene;
         m_ActiveScene = CreateRef<Scene>(m_CacheScene);
@@ -827,6 +874,42 @@ namespace Voxymore::Editor {
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
     }
+
+	void EditorLayer::OnScenePause()
+	{
+		if (m_SceneState != SceneState::Play) return;
+		m_SceneState = SceneState::Pause;
+
+		ParticlePhysicsLayer* ppl;
+		if(Application::Get().TryGetLayer<ParticlePhysicsLayer>(ppl))
+		{
+			ppl->ResetScene();
+		}
+
+		RigidbodyPhysicsLayer* rpl;
+		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		{
+			rpl->ResetScene();
+		}
+	}
+
+	void EditorLayer::OnSceneResume()
+	{
+		if (m_SceneState != SceneState::Pause) return;
+		m_SceneState = SceneState::Play;
+
+		ParticlePhysicsLayer* ppl;
+		if(Application::Get().TryGetLayer<ParticlePhysicsLayer>(ppl))
+		{
+			ppl->SetScene(m_ActiveScene);
+		}
+
+		RigidbodyPhysicsLayer* rpl;
+		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		{
+			rpl->SetScene(m_ActiveScene);
+		}
+	}
 
     void EditorLayer::ReloadAssets()
     {

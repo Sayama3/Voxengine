@@ -1,16 +1,16 @@
 //
-// Created by ianpo on 18/01/2024.
+// Created by ianpo on 19/02/2024.
 //
 
 #pragma once
 
-#include "static_block.hpp"
-#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Math.hpp"
-#include "Voxymore/Components/Components.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
-#include "Voxymore/Scene/Entity.hpp"
 
+#ifndef VXM_DEFAULT_LOCAL_POSITION
+#define VXM_DEFAULT_LOCAL_POSITION {0,0,0};
+#endif
 #ifndef VXM_DEFAULT_MAX_DEPTH
 #define VXM_DEFAULT_MAX_DEPTH 0.5
 #endif
@@ -26,16 +26,20 @@
 
 namespace Voxymore::Core
 {
-	class FloatingComponent : public Component<FloatingComponent>
-	{
-		VXM_IMPLEMENT_COMPONENT(FloatingComponent);
-	public:
-		FloatingComponent() = default;
-		~FloatingComponent() = default;
 
+	class RigidbodyFloatingComponent : public Component<RigidbodyFloatingComponent>
+	{
+		VXM_IMPLEMENT_COMPONENT(RigidbodyFloatingComponent);
+	public:
+		RigidbodyFloatingComponent() = default;
+		~RigidbodyFloatingComponent() = default;
+	public:
 		void DeserializeComponent(YAML::Node& node);
 		void SerializeComponent(YAML::Emitter& out);
 		bool OnImGuiRender();
+	public:
+
+		Vec3 LocalPosition = VXM_DEFAULT_LOCAL_POSITION;
 
 		/**
 		 * The height (on the global Y axis) of the water of this object.
@@ -58,8 +62,7 @@ namespace Voxymore::Core
 		 * The volume of the object
 		 */
 		Real Volume = VXM_DEFAULT_VOLUME;
-
-
 	};
+
 } // namespace Voxymore::Core
 

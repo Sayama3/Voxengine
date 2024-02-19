@@ -22,7 +22,6 @@ namespace Voxymore::Core
 		~RigidbodySpringSystem() = default;
 	public:
 		virtual void Update(Scene& scene, TimeStep ts) override;
-		inline bool RunOnAllScenes() override {return true;}
 	};
 
 } // namespace Voxymore::Core

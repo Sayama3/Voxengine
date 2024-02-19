@@ -27,7 +27,7 @@ namespace Voxymore::Core
 		Light AsLight(const TransformComponent& tc) const;
 		Light AsLight(const glm::vec3& position, const glm::vec3& direction) const;
 
-	private:
+	public:
 		glm::vec4 m_Color = {1,1,1,1};
 		float m_Intensity = 1;
 		float m_Range = 10;
