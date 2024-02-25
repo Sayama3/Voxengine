@@ -20,11 +20,15 @@ namespace Voxymore::Editor {
 		VXM_PROFILE_FUNCTION();
 		if(m_PropertyPanel.m_SelectedEntity)
 		{
-			auto id = m_PropertyPanel.m_SelectedEntity.GetUUID();
+			auto id = m_PropertyPanel.m_SelectedEntity.id();
 			auto e = scene->GetEntity(id);
 			if(e.IsValid())
 			{
 				m_PropertyPanel.m_SelectedEntity = e;
+			}
+			else
+			{
+				m_PropertyPanel.m_SelectedEntity = {};
 			}
 		}
 		else

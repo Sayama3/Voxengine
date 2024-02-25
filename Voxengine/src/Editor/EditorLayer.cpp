@@ -688,11 +688,11 @@ namespace Voxymore::Editor {
         ImGui::Begin("toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
         Ref<Texture2D> imageTex =  m_SceneState == SceneState::Edit ? m_PlayTexture : m_StopTexture;
-		Ref<Texture2D> pauseTex = m_SceneState == SceneState::Play ? m_PauseTexture : m_PlayTexture;
+		Ref<Texture2D> pauseTex = m_SceneState != SceneState::Pause ? m_PauseTexture : m_PlayTexture;
 
         auto size = ImGui::GetWindowSize();
         float buttonSize = glm::max(glm::min(size.x, size.y) - 4.0f, 20.0f);
-		auto offset = m_SceneState == SceneState::Edit ? buttonSize * 0.5f : buttonSize + 4.f;
+		auto offset = buttonSize + 4.f;
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - offset);
 		// Play/stop button
         if(ImGui::ImageButton((ImTextureID)(uint64_t)imageTex->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1,1), 0))
@@ -715,10 +715,9 @@ namespace Voxymore::Editor {
 		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f + 4.f);
 
 		// pause resume button
-		bool isPlaying = m_SceneState == SceneState::Play || m_SceneState == SceneState::Pause;
-        if(isPlaying && ImGui::ImageButton((ImTextureID)(uint64_t)pauseTex->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1,1), 0))
+		ImGui::BeginDisabled(m_SceneState != SceneState::Play && m_SceneState != SceneState::Pause);
+        if(ImGui::ImageButton((ImTextureID)(uint64_t)pauseTex->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1,1), 0))
         {
-//			m_SceneState = m_SceneState == SceneState::Play ? SceneState::Pause : SceneState::Play;
 			switch (m_SceneState) {
 				case SceneState::Play:
 				{
@@ -732,6 +731,7 @@ namespace Voxymore::Editor {
 				}
         	}
         }
+		ImGui::EndDisabled();
 
         ImGui::End();
         ImGui::PopStyleVar(2);
