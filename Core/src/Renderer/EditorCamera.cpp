@@ -4,10 +4,10 @@
 
 #include "Voxymore/Renderer/EditorCamera.hpp"
 
-#include "Voxymore/Core/Input.hpp"
 #include "Voxymore/Core/Application.hpp"
+#include "Voxymore/Core/Input.hpp"
 #include "Voxymore/Core/MouseButtonCodes.hpp"
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 
 namespace Voxymore::Core
 {

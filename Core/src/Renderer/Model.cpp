@@ -4,7 +4,7 @@
 
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Core/Logger.hpp"
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 
 // PRIVATE USE ONLY
 #include "GLTFHelper.hpp"

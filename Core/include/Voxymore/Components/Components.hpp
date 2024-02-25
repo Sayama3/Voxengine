@@ -5,13 +5,13 @@
 #pragma once
 
 #include "CustomComponent.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/UUID.hpp"
+#include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
-#include "Voxymore/Scene/ScriptableEntity.hpp"
 #include "Voxymore/Scene/SceneCamera.hpp"
+#include "Voxymore/Scene/ScriptableEntity.hpp"
 
 namespace Voxymore::Core
 {

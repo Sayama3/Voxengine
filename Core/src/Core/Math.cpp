@@ -2,7 +2,7 @@
 // Created by Iannis on 30/05/2023.
 //
 
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 
 namespace Voxymore::Core {
 	Mat4 Math::TRS(const Vec3& position, const Quat& rotation, const Vec3& scale) {

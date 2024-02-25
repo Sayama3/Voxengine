@@ -11,7 +11,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/Application.hpp
         include/Voxymore/Core/EntryPoint.hpp
         include/Voxymore/Core/Logger.hpp
-        include/Voxymore/Core/Math.hpp
+        include/Voxymore/Math/Math.hpp
         vendor/stb_image.h
         include/Voxymore/Core/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp

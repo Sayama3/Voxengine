@@ -6,7 +6,7 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 
 #include "Voxymore/Layers/Layer.hpp"
 #include "Voxymore/Events/MouseEvent.hpp"

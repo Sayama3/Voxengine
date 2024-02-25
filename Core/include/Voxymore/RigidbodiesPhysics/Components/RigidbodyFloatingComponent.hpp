@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Voxymore/Core/Math.hpp"
-#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 
 #ifndef VXM_DEFAULT_LOCAL_POSITION
 #define VXM_DEFAULT_LOCAL_POSITION {0,0,0};
