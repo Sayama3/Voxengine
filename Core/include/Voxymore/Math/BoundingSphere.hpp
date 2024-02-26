@@ -23,6 +23,7 @@ namespace Voxymore::Core
 		[[nodiscard]] bool Overlaps(const BoundingSphere& other) const;
 		[[nodiscard]] Real GetSize() const;
 		void Grow(const BoundingSphere& other);
+		Real GetGrowth(BoundingSphere other) const;
 	private:
 		Vec3 m_Center = {0,0,0};
 		Real m_Radius = 0;

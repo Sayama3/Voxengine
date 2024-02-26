@@ -59,4 +59,9 @@ namespace Voxymore::Core
 			}
 		}
 	}
+	Real BoundingSphere::GetGrowth(BoundingSphere other) const
+	{
+		other.Grow(*this);
+		return other.GetSize() - GetSize();
+	}
 } // namespace Voxymore::Core
