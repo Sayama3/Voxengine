@@ -12,6 +12,7 @@ namespace Voxymore::Core
 	class BoundingObject
 	{
 	public:
+		inline BoundingObject() = default;
 		inline BoundingObject(const BoundingObject<BoundingClass>& other ) : BoundingClass::BoundingClass(other) {}
 		inline BoundingObject(const BoundingClass& other ) : BoundingClass::BoundingClass(other) {}
 
