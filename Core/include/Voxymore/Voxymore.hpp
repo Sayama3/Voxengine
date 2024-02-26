@@ -21,7 +21,10 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/UUID.hpp"
+
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/BoundingObject.hpp"
+#include "Voxymore/Math/BoundingSphere.hpp"
 
 #include "Voxymore/Layers/Layer.hpp"
 
@@ -53,6 +56,7 @@
 #include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"

@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.25)
 set(LIBRARY_TARGET_NAME Core)
 
 set(SRC_FILES src/Core/Application.cpp
-        src/Core/Math.cpp
+        src/Math/Math.cpp
         src/Core/Logger.cpp
         include/Voxymore/Voxymore.hpp
         include/Voxymore/Core/Application.hpp
@@ -152,6 +152,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/Systems/RigidbodyBuoyancySystem.hpp
         src/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.hpp
+        include/Voxymore/Math/BoundingObject.hpp
+        src/Math/BoundingSphere.cpp
+        include/Voxymore/Math/BoundingSphere.hpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
