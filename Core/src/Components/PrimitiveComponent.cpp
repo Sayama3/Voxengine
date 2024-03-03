@@ -22,6 +22,11 @@ namespace Voxymore::Core
 			pc.SetType(Primitive::Type::Square);
 			VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", "PrimitiveType", Primitive::GetTypeString(pc.PrimitiveType));
 		}
+
+		auto MaterialNode = node["Material"];
+		if (m_Mesh && MaterialNode.IsDefined()) {
+			m_Mesh->GetMaterial()->Deserialize(MaterialNode);
+		}
 	}
 
 	void PrimitiveComponent::SerializeComponent(YAML::Emitter &out)
@@ -30,6 +35,11 @@ namespace Voxymore::Core
 		auto& pc = *this;
 
 		out << KEYVAL("PrimitiveType", pc.PrimitiveType);
+		if(m_Mesh) {
+			out << KEYVAL("Material", YAML::BeginMap);
+			m_Mesh->GetMaterial()->Serialize(out);
+			out << YAML::EndMap;
+		}
 	}
 
 	bool PrimitiveComponent::OnImGuiRender()
@@ -62,6 +72,11 @@ namespace Voxymore::Core
 			ImGui::EndCombo();
 		}
 
+		if(m_Mesh)
+		{
+			m_Mesh->GetMaterial()->OnImGui();
+		}
+
 		return changed;
 	}
 
@@ -69,6 +84,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_Mesh = Primitive::CreateOrphan(PrimitiveType);
+
 		m_IsDirty = false;
 	}
 

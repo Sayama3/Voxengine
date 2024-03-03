@@ -39,7 +39,7 @@ struct MaterialParams
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
     vec4 EmissiveFactor;
-    int AlphaMode;
+    int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
     float AlphaCutoff;
     int DoubleSided;
 };
@@ -220,6 +220,8 @@ void main()
         }
     }
 
+    if(materialParameters.AlphaMode == 1 && o_Color.a <= materialParameters.AlphaCutoff) discard;
+
     vec3 result = vec3(0.0);
 
     for(int i = 0; i < int(lights.lightCount); i++)
@@ -240,6 +242,6 @@ void main()
         }
     }
 
-    o_Color = vec4(result, 1);
+    o_Color = vec4(result, o_Color.a);
     o_Entity = v_EntityId;
 }
