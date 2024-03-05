@@ -59,7 +59,8 @@ namespace Voxymore {
 			Ref<UniformBuffer> ModelUniformBuffer;
 			Ref<UniformBuffer> LightUniformBuffer;
 			Ref<UniformBuffer> MaterialUniformBuffer;
-			std::multimap<Real, std::tuple<const Ref<Mesh>, ModelData>> ToDrawMeshes;
+			std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
+			std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
 		};
 
 		class Renderer {

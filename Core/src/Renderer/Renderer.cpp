@@ -44,7 +44,8 @@ namespace Voxymore::Core {
 		}
 		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
 
-		s_Data.ToDrawMeshes.clear();
+		s_Data.AlphaMeshes.clear();
+		s_Data.OpaqueMeshes.clear();
 	}
 
 	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights)
@@ -62,17 +63,39 @@ namespace Voxymore::Core {
 		}
 		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
 
-		s_Data.ToDrawMeshes.clear();
+		s_Data.AlphaMeshes.clear();
+		s_Data.OpaqueMeshes.clear();
 	}
 
 	void Renderer::EndScene() {
 		VXM_PROFILE_FUNCTION();
 
-		for(std::multimap<Real, std::tuple<const Ref<Mesh>, RendererData::ModelData>>::reverse_iterator it = s_Data.ToDrawMeshes.rbegin(); it != s_Data.ToDrawMeshes.rend(); ++it)
+		for(const auto& mesh : s_Data.OpaqueMeshes)
+		{
+			s_Data.ModelBuffer.TransformMatrix = std::get<1>(mesh);
+			s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(std::get<1>(mesh)));
+			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
+
+			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+			std::get<0>(mesh)->Bind();
+			auto& shaderName = std::get<0>(mesh)->GetMaterial()->GetShaderName();
+			if(shaderName != s_BindedShader)
+			{
+				std::get<0>(mesh)->GetMaterial()->Bind();
+				s_BindedShader = shaderName;
+			}
+			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
+		}
+
+		for(std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>>::reverse_iterator it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
 			auto& mesh = it->second;
 
-			s_Data.ModelBuffer = std::get<1>(mesh);
+			s_Data.ModelBuffer.TransformMatrix = std::get<1>(mesh);
+			s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(std::get<1>(mesh)));
+			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
+
 			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			std::get<0>(mesh)->Bind();
@@ -162,9 +185,15 @@ namespace Voxymore::Core {
 		Vec4 center = transform*Vec4(mesh->GetBoundingBox().GetCenter(),1);
 		center /= center.w;
 		Real distance = Math::SqrMagnitude(Vec3(center) - Vec3(s_Data.CameraBuffer.CameraPosition));
-		s_Data.ToDrawMeshes.insert(std::make_pair(distance, std::tuple<Ref<Mesh>, RendererData::ModelData>(mesh, RendererData::ModelData(transform, glm::transpose(glm::inverse(transform)), entityId))));
 
-//		Submit(*mesh, transform, entityId);
+		if(mesh->GetMaterial()->GetMaterialsParameters().AlphaMode == AlphaMode::Blend)
+		{
+			s_Data.AlphaMeshes.insert(std::make_pair(distance, std::tuple(mesh, transform, entityId)));
+		}
+		else
+		{
+			s_Data.OpaqueMeshes.emplace_back(std::tuple(mesh, transform, entityId));
+		}
 	}
 /*
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)

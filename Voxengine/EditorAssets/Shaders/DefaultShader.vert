@@ -1,5 +1,9 @@
 #version 450 core
 
+#define ALPHA_MODE_OPAQUE 0
+#define ALPHA_MODE_MASK 1
+#define ALPHA_MODE_BLEND 2
+
 struct TextureInfo
 {
     int Index;
