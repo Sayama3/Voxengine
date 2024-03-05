@@ -49,8 +49,7 @@ namespace Voxymore
 			Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
 			Ref<Scene> m_SceneHandle = nullptr;
 			std::vector<RigidbodyContact> m_Contacts;
-			RigidbodyContactResolver m_Resolver;
-
+//			RigidbodyContactResolver m_Resolver;
 		};
 
 	}// namespace Core

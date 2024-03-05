@@ -16,7 +16,7 @@
 
 namespace Voxymore::Core
 {
-	RigidbodyPhysicsLayer::RigidbodyPhysicsLayer() : Layer("RigidbodyPhysicsLayer"), m_Resolver(0)
+	RigidbodyPhysicsLayer::RigidbodyPhysicsLayer() : Layer("RigidbodyPhysicsLayer")//, m_Resolver(0)
 	{
 	}
 
@@ -74,8 +74,8 @@ namespace Voxymore::Core
 		if(!m_Contacts.empty())
 		{
 			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} iterations.",m_Contacts.size() , m_Contacts.size() * 2);
-			m_Resolver.SetIterations(m_Contacts.size() * 2);
-			m_Resolver.ResolveContacts(ts, m_Contacts);
+//			m_Resolver.SetIterations(m_Contacts.size() * 2);
+//			m_Resolver.ResolveContacts(ts, m_Contacts);
 			m_Contacts.clear();
 		}
 	}

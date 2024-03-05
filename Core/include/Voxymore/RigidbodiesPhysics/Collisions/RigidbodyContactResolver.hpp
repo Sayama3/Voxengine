@@ -7,11 +7,10 @@
 #include "RigidbodyContact.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Math/Math.hpp"
-namespace Voxymore
-{
-	namespace Core
-	{
 
+namespace Voxymore::Core
+{
+/*
 		class RigidbodyContactResolver
 		{
 			protected:
@@ -26,6 +25,6 @@ namespace Voxymore
 
 			void ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 		};
+*/
+} // namespace Voxymore::Core
 
-	}// namespace Core
-}// namespace Voxymore
