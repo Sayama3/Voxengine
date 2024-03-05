@@ -156,6 +156,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Math/BoundingSphere.cpp
         include/Voxymore/Math/BoundingSphere.hpp
         include/Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp
+        src/Math/BoundingBox.cpp
+        include/Voxymore/Math/BoundingBox.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
