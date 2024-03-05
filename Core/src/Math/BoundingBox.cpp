@@ -13,6 +13,21 @@ namespace Voxymore::Core
 		Grow(two);
 	}
 
+	BoundingBox::BoundingBox(const std::vector<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
+	{
+		for(const auto& point : points)
+		{
+			Grow(point);
+		}
+	}
+	BoundingBox::BoundingBox(const std::initializer_list<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
+	{
+		for(const auto& point : points)
+		{
+			Grow(point);
+		}
+	}
+
 	bool BoundingBox::Overlaps(const BoundingBox& other) const
 	{
 		// Checks if this box is to the right of the other box.
@@ -56,6 +71,12 @@ namespace Voxymore::Core
 		m_Max = glm::max(m_Max, other.m_Max);
 	}
 
+	void BoundingBox::Grow(const Vec3 &point)
+	{
+		m_Min = glm::min(m_Min, point);
+		m_Max = glm::max(m_Max, point);
+	}
+
 	void BoundingBox::Move(const Vec3 &movement)
 	{
 		m_Min += movement;
@@ -64,44 +85,72 @@ namespace Voxymore::Core
 
 	Vec3 BoundingBox::GetCenter() const
 	{
-		return (m_Max + m_Min) * 0.5f;
+		return (m_Max + m_Min) * (Real)0.5;
 	}
 
 	Vec3 BoundingBox::GetHalfSize() const
 	{
-		return (m_Max - m_Min) * 0.5f;
+		return (m_Max - m_Min) * (Real)0.5;
 	}
+
 	Vec3 BoundingBox::GetMin() const
 	{
 		return m_Min;
 	}
+
 	Vec3 BoundingBox::GetMax() const
 	{
 		return m_Max;
 	}
 
+	bool BoundingBox::IsValid() const
+	{
+		return m_Min.x <= m_Max.x && m_Min.y <= m_Max.y && m_Min.z <= m_Max.z;
+	}
 
 	void BoundingBox::SetCenter(Vec3 center)
 	{
 		auto movement = center - GetCenter();
 		Move(movement);
 	}
+
 	void BoundingBox::SetSize(Vec3 size)
 	{
-		SetHalfSize(size * 0.5f);
+		SetHalfSize(size * (Real)0.5);
 	}
+
 	void BoundingBox::SetHalfSize(Vec3 halfSize)
 	{
 		auto center = GetCenter();
 		m_Min = center - halfSize;
 		m_Max = center + halfSize;
 	}
+
 	void BoundingBox::SetMin(Vec3 min)
 	{
 		m_Min = min;
 	}
+
 	void BoundingBox::SetMax(Vec3 max)
 	{
 		m_Max = max;
+	}
+
+	void BoundingBox::SetMinMax(Vec3 min, Vec3 max)
+	{
+		m_Min = min;
+		m_Max = max;
+	}
+
+	void BoundingBox::SetCenterSize(Vec3 center, Vec3 size)
+	{
+		auto half = size * (Real)0.5;
+		m_Min = center - half;
+		m_Max = center + half;
+	}
+
+	BoundingBox::operator bool() const
+	{
+		return IsValid();
 	}
 }// namespace Voxymore::Core

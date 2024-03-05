@@ -36,6 +36,19 @@ namespace Voxymore::Core
 		sm.SetMaterial(material);
 	}
 
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto &sm = m_Meshes.emplace_back(vertices, indexes, aabb);
+	}
+
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto &sm = m_Meshes.emplace_back(vertices, indexes, aabb);
+		sm.SetMaterial(material);
+	}
+
 	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -50,6 +63,36 @@ namespace Voxymore::Core
 
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+		if (!vertices.empty())
+		{
+			for (const auto& v : vertices) {
+				m_BoundingBox.Grow(v.Position);
+			}
+		}
+	}
+
+	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb) : m_BoundingBox(std::move(aabb))
+	{
+		VXM_PROFILE_FUNCTION();
+		m_VertexArray = VertexArray::Create();
+
+		m_BufferLayout = Vertex::Layout();
+
+		m_VertexBuffer = VertexBuffer::Create(vertices.size() * sizeof(Vertex), vertices.data());
+		m_VertexBuffer->SetLayout(m_BufferLayout);
+
+		m_IndexBuffer = IndexBuffer::Create(indexes.size(), indexes.data());
+
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+		if (!m_BoundingBox && !vertices.empty())
+		{
+			for (const auto& v : vertices) {
+				m_BoundingBox.Grow(v.Position);
+			}
+		}
 	}
 
 	void Mesh::Bind() const

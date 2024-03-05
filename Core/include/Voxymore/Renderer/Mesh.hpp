@@ -9,6 +9,8 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/BoundingBox.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Texture.hpp"
@@ -69,6 +71,8 @@ namespace Voxymore::Core
 		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
 		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
 		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material);
 	};
 
 	class Mesh
@@ -77,6 +81,7 @@ namespace Voxymore::Core
 	public:
 		//Mesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
+		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb);
 		~Mesh() = default;
 		inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		void Bind() const;
@@ -86,6 +91,8 @@ namespace Voxymore::Core
 		const Ref<Material>& GetMaterial() const;
 		void SetMaterial(Ref<Material> material);
 		[[nodiscard]] inline UUID id() const { return m_Id; }
+
+		inline const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 	private:
 		UUID m_Id;
 		Ref<VertexArray> m_VertexArray;
@@ -93,6 +100,7 @@ namespace Voxymore::Core
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Material> m_Material;
 		BufferLayout m_BufferLayout;
+		BoundingBox m_BoundingBox;
 	};
 
 	class Primitive
