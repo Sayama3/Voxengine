@@ -10,6 +10,8 @@ namespace Voxymore::Core {
 	static RendererData s_Data;
 	static std::string s_BindedShader;
 
+	RendererData::ModelData::ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId) : TransformMatrix(transformMatrix), NormalMatrix(normalMatrix), EntityId(entityId) {}
+
 	void Renderer::Init() {
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
@@ -41,6 +43,8 @@ namespace Voxymore::Core {
 			s_Data.LightBuffer.lights[i] = lights[i];
 		}
 		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
+
+		s_Data.ToDrawMeshes.clear();
 	}
 
 	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights)
@@ -57,10 +61,30 @@ namespace Voxymore::Core {
 			s_Data.LightBuffer.lights[i] = lights[i];
 		}
 		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
+
+		s_Data.ToDrawMeshes.clear();
 	}
 
 	void Renderer::EndScene() {
 		VXM_PROFILE_FUNCTION();
+
+		for(std::multimap<Real, std::tuple<const Ref<Mesh>, RendererData::ModelData>>::reverse_iterator it = s_Data.ToDrawMeshes.rbegin(); it != s_Data.ToDrawMeshes.rend(); ++it)
+		{
+			auto& mesh = it->second;
+
+			s_Data.ModelBuffer = std::get<1>(mesh);
+			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+			std::get<0>(mesh)->Bind();
+			auto& shaderName = std::get<0>(mesh)->GetMaterial()->GetShaderName();
+			if(shaderName != s_BindedShader)
+			{
+				std::get<0>(mesh)->GetMaterial()->Bind();
+				s_BindedShader = shaderName;
+			}
+			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
+		}
+
 		RenderCommand::ClearBinding();
 		s_BindedShader = "";
 	}
@@ -112,34 +136,41 @@ namespace Voxymore::Core {
 	void Renderer::Submit(const MeshGroup& meshGroup, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		s_Data.ModelBuffer.TransformMatrix = transform;
-		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
-		s_Data.ModelBuffer.EntityId = entityId;
-		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+		// s_Data.ModelBuffer.TransformMatrix = transform;
+		// s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
+		// s_Data.ModelBuffer.EntityId = entityId;
+		// s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		for (const auto& mesh : meshGroup.GetSubMeshes())
 		{
-			s_Data.MaterialUniformBuffer->SetData(&mesh.GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
-			mesh.Bind();
-			auto& shaderName = mesh.GetMaterial()->GetShaderName();
-			if(shaderName != s_BindedShader)
-			{
-				mesh.GetMaterial()->Bind();
-				s_BindedShader = shaderName;
-			}
-			RenderCommand::DrawIndexed(mesh.GetVertexArray());
+			Submit(mesh, transform, entityId);
+//			s_Data.MaterialUniformBuffer->SetData(&mesh->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+//			mesh->Bind();
+//			auto& shaderName = mesh->GetMaterial()->GetShaderName();
+//			if(shaderName != s_BindedShader)
+//			{
+//				mesh->GetMaterial()->Bind();
+//				s_BindedShader = shaderName;
+//			}
+//			RenderCommand::DrawIndexed(mesh->GetVertexArray());
 		}
 	}
 
-	void Renderer::Submit(const Ref<Mesh>& mesh, const glm::mat4& transform, int entityId)
+	void Renderer::Submit(Ref<Mesh> mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		Submit(*mesh, transform, entityId);
-	}
+		Vec4 center = transform*Vec4(mesh->GetBoundingBox().GetCenter(),1);
+		center /= center.w;
+		Real distance = Math::SqrMagnitude(Vec3(center) - Vec3(s_Data.CameraBuffer.CameraPosition));
+		s_Data.ToDrawMeshes.insert(std::make_pair(distance, std::tuple<Ref<Mesh>, RendererData::ModelData>(mesh, RendererData::ModelData(transform, glm::transpose(glm::inverse(transform)), entityId))));
 
+//		Submit(*mesh, transform, entityId);
+	}
+/*
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
+
 		s_Data.ModelBuffer.TransformMatrix = transform;
 		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
@@ -154,11 +185,11 @@ namespace Voxymore::Core {
 		}
 		RenderCommand::DrawIndexed(mesh.GetVertexArray());
 	}
-
+*/
 	void Renderer::Submit(const Ref<Model>& model, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		model->Bind();
+		//model->Bind();
 		for (int nodeIndex : model->GetDefaultScene())
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);
@@ -188,4 +219,5 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		RenderCommand::SetViewport(0,0,width,height);
 	}
+
 } // Core

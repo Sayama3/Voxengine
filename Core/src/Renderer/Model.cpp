@@ -455,7 +455,7 @@ namespace Voxymore::Core
 		{
 			for(auto& mesh : meshGroup.m_Meshes)
 			{
-				mesh.SetShader(shader);
+				mesh->SetShader(shader);
 			}
 		}
 	}
@@ -468,7 +468,7 @@ namespace Voxymore::Core
 		{
 			for(auto& mesh : meshGroup.m_Meshes)
 			{
-				mesh.SetShader(shaderName);
+				mesh->SetShader(shaderName);
 			}
 		}
 	}

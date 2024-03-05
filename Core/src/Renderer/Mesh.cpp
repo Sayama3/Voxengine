@@ -26,27 +26,27 @@ namespace Voxymore::Core
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_Meshes.emplace_back(vertices, indexes);
+		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes));
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_Meshes.emplace_back(vertices, indexes);
-		sm.SetMaterial(material);
+		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes));
+		m_Meshes[m_Meshes.size() - 1]->SetMaterial(material);
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_Meshes.emplace_back(vertices, indexes, aabb);
+		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes, aabb));
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto &sm = m_Meshes.emplace_back(vertices, indexes, aabb);
-		sm.SetMaterial(material);
+		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes, aabb));
+		m_Meshes[m_Meshes.size() - 1]->SetMaterial(material);
 	}
 
 	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)

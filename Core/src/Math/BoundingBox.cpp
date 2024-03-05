@@ -10,11 +10,13 @@ namespace Voxymore::Core
 
 	BoundingBox::BoundingBox(const BoundingBox &one, const BoundingBox &two) : m_Min(one.m_Min), m_Max(one.m_Max)
 	{
+		VXM_PROFILE_FUNCTION();
 		Grow(two);
 	}
 
 	BoundingBox::BoundingBox(const std::vector<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
 	{
+		VXM_PROFILE_FUNCTION();
 		for(const auto& point : points)
 		{
 			Grow(point);
@@ -22,6 +24,7 @@ namespace Voxymore::Core
 	}
 	BoundingBox::BoundingBox(const std::initializer_list<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
 	{
+		VXM_PROFILE_FUNCTION();
 		for(const auto& point : points)
 		{
 			Grow(point);
@@ -30,6 +33,7 @@ namespace Voxymore::Core
 
 	bool BoundingBox::Overlaps(const BoundingBox& other) const
 	{
+		VXM_PROFILE_FUNCTION();
 		// Checks if this box is to the right of the other box.
 		if(this->m_Min.x > other.m_Max.x)
 			return false;
@@ -55,41 +59,48 @@ namespace Voxymore::Core
 
 	Real BoundingBox::GetSize() const
 	{
+		VXM_PROFILE_FUNCTION();
 		auto size = m_Max - m_Min;
 		return Math::SqrMagnitude(size);
 	}
 
 	Real BoundingBox::GetGrowth(BoundingBox other) const
 	{
+		VXM_PROFILE_FUNCTION();
 		other.Grow(*this);
 		return other.GetSize();
 	}
 
 	void BoundingBox::Grow(const BoundingBox& other)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Min = glm::min(m_Min, other.m_Min);
 		m_Max = glm::max(m_Max, other.m_Max);
 	}
 
 	void BoundingBox::Grow(const Vec3 &point)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Min = glm::min(m_Min, point);
 		m_Max = glm::max(m_Max, point);
 	}
 
 	void BoundingBox::Move(const Vec3 &movement)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Min += movement;
 		m_Max += movement;
 	}
 
 	Vec3 BoundingBox::GetCenter() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return (m_Max + m_Min) * (Real)0.5;
 	}
 
 	Vec3 BoundingBox::GetHalfSize() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return (m_Max - m_Min) * (Real)0.5;
 	}
 
@@ -105,22 +116,26 @@ namespace Voxymore::Core
 
 	bool BoundingBox::IsValid() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return m_Min.x <= m_Max.x && m_Min.y <= m_Max.y && m_Min.z <= m_Max.z;
 	}
 
 	void BoundingBox::SetCenter(Vec3 center)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto movement = center - GetCenter();
 		Move(movement);
 	}
 
 	void BoundingBox::SetSize(Vec3 size)
 	{
+		VXM_PROFILE_FUNCTION();
 		SetHalfSize(size * (Real)0.5);
 	}
 
 	void BoundingBox::SetHalfSize(Vec3 halfSize)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto center = GetCenter();
 		m_Min = center - halfSize;
 		m_Max = center + halfSize;
@@ -144,6 +159,7 @@ namespace Voxymore::Core
 
 	void BoundingBox::SetCenterSize(Vec3 center, Vec3 size)
 	{
+		VXM_PROFILE_FUNCTION();
 		auto half = size * (Real)0.5;
 		m_Min = center - half;
 		m_Max = center + half;
@@ -151,6 +167,7 @@ namespace Voxymore::Core
 
 	BoundingBox::operator bool() const
 	{
+		VXM_PROFILE_FUNCTION();
 		return IsValid();
 	}
 }// namespace Voxymore::Core

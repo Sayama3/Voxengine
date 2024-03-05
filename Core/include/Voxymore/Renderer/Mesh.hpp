@@ -62,11 +62,11 @@ namespace Voxymore::Core
 		friend class Model;
 	public:
 	private:
-		std::vector<Mesh> m_Meshes;
+		std::vector<Ref<Mesh>> m_Meshes;
 	public:
 		MeshGroup() = default;
 		~MeshGroup() = default;
-		inline const std::vector<Mesh>& GetSubMeshes() const { return m_Meshes; }
+		inline const std::vector<Ref<Mesh>>& GetSubMeshes() const { return m_Meshes; }
 		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
 		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
 		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);

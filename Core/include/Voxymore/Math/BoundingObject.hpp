@@ -13,8 +13,7 @@ namespace Voxymore::Core
 	{
 	public:
 		inline BoundingObject() = default;
-		inline BoundingObject(const BoundingObject<BoundingClass>& other ) : BoundingClass::BoundingClass(other) {}
-		inline BoundingObject(const BoundingClass& other ) : BoundingClass::BoundingClass(other) {}
+		inline ~BoundingObject() = default;
 
 		bool Overlaps(const BoundingObject<BoundingClass>& other) const;
 		Real GetSize() const;
@@ -25,28 +24,28 @@ namespace Voxymore::Core
 	template<typename BoundingClass>
 	Real BoundingObject<BoundingClass>::GetGrowth(const BoundingObject<BoundingClass> &other) const
 	{
-		return BoundingClass::GetGrowth(other);
+		return reinterpret_cast<BoundingClass>(this)->GetGrowth(other);
 	}
 
 	template<typename BoundingClass>
 	bool BoundingObject<BoundingClass>::Overlaps(const BoundingObject<BoundingClass> &other) const
 	{
 		VXM_PROFILE_FUNCTION();
-		return BoundingClass::Overlaps(other);
+		return reinterpret_cast<BoundingClass>(this)->Overlaps(other);
 	}
 
 	template<typename BoundingClass>
 	Real BoundingObject<BoundingClass>::GetSize() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return BoundingClass::GetSize();
+		return reinterpret_cast<BoundingClass>(this)->GetSize();
 	}
 
 	template<typename BoundingClass>
 	void BoundingObject<BoundingClass>::Grow(const BoundingObject<BoundingClass> &other)
 	{
 		VXM_PROFILE_FUNCTION();
-		BoundingClass::Grow(other);
+		reinterpret_cast<BoundingClass>(this)->Grow(other);
 	}
 } // namespace Voxymore::Core
 
