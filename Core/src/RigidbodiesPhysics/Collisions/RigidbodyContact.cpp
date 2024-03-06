@@ -139,5 +139,43 @@ namespace Voxymore::Core
 			rigidbodies[1]->AddMovement(rigidbodyMovement[1]);
 		}
 	}
-	 */
+ */
+
+	void RigidbodyContact::SetBodyData(Rigidbody *one, Rigidbody *two, Real friction, Real restitution)
+	{
+		this->bodies[0] = one;
+		this->bodies[1] = two;
+		this->friction = friction;
+		this->restitution = restitution;
+	}
+
+		CollisionData::CollisionData() : contactsCount(10)
+		{
+			contactsLeft = contactsCount;
+			contacts = new RigidbodyContact[contactsCount];
+		}
+		CollisionData::~CollisionData()
+		{
+			delete[] contacts;
+		}
+	void CollisionData::AddContact(int i)
+	{
+		contactsLeft -= i;
+	}
+
+	RigidbodyContact* CollisionData::GetContact()
+	{
+		if(contactsLeft <= 0)
+		{
+			return nullptr;
+		}
+		return &contacts[contactsLeft - 1];
+	}
+
+	RigidbodyContact* CollisionData::GetContact(int i)
+	{
+		VXM_CORE_ASSERT(i >= 0 && i < contactsCount, "Contact {0} is not a valid index.");
+		if(i < 0 || i >= contactsCount) return nullptr;
+		return &contacts[i];
+	}
 }// namespace Voxymore::Core

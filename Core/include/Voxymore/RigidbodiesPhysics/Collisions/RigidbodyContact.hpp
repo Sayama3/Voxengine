@@ -15,6 +15,8 @@ namespace Voxymore::Core
 		inline RigidbodyContact() = default;
 		inline ~RigidbodyContact() = default;
 
+		std::array<Rigidbody*, 2> bodies;
+
 		/**
 		 * Holds the position of the contact in world coordinates.
 		 */
@@ -29,6 +31,31 @@ namespace Voxymore::Core
 		 * The depth of penetration at the contact.
 		 */
 		Real penetration;
+
+		Real friction;
+
+		Real restitution;
+
+		void SetBodyData(Rigidbody* one, Rigidbody* two, Real friction, Real restitution);
+	};
+
+	struct CollisionData
+	{
+		CollisionData();
+		~CollisionData();
+		int contactsLeft;
+		Real friction;
+		Real restitution;
+
+		void AddContact(int i);
+		RigidbodyContact* GetContact();
+		RigidbodyContact* GetContact(int i);
+
+		inline RigidbodyContact* begin()  { return contacts + (contactsLeft-1);}
+		inline RigidbodyContact* end()  { return contacts + contactsCount;}
+	private:
+		RigidbodyContact* contacts;
+		int contactsCount;
 	};
 } // namespace Voxymore::Core
 
