@@ -88,7 +88,7 @@ namespace Voxymore::Core {
 			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
 		}
 
-		for(std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>>::reverse_iterator it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
+		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
 			auto& mesh = it->second;
 
