@@ -27,7 +27,15 @@ namespace Voxymore::Core
 	class Plane : public Primitive
 	{
 	public:
-		Vec3 m_Normal = Vec3(0,1,0);
+		Vec3 m_Normal = {0,0,0};
 		Real m_Offset = 0;
+	};
+
+	class Box : public Primitive
+	{
+	public:
+		Vec3 m_HalfSize = {0,0,0};
+
+		[[nodiscard]] std::array<Vec3, 8> GetVertices() const;
 	};
 } // namespace Voxymore::Core

@@ -47,15 +47,15 @@ namespace Voxymore::Core
 		Real friction;
 		Real restitution;
 
-		void AddContact(int i);
+		void AddContact(int i = 1);
 		RigidbodyContact* GetContact();
 		RigidbodyContact* GetContact(int i);
 
-		inline RigidbodyContact* begin()  { return contacts + (contactsLeft-1);}
-		inline RigidbodyContact* end()  { return contacts + contactsCount;}
+		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin() + (contactsLeft - 1);}
+		inline std::vector<RigidbodyContact>::iterator end()  { return contacts.end();}
 	private:
-		RigidbodyContact* contacts;
-		int contactsCount;
+		std::vector<RigidbodyContact> contacts;
+		//int contactsCount;
 	};
 } // namespace Voxymore::Core
 

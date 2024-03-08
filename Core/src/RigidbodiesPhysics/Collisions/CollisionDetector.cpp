@@ -8,6 +8,11 @@
 
 namespace Voxymore::Core
 {
+	bool IntersectionDetector::BoxAndHalfSpace(const Box &box, const Plane &plane)
+	{
+		return true;
+	}
+
 	uint32_t CollisionDetector::SphereAndSphere(const Sphere &one, const Sphere &two, CollisionData *data)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -35,7 +40,9 @@ namespace Voxymore::Core
 		contacts->contactPoint = pOne + midline * (Real)0.5;
 		contacts->penetration = (one.m_Radius + two.m_Radius - size);
 		contacts->SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
-		data->AddContact(1);
+		data->AddContact();
+
+		return 1;
 	}
 
 	uint32_t CollisionDetector::SphereAndHalfSpace(const Sphere &sphere, const Plane &plane, CollisionData *data)
@@ -58,7 +65,8 @@ namespace Voxymore::Core
 		contact->penetration = -ballDistance;
 		contact->contactPoint = position - plane.m_Normal * (ballDistance + sphere.m_Radius);
 		contact->SetBodyData(sphere.m_Body, nullptr, data->friction, data->restitution);
-		data->AddContact(1);
+		data->AddContact();
+
 		return 1;
 	}
 
@@ -94,7 +102,48 @@ namespace Voxymore::Core
 		contact->penetration = penetration;
 
 		contact->SetBodyData(sphere.m_Body, nullptr,data->friction ,data->restitution);
-		data->AddContact(1);
+		data->AddContact();
+
 		return 1;
+	}
+
+	uint32_t CollisionDetector::BoxAndHalfSpace(const Box& box, const Plane& plane, CollisionData* data)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
+		if(!data || data->contactsLeft <= 0)
+		{
+			return 0;
+		}
+
+
+		if(!IntersectionDetector::BoxAndHalfSpace(box, plane))
+		{
+			return 0;
+		}
+
+		auto vertices = box.GetVertices();
+		int contactUsed = 0;
+
+		for(auto&vertexPos: vertices)
+		{
+			Real vertDistance = Math::Dot(vertexPos, plane.m_Normal);
+
+			if(vertDistance <= plane.m_Offset)
+			{
+				auto* contact = data->GetContact();
+				contact->contactPoint = plane.m_Normal;
+				contact->contactPoint *= (vertDistance -plane.m_Offset);
+				contact->contactPoint += vertexPos;
+				contact->contactPoint = plane.m_Normal;
+				contact->penetration = plane.m_Offset - vertDistance;
+				contact->SetBodyData(box.m_Body, nullptr, data->friction, data->restitution);
+				data->AddContact();
+				contactUsed++;
+				if(data->contactsLeft <= 0) break;
+			}
+		}
+
+		return contactUsed;
 	}
 } // namespace Voxymore::Core

@@ -149,16 +149,16 @@ namespace Voxymore::Core
 		this->restitution = restitution;
 	}
 
-		CollisionData::CollisionData() : contactsCount(10)
-		{
-			contactsLeft = contactsCount;
-			contacts = new RigidbodyContact[contactsCount];
-		}
-		CollisionData::~CollisionData()
-		{
-			delete[] contacts;
-		}
-	void CollisionData::AddContact(int i)
+	CollisionData::CollisionData() : contacts(10)
+	{
+		contactsLeft = contacts.size();
+	}
+
+	CollisionData::~CollisionData()
+	{
+	}
+
+	void CollisionData::AddContact(int i/* = 1*/)
 	{
 		contactsLeft -= i;
 	}
@@ -174,8 +174,8 @@ namespace Voxymore::Core
 
 	RigidbodyContact* CollisionData::GetContact(int i)
 	{
-		VXM_CORE_ASSERT(i >= 0 && i < contactsCount, "Contact {0} is not a valid index.");
-		if(i < 0 || i >= contactsCount) return nullptr;
+		VXM_CORE_ASSERT(i >= 0 && i < contacts.size(), "Contact {0} is not a valid index.");
+		if(i < 0 || i >= contacts.size()) return nullptr;
 		return &contacts[i];
 	}
 }// namespace Voxymore::Core
