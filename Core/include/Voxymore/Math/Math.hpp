@@ -144,6 +144,51 @@ namespace Voxymore::Core
 		inline static Real Pow(Real value, Real power) { VXM_PROFILE_FUNCTION(); return glm::pow(value, power); }
 
 		/**
+		 * Transforms a 3D point using a 4x4 transformation matrix.
+		 *
+		 * This function takes a 4x4 transformation matrix `mat` and a 3D point `point` as input.
+		 * It transforms the point by multiplying it with the matrix, dividing by the w-component,
+		 * and returns the transformed point in a 3D vector.
+		 *
+		 * @tparam T The type of the matrix and the point elements.
+		 * @tparam Q The qualifier of the matrix and the point elements. It defaults to `glm::defaultp`.
+		 * @param mat The 4x4 transformation matrix.
+		 * @param point The 3D point to transform.
+		 * @return The transformed point as a 3D vector.
+		 *
+		 */
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::vec<3,T,Q> TransformPoint(const glm::mat<4,4,T,Q>& mat, const glm::vec<3,T,Q>& point)
+		{
+			VXM_PROFILE_FUNCTION();
+			auto vec = glm::vec<4,T,Q>(point,(T)1);
+			vec = mat * vec;
+			vec /= vec.w;
+			return vec;
+		}
+
+		/**
+		 * Transforms a 3D direction using a 4x4 transformation matrix.
+		 *
+		 * This function takes a 4x4 transformation matrix `mat` and a 3D direction `point` as input.
+		 * It transforms the direction by multiplying it with the matrix and returns the transformed direction
+		 * in a 3D vector. The w-component of the resulting vector is set to 0.
+		 *
+		 * @tparam T The type of the matrix and the direction elements.
+		 * @tparam Q The qualifier of the matrix and the direction elements. It defaults to `glm::defaultp`.
+		 * @param mat The 4x4 transformation matrix.
+		 * @param point The 3D direction to transform.
+		 * @return The transformed direction as a 3D vector.
+		 *
+		 */
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::vec<3,T,Q> TransformDirection(const glm::mat<4,4,T,Q>& mat, const glm::vec<3,T,Q>& point)
+		{
+			VXM_PROFILE_FUNCTION();
+			return mat * glm::vec<4,T,Q>(point,(T)0);
+		}
+
+		/**
 		 * Calculate the power of a value.
 		 *
 		 * This function calculates the power of a value to the given exponent.
@@ -184,6 +229,13 @@ namespace Voxymore::Core
 		inline static Vec3 Cross(const Vec3& a, const Vec3& b)
 		{
 			return glm::cross(a,b);
+		}
+
+		template<typename T>
+		inline static T Abs(const T& val)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::abs(val);
 		}
 
 

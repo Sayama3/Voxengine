@@ -25,6 +25,7 @@ namespace Voxymore::Core
 		static uint32_t SphereAndHalfSpace(const Sphere &sphere, const Plane &plane, CollisionData *data);
 		static uint32_t SphereAndTruePlane(const Sphere &sphere, const Plane &plane, CollisionData *data);
 		static uint32_t BoxAndHalfSpace(const Box& box, const Plane &plane, CollisionData *data);
+		static uint32_t BoxAndSphere(const Box& box, const Sphere& sphere, CollisionData* data);
 	};
 
 } // namespace Voxymore::Core

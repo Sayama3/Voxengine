@@ -118,7 +118,6 @@ namespace Voxymore::Core
 			return 0;
 		}
 
-
 		if(!IntersectionDetector::BoxAndHalfSpace(box, plane))
 		{
 			return 0;
@@ -127,7 +126,7 @@ namespace Voxymore::Core
 		auto vertices = box.GetVertices();
 		int contactUsed = 0;
 
-		for(auto&vertexPos: vertices)
+		for(auto& vertexPos: vertices)
 		{
 			Real vertDistance = Math::Dot(vertexPos, plane.m_Normal);
 
@@ -147,5 +146,57 @@ namespace Voxymore::Core
 		}
 
 		return contactUsed;
+	}
+
+	uint32_t CollisionDetector::BoxAndSphere(const Box &box, const Sphere &sphere, CollisionData *data)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
+		if(!data || data->contactsLeft <= 0)
+		{
+			return 0;
+		}
+
+		Vec3 sphereCenter = sphere.GetPosition();
+		Vec3 relativeCenter = Math::TransformPoint(Math::Inverse(box.m_Offset), sphereCenter);
+
+		if (Math::Abs(relativeCenter.x) - sphere.m_Radius > box.m_HalfSize.x ||
+			Math::Abs(relativeCenter.y) - sphere.m_Radius > box.m_HalfSize.y ||
+			Math::Abs(relativeCenter.z) - sphere.m_Radius > box.m_HalfSize.z)
+		{
+			return 0;
+		}
+
+		Vec3 closest = {0,0,0};
+		Real dist;
+
+		dist = relativeCenter.x;
+		if(dist > box.m_HalfSize.x) dist = box.m_HalfSize.x;
+		if(dist < -box.m_HalfSize.x) dist = -box.m_HalfSize.x;
+		closest.x = dist;
+
+		dist = relativeCenter.y;
+		if(dist > box.m_HalfSize.y) dist = box.m_HalfSize.y;
+		if(dist < -box.m_HalfSize.y) dist = -box.m_HalfSize.y;
+		closest.y = dist;
+
+		dist = relativeCenter.z;
+		if(dist > box.m_HalfSize.z) dist = box.m_HalfSize.z;
+		if(dist < -box.m_HalfSize.z) dist = -box.m_HalfSize.z;
+		closest.z = dist;
+
+		dist = Math::SqrMagnitude(closest - relativeCenter);
+		if(dist > Math::Pow2(sphere.m_Radius)) return 0;
+
+		Vec3 closestPtWorld = Math::TransformPoint(box.m_Offset, closest);
+
+		auto* contact = data->GetContact();
+		contact->contactPoint = closestPtWorld;
+		contact->contactNormal = Math::Normalize(closestPtWorld - sphereCenter);
+		contact->penetration = sphere.m_Radius - Math::Sqrt(dist);
+		contact->SetBodyData(box.m_Body, sphere.m_Body, data->friction, data->restitution);
+		data->AddContact();
+
+		return 1;
 	}
 } // namespace Voxymore::Core
