@@ -8,9 +8,11 @@
 
 namespace Voxymore::Core
 {
-	bool IntersectionDetector::BoxAndHalfSpace(const Box &box, const Plane &plane)
+	bool IntersectionDetector::BoxAndHalfSpace(const Box& box, const Plane& plane)
 	{
-		return true;
+		return std::ranges::any_of(box.GetVertices(), [&plane](Vec3& point) {
+			return Math::Dot(point, plane.m_Normal) <= plane.m_Offset;
+		});
 	}
 
 	uint32_t CollisionDetector::SphereAndSphere(const Sphere &one, const Sphere &two, CollisionData *data)
