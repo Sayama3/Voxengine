@@ -16,6 +16,17 @@ namespace Voxymore::Core
 		Mat4 m_Offset = Math::Identity<Mat4>();
 
 		[[nodiscard]] virtual Vec3 GetPosition() const;
+
+		/**
+		 * @brief This function returns the axis (i.e. a column of the matrix) of the Primitive object at a given index.
+		 *
+		 * @param i The index of the axis.
+		 * @return Vec3 The axis vector.
+		 *
+		 * @note The function assumes that index `i` is non-negative and within the range of the offset length.
+		 * If the provided index is invalid, the behavior is undefined.
+		 */
+		[[nodiscard]] Vec3 GetAxis(int32_t i) const;
 	};
 
 	class Sphere : public Primitive

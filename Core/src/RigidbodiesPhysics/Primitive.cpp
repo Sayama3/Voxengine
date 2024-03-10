@@ -9,8 +9,13 @@ namespace Voxymore::Core
 {
 	Vec3 Primitive::GetPosition() const
 	{
-		VXM_PROFILE_FUNCTION();
 		return m_Offset[3];
+	}
+
+	Vec3 Primitive::GetAxis(int32_t i) const {
+		VXM_CORE_ASSERT(i >= 0, "The value i ({0}) is negative", i);
+		VXM_CORE_ASSERT(i < m_Offset.length(), "The value i ({0}) is not valid (superior to {1})", i, m_Offset.length());
+		return m_Offset[i];
 	}
 
 	std::array<Vec3, 8> Box::GetVertices() const
