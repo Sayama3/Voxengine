@@ -15,12 +15,12 @@ namespace Voxymore::Core
 		auto PrimitiveTypeNode = node["PrimitiveType"];
 		if (PrimitiveTypeNode.IsDefined())
 		{
-			pc.SetType(static_cast<Primitive::Type>(PrimitiveTypeNode.as<int>()));
+			pc.SetType(static_cast<PrimitiveMesh::Type>(PrimitiveTypeNode.as<int>()));
 		}
 		else
 		{
-			pc.SetType(Primitive::Type::Square);
-			VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", "PrimitiveType", Primitive::GetTypeString(pc.PrimitiveType));
+			pc.SetType(PrimitiveMesh::Type::Square);
+			VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", "PrimitiveType", PrimitiveMesh::GetTypeString(pc.PrimitiveType));
 		}
 
 		auto MaterialNode = node["Material"];
@@ -49,10 +49,10 @@ namespace Voxymore::Core
 
 		auto& pc = *this;
 
-		std::unordered_map<Primitive::Type, std::string> strings = Primitive::GetTypesString();
-		std::vector<Primitive::Type> types = Primitive::GetAllTypes();
+		std::unordered_map<PrimitiveMesh::Type, std::string> strings = PrimitiveMesh::GetTypesString();
+		std::vector<PrimitiveMesh::Type> types = PrimitiveMesh::GetAllTypes();
 
-		Primitive::Type current = pc.PrimitiveType;
+		PrimitiveMesh::Type current = pc.PrimitiveType;
 
 		if(ImGui::BeginCombo("Primitive", strings[current].c_str()))
 		{
@@ -83,7 +83,7 @@ namespace Voxymore::Core
 	void PrimitiveComponent::Load()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Mesh = Primitive::CreateOrphan(PrimitiveType);
+		m_Mesh = PrimitiveMesh::CreateOrphan(PrimitiveType);
 
 		m_IsDirty = false;
 	}
@@ -106,20 +106,20 @@ namespace Voxymore::Core
 		return m_IsDirty;
 	}
 
-	Primitive::Type PrimitiveComponent::GetType() const
+	PrimitiveMesh::Type PrimitiveComponent::GetType() const
 	{
 		VXM_PROFILE_FUNCTION();
 		return PrimitiveType;
 	}
 
-	void PrimitiveComponent::SetType(Primitive::Type type)
+	void PrimitiveComponent::SetType(PrimitiveMesh::Type type)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_IsDirty |= PrimitiveType != type;
 		PrimitiveType = type;
 	}
 
-	PrimitiveComponent::PrimitiveComponent(Primitive::Type primitiveType) : PrimitiveType(Primitive::Type::Cube), m_IsDirty(true)
+	PrimitiveComponent::PrimitiveComponent(PrimitiveMesh::Type primitiveType) : PrimitiveType(PrimitiveMesh::Type::Cube), m_IsDirty(true)
 	{
 	}
 }

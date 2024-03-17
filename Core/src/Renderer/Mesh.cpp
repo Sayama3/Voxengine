@@ -9,9 +9,9 @@
 
 namespace Voxymore::Core
 {
-	static Primitive* s_Primitive = nullptr;
+	static PrimitiveMesh * s_Primitive = nullptr;
 
-	std::string Primitive::GetTypeString(Primitive::Type type)
+	std::string PrimitiveMesh::GetTypeString(PrimitiveMesh::Type type)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -141,13 +141,13 @@ namespace Voxymore::Core
 	{
 	}
 
-	Primitive* Primitive::GetInstance()
+	PrimitiveMesh *PrimitiveMesh::GetInstance()
 	{
 		VXM_PROFILE_FUNCTION();
 		return s_Primitive;
 	}
 
-	void Primitive::InitPrimitives()
+	void PrimitiveMesh::InitPrimitives()
 	{
 		VXM_PROFILE_FUNCTION();
 		if(IsInit())
@@ -156,10 +156,10 @@ namespace Voxymore::Core
 			return;
 		}
 
-		s_Primitive = new Primitive();
+		s_Primitive = new PrimitiveMesh();
 	}
 
-	void Primitive::DestroyPrimitives()
+	void PrimitiveMesh::DestroyPrimitives()
 	{
 		VXM_PROFILE_FUNCTION();
 		if(!IsInit())
@@ -172,13 +172,13 @@ namespace Voxymore::Core
 		s_Primitive = nullptr;
 	}
 
-	bool Primitive::IsInit()
+	bool PrimitiveMesh::IsInit()
 	{
 		VXM_PROFILE_FUNCTION();
 		return s_Primitive != nullptr;
 	}
 
-	Ref<Mesh> Primitive::GetMesh(Primitive::Type type)
+	Ref<Mesh> PrimitiveMesh::GetMesh(PrimitiveMesh::Type type)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(IsInit(), "The Primitive is not initialized.");
@@ -189,29 +189,29 @@ namespace Voxymore::Core
 
 		switch (type)
 		{
-			case Primitive::Square: return GetInstance()->GetOrCreateSquare();
-			case Primitive::Cube: return GetInstance()->GetOrCreateCube();
+			case PrimitiveMesh::Square: return GetInstance()->GetOrCreateSquare();
+			case PrimitiveMesh::Cube: return GetInstance()->GetOrCreateCube();
 		}
 
 		VXM_CORE_ASSERT(false, "The Primitive ({0}) is not implemented", (uint32_t)type);
 		return nullptr;
 	}
 
-	Ref<Mesh> Primitive::CreateOrphan(Primitive::Type type)
+	Ref<Mesh> PrimitiveMesh::CreateOrphan(PrimitiveMesh::Type type)
 	{
 		VXM_PROFILE_FUNCTION();
 
 		switch (type)
 		{
-			case Primitive::Square: return CreateSquare();
-			case Primitive::Cube: return CreateCube();
+			case PrimitiveMesh::Square: return CreateSquare();
+			case PrimitiveMesh::Cube: return CreateCube();
 		}
 
 		VXM_CORE_ASSERT(false, "The Primitive ({0}) is not implemented", (uint32_t)type);
 		return nullptr;
 	}
 
-	Ref<Mesh> Primitive::GetOrCreateSquare()
+	Ref<Mesh> PrimitiveMesh::GetOrCreateSquare()
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Mesh> mesh;
@@ -230,7 +230,7 @@ namespace Voxymore::Core
 		return mesh;
 	}
 
-	Ref<Mesh> Primitive::GetOrCreateCube()
+	Ref<Mesh> PrimitiveMesh::GetOrCreateCube()
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Mesh> mesh;
@@ -249,7 +249,7 @@ namespace Voxymore::Core
 		return mesh;
 	}
 
-	Ref<Mesh> Primitive::CreateSquare()
+	Ref<Mesh> PrimitiveMesh::CreateSquare()
 	{
 		std::vector<Vertex> square {
 				Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0,0,1), glm::vec2(0,0)), // 0
@@ -268,7 +268,7 @@ namespace Voxymore::Core
 		return mesh;
 	}
 
-	Ref<Mesh> Primitive::CreateCube()
+	Ref<Mesh> PrimitiveMesh::CreateCube()
 	{
 		std::vector<Vertex> cube {
 				//Front Face

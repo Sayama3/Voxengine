@@ -7,6 +7,8 @@
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/BoundingObject.hpp"
+#include "Voxymore/Math/BoundingSphere.hpp"
 
 #include "Voxymore/Layers/Layer.hpp"
 #include "Voxymore/Events/MouseEvent.hpp"
@@ -18,39 +20,42 @@
 
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
+#include "Voxymore/RigidbodiesPhysics/Primitive.hpp"
 
-namespace Voxymore
+
+namespace Voxymore::Core
 {
-	namespace Core
+
+	class RigidbodyPhysicsLayer : public Layer
 	{
+	public:
+		RigidbodyPhysicsLayer();
+		~RigidbodyPhysicsLayer() override;
 
-		class RigidbodyPhysicsLayer : public Layer
-		{	
-		public:
-			RigidbodyPhysicsLayer();
-			~RigidbodyPhysicsLayer() override;
+		virtual void OnUpdate(TimeStep ts) override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+	public:
+		void SetScene(Ref<Scene> scene);
+		void ResetScene();
+	public:
+		const Vec3& GetGravity() const;
+		void SetGravity(const Vec3& g);
 
-			virtual void OnUpdate(TimeStep ts) override;
-			virtual void OnAttach() override;
-			virtual void OnDetach() override;
-		public:
-			void SetScene(Ref<Scene> scene);
-			void ResetScene();
-		public:
-			const Vec3& GetGravity() const;
-			void SetGravity(const Vec3& g);
+		void AddContact(const RigidbodyContact & contact);
+		void AddContacts(const std::vector<RigidbodyContact>& contacts);
+	private:
+		[[nodiscard]] bool HasScene() const;
+	private:
+		Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
+		Ref<Scene> m_SceneHandle = nullptr;
+		std::vector<PotentialContact> m_PotentialContacts {};
+		CollisionData m_Contacts;
+		RigidbodyContactResolver m_Resolver;
+		BVHNode<BoundingSphere>* m_Root = nullptr;
+	};
 
-			void AddContact(const RigidbodyContact & contact);
-			void AddContacts(const std::vector<RigidbodyContact>& contacts);
-		private:
-			[[nodiscard]] bool HasScene() const;
-		private:
-			Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
-			Ref<Scene> m_SceneHandle = nullptr;
-			std::vector<RigidbodyContact> m_Contacts;
-//			RigidbodyContactResolver m_Resolver;
-		};
+} // namespace Voxymore::Core
 
-	}// namespace Core
-}// namespace Voxymore

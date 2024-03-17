@@ -5,16 +5,7 @@
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
 
-#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\
-auto VXM_COMBINE(fieldVariable, Node) = node[fieldName]; 																			\
-if(VXM_COMBINE(fieldVariable, Node).IsDefined())																						\
-{																																		\
-fieldVariable = VXM_COMBINE(fieldVariable, Node).as<type>();																		\
-}																																		\
-else {																																	\
-	fieldVariable = defaultValue;																									\
-		VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", #fieldName, Math::to_string(fieldVariable));	\
-}
+#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue) fieldVariable = node[fieldName].as<type>(defaultValue);
 
 namespace Voxymore::Core
 {
@@ -38,6 +29,11 @@ namespace Voxymore::Core
 		DeserializeField(node, m_TorqueAccumulate, "TorqueAccumulate", Vec3, Vec3(0));
 		DeserializeField(node, m_Acceleration, "Acceleration", Vec3, Math::Gravity);
 		DeserializeField(node, m_IsAwake, "IsAwake", bool, false);
+
+		if(node["Disable"].as<bool>(false) && !entity.HasComponent<DisableRigidbody>())
+		{
+			entity.AddEmptyComponent<DisableRigidbody>();
+		}
 	}
 
 	void RigidbodyComponent::SerializeComponent(YAML::Emitter &out, Entity entity)
@@ -55,12 +51,28 @@ namespace Voxymore::Core
 		out << KEYVAL("TorqueAccumulate", m_TorqueAccumulate);
 		out << KEYVAL("Acceleration", m_Acceleration);
 		out << KEYVAL("IsAwake", m_IsAwake);
+		out << KEYVAL("Disable", entity.HasComponent<DisableRigidbody>());
 	}
 
 	bool RigidbodyComponent::OnImGuiRender(Entity entity)
 	{
 		VXM_PROFILE_FUNCTION();
 		bool changed = false;
+
+		bool IsDisable = entity.HasComponent<DisableRigidbody>();
+
+		if(ImGui::Checkbox("Disable Physics", &IsDisable))
+		{
+			changed = true;
+			if(IsDisable)
+			{
+				entity.AddEmptyComponent<DisableRigidbody>();
+			}
+			else
+			{
+				entity.RemoveComponent<DisableRigidbody>();
+			}
+		}
 
 		// Information about the object.
 		if(HasFiniteMass())

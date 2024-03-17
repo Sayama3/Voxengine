@@ -5,12 +5,19 @@
 #pragma once
 
 #include "Voxymore/Math/Math.hpp"
-#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
 namespace Voxymore::Core
 {
-	class Primitive
+	class Rigidbody;
+
+	class PrimitiveCollider
 	{
+	public:
+		enum Type {
+			Sphere,
+			Plane,
+			Box,
+		};
 	public:
 		Rigidbody* m_Body = nullptr;
 		Mat4 m_Offset = Math::Identity<Mat4>();
@@ -29,20 +36,20 @@ namespace Voxymore::Core
 		[[nodiscard]] Vec3 GetAxis(int32_t i) const;
 	};
 
-	class Sphere : public Primitive
+	class Sphere : public PrimitiveCollider
 	{
 	public:
 		Real m_Radius = 1;
 	};
 
-	class Plane : public Primitive
+	class Plane : public PrimitiveCollider
 	{
 	public:
 		Vec3 m_Normal = {0,0,0};
 		Real m_Offset = 0;
 	};
 
-	class Box : public Primitive
+	class Box : public PrimitiveCollider
 	{
 	public:
 		Vec3 m_HalfSize = {0,0,0};

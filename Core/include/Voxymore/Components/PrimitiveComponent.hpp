@@ -21,17 +21,17 @@ namespace Voxymore::Core
 
 		inline PrimitiveComponent() = default;
 		inline ~PrimitiveComponent() = default;
-		PrimitiveComponent(Primitive::Type primitiveType);
+		PrimitiveComponent(PrimitiveMesh::Type primitiveType);
 
 		void Load();
 		bool IsLoaded() const;
 		Ref<Mesh> GetMesh();
 		bool IsDirty() const;
-		Primitive::Type GetType() const;
-		void SetType(Primitive::Type type);
+		PrimitiveMesh::Type GetType() const;
+		void SetType(PrimitiveMesh::Type type);
 
 	private:
-		Primitive::Type PrimitiveType;
+		PrimitiveMesh::Type PrimitiveType;
 		Ref<Mesh> m_Mesh = nullptr;
 		bool m_IsDirty = true;
 	};

@@ -178,4 +178,24 @@ namespace Voxymore::Core
 		if(i < 0 || i >= contacts.size()) return nullptr;
 		return &contacts[i];
 	}
+
+	void CollisionData::reserve(size_t count)
+	{
+		contacts.reserve(count);
+	}
+
+	bool CollisionData::empty() const
+	{
+		return contacts.empty();
+	}
+
+	size_t CollisionData::size() const
+	{
+		return contacts.size();
+	}
+
+	void CollisionData::clear()
+	{
+		contacts.clear();
+	}
 }// namespace Voxymore::Core

@@ -3,16 +3,17 @@
 //
 
 #include "Voxymore/RigidbodiesPhysics/Primitive.hpp"
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
 
 namespace Voxymore::Core
 {
-	Vec3 Primitive::GetPosition() const
+	Vec3 PrimitiveCollider::GetPosition() const
 	{
 		return m_Offset[3];
 	}
 
-	Vec3 Primitive::GetAxis(int32_t i) const {
+	Vec3 PrimitiveCollider::GetAxis(int32_t i) const {
 		VXM_CORE_ASSERT(i >= 0, "The value i ({0}) is negative", i);
 		VXM_CORE_ASSERT(i < m_Offset.length(), "The value i ({0}) is not valid (superior to {1})", i, m_Offset.length());
 		return m_Offset[i];

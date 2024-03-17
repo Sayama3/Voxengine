@@ -103,7 +103,7 @@ namespace Voxymore::Core
 		BoundingBox m_BoundingBox;
 	};
 
-	class Primitive
+	class PrimitiveMesh
 	{
 	public:
 		enum Type
@@ -111,11 +111,11 @@ namespace Voxymore::Core
 			Square,
 			Cube,
 		};
-		static std::string GetTypeString(Primitive::Type type);
+		static std::string GetTypeString(PrimitiveMesh::Type type);
 		inline static std::unordered_map<Type, std::string> GetTypesString() { return {{Type::Square, "Square"}, {Type::Cube, "Cube"}};}
 		inline static std::vector<Type> GetAllTypes() { return {Type::Square, Type::Cube};}
 	private:
-		static Primitive* GetInstance();
+		static PrimitiveMesh * GetInstance();
 	public:
 		static void InitPrimitives();
 		static void DestroyPrimitives();
@@ -125,8 +125,8 @@ namespace Voxymore::Core
 		static Ref<Mesh> CreateOrphan(Type type);
 
 	public:
-		Primitive() = default;
-		~Primitive() = default;
+		PrimitiveMesh() = default;
+		~PrimitiveMesh() = default;
 	private:
 		Ref<Mesh> GetOrCreateSquare();
 		Ref<Mesh> GetOrCreateCube();

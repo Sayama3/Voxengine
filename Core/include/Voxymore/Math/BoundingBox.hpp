@@ -17,8 +17,8 @@ namespace Voxymore::Core
 		inline ~BoundingBox() = default;
 		inline BoundingBox(const BoundingBox& one) = default;
 
-		BoundingBox(const std::vector<Vec3>& points);
-		BoundingBox(const std::initializer_list<Vec3>& points);
+		template<class ListVec3>
+		inline BoundingBox(const ListVec3& points);
 		BoundingBox(const Vec3& min, const Vec3& max);
 		BoundingBox(const BoundingBox& one, const BoundingBox& two);
 	public:
@@ -50,6 +50,17 @@ namespace Voxymore::Core
 		Vec3 m_Min = Vec3(std::numeric_limits<Real>::max());
 		Vec3 m_Max = Vec3(std::numeric_limits<Real>::min());
 	};
+
+	template<class ListVec3>
+	BoundingBox::BoundingBox(const ListVec3 &points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
+	{
+		VXM_PROFILE_FUNCTION();
+		for(const Vec3& point : points)
+		{
+			Grow(point);
+		}
+	}
+
 
 } // namespace Voxymore::Core
 

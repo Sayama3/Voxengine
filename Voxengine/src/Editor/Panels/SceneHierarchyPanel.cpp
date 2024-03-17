@@ -112,7 +112,7 @@ namespace Voxymore::Editor {
 		{
 			static uint64_t entityCubeCount = 0;
 			auto e = m_Context->CreateEntity("Cube - " + std::to_string(entityCubeCount++));
-			e.AddComponent<PrimitiveComponent>(Primitive::Type::Cube);
+			e.AddComponent<PrimitiveComponent>(PrimitiveMesh::Type::Cube);
 			m_PropertyPanel.m_SelectedEntity = e;
 		}
 

@@ -25,6 +25,8 @@ namespace Voxymore::Core
 		RigidbodyComponent(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
 	};
 
+	struct DisableRigidbody {};
+
 } // namespace Voxymore::Core
 
 

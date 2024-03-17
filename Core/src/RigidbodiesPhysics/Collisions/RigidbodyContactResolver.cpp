@@ -7,18 +7,19 @@
 
 namespace Voxymore::Core
 {
-	/*
+
 	RigidbodyContactResolver::RigidbodyContactResolver() : iterations(0), iterationsUsed(0) {}
 	RigidbodyContactResolver::RigidbodyContactResolver(uint32_t iterations) : iterations(iterations), iterationsUsed(0) {}
 
 	void RigidbodyContactResolver::ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts)
 	{
+		VXM_PROFILE_FUNCTION();
 		uint32_t i;
 		iterationsUsed = 0;
 
 		VXM_CORE_CHECK(iterations <= 0, "No iteration will be done as iterations = {0}", iterations);
 		VXM_CORE_CHECK(iterations >= contacts.size(), "There is not enough iterations to cover all the m_Contacts... {0} iterations for {1} m_Contacts", iterations, contacts.size());
-
+/*
 		while (iterationsUsed < iterations)
 		{
 			Real max = REAL_MAX;
@@ -41,11 +42,13 @@ namespace Voxymore::Core
 			contacts[maxIndex].Resolve(ts);
 			++iterationsUsed;
 		}
+*/
+		VXM_CORE_WARN("We should use resolve all the contacts encountered here.");
 	}
 
 	void RigidbodyContactResolver::SetIterations(uint32_t iterations)
 	{
 		this->iterations = iterations;
 	}
-*/
+
 } // namespace Voxymore::Core

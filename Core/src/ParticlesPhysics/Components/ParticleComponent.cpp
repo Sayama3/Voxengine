@@ -6,17 +6,7 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
 
-#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue)														\
-auto VXM_COMBINE(fieldVariable, Node) = node[fieldName]; 																			\
-if(VXM_COMBINE(fieldVariable, Node).IsDefined())																						\
-{																																		\
-fieldVariable = VXM_COMBINE(fieldVariable, Node).as<type>();																		\
-}																																		\
-else {																																	\
-	fieldVariable = defaultValue;																									\
-		VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", #fieldName, Math::to_string(fieldVariable));	\
-}
-
+#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue) fieldVariable = node[fieldName].as<type>(defaultValue);
 
 namespace Voxymore::Core
 {

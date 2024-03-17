@@ -162,6 +162,9 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/Primitive.hpp
         src/RigidbodiesPhysics/Collisions/CollisionDetector.cpp
         include/Voxymore/RigidbodiesPhysics/Collisions/CollisionDetector.hpp
+        src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
+        include/Voxymore/Core/TypeHelpers.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

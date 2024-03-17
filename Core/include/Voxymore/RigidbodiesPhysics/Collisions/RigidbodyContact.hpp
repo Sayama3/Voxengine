@@ -53,7 +53,13 @@ namespace Voxymore::Core
 
 		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin() + (contactsLeft - 1);}
 		inline std::vector<RigidbodyContact>::iterator end()  { return contacts.end();}
-	private:
+
+		void reserve(size_t count);
+		size_t size() const;
+		bool empty() const;
+		void clear();
+
+
 		std::vector<RigidbodyContact> contacts;
 		//int contactsCount;
 	};

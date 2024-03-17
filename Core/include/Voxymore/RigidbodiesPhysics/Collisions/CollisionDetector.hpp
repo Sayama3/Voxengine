@@ -44,8 +44,16 @@ namespace Voxymore::Core
 		static uint32_t SphereAndTruePlane(const Sphere &sphere, const Plane &plane, CollisionData *data);
 		static uint32_t BoxAndHalfSpace(const Box& box, const Plane &plane, CollisionData *data);
 		static uint32_t BoxAndSphere(const Box& box, const Sphere& sphere, CollisionData* data);
-
 		static uint32_t BoxAndBox(const Box &one, const Box &two, CollisionData *data);
+
+		inline static uint32_t Collide(const Sphere& one, const Sphere& two, CollisionData* data) {return SphereAndSphere(one, two, data);}
+		inline static uint32_t Collide(const Sphere &one, const Plane &two, CollisionData *data) {return SphereAndHalfSpace(one, two, data);}
+		inline static uint32_t Collide(const Plane &two,const Sphere &one, CollisionData *data) {return SphereAndHalfSpace(one, two, data);}
+		inline static uint32_t Collide(const Box& one, const Plane &two, CollisionData *data) {return BoxAndHalfSpace(one, two, data);}
+		inline static uint32_t Collide(const Plane &two, const Box& one, CollisionData *data) {return BoxAndHalfSpace(one, two, data);}
+		inline static uint32_t Collide(const Box& one, const Sphere& two, CollisionData* data) {return BoxAndSphere(one, two, data);}
+		inline static uint32_t Collide(const Sphere& two, const Box& one, CollisionData* data) {return BoxAndSphere(one, two, data);}
+		inline static uint32_t Collide(const Box &one, const Box &two, CollisionData *data) {return BoxAndBox(one, two, data);}
 	};
 
 } // namespace Voxymore::Core

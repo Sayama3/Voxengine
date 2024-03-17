@@ -36,6 +36,7 @@ namespace Voxymore::Core {
 #define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::trace, __VA_ARGS__)
 #define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::info, __VA_ARGS__)
 #define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
+#define VXM_CORE_WARN(...)     ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
 #define VXM_CORE_ERROR(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::err, __VA_ARGS__)
 #define VXM_CORE_CRITICAL(...)    ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::critical, __VA_ARGS__)
 
@@ -43,6 +44,7 @@ namespace Voxymore::Core {
 #define VXM_TRACE(...)       ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::trace, __VA_ARGS__)
 #define VXM_INFO(...)        ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::info, __VA_ARGS__)
 #define VXM_WARNING(...)     ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
+#define VXM_WARN(...)     ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
 #define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::err, __VA_ARGS__)
 #define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::critical, __VA_ARGS__)
 
