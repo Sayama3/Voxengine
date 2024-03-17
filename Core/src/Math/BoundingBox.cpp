@@ -14,23 +14,6 @@ namespace Voxymore::Core
 		Grow(two);
 	}
 
-	BoundingBox::BoundingBox(const std::vector<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
-	{
-		VXM_PROFILE_FUNCTION();
-		for(const auto& point : points)
-		{
-			Grow(point);
-		}
-	}
-	BoundingBox::BoundingBox(const std::initializer_list<Vec3>& points) : m_Max(std::numeric_limits<Real>::min()), m_Min(std::numeric_limits<Real>::max())
-	{
-		VXM_PROFILE_FUNCTION();
-		for(const auto& point : points)
-		{
-			Grow(point);
-		}
-	}
-
 	bool BoundingBox::Overlaps(const BoundingBox& other) const
 	{
 		VXM_PROFILE_FUNCTION();

@@ -126,6 +126,7 @@ namespace Voxymore::Core
 
 			auto collisionPoints = std::visit(overloads{bb, bs, bp, sb, ss, sp, pb, ps, pp}, col0.m_Collider, col1.m_Collider);
 		}
+		m_PotentialContacts.clear();
 
 		if(!m_Contacts.empty())
 		{
@@ -170,12 +171,12 @@ namespace Voxymore::Core
 	void RigidbodyPhysicsLayer::AddContact(const RigidbodyContact& contact)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Contacts.push_back(contact);
+		m_Contacts.contacts.push_back(contact);
 	}
 
 	void RigidbodyPhysicsLayer::AddContacts(const std::vector<RigidbodyContact>& contacts)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Contacts.insert(m_Contacts.end(), contacts.begin(), contacts.end());
+		m_Contacts.contacts.insert(m_Contacts.end(), contacts.begin(), contacts.end());
 	}
 } // namespace Voxymore::Core

@@ -26,6 +26,7 @@ namespace Voxymore::Core
 			uint32_t maxIndex = contacts.size();
 			for (i = 0; i < contacts.size(); ++i)
 			{
+				if(!contacts[i].bodies[0] && !contacts[i].bodies[1]) continue;
 				Real sepVel = contacts[i].CalculateSeparatingVelocity();
 				if(sepVel < max && (sepVel < 0 || contacts[0].penetration > 0))
 				{

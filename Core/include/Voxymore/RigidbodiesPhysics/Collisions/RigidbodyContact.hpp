@@ -43,7 +43,6 @@ namespace Voxymore::Core
 	{
 		CollisionData();
 		~CollisionData();
-		int contactsLeft;
 		Real friction;
 		Real restitution;
 
@@ -51,7 +50,7 @@ namespace Voxymore::Core
 		RigidbodyContact* GetContact();
 		RigidbodyContact* GetContact(int i);
 
-		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin() + (contactsLeft - 1);}
+		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin();}
 		inline std::vector<RigidbodyContact>::iterator end()  { return contacts.end();}
 
 		void reserve(size_t count);

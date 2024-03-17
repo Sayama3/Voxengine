@@ -28,6 +28,29 @@ Scene:
         Scale: [100, 0.00999999978, 100]
       PrimitiveComponent:
         PrimitiveType: 1
+        Material:
+          MaterialName: 10510745452913222693
+          ShaderName: Default
+          Parameters:
+            AlphaMode: 0
+            AlphaCutoff: 0.5
+            DoubleSided: 0
+            BaseColor: [1, 1, 1, 1]
+            BaseColorIndex: -1
+            BaseColorTexCoord: 0
+            MetallicFactor: 1
+            RoughnessFactor: 1
+            MetallicRoughnessIndex: -1
+            MetallicRoughnessTexCoord: 0
+            NormalMapIndex: -1
+            NormalMapTexCoord: 0
+            NormalMapScale: 1
+            OcclusionTextureIndex: -1
+            OcclusionTextureTexCoord: 0
+            OcclusionTextureStrength: 1
+            EmissiveFactor: [0, 0, 0, 1]
+            EmissiveTextureIndex: -1
+            EmissiveTextureTexCoord: 0
     - Entity: 4594569767300733131
       IsActive: true
       TagComponent:
@@ -48,12 +71,37 @@ Scene:
       TagComponent:
         Tag: Cube - 0
       TransformComponent:
-        Position: [0, 2.70000005, 0]
+        Position: [-0.0363512039, 2.70000005, 0]
         Rotation: [0, 0, 0, 1]
-        EulerRotation: [0, 0, 0]
+        EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
       PrimitiveComponent:
         PrimitiveType: 1
+        Material:
+          MaterialName: 1468695382395566660
+          ShaderName: Default
+          Parameters:
+            AlphaMode: 0
+            AlphaCutoff: 0.5
+            DoubleSided: 0
+            BaseColor: [1, 1, 1, 1]
+            BaseColorIndex: -1
+            BaseColorTexCoord: 0
+            MetallicFactor: 1
+            RoughnessFactor: 1
+            MetallicRoughnessIndex: -1
+            MetallicRoughnessTexCoord: 0
+            NormalMapIndex: -1
+            NormalMapTexCoord: 0
+            NormalMapScale: 1
+            OcclusionTextureIndex: -1
+            OcclusionTextureTexCoord: 0
+            OcclusionTextureStrength: 1
+            EmissiveFactor: [0, 0, 0, 1]
+            EmissiveTextureIndex: -1
+            EmissiveTextureTexCoord: 0
+      ColliderComponent:
+        HalfSize: [0.5, 0.5, 0.5]
       RigidbodyComponent:
         InverseMass: 0.0250000004
         LinearDamping: 0.800000012
@@ -79,6 +127,7 @@ Scene:
         TorqueAccumulate: [0, 0, 0]
         Acceleration: [0, -9.81000042, 0]
         IsAwake: true
+        Disable: false
       RigidbodyFloatingComponent:
         LocalPosition: [0.5, 0.5, 0.5]
         MaxDepth: 0.5
@@ -97,10 +146,76 @@ Scene:
         FixedAspectRatio: false
         Camera:
           IsOrthographic: false
-          AspectRatio: 0.824207485
+          AspectRatio: 1.14841497
           OrthographicSize: 10
           OrthographicNear: -1
           OrthographicFar: 1
           PerspectiveVerticalFOV: 1.04719758
           PerspectiveNear: 0.00999999978
           PerspectiveFar: 1000
+    - Entity: 15659725371521534898
+      IsActive: true
+      TagComponent:
+        Tag: Cube - 0
+      TransformComponent:
+        Position: [0, 1.49011612e-08, 0.758909404]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      PrimitiveComponent:
+        PrimitiveType: 1
+        Material:
+          MaterialName: 12089639480541265262
+          ShaderName: Default
+          Parameters:
+            AlphaMode: 0
+            AlphaCutoff: 0.5
+            DoubleSided: 0
+            BaseColor: [1, 1, 1, 1]
+            BaseColorIndex: -1
+            BaseColorTexCoord: 0
+            MetallicFactor: 1
+            RoughnessFactor: 1
+            MetallicRoughnessIndex: -1
+            MetallicRoughnessTexCoord: 0
+            NormalMapIndex: -1
+            NormalMapTexCoord: 0
+            NormalMapScale: 1
+            OcclusionTextureIndex: -1
+            OcclusionTextureTexCoord: 0
+            OcclusionTextureStrength: 1
+            EmissiveFactor: [0, 0, 0, 1]
+            EmissiveTextureIndex: -1
+            EmissiveTextureTexCoord: 0
+      ColliderComponent:
+        HalfSize: [0.5, 0.5, 0.5]
+      RigidbodyComponent:
+        InverseMass: 0.0250000004
+        LinearDamping: 0.899999976
+        AngularDamping: 0.899999976
+        Position: [0, 0, 0]
+        Orientation: [0, 0, 0, 1]
+        LinearVelocity: [0, 0, 0]
+        AngularVelocity: [0, 0, 0]
+        InverseInertiaTensor:
+          -
+            - 0.149999991
+            - -0
+            - 0
+          -
+            - -0
+            - 0.149999991
+            - -0
+          -
+            - 0
+            - -0
+            - 0.149999991
+        ForceAccumulate: [0, 0, 0]
+        TorqueAccumulate: [0, 0, 0]
+        Acceleration: [0, -9.81000042, 0]
+        IsAwake: true
+        Disable: false
+      RigidbodyFloatingComponent:
+        LocalPosition: [0, 0.200000003, 0]
+        MaxDepth: 0.5
+        Volume: 0.800000012

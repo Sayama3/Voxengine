@@ -7,59 +7,41 @@
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Core/TypeHelpers.hpp"
 
+#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue) fieldVariable = node[fieldName].as<type>(defaultValue);
 
 namespace Voxymore::Core
 {
 	void ColliderComponent::DeserializeComponent(YAML::Node& node)
 	{
-		auto useSphere = [&node](Sphere& sphere) -> void {
-			auto rad = node["Radius"];
-			if(rad.IsDefined())
-			{
-				sphere.m_Radius = rad.as<Real>();
-			}
-			else
-			{
-				sphere.m_Radius = 1;
-			}
-		};
-		auto useBox = [&node](Box& box) -> void {
-			auto half = node["HalfSize"];
-			if(half.IsDefined())
-			{
-				box.m_HalfSize = half.as<Vec3>();
-			}
-			else
-			{
-				box.m_HalfSize = {0,0,0};
-			}
-		};
-		auto usePlane = [&node](Plane& plane) -> void {
-			auto norm = node["Normal"];
-			if(norm.IsDefined())
-			{
-				plane.m_Normal = norm.as<Vec3>();
-			}
-			else
-			{
-				plane.m_Normal = {0,0,0};
-			}
+		PrimitiveCollider::Type t = (PrimitiveCollider::Type) node["Type"].as<int>(PrimitiveCollider::Type::Box);
+		switch (t) {
 
-			auto offset = node["Offset"];
-			if(offset.IsDefined())
-			{
-				plane.m_Offset = offset.as<Real>();
+			case PrimitiveCollider::Sphere: {
+				m_Collider = Sphere();
+				Sphere& sphere = std::get<Sphere>(m_Collider);
+				DeserializeField(node, sphere.m_Radius, "Radius", Real, .5);
+				break;
 			}
-			else
-			{
-				plane.m_Offset = 0;
+			case PrimitiveCollider::Plane: {
+				m_Collider = Plane();
+				Plane& plane = std::get<Plane>(m_Collider);
+				DeserializeField(node, plane.m_Normal, "Normal", Vec3, Vec3(0,1,0));
+				DeserializeField(node, plane.m_Offset, "Offset", Real, 0);
+				break;
 			}
-		};
-		std::visit(overloads{useBox, useSphere, usePlane}, m_Collider);
+			case PrimitiveCollider::Box: {
+				m_Collider = Box();
+				Box& box = std::get<Box>(m_Collider);
+				DeserializeField(node, box.m_HalfSize, "HalfSize", Vec3, Vec3(.5,.5,.5));
+				break;
+			}
+		}
 	}
 
 	void ColliderComponent::SerializeComponent(YAML::Emitter& out)
 	{
+		PrimitiveCollider::Type t = std::visit(overloads{[](const Box& box){return PrimitiveCollider::Type::Box;}, [](const Sphere& sphere){return PrimitiveCollider::Type::Sphere;}, [](const Plane& plane){return PrimitiveCollider::Type::Plane;}}, m_Collider);
+		out << KEYVAL("Type", (int)t);
 		auto useSphere = [&out](const Sphere& sphere) -> void {
 			out << KEYVAL("Radius", sphere.m_Radius);
 		};
@@ -75,6 +57,18 @@ namespace Voxymore::Core
 
 	bool ColliderComponent::OnImGuiRender()
 	{
+		PrimitiveCollider::Type t = std::visit(overloads{[](const Box& box){return PrimitiveCollider::Type::Box;}, [](const Sphere& sphere){return PrimitiveCollider::Type::Sphere;}, [](const Plane& plane){return PrimitiveCollider::Type::Plane;}}, m_Collider);
+
+		const char* elems[3] = {"Sphere","Plane","Box"};
+		if(ImGui::Combo("Type", (int*)&t, elems, 3))
+		{
+			switch (t) {
+				case PrimitiveCollider::Sphere: m_Collider = Sphere(); break;
+				case PrimitiveCollider::Plane: m_Collider = Plane(); break;
+				case PrimitiveCollider::Box: m_Collider = Box(); break;
+			}
+		}
+
 		auto useSphere = [](Sphere& sphere) -> bool {
 			return ImGuiLib::DragReal("Radius", &sphere.m_Radius);
 		};

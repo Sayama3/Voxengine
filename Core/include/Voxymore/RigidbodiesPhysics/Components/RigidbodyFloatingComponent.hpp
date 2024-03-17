@@ -9,13 +9,13 @@
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 
 #ifndef VXM_DEFAULT_LOCAL_POSITION
-#define VXM_DEFAULT_LOCAL_POSITION {0,0,0};
+#define VXM_DEFAULT_LOCAL_POSITION (Vec3{0,0,0})
 #endif
 #ifndef VXM_DEFAULT_MAX_DEPTH
-#define VXM_DEFAULT_MAX_DEPTH 0.5
+#define VXM_DEFAULT_MAX_DEPTH ((Real)0.5)
 #endif
 #ifndef VXM_DEFAULT_VOLUME
-#define VXM_DEFAULT_VOLUME 0.015
+#define VXM_DEFAULT_VOLUME ((Real)0.015)
 #endif
 #ifndef VXM_DEFAULT_WATER_HEIGHT
 #define VXM_DEFAULT_WATER_HEIGHT {}

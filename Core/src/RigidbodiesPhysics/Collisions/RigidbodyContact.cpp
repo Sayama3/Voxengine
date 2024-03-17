@@ -151,7 +151,7 @@ namespace Voxymore::Core
 
 	CollisionData::CollisionData() : contacts(10)
 	{
-		contactsLeft = contacts.size();
+//		contactsLeft = contacts.size();
 	}
 
 	CollisionData::~CollisionData()
@@ -160,16 +160,13 @@ namespace Voxymore::Core
 
 	void CollisionData::AddContact(int i/* = 1*/)
 	{
-		contactsLeft -= i;
+//		contactsLeft -= i;
 	}
 
 	RigidbodyContact* CollisionData::GetContact()
 	{
-		if(contactsLeft <= 0)
-		{
-			return nullptr;
-		}
-		return &contacts[contactsLeft - 1];
+		contacts.emplace_back();
+		return &contacts[contacts.size() - 1];
 	}
 
 	RigidbodyContact* CollisionData::GetContact(int i)

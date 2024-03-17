@@ -54,9 +54,9 @@ namespace Voxymore::Core
 
 	Real IntersectionDetector::TransformToAxis(const Box& box, const Vec3& axis)
 	{
-		box.m_HalfSize.x * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[0]))) +
-				box.m_HalfSize.y * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[1]))) +
-				box.m_HalfSize.z * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[2])));
+		return box.m_HalfSize.x * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[0]))) +
+			   box.m_HalfSize.y * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[1]))) +
+			   box.m_HalfSize.z * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[2])));
 	}
 
 	Real IntersectionDetector::PenetrationOnAxis(const Voxymore::Core::Box &one, const Voxymore::Core::Box &two, const Voxymore::Core::Vec3 &axis, const Voxymore::Core::Vec3 &toCenter){
@@ -73,7 +73,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
@@ -105,7 +105,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
@@ -130,7 +130,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
@@ -167,7 +167,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
@@ -195,7 +195,6 @@ namespace Voxymore::Core
 				contact->SetBodyData(box.m_Body, nullptr, data->friction, data->restitution);
 				data->AddContact();
 				contactUsed++;
-				if(data->contactsLeft <= 0) break;
 			}
 		}
 
@@ -206,7 +205,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
@@ -281,7 +280,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(data, "The CollisionData is not valid.");
-		if(!data || data->contactsLeft <= 0)
+		if(!data)
 		{
 			return 0;
 		}
