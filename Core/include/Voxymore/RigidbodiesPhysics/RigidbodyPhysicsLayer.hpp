@@ -48,6 +48,11 @@ namespace Voxymore::Core
 		void AddContacts(const std::vector<RigidbodyContact>& contacts);
 	private:
 		[[nodiscard]] bool HasScene() const;
+
+		void Integrate(TimeStep ts);
+		bool BroadCollisionCheck(TimeStep ts);
+		bool FineCollisionCheck(TimeStep ts);
+		void CollisionResolution(TimeStep ts);
 	private:
 		Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
 		Ref<Scene> m_SceneHandle = nullptr;

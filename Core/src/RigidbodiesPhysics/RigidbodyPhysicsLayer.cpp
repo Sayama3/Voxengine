@@ -67,29 +67,41 @@ namespace Voxymore::Core
 			return;
 		}
 
+		Integrate(ts);
+
+		if(!BroadCollisionCheck(ts)) return;
+
+		if(!FineCollisionCheck(ts)) return;
+
+		CollisionResolution(ts);
+	}
+
+	void RigidbodyPhysicsLayer::Integrate(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
 		// Integrate all Rigidbodies
-		auto func = [&ts](entt::entity e, RigidbodyComponent& pc, TransformComponent& tc){
-			VXM_PROFILE_FUNCTION();
+		auto func = [&ts](entt::entity e, RigidbodyComponent& rc, TransformComponent& tc){
 
-			pc.SetPosition(tc.GetPosition());
-			pc.SetOrientation(tc.GetRotation());
-
-			pc.Integrate(ts);
-
-			tc.SetPosition(pc.GetPosition());
-			tc.SetRotation(pc.GetOrientation());
+			rc.SetTransform(&tc);
+			rc.Integrate(ts);
 		};
 
 		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent, DisableRigidbody>,  MultiThreading::ExecutionPolicy::Parallel, func);
+	}
 
+	bool RigidbodyPhysicsLayer::BroadCollisionCheck(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
 		delete m_Root;
 		m_Root = nullptr;
 		auto view = m_SceneHandle->view<RigidbodyComponent, ColliderComponent, TransformComponent>(exclude<DisableComponent, DisableRigidbody>);
 		for (auto e : view)
 		{
 			RigidbodyComponent& rc = view.get<RigidbodyComponent>(e);
-			ColliderComponent& cc = view.get<ColliderComponent>(e);
 			TransformComponent& tc = view.get<TransformComponent>(e);
+			ColliderComponent& cc = view.get<ColliderComponent>(e);
+			cc.SetTransform(&tc);
+			cc.SetRigidbody(&rc);
 			if(m_Root) m_Root->Insert(reinterpret_cast<Rigidbody*>(&rc), Entity(e,m_SceneHandle.get()), cc.GetBoundingSphere());
 			else m_Root = new BVHNode<BoundingSphere>(nullptr, reinterpret_cast<Rigidbody*>(&rc), Entity(e,m_SceneHandle.get()), cc.GetBoundingSphere());
 		}
@@ -97,13 +109,20 @@ namespace Voxymore::Core
 		if(!m_Root)
 		{
 			VXM_CORE_WARN("No rigidbodies found in the scene.");
-			return;
+			return false;
 		}
 
+		m_PotentialContacts.clear();
 		m_PotentialContacts.reserve(view.size_hint());
-		uint32_t count = m_Root->GetPotentialContacts(m_PotentialContacts);
-		m_Contacts.reserve(count);
+		m_Root->GetPotentialContacts(m_PotentialContacts);
+		return !m_PotentialContacts.empty();
+	}
 
+	bool RigidbodyPhysicsLayer::FineCollisionCheck(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Contacts.clear();
+		m_Contacts.reserve(m_PotentialContacts.size());
 		CollisionData* contacts = &m_Contacts;
 
 		for (PotentialContact& potentialContact : m_PotentialContacts)
@@ -126,14 +145,18 @@ namespace Voxymore::Core
 
 			auto collisionPoints = std::visit(overloads{bb, bs, bp, sb, ss, sp, pb, ps, pp}, col0.m_Collider, col1.m_Collider);
 		}
-		m_PotentialContacts.clear();
 
+		return !m_Contacts.empty();
+	}
+
+	void RigidbodyPhysicsLayer::CollisionResolution(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
 		if(!m_Contacts.empty())
 		{
 			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} iterations.",m_Contacts.size() , m_Contacts.size() * 2);
-//			m_Resolver.SetIterations(m_Contacts.size() * 2);
+			m_Resolver.SetIterations(m_Contacts.size() * 2);
 			m_Resolver.ResolveContacts(ts, m_Contacts.contacts);
-			m_Contacts.clear();
 		}
 	}
 
@@ -142,12 +165,19 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		m_SceneHandle = std::move(scene);
 		// Integrate all Rigidbodies
-		auto func = [](entt::entity e, RigidbodyComponent& pc, TransformComponent& tc){
-			pc.SetPosition(tc.GetPosition());
-			pc.SetOrientation(tc.GetRotation());
+		auto func0 = [](entt::entity e, RigidbodyComponent& rc, TransformComponent& tc){
+			rc.SetTransform(&tc);
+		};
+		auto func1 = [](entt::entity e, RigidbodyComponent& rc, ColliderComponent& cc){
+			cc.SetRigidbody(&rc);
+		};
+		auto func2 = [](entt::entity e, ColliderComponent& cc, TransformComponent& tc){
+			cc.SetTransform(&tc);
 		};
 
-		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(exclude<DisableComponent>, MultiThreading::ExecutionPolicy::Parallel, func);
+		m_SceneHandle->each<RigidbodyComponent, TransformComponent>(MultiThreading::ExecutionPolicy::Parallel, func0);
+		m_SceneHandle->each<RigidbodyComponent, ColliderComponent>(MultiThreading::ExecutionPolicy::Parallel, func1);
+		m_SceneHandle->each<ColliderComponent, TransformComponent>(MultiThreading::ExecutionPolicy::Parallel, func2);
 	}
 
 	void RigidbodyPhysicsLayer::ResetScene()

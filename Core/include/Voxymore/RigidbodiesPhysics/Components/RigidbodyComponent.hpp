@@ -22,7 +22,7 @@ namespace Voxymore::Core
 
 		inline RigidbodyComponent() = default;
 		inline ~RigidbodyComponent() = default;
-		RigidbodyComponent(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
+		RigidbodyComponent(Real inverseMass, Real linearDamping, TransformComponent* transform, Mat3 inverseInertiaTensor);
 	};
 
 	struct DisableRigidbody {};

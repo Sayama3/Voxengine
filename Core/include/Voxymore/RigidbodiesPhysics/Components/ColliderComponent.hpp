@@ -5,7 +5,9 @@
 #pragma once
 
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Components/Components.hpp"
 #include "Voxymore/RigidbodiesPhysics/Primitive.hpp"
+#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/Math/BoundingSphere.hpp"
 #include "Voxymore/Math/BoundingBox.hpp"
 #include <variant>
@@ -13,16 +15,16 @@
 namespace Voxymore::Core
 {
 
-	struct ColliderComponent : public Component<ColliderComponent>
+	struct ColliderComponent : public SelfAwareComponent<ColliderComponent>
 	{
 		VXM_IMPLEMENT_COMPONENT(ColliderComponent);
 	public:
 		inline ColliderComponent() = default;
 		inline ~ColliderComponent() = default;
 
-		void DeserializeComponent(YAML::Node& node);
-		void SerializeComponent(YAML::Emitter& out);
-		bool OnImGuiRender();
+		void DeserializeComponent(YAML::Node& node, Entity e);
+		void SerializeComponent(YAML::Emitter& out, Entity e);
+		bool OnImGuiRender(Entity e);
 	public:
 
 		template<class Collider>
@@ -40,6 +42,9 @@ namespace Voxymore::Core
 
 		[[nodiscard]] BoundingSphere GetBoundingSphere() const;
 		[[nodiscard]] BoundingBox GetBoundingBox() const;
+
+		void SetTransform(TransformComponent* tc);
+		void SetRigidbody(RigidbodyComponent* rc);
 
 
 		std::variant<Sphere, Plane, Box> m_Collider;

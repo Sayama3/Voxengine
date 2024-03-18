@@ -10,13 +10,23 @@ namespace Voxymore::Core
 {
 	Vec3 PrimitiveCollider::GetPosition() const
 	{
-		return m_Offset[3];
+		return m_CachedMatrix[3];
+	}
+
+	Mat4 PrimitiveCollider::GetMatrix() const
+	{
+		return m_CachedMatrix;
 	}
 
 	Vec3 PrimitiveCollider::GetAxis(int32_t i) const {
 		VXM_CORE_ASSERT(i >= 0, "The value i ({0}) is negative", i);
-		VXM_CORE_ASSERT(i < m_Offset.length(), "The value i ({0}) is not valid (superior to {1})", i, m_Offset.length());
-		return m_Offset[i];
+		VXM_CORE_ASSERT(i < m_CachedMatrix.length(), "The value i ({0}) is not valid (superior to {1})", i, m_CachedMatrix.length());
+		return m_CachedMatrix[i];
+	}
+
+	void PrimitiveCollider::CacheMatrix()
+	{
+		m_CachedMatrix = m_Transform ? m_Transform->GetTransform() : Math::Identity<Mat4>();
 	}
 
 	std::array<Vec3, 8> Box::GetVertices() const
@@ -34,8 +44,7 @@ namespace Voxymore::Core
 		};
 
 		for (auto& position : positions) {
-			auto pos = m_Offset * Vec4(position, 1);
-			position = pos / pos.w;
+			position = Math::TransformPoint(m_CachedMatrix, position);
 		}
 
 		return positions;

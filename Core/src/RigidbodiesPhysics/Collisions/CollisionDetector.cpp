@@ -54,9 +54,9 @@ namespace Voxymore::Core
 
 	Real IntersectionDetector::TransformToAxis(const Box& box, const Vec3& axis)
 	{
-		return box.m_HalfSize.x * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[0]))) +
-			   box.m_HalfSize.y * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[1]))) +
-			   box.m_HalfSize.z * Math::Abs(Math::Dot(axis, Vec3(box.m_Offset[2])));
+		return box.m_HalfSize.x * Math::Abs(Math::Dot(axis, Vec3(box.GetAxis(0)))) +
+			   box.m_HalfSize.y * Math::Abs(Math::Dot(axis, Vec3(box.GetAxis(1)))) +
+			   box.m_HalfSize.z * Math::Abs(Math::Dot(axis, Vec3(box.GetAxis(2))));
 	}
 
 	Real IntersectionDetector::PenetrationOnAxis(const Voxymore::Core::Box &one, const Voxymore::Core::Box &two, const Voxymore::Core::Vec3 &axis, const Voxymore::Core::Vec3 &toCenter){
@@ -210,7 +210,7 @@ namespace Voxymore::Core
 		}
 
 		Vec3 sphereCenter = sphere.GetPosition();
-		Vec3 relativeCenter = Math::TransformPoint(Math::Inverse(box.m_Offset), sphereCenter);
+		Vec3 relativeCenter = Math::TransformPoint(Math::Inverse(box.GetMatrix()), sphereCenter);
 
 		if (Math::Abs(relativeCenter.x) - sphere.m_Radius > box.m_HalfSize.x ||
 			Math::Abs(relativeCenter.y) - sphere.m_Radius > box.m_HalfSize.y ||
@@ -240,7 +240,7 @@ namespace Voxymore::Core
 		dist = Math::SqrMagnitude(closest - relativeCenter);
 		if(dist > Math::Pow2(sphere.m_Radius)) return 0;
 
-		Vec3 closestPtWorld = Math::TransformPoint(box.m_Offset, closest);
+		Vec3 closestPtWorld = Math::TransformPoint(box.GetMatrix(), closest);
 
 		RigidbodyContact contact;
 		contact.contactPoint = closestPtWorld;
@@ -356,7 +356,7 @@ namespace Voxymore::Core
 			// Create the contact data
 			contact.contactNormal = normal;
 			contact.penetration = bestOverlap;
-			contact.contactPoint = Math::TransformPoint(two.m_Offset, vertex);
+			contact.contactPoint = Math::TransformPoint(two.GetMatrix(), vertex);
 			contact.SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
 			data->AddContact(contact);
 			return 1;
@@ -380,7 +380,7 @@ namespace Voxymore::Core
 			// Create the contact data
 			contact.contactNormal = normal;
 			contact.penetration = bestOverlap;
-			contact.contactPoint = Math::TransformPoint(one.m_Offset, vertex);
+			contact.contactPoint = Math::TransformPoint(one.GetMatrix(), vertex);
 			contact.SetBodyData(two.m_Body, one.m_Body, data->friction, data->restitution);
 			data->AddContact(contact);
 			return 1;

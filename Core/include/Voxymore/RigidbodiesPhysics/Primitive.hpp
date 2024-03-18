@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Components/Components.hpp"
+#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
 namespace Voxymore::Core
 {
@@ -20,9 +22,11 @@ namespace Voxymore::Core
 		};
 	public:
 		Rigidbody* m_Body = nullptr;
-		Mat4 m_Offset = Math::Identity<Mat4>();
+		TransformComponent* m_Transform = nullptr;
 
+		void CacheMatrix();
 		[[nodiscard]] virtual Vec3 GetPosition() const;
+		[[nodiscard]] virtual Mat4 GetMatrix() const;
 
 		/**
 		 * @brief This function returns the axis (i.e. a column of the matrix) of the Primitive object at a given index.
@@ -34,25 +38,27 @@ namespace Voxymore::Core
 		 * If the provided index is invalid, the behavior is undefined.
 		 */
 		[[nodiscard]] Vec3 GetAxis(int32_t i) const;
+	protected:
+		Mat4 m_CachedMatrix = Math::Identity<Mat4>();
 	};
 
 	class Sphere : public PrimitiveCollider
 	{
 	public:
-		Real m_Radius = 1;
+		Real m_Radius = .5;
 	};
 
 	class Plane : public PrimitiveCollider
 	{
 	public:
-		Vec3 m_Normal = {0,0,0};
+		Vec3 m_Normal = {0,1,0};
 		Real m_Offset = 0;
 	};
 
 	class Box : public PrimitiveCollider
 	{
 	public:
-		Vec3 m_HalfSize = {0,0,0};
+		Vec3 m_HalfSize = {.5,.5,.5};
 
 		[[nodiscard]] std::array<Vec3, 8> GetVertices() const;
 	};

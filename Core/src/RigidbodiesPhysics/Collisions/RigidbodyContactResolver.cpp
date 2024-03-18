@@ -17,7 +17,7 @@ namespace Voxymore::Core
 		uint32_t i;
 		iterationsUsed = 0;
 
-		VXM_CORE_CHECK(iterations <= 0, "No iteration will be done as iterations = {0}", iterations);
+		VXM_CORE_CHECK(iterations > 0, "No iteration will be done as iterations = {0}", iterations);
 		VXM_CORE_CHECK(iterations >= contacts.size(), "There is not enough iterations to cover all the m_Contacts... {0} iterations for {1} m_Contacts", iterations, contacts.size());
 /*
 		while (iterationsUsed < iterations)
