@@ -84,6 +84,16 @@ namespace Voxymore::Core {
                 timeStep = static_cast<float>(time - m_LastFrameTime);
                 m_LastFrameTime = time;
             }
+
+#ifdef VXM_DEBUG
+			// Checking that we don't have a enormous timestep.
+			// Timestep > 1 mean we probably where checking debugger.
+			// Only doing that in debug mode thought.
+			if(timeStep > 1)
+			{
+				timeStep = 1./30.;
+			}
+#endif
             //TODO: Remove later as it should be abstracted?
             if(!GetWindow().IsMinify())
             {
