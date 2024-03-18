@@ -51,6 +51,7 @@ namespace Voxymore::Core {
 //#define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->trace(__VA_ARGS__)
 //#define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->info(__VA_ARGS__)
 //#define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
+//#define VXM_CORE_WARN(...)     ::Voxymore::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
 //#define VXM_CORE_ERROR(...)       ::Voxymore::Core::Log::GetCoreLogger()->error(__VA_ARGS__)
 //#define VXM_CORE_CRITICAL(...)    ::Voxymore::Core::Log::GetCoreLogger()->critical(__VA_ARGS__)
 //
@@ -58,6 +59,7 @@ namespace Voxymore::Core {
 //#define VXM_TRACE(...)       ::Voxymore::Core::Log::GetClientLogger()->trace(__VA_ARGS__)
 //#define VXM_INFO(...)        ::Voxymore::Core::Log::GetClientLogger()->info(__VA_ARGS__)
 //#define VXM_WARNING(...)     ::Voxymore::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
+//#define VXM_WARN(...)     ::Voxymore::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
 //#define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->error(__VA_ARGS__)
 //#define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->critical(__VA_ARGS__)
 
@@ -66,6 +68,7 @@ namespace Voxymore::Core {
 #define VXM_CORE_TRACE(...)
 #define VXM_CORE_INFO(...)
 #define VXM_CORE_WARNING(...)
+#define VXM_CORE_WARN(...)
 #define VXM_CORE_ERROR(...)
 #define VXM_CORE_CRITICAL(...)
 
@@ -73,6 +76,7 @@ namespace Voxymore::Core {
 #define VXM_TRACE(...)
 #define VXM_INFO(...)
 #define VXM_WARNING(...)
+#define VXM_WARN(...)
 #define VXM_ERROR(...)
 #define VXM_CRITICAL(...)
 
