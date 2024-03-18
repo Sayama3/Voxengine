@@ -91,12 +91,12 @@ namespace Voxymore::Core
 
 		Vec3 normal = midline * (Real)1.0 / size;
 
-		auto* contacts = data->GetContact();
-		contacts->contactNormal = normal;
-		contacts->contactPoint = pOne + midline * (Real)0.5;
-		contacts->penetration = (one.m_Radius + two.m_Radius - size);
-		contacts->SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
-		data->AddContact();
+		RigidbodyContact contacts;
+		contacts.contactNormal = normal;
+		contacts.contactPoint = pOne + midline * (Real)0.5;
+		contacts.penetration = (one.m_Radius + two.m_Radius - size);
+		contacts.SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
+		data->AddContact(contacts);
 
 		return 1;
 	}
@@ -115,13 +115,13 @@ namespace Voxymore::Core
 
 		if (ballDistance >= 0) return 0;
 
-		RigidbodyContact* contact = data->GetContact();
+		RigidbodyContact contact;
 
-		contact->contactNormal = plane.m_Normal;
-		contact->penetration = -ballDistance;
-		contact->contactPoint = position - plane.m_Normal * (ballDistance + sphere.m_Radius);
-		contact->SetBodyData(sphere.m_Body, nullptr, data->friction, data->restitution);
-		data->AddContact();
+		contact.contactNormal = plane.m_Normal;
+		contact.penetration = -ballDistance;
+		contact.contactPoint = position - plane.m_Normal * (ballDistance + sphere.m_Radius);
+		contact.SetBodyData(sphere.m_Body, nullptr, data->friction, data->restitution);
+		data->AddContact(contact);
 
 		return 1;
 	}
@@ -152,13 +152,12 @@ namespace Voxymore::Core
 		}
 		penetration += sphere.m_Radius;
 
-		RigidbodyContact* contact = data->GetContact();
-		contact->contactPoint = position - normal * centerDistance;
-		contact->contactNormal = normal;
-		contact->penetration = penetration;
-
-		contact->SetBodyData(sphere.m_Body, nullptr,data->friction ,data->restitution);
-		data->AddContact();
+		RigidbodyContact contact;
+		contact.contactPoint = position - normal * centerDistance;
+		contact.contactNormal = normal;
+		contact.penetration = penetration;
+		contact.SetBodyData(sphere.m_Body, nullptr,data->friction ,data->restitution);
+		data->AddContact(contact);
 
 		return 1;
 	}
@@ -186,14 +185,14 @@ namespace Voxymore::Core
 
 			if(vertDistance <= plane.m_Offset)
 			{
-				auto* contact = data->GetContact();
-				contact->contactPoint = plane.m_Normal;
-				contact->contactPoint *= (vertDistance -plane.m_Offset);
-				contact->contactPoint += vertexPos;
-				contact->contactNormal = plane.m_Normal;
-				contact->penetration = plane.m_Offset - vertDistance;
-				contact->SetBodyData(box.m_Body, nullptr, data->friction, data->restitution);
-				data->AddContact();
+				RigidbodyContact contact;
+				contact.contactPoint = plane.m_Normal;
+				contact.contactPoint *= (vertDistance -plane.m_Offset);
+				contact.contactPoint += vertexPos;
+				contact.contactNormal = plane.m_Normal;
+				contact.penetration = plane.m_Offset - vertDistance;
+				contact.SetBodyData(box.m_Body, nullptr, data->friction, data->restitution);
+				data->AddContact(contact);
 				contactUsed++;
 			}
 		}
@@ -243,12 +242,12 @@ namespace Voxymore::Core
 
 		Vec3 closestPtWorld = Math::TransformPoint(box.m_Offset, closest);
 
-		auto* contact = data->GetContact();
-		contact->contactPoint = closestPtWorld;
-		contact->contactNormal = Math::Normalize(closestPtWorld - sphereCenter);
-		contact->penetration = sphere.m_Radius - Math::Sqrt(dist);
-		contact->SetBodyData(box.m_Body, sphere.m_Body, data->friction, data->restitution);
-		data->AddContact();
+		RigidbodyContact contact;
+		contact.contactPoint = closestPtWorld;
+		contact.contactNormal = Math::Normalize(closestPtWorld - sphereCenter);
+		contact.penetration = sphere.m_Radius - Math::Sqrt(dist);
+		contact.SetBodyData(box.m_Body, sphere.m_Body, data->friction, data->restitution);
+		data->AddContact(contact);
 
 		return 1;
 	}
@@ -340,7 +339,7 @@ namespace Voxymore::Core
 
 		if(bestCase < 3) // Face Object one
 		{
-			auto* contact = data->GetContact();
+			RigidbodyContact contact;
 
 			Vec3 normal = one.GetAxis(bestCase);
 			if (Math::Dot(one.GetAxis(bestCase), toCenter) > 0)
@@ -355,16 +354,16 @@ namespace Voxymore::Core
 			if (Math::Dot(two.GetAxis(2), normal) < 0) vertex.z = -vertex.z;
 
 			// Create the contact data
-			contact->contactNormal = normal;
-			contact->penetration = bestOverlap;
-			contact->contactPoint = Math::TransformPoint(two.m_Offset, vertex);
-			contact->SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
-			data->AddContact();
+			contact.contactNormal = normal;
+			contact.penetration = bestOverlap;
+			contact.contactPoint = Math::TransformPoint(two.m_Offset, vertex);
+			contact.SetBodyData(one.m_Body, two.m_Body, data->friction, data->restitution);
+			data->AddContact(contact);
 			return 1;
 		}
 		else if(bestCase < 6) // Face Object two
 		{
-			auto* contact = data->GetContact();
+			RigidbodyContact contact;
 
 			Vec3 normal = two.GetAxis(bestCase-3);
 			if (Math::Dot(two.GetAxis(bestCase-3), (toCenter * (Real)-1)) > 0)
@@ -379,11 +378,11 @@ namespace Voxymore::Core
 			if (Math::Dot(one.GetAxis(2), normal) < 0) vertex.z = -vertex.z;
 
 			// Create the contact data
-			contact->contactNormal = normal;
-			contact->penetration = bestOverlap;
-			contact->contactPoint = Math::TransformPoint(one.m_Offset, vertex);
-			contact->SetBodyData(two.m_Body, one.m_Body, data->friction, data->restitution);
-			data->AddContact();
+			contact.contactNormal = normal;
+			contact.penetration = bestOverlap;
+			contact.contactPoint = Math::TransformPoint(one.m_Offset, vertex);
+			contact.SetBodyData(two.m_Body, one.m_Body, data->friction, data->restitution);
+			data->AddContact(contact);
 			return 1;
 		}
 		else // Edge vs Edge contact
@@ -410,12 +409,12 @@ namespace Voxymore::Core
 				else if(Math::Dot(two.GetAxis(i), axe) > 0) ptOnEdgeTwo[i] *= (Real)-1.0;
 			}
 
-			auto contact = data->GetContact();
-			contact->contactNormal = axe;
-			contact->penetration = bestOverlap;
-			contact->contactPoint = GetContactPoint(oneAxis, twoAxis, ptOnEdgeOne, ptOnEdgeTwo);
-			contact->SetBodyData(two.m_Body, one.m_Body, data->friction, data->restitution);
-			data->AddContact();
+			RigidbodyContact contact;
+			contact.contactPoint = GetContactPoint(oneAxis, twoAxis, ptOnEdgeOne, ptOnEdgeTwo);
+			contact.contactNormal = axe;
+			contact.penetration = bestOverlap;
+			contact.SetBodyData(two.m_Body, one.m_Body, data->friction, data->restitution);
+			data->AddContact(contact);
 			return 1;
 		}
 	}

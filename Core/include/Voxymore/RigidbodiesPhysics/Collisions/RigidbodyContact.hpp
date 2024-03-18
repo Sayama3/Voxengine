@@ -47,8 +47,10 @@ namespace Voxymore::Core
 		Real restitution;
 
 		void AddContact(int i = 1);
+		[[deprecated("use CollisionData::AddContact")]]
 		RigidbodyContact* GetContact();
 		RigidbodyContact* GetContact(int i);
+		void AddContact(const RigidbodyContact& contact);
 
 		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin();}
 		inline std::vector<RigidbodyContact>::iterator end()  { return contacts.end();}

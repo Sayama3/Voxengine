@@ -165,6 +165,7 @@ namespace Voxymore::Core
 
 	RigidbodyContact* CollisionData::GetContact()
 	{
+		VXM_PROFILE_FUNCTION();
 		contacts.emplace_back();
 		return &contacts[contacts.size() - 1];
 	}
@@ -174,6 +175,15 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(i >= 0 && i < contacts.size(), "Contact {0} is not a valid index.");
 		if(i < 0 || i >= contacts.size()) return nullptr;
 		return &contacts[i];
+	}
+
+	void CollisionData::AddContact(const RigidbodyContact& contact)
+	{
+		VXM_PROFILE_FUNCTION();
+		if(contact.bodies[0] || contact.bodies[1]) {
+			contacts.push_back(contact);
+			AddContact(1);
+		}
 	}
 
 	void CollisionData::reserve(size_t count)
