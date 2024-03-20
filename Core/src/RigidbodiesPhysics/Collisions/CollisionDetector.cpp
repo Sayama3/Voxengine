@@ -4,15 +4,26 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/CollisionDetector.hpp"
+#include <algorithm>
 
 
 namespace Voxymore::Core
 {
 	bool IntersectionDetector::BoxAndHalfSpace(const Box& box, const Plane& plane)
 	{
+#if defined(__APPLE__) || defined(__MACH__)
+		auto vertices = box.GetVertices();
+		for(const Vec3& vertice : vertices) {
+			if(Math::Dot(vertice, plane.m_Normal) <= plane.m_Offset) {
+				return true;
+			}
+		}
+		return false;
+#else
 		return std::ranges::any_of(box.GetVertices(), [&plane](Vec3& point) {
 			return Math::Dot(point, plane.m_Normal) <= plane.m_Offset;
 		});
+#endif
 	}
 	bool IntersectionDetector::BoxAndBox(const Box &one, const Box &two)
 	{
