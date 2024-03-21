@@ -16,6 +16,7 @@
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Renderer/Light.hpp"
+#include <map>
 
 #define MAX_LIGHT_COUNT 20
 
@@ -37,6 +38,9 @@ namespace Voxymore {
 			};
 			struct ModelData
 			{
+				inline ModelData() = default;
+				inline ~ModelData() = default;
+				ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId);
 				glm::mat4 TransformMatrix;
 				glm::mat4 NormalMatrix;
 				int EntityId;
@@ -55,6 +59,8 @@ namespace Voxymore {
 			Ref<UniformBuffer> ModelUniformBuffer;
 			Ref<UniformBuffer> LightUniformBuffer;
 			Ref<UniformBuffer> MaterialUniformBuffer;
+			std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
+			std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
 		};
 
 		class Renderer {
@@ -69,13 +75,15 @@ namespace Voxymore {
 			static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {});
 			static void EndScene();
 
+			[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
 			static void Submit(Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+			[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
 			static void Submit(Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+
 			static void Submit(const MeshGroup& mesh, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 			static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-
-			static void Submit(const Ref<Mesh>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+			static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+//			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 
 			inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		private:

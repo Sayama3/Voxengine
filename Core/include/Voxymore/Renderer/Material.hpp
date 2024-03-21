@@ -23,7 +23,7 @@ namespace Voxymore::Core {
 		Blend,
 	};
 
-	struct TextureInfo
+	struct 	TextureInfo
 	{
 		int Index = -1;
 		int TexCoord = 0;
@@ -74,11 +74,9 @@ namespace Voxymore::Core {
 		int AlphaMode = AlphaMode::Opaque;
 		float AlphaCutoff = 0.5f;
 		int DoubleSided = false;
-
-		//		void Deserialize(YAML::Node& node);
-		//		void Serialize(YAML::Emitter& emitter) const;
-		//		void SetAlphaMode(const std::string& alphaMode);
 	};
+
+
 
 	class Material : public Serializable
 	{
@@ -116,6 +114,7 @@ namespace Voxymore::Core {
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
 		virtual void Serialize(YAML::Emitter& emitter) const override;
+		virtual bool OnImGui() override;
 	private:
 		void ResetShader();
 		void LoadShader();
@@ -136,7 +135,12 @@ namespace Voxymore::Core {
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
 		virtual void Serialize(YAML::Emitter& emitter) const override;
+		virtual bool OnImGui() override;
 	};
+
+	static void MaterialParameters_Deserialize(MaterialParameters* material, YAML::Node& node);
+	static void MaterialParameters_Serialize(const MaterialParameters* material, YAML::Emitter& emitter);
+	static bool MaterialParameters_ImGui(MaterialParameters* material);
 
 } // Voxymore
 // Core

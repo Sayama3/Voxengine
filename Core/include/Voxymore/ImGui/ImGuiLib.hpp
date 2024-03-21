@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 #include <imgui.h>
 
 namespace Voxymore::Core

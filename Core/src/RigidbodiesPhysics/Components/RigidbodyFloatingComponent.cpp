@@ -5,26 +5,16 @@
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
 
+#define DeserializeField(node, fieldVariable, fieldName, type, defaultValue) fieldVariable = node[fieldName].as<type>(defaultValue);
+
 namespace Voxymore
 {
 	namespace Core
 	{
 		void RigidbodyFloatingComponent::DeserializeComponent(YAML::Node& node) {
-			if(node["LocalPosition"].IsDefined()) {
-				LocalPosition = node["LocalPosition"].as<Vec3>();
-			} else{
-				LocalPosition = VXM_DEFAULT_LOCAL_POSITION;
-			}
-			if(node["MaxDepth"].IsDefined()) {
-				MaxDepth = node["MaxDepth"].as<Real>();
-			} else{
-				MaxDepth = VXM_DEFAULT_MAX_DEPTH;
-			}
-			if(node["Volume"].IsDefined()) {
-				Volume = node["Volume"].as<Real>();
-			} else{
-				Volume = VXM_DEFAULT_VOLUME;
-			}
+			DeserializeField(node, LocalPosition, "LocalPosition", Vec3, VXM_DEFAULT_LOCAL_POSITION);
+			DeserializeField(node, MaxDepth, "MaxDepth", Real, VXM_DEFAULT_MAX_DEPTH);
+			DeserializeField(node, Volume, "Volume", Real, VXM_DEFAULT_VOLUME);
 			if(node["WaterHeight"].IsDefined()) {
 				WaterHeight = node["WaterHeight"].as<Real>();
 			} else{

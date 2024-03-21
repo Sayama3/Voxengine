@@ -5,13 +5,13 @@ cmake_minimum_required(VERSION 3.25)
 set(LIBRARY_TARGET_NAME Core)
 
 set(SRC_FILES src/Core/Application.cpp
-        src/Core/Math.cpp
+        src/Math/Math.cpp
         src/Core/Logger.cpp
         include/Voxymore/Voxymore.hpp
         include/Voxymore/Core/Application.hpp
         include/Voxymore/Core/EntryPoint.hpp
         include/Voxymore/Core/Logger.hpp
-        include/Voxymore/Core/Math.hpp
+        include/Voxymore/Math/Math.hpp
         vendor/stb_image.h
         include/Voxymore/Core/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp
@@ -152,6 +152,19 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/Systems/RigidbodyBuoyancySystem.hpp
         src/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.hpp
+        include/Voxymore/Math/BoundingObject.hpp
+        src/Math/BoundingSphere.cpp
+        include/Voxymore/Math/BoundingSphere.hpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp
+        src/Math/BoundingBox.cpp
+        include/Voxymore/Math/BoundingBox.hpp
+        src/RigidbodiesPhysics/Primitive.cpp
+        include/Voxymore/RigidbodiesPhysics/Primitive.hpp
+        src/RigidbodiesPhysics/Collisions/CollisionDetector.cpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/CollisionDetector.hpp
+        src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
+        include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
+        include/Voxymore/Core/TypeHelpers.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

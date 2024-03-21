@@ -5,8 +5,8 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/Math/Math.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 #include "static_block.hpp"

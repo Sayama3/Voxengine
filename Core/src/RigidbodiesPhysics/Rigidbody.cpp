@@ -6,13 +6,15 @@
 
 namespace Voxymore::Core
 {
-	Rigidbody::Rigidbody(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor)
-		: m_InverseMass(inverseMass), m_LinearDamping(linearDamping), m_Position(position), m_Orientation(orientation), m_InverseInertiaTensor(inverseInertiaTensor)
+	Rigidbody::Rigidbody(Real inverseMass, Real linearDamping, TransformComponent* transform, Mat3 inverseInertiaTensor)
+		: m_InverseMass(inverseMass), m_LinearDamping(linearDamping), m_Transform(transform), m_InverseInertiaTensor(inverseInertiaTensor)
 	{
 	}
 	void Rigidbody::Integrate(Real ts)
 	{
 		VXM_PROFILE_FUNCTION();
+
+		if(!m_Transform) return;
 
 		if(m_InverseMass <= 0) {
 			return;
@@ -28,23 +30,25 @@ namespace Voxymore::Core
 		m_LinearVelocity *= Math::Pow(m_LinearDamping, static_cast<Real>(ts));
 		m_AngularVelocity *= Math::Pow(m_AngularDamping, static_cast<Real>(ts));
 
-		m_Position += m_LinearVelocity * ts;
+		m_Transform->AddMovement(m_LinearVelocity * ts);
 		auto rad = glm::radians(m_AngularVelocity * ts);
+		auto orientation = m_Transform->GetRotation();
 		auto qua = Quat();
 		qua.x = rad.x;
 		qua.y = rad.y;
 		qua.z = rad.z;
 		qua.w = 0;
-		qua *= m_Orientation;
-		m_Orientation += qua * (Real)0.5;
-		m_Orientation = glm::normalize(m_Orientation);
+		qua *= orientation;
+		orientation += qua * (Real)0.5;
+		orientation = glm::normalize(orientation);
+		m_Transform->SetRotation(orientation);
 		ClearAccumulator();
 	}
 
 	Mat4 Rigidbody::CalculateTransformMatrix() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return Math::TRS(m_Position, m_Orientation);
+		return m_Transform->GetTransform();
 	}
 
 	void Rigidbody::SetInertiaTensor(const Mat3 &inertiaTensor)
@@ -62,33 +66,36 @@ namespace Voxymore::Core
 	Mat3 Rigidbody::CalculateWorldInverseInertiaTensor() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return Math::ToMat3(m_Orientation) * m_InverseInertiaTensor;
+		return Math::ToMat3(m_Transform->GetRotation()) * m_InverseInertiaTensor;
 	}
 
 	void Rigidbody::AddForce(const Vec3 &force)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_ForceAccumulate += force;
-		m_IsAwake = true;
+		// TODO: Add an "awake" mechanism without a bool m_Awake>
+		// m_IsAwake = true;
 	}
 
 	void Rigidbody::AddAcceleration(const Vec3 & accel)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_ForceAccumulate += HasFiniteMass() ? accel * GetMass() : accel;
-		m_IsAwake = true;
+		// TODO: Add an "awake" mechanism without a bool m_Awake>
+		// m_IsAwake = true;
 	}
 
 
 	void Rigidbody::AddForceAtPoint(const Vec3& force,const Vec3& point)
 	{
 		VXM_PROFILE_FUNCTION();
-		auto r = point - m_Position;
+		auto r = point - m_Transform->GetPosition();
 
 		m_ForceAccumulate += force;
 		m_TorqueAccumulate += Math::Cross(r, force);
 
-		m_IsAwake = true;
+		// TODO: Add an "awake" mechanism without a bool m_Awake>
+		// m_IsAwake = true;
 	}
 
 	void Rigidbody::AddForceAtBodyPoint(const Vec3& force,const Vec3& bodyPoint)
@@ -174,45 +181,49 @@ namespace Voxymore::Core
 		m_LinearDamping = linearDamping;
 	}
 
-	const Vec3& Rigidbody::GetPosition() const
+	void Rigidbody::SetTransform(TransformComponent* transform)
 	{
-		VXM_PROFILE_FUNCTION();
-		return m_Position;
+		m_Transform = transform;
 	}
 
-	Vec3& Rigidbody::GetPosition()
+	const TransformComponent* Rigidbody::GetTransform() const
+	{
+		return m_Transform;
+	}
+
+	TransformComponent* Rigidbody::GetTransform()
+	{
+		return m_Transform;
+	}
+
+	Vec3 Rigidbody::GetPosition() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return m_Position;
+		return m_Transform->GetPosition();
 	}
 
 	void Rigidbody::SetPosition(const Vec3& position)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Position = position;
+		m_Transform->SetPosition(position);
 	}
+
 	void Rigidbody::AddMovement(const Vec3& movement)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Position += movement;
+		m_Transform->AddMovement(movement);
 	}
 
-	const Quat& Rigidbody::GetOrientation() const
+	Quat Rigidbody::GetOrientation() const
 	{
 		VXM_PROFILE_FUNCTION();
-		return m_Orientation;
-	}
-
-	Quat& Rigidbody::GetOrientation()
-	{
-		VXM_PROFILE_FUNCTION();
-		return m_Orientation;
+		return m_Transform->GetRotation();
 	}
 
 	void Rigidbody::SetOrientation(const Quat& orientation)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Orientation = orientation;
+		m_Transform->SetRotation(orientation);
 	}
 
 	const Vec3& Rigidbody::GetLinearVelocity() const

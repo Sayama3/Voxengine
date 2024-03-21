@@ -4,7 +4,8 @@
 
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Core/Logger.hpp"
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/BoundingBox.hpp"
 
 // PRIVATE USE ONLY
 #include "GLTFHelper.hpp"
@@ -18,6 +19,19 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		return CreateRef<Model>(path, shader);
+	}
+
+	BoundingBox GetBoundingBox(const std::string &attribute, tinygltf::Model &model, tinygltf::Primitive &primitive)
+	{
+		VXM_PROFILE_FUNCTION();
+		int value = primitive.attributes[attribute];
+		auto &accessor = model.accessors[value];
+		BoundingBox aabb;
+		if(accessor.minValues.size() >= 3 && accessor.maxValues.size() >= 3) {
+			aabb.SetMinMax(Vec3(accessor.minValues[0], accessor.minValues[1], accessor.minValues[2]),
+						   Vec3(accessor.maxValues[0], accessor.maxValues[1], accessor.maxValues[2]));
+		}
+		return aabb;
 	}
 
 	template<typename T, GLTF::ComponentType ct, GLTF::AccessorType at>
@@ -221,6 +235,7 @@ namespace Voxymore::Core
 
 					std::vector<Vertex> vertexes;
 					std::vector<uint32_t> index;
+					BoundingBox aabb;
 
 					{
 						VXM_PROFILE_SCOPE("Model::Model -> Create Vertex Buffer");
@@ -245,6 +260,7 @@ namespace Voxymore::Core
 						auto &&[positionsBuffer, positionsCount] = GetBuffer<glm::vec3, GLTF::ComponentType::Float, GLTF::AccessorType::VEC3>(positionAttribute, model, primitive);
 						auto &&[normalsBuffer, normalsCount] = GetBuffer<glm::vec3, GLTF::ComponentType::Float, GLTF::AccessorType::VEC3>(normalAttribute, model, primitive);
 						auto &&[texcoordsBuffer, texcoordsCount] = GetBuffer<glm::vec2, GLTF::ComponentType::Float, GLTF::AccessorType::VEC2>(texcoordAttribute, model, primitive);
+						aabb = GetBoundingBox(positionAttribute, model, primitive);
 
 						VXM_CORE_ASSERT(positionsCount == normalsCount && normalsCount == texcoordsCount, "The buffer are not the same size");
 						size_t verticesCount = positionsCount;
@@ -379,7 +395,7 @@ namespace Voxymore::Core
 						}
 					}
 
-					meshGroup.AddSubMesh(vertexes, index, material);
+					meshGroup.AddSubMesh(vertexes, index, aabb, material);
 				}
 				m_Meshes.push_back(meshGroup);
 			}
@@ -439,7 +455,7 @@ namespace Voxymore::Core
 		{
 			for(auto& mesh : meshGroup.m_Meshes)
 			{
-				mesh.SetShader(shader);
+				mesh->SetShader(shader);
 			}
 		}
 	}
@@ -452,7 +468,7 @@ namespace Voxymore::Core
 		{
 			for(auto& mesh : meshGroup.m_Meshes)
 			{
-				mesh.SetShader(shaderName);
+				mesh->SetShader(shaderName);
 			}
 		}
 	}

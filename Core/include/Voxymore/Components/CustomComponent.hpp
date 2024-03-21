@@ -40,6 +40,17 @@ public:
 		static void RemoveComponent(const std::string&componentName);
 		static const std::vector<ComponentChecker>& GetComponents();
 	};
+	template<class...>struct types{using type=types;};
+
+	template<class Sig> struct args;
+	template<class R, class...Args>
+	struct args<R(Args...)>:types<Args...>{};
+	template<class Sig> using args_t=typename args<Sig>::type;
+
+	template <class...Params>
+	void some_function(types<Params...>) {
+
+	}
 
 	template<class T>
 	class Component
@@ -51,6 +62,42 @@ public:
 		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<T>().DeserializeComponent(node);}
 		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out);}
 		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender();}
+		inline static std::string StaticGetName() { return T::GetName(); }
+
+		inline static void RegisterComponent()
+		{
+			std::string name = StaticGetName();
+			if(ComponentManager::HasComponent(name)) return;
+			ComponentChecker cc;
+			cc.ComponentName = name;
+			cc.ComponentHash = typeid(T).hash_code();
+			cc.HasComponent = T::HasComponent;
+			cc.AddComponent = T::AddComponent;
+			cc.RemoveComponent = T::RemoveComponent;
+			cc.SerializeComponent = T::StaticSerializeComponent;
+			cc.DeserializeComponent = T::StaticDeserializeComponent;
+			cc.OnImGuiRender = T::StaticOnImGuiRender;
+			ComponentManager::AddComponent(cc);
+		}
+
+		inline static void UnregisterComponent()
+		{
+			std::string name = StaticGetName();
+			ComponentManager::RemoveComponent(name);
+		}
+	};
+
+
+	template<class T>
+	class SelfAwareComponent
+	{
+	public:
+		inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<T>();}
+		inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddComponent<T>(); }
+		inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<T>(); }
+		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<T>().DeserializeComponent(node, targetEntity);}
+		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out, sourceEntity);}
+		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender(sourceEntity);}
 		inline static std::string StaticGetName() { return T::GetName(); }
 
 		inline static void RegisterComponent()

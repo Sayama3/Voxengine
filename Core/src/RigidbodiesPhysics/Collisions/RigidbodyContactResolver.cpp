@@ -4,49 +4,52 @@
 
 #include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
 
-namespace Voxymore
+
+namespace Voxymore::Core
 {
-	namespace Core
+
+	RigidbodyContactResolver::RigidbodyContactResolver() : iterations(0), iterationsUsed(0) {}
+	RigidbodyContactResolver::RigidbodyContactResolver(uint32_t iterations) : iterations(iterations), iterationsUsed(0) {}
+
+	void RigidbodyContactResolver::ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts)
 	{
-		RigidbodyContactResolver::RigidbodyContactResolver() : iterations(0), iterationsUsed(0) {}
-		RigidbodyContactResolver::RigidbodyContactResolver(uint32_t iterations) : iterations(iterations), iterationsUsed(0) {}
+		VXM_PROFILE_FUNCTION();
+		uint32_t i;
+		iterationsUsed = 0;
 
-		void RigidbodyContactResolver::ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts)
+		VXM_CORE_CHECK(iterations > 0, "No iteration will be done as iterations = {0}", iterations);
+		VXM_CORE_CHECK(iterations >= contacts.size(), "There is not enough iterations to cover all the m_Contacts... {0} iterations for {1} m_Contacts", iterations, contacts.size());
+/*
+		while (iterationsUsed < iterations)
 		{
-			uint32_t i;
-			iterationsUsed = 0;
-
-			VXM_CORE_CHECK(iterations <= 0, "No iteration will be done as iterations = {0}", iterations);
-			VXM_CORE_CHECK(iterations >= contacts.size(), "There is not enough iterations to cover all the m_Contacts... {0} iterations for {1} m_Contacts", iterations, contacts.size());
-
-			while (iterationsUsed < iterations)
+			Real max = REAL_MAX;
+			uint32_t maxIndex = contacts.size();
+			for (i = 0; i < contacts.size(); ++i)
 			{
-				Real max = REAL_MAX;
-				uint32_t maxIndex = contacts.size();
-				for (i = 0; i < contacts.size(); ++i)
+				if(!contacts[i].bodies[0] && !contacts[i].bodies[1]) continue;
+				Real sepVel = contacts[i].CalculateSeparatingVelocity();
+				if(sepVel < max && (sepVel < 0 || contacts[0].penetration > 0))
 				{
-					Real sepVel = contacts[i].CalculateSeparatingVelocity();
-					if(sepVel < max && (sepVel < 0 || contacts[0].penetration > 0))
-					{
-						max = sepVel;
-						maxIndex = i;
-					}
+					max = sepVel;
+					maxIndex = i;
 				}
-
-				if(maxIndex == contacts.size())
-				{
-					break;
-				}
-
-				contacts[maxIndex].Resolve(ts);
-				++iterationsUsed;
 			}
-		}
 
-		void RigidbodyContactResolver::SetIterations(uint32_t iterations)
-		{
-			this->iterations = iterations;
-		}
+			if(maxIndex == contacts.size())
+			{
+				break;
+			}
 
-	}// namespace Core
-}// namespace Voxymore
+			contacts[maxIndex].Resolve(ts);
+			++iterationsUsed;
+		}
+*/
+		VXM_CORE_WARN("We should use resolve all the contacts encountered here.");
+	}
+
+	void RigidbodyContactResolver::SetIterations(uint32_t iterations)
+	{
+		this->iterations = iterations;
+	}
+
+} // namespace Voxymore::Core

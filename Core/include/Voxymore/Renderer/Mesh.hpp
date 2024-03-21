@@ -9,6 +9,8 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/BoundingBox.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Texture.hpp"
@@ -60,15 +62,17 @@ namespace Voxymore::Core
 		friend class Model;
 	public:
 	private:
-		std::vector<Mesh> m_Meshes;
+		std::vector<Ref<Mesh>> m_Meshes;
 	public:
 		MeshGroup() = default;
 		~MeshGroup() = default;
-		inline const std::vector<Mesh>& GetSubMeshes() const { return m_Meshes; }
+		inline const std::vector<Ref<Mesh>>& GetSubMeshes() const { return m_Meshes; }
 		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
 		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
 		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
 		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material);
 	};
 
 	class Mesh
@@ -77,6 +81,7 @@ namespace Voxymore::Core
 	public:
 		//Mesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
+		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb);
 		~Mesh() = default;
 		inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		void Bind() const;
@@ -86,6 +91,8 @@ namespace Voxymore::Core
 		const Ref<Material>& GetMaterial() const;
 		void SetMaterial(Ref<Material> material);
 		[[nodiscard]] inline UUID id() const { return m_Id; }
+
+		inline const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 	private:
 		UUID m_Id;
 		Ref<VertexArray> m_VertexArray;
@@ -93,9 +100,10 @@ namespace Voxymore::Core
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Material> m_Material;
 		BufferLayout m_BufferLayout;
+		BoundingBox m_BoundingBox;
 	};
 
-	class Primitive
+	class PrimitiveMesh
 	{
 	public:
 		enum Type
@@ -103,11 +111,11 @@ namespace Voxymore::Core
 			Square,
 			Cube,
 		};
-		static std::string GetTypeString(Primitive::Type type);
+		static std::string GetTypeString(PrimitiveMesh::Type type);
 		inline static std::unordered_map<Type, std::string> GetTypesString() { return {{Type::Square, "Square"}, {Type::Cube, "Cube"}};}
 		inline static std::vector<Type> GetAllTypes() { return {Type::Square, Type::Cube};}
 	private:
-		static Primitive* GetInstance();
+		static PrimitiveMesh * GetInstance();
 	public:
 		static void InitPrimitives();
 		static void DestroyPrimitives();
@@ -117,8 +125,8 @@ namespace Voxymore::Core
 		static Ref<Mesh> CreateOrphan(Type type);
 
 	public:
-		Primitive() = default;
-		~Primitive() = default;
+		PrimitiveMesh() = default;
+		~PrimitiveMesh() = default;
 	private:
 		Ref<Mesh> GetOrCreateSquare();
 		Ref<Mesh> GetOrCreateCube();

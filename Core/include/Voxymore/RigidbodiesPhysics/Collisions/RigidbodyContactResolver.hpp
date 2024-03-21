@@ -5,12 +5,11 @@
 #pragma once
 
 #include "RigidbodyContact.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
-namespace Voxymore
+#include "Voxymore/Math/Math.hpp"
+
+namespace Voxymore::Core
 {
-	namespace Core
-	{
 
 		class RigidbodyContactResolver
 		{
@@ -27,5 +26,5 @@ namespace Voxymore
 			void ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 		};
 
-	}// namespace Core
-}// namespace Voxymore
+} // namespace Voxymore::Core
+

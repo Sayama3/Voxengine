@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "static_block.hpp"
-#include "Voxymore/Core/Core.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Scene/Entity.hpp"
+#include "static_block.hpp"
 
 namespace Voxymore::Core
 {

@@ -5,8 +5,9 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Components/Components.hpp"
 
 namespace Voxymore::Core
 {
@@ -22,7 +23,7 @@ namespace Voxymore::Core
 	public:
 		inline Rigidbody() = default;
 		inline ~Rigidbody() = default;
-		Rigidbody(Real inverseMass, Real linearDamping, Vec3 position, Quat orientation, Mat3 inverseInertiaTensor);
+		Rigidbody(Real inverseMass, Real linearDamping, TransformComponent* transform, Mat3 inverseInertiaTensor);
 	public:
 		/**
 		 * @brief Integrate the rigid body over a specified time step.
@@ -63,13 +64,15 @@ namespace Voxymore::Core
 		Real& GetLinearDamping();
 		void SetLinearDamping(Real linearDamping);
 
-		[[nodiscard]] const Vec3& GetPosition() const;
-		Vec3& GetPosition();
+		void SetTransform(TransformComponent* transform);
+		const TransformComponent* GetTransform() const;
+		TransformComponent* GetTransform();
+
+		[[nodiscard]] Vec3 GetPosition() const;
 		void SetPosition(const Vec3& position);
 		void AddMovement(const Vec3& movement);
 
-		[[nodiscard]] const Quat& GetOrientation() const;
-		Quat& GetOrientation();
+		[[nodiscard]] Quat GetOrientation() const;
 		void SetOrientation(const Quat& orientation);
 
 		[[nodiscard]] const Vec3& GetLinearVelocity() const;
@@ -99,16 +102,6 @@ namespace Voxymore::Core
 		Mat3 m_InverseInertiaTensor = Math::Identity<Mat3>();
 
 		/**
-		 * Angular orientation in world space.
-		 */
-		Quat m_Orientation = Math::Identity<Quat>();
-
-		/**
-		 * Linear position in world space.
-		 */
-		Vec3 m_Position = Vec3(0.0);
-
-		/**
 		* @brief Holds the acceleration vector applied to the rigid body.
 		*
 		* Acceleration is a vector quantity that represents the change in velocity of a body per unit of time.
@@ -127,6 +120,7 @@ namespace Voxymore::Core
 		 * Angular velocity (or rotation) in world space.
 		 */
 		Vec3 m_AngularVelocity = Vec3(0.0);
+
 		/**
 		 *   @brief Used to accumulate forces applied on the Rigidbody during a physics simulation step.
 		 *
@@ -160,6 +154,8 @@ namespace Voxymore::Core
 		 */
 		Vec3 m_TorqueAccumulate = Vec3(0.0);
 
+		TransformComponent* m_Transform = nullptr;
+
 		/**
 		 * Hold the inverse of the mass of the rigidbody. It is
 		 * more useful to hold the inverse mass because integration is
@@ -186,20 +182,6 @@ namespace Voxymore::Core
 		* This is a scalar value, with its unit being force time per radian.
 		*/
 		Real m_AngularDamping = 0.9;
-
-		/**
-		 * @brief Flag to check if the Rigidbody is awake in the simulation.
-		 *
-		 * This Boolean data member, m_IsAwake, represents the awake state of the Rigidbody during the physics simulation step.
-		 * When a Rigidbody is awake, it is subject to the physics simulation, which includes handling forces, collisions, etc.
-		 *
-		 * If m_IsAwake is set to true, this indicates that the Rigidbody is active in the physics simulation and needs to be updated.
-		 * This might be due to a force or torque being applied, or the Rigidbody might be in motion due to previous simulation steps.
-		 *
-		 * If m_IsAwake is set to false, the physics engine may choose to omit this Rigidbody from certain computations, improving performance.
-		 * Note: The specific behavior may vary depending on the physics engine's design and implementation.
-		 */
-		bool m_IsAwake = true;
 	};
 
 } // namespace Voxymore::Core

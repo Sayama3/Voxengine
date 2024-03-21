@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Voxymore/Renderer/Shader.hpp"
-#include "Voxymore/Core/Math.hpp"
 #include "Voxymore/Core/SystemHelper.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core {
     // TODO: Analyse shaders to get the different uniform inside.

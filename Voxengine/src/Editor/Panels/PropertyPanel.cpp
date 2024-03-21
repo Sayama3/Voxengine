@@ -140,8 +140,7 @@ namespace Voxymore::Editor {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
-			bool open = ImGui::TreeNodeEx((void *) component.ComponentHash, treeNodeFlags, "%s",
-										  component.ComponentName.c_str());
+			bool open = ImGui::TreeNodeEx((void *) component.ComponentHash, treeNodeFlags, "%s", component.ComponentName.c_str());
 			ImGui::PopStyleVar();
 
 			bool removeComponent = false;
@@ -157,7 +156,10 @@ namespace Voxymore::Editor {
 			}
 
 			if (open) {
+				std::string id = component.ComponentName + std::to_string(entity.id());
+				ImGui::PushID(id.c_str());
 				component.OnImGuiRender(entity);
+				ImGui::PopID();
 				ImGui::TreePop();
 			}
 

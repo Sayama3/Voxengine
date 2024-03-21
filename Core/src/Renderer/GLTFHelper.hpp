@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Voxymore/Core/FileSystem.hpp"
-#include "Voxymore/Core/Math.hpp"
+#include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
 #include <tiny_gltf.h>

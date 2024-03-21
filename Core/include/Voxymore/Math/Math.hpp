@@ -6,17 +6,17 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
-#include <glm/gtx/hash.hpp>
-#include <iostream>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/hash.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
@@ -95,7 +95,14 @@ namespace Voxymore::Core
 		static bool DecomposeTransform(const Mat4& transform, Vec3& position, glm::quat& rotation, Vec3& scale);
 
 		template<typename T>
-		inline static std::string to_string(T value)
+		inline static std::string to_string(const T& value)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::to_string(value);
+		}
+
+		template<typename T>
+		inline static std::string ToString(const T& value)
 		{
 			VXM_PROFILE_FUNCTION();
 			return glm::to_string(value);
@@ -144,6 +151,51 @@ namespace Voxymore::Core
 		inline static Real Pow(Real value, Real power) { VXM_PROFILE_FUNCTION(); return glm::pow(value, power); }
 
 		/**
+		 * Transforms a 3D point using a 4x4 transformation matrix.
+		 *
+		 * This function takes a 4x4 transformation matrix `mat` and a 3D point `point` as input.
+		 * It transforms the point by multiplying it with the matrix, dividing by the w-component,
+		 * and returns the transformed point in a 3D vector.
+		 *
+		 * @tparam T The type of the matrix and the point elements.
+		 * @tparam Q The qualifier of the matrix and the point elements. It defaults to `glm::defaultp`.
+		 * @param mat The 4x4 transformation matrix.
+		 * @param point The 3D point to transform.
+		 * @return The transformed point as a 3D vector.
+		 *
+		 */
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::vec<3,T,Q> TransformPoint(const glm::mat<4,4,T,Q>& mat, const glm::vec<3,T,Q>& point)
+		{
+			VXM_PROFILE_FUNCTION();
+			auto vec = glm::vec<4,T,Q>(point,(T)1);
+			vec = mat * vec;
+			vec /= vec.w;
+			return vec;
+		}
+
+		/**
+		 * Transforms a 3D direction using a 4x4 transformation matrix.
+		 *
+		 * This function takes a 4x4 transformation matrix `mat` and a 3D direction `point` as input.
+		 * It transforms the direction by multiplying it with the matrix and returns the transformed direction
+		 * in a 3D vector. The w-component of the resulting vector is set to 0.
+		 *
+		 * @tparam T The type of the matrix and the direction elements.
+		 * @tparam Q The qualifier of the matrix and the direction elements. It defaults to `glm::defaultp`.
+		 * @param mat The 4x4 transformation matrix.
+		 * @param point The 3D direction to transform.
+		 * @return The transformed direction as a 3D vector.
+		 *
+		 */
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::vec<3,T,Q> TransformDirection(const glm::mat<4,4,T,Q>& mat, const glm::vec<3,T,Q>& point)
+		{
+			VXM_PROFILE_FUNCTION();
+			return mat * glm::vec<4,T,Q>(point,(T)0);
+		}
+
+		/**
 		 * Calculate the power of a value.
 		 *
 		 * This function calculates the power of a value to the given exponent.
@@ -186,6 +238,13 @@ namespace Voxymore::Core
 			return glm::cross(a,b);
 		}
 
+		template<typename T>
+		inline static T Abs(const T& val)
+		{
+			VXM_PROFILE_FUNCTION();
+			return glm::abs(val);
+		}
+
 
 		/**
 		 * Calculates the dot product (also known as scalar product) of two vectors.
@@ -212,18 +271,31 @@ namespace Voxymore::Core
 		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
-	template<> inline std::string Math::to_string(bool value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(float value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(long double value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(uint8_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(uint16_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(uint32_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(uint64_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(int8_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(int16_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(int32_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(int64_t value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const float& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const long double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const uint8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const uint16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const uint32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const uint64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const int8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const int16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::to_string(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+
+	template<> inline std::string Math::ToString(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const float& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const long double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const uint8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const uint16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const uint32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const uint64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const int8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const int16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> inline std::string Math::ToString(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 
 } // Voxymore::Core
 
