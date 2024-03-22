@@ -154,7 +154,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		if(!m_Contacts.empty())
 		{
-			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} iterations.",m_Contacts.size() , m_Contacts.size() * 2);
+			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} m_Iterations.",m_Contacts.size() , m_Contacts.size() * 2);
 			m_Resolver.SetIterations(m_Contacts.size() * 2);
 			m_Resolver.ResolveContacts(ts, m_Contacts.contacts);
 		}

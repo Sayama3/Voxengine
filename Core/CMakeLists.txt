@@ -139,8 +139,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp
         src/RigidbodiesPhysics/Collisions/RigidbodyContact.cpp
         include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp
-        src/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.cpp
-        include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp
+        src/RigidbodiesPhysics/Collisions/RBContactResolver.cpp
+        include/Voxymore/RigidbodiesPhysics/Collisions/RBContactResolver.hpp
         src/Components/LightComponent.cpp
         include/Voxymore/Components/LightComponent.hpp
         include/Voxymore/Renderer/Light.hpp

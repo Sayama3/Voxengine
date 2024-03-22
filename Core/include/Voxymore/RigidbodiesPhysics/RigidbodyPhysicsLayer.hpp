@@ -18,9 +18,9 @@
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 
-#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
-#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContactResolver.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/RBContactResolver.hpp"
+#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
 #include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
 #include "Voxymore/RigidbodiesPhysics/Primitive.hpp"
 
@@ -58,7 +58,7 @@ namespace Voxymore::Core
 		Ref<Scene> m_SceneHandle = nullptr;
 		std::vector<PotentialContact> m_PotentialContacts {};
 		CollisionData m_Contacts;
-		RigidbodyContactResolver m_Resolver;
+		RBContactResolver m_Resolver;
 		BVHNode<BoundingSphere>* m_Root = nullptr;
 	};
 

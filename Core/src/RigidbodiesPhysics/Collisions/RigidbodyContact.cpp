@@ -6,6 +6,35 @@
 
 namespace Voxymore::Core
 {
+
+	namespace Helper
+	{
+		//		void makeOrthonormalBasis(Vec3& x, Vec3& y, Vec3& z)
+		//		{
+		//			x = Math::Normalize(x);
+		//			z = Math::Cross(x,y);
+		//			if(Math::SqrMagnitude(z) == 0) {
+		//				VXM_CORE_ERROR("The cross product of x({0}) and y({1}) has resulted in a null vector.", Math::ToString(x), Math::ToString(y));
+		//				return;
+		//			}
+		//			z = Math::Normalize(z);
+		//			y = Math::Normalize(Math::Cross(z, x));
+		//		}
+
+		void makeOrthonormalBasis(Vec3 &x, Vec3 &y, Vec3 &z)
+		{
+			const Real s = 1.0 / Math::Sqrt(x.z * x.z + x.y * x.y);
+
+			z.x = x.z * s;
+			z.y = 0;
+			z.z = -x.x * s;
+
+			y.x = x.y * z.x;
+			y.y = x.z * z.x - x.x * z.z;
+			y.z = -x.y * z.x;
+		}
+	}
+
 	/*
 	RigidbodyContact::RigidbodyContact(Rigidbody *p0, Vec3 contactNormal, Real restitution, Real penetration) : rigidbodies({p0, nullptr}), contactNormal(contactNormal), restitution(restitution), penetration(penetration)
 	{
@@ -149,9 +178,138 @@ namespace Voxymore::Core
 		this->restitution = restitution;
 	}
 
-	CollisionData::CollisionData() : contacts(10)
+	void RigidbodyContact::CalculateInternals(TimeStep ts)
 	{
-//		contactsLeft = contacts.size();
+		VXM_PROFILE_FUNCTION();
+		if(!bodies[0]) SwapBodies();
+		VXM_CORE_ASSERT(bodies[0], "Cannot calculate internals without any Rigidbodies.");
+		if(!bodies[0]) return;
+
+		CalculateContactBasis();
+
+		m_RelativeContactPosition[0] = contactPoint - bodies[0]->GetPosition();
+		if(bodies[1])
+		{
+			m_RelativeContactPosition[1] = contactPoint - bodies[1]->GetPosition();
+		}
+
+		m_ContactVelocity = CalculateLocalVelocity(0, ts);
+		if(bodies[1])
+		{
+			m_ContactVelocity -= CalculateLocalVelocity(1, ts);
+		}
+
+		CalculateDesiredDeltaVelocity(ts);
+	}
+
+	void RigidbodyContact::SwapBodies()
+	{
+		VXM_PROFILE_FUNCTION();
+
+		contactNormal *= (Real)-1;
+
+		auto* tmp = bodies[0];
+		bodies[0] = bodies[1];
+		bodies[1] = tmp;
+	}
+
+	void RigidbodyContact::CalculateContactBasis()
+	{
+		VXM_PROFILE_FUNCTION();
+		std::array<Vec3, 2> contactTangent {};
+
+		VXM_CORE_ASSERT(Math::Abs(Math::SqrMagnitude(contactNormal)-1) < 0.001, "The vector contact normal is not normalized.");
+
+		if(Math::Abs(contactNormal.x) > Math::Abs(contactNormal.y))
+		{
+			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x);
+
+			contactTangent[0].x = contactNormal.z * s;
+			contactTangent[0].y = 0;
+			contactTangent[0].z = -contactNormal.x* s;
+
+			contactTangent[1].x = contactNormal.y * contactTangent[0].x;
+			contactTangent[1].y = contactNormal.z * contactTangent[0].x - contactNormal.x * contactTangent[0].z;
+			contactTangent[1].z = -contactNormal.y * contactTangent[0].x;
+		}
+		else
+		{
+			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y);
+
+			contactTangent[0].x = 0;
+			contactTangent[0].y = -contactNormal.z * s;
+			contactTangent[0].z = contactNormal.y * s;
+
+			contactTangent[1].x = contactNormal.y * contactTangent[0].z - contactNormal.z * contactTangent[0].y;
+			contactTangent[1].y = -contactNormal.x * contactTangent[0].z;
+			contactTangent[1].z = contactNormal.x * contactTangent[0].y;
+		}
+
+		m_ContactToWorld[0] = contactNormal;
+		m_ContactToWorld[1] = contactTangent[0];
+		m_ContactToWorld[2] = contactTangent[1];
+	}
+
+	Vec3 RigidbodyContact::CalculateLocalVelocity(uint32_t bodyIndex, TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
+		Rigidbody& rb = *bodies[bodyIndex];
+
+		Vec3 velocity = Math::Cross(rb.GetAngularVelocity(), m_RelativeContactPosition[bodyIndex]);
+		velocity += rb.GetLinearVelocity();
+
+		auto worldToContact = GetWorldToContact();
+
+		Vec3 contactVelocity = worldToContact * velocity;
+
+		Vec3 accVelocity = rb.GetLastFrameAcceleration() * ts.as<Real>();
+
+		accVelocity = worldToContact * accVelocity;
+
+		accVelocity.x = 0;
+
+		contactVelocity += accVelocity;
+
+		return contactVelocity;
+	}
+
+	void RigidbodyContact::CalculateDesiredDeltaVelocity(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		Real thisRestitution = restitution;
+		if(Math::Abs(m_ContactVelocity.x) < c_VelocityLimit)
+		{
+			thisRestitution = (Real)0;
+		}
+
+		Real accVelocity = Math::Dot(bodies[0]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
+		if (bodies[1])
+		{
+			accVelocity -= Math::Dot(bodies[1]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
+		}
+		m_DesiredDeltaVelocity = -m_ContactVelocity.x - thisRestitution * (m_ContactVelocity.x - accVelocity);
+	}
+
+	const Mat3& RigidbodyContact::GetContactToWorld() const
+	{
+		return m_ContactToWorld;
+	}
+
+	Mat3 RigidbodyContact::GetWorldToContact() const
+	{
+		return glm::transpose(m_ContactToWorld);
+	}
+
+	RigidbodyContact::operator bool() const
+	{
+		return bodies[0] || bodies[1];
+	}
+
+	CollisionData::CollisionData() : contacts()
+	{
+		contacts.reserve(10);
+		// contactsLeft = contacts.size();
 	}
 
 	CollisionData::~CollisionData()

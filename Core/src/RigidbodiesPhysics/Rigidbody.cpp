@@ -63,6 +63,11 @@ namespace Voxymore::Core
 		m_InverseInertiaTensor = inverseInertiaTensor;
 	}
 
+	const Mat3& Rigidbody::GetInverseInertiaTensor() const
+	{
+		return m_InverseInertiaTensor;
+	}
+
 	Mat3 Rigidbody::CalculateWorldInverseInertiaTensor() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -271,6 +276,12 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_AngularVelocity += angularVelocity;
+	}
+
+	Vec3 Rigidbody::GetLastFrameAcceleration() const
+	{
+		//TODO: see if I shouldn't cache the force applied...
+		return m_Acceleration;
 	}
 
 } // namespace Voxymore::Core
