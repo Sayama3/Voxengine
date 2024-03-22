@@ -15,8 +15,8 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		m_PositionIterationsUsed = 0;
 
-		VXM_CORE_CHECK(iterations > 0, "No iteration will be done as m_Iterations = {0}", iterations);
-		VXM_CORE_CHECK(iterations >= contacts.size(), "There is not enough m_Iterations to cover all the m_Contacts... {0} m_Iterations for {1} m_Contacts", iterations, contacts.size());
+		VXM_CORE_CHECK(m_Iterations > 0, "No iteration will be done as m_Iterations = {0}", m_Iterations);
+		VXM_CORE_CHECK(m_Iterations >= contacts.size(), "There is not enough m_Iterations to cover all the m_Contacts... {0} m_Iterations for {1} m_Contacts", m_Iterations, contacts.size());
 
 		if(contacts.empty()) {
 			return;

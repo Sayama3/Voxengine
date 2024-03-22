@@ -178,6 +178,288 @@ namespace Voxymore::Core
 		this->restitution = restitution;
 	}
 
+	void RigidbodyContact::ApplyPositionChange(std::array<Vec3, 2>& linearChange, std::array<Vec3, 2>& angularChange, Real penetration)
+	{
+		VXM_PROFILE_FUNCTION();
+		const Real angularLimit = (Real)0.2f;
+		std::array<Real,2> angularMove;
+		std::array<Real,2> linearMove;
+
+		Real totalInertia = 0;
+		std::array<Real,2> linearInertia;
+		std::array<Real,2> angularInertia;
+
+		// We need to work out the inertia of each object in the direction
+		// of the contact normal, due to angular inertia only.
+		for (unsigned i = 0; i < 2; i++) if (bodies[i])
+			{
+				Mat3 inverseInertiaTensor = bodies[i]->GetInverseInertiaTensorWorld();
+
+				// Use the same procedure as for calculating frictionless
+				// velocity change to work out the angular inertia.
+				Vec3 angularInertiaWorld = Math::Cross(m_RelativeContactPosition[i], contactNormal);
+				angularInertiaWorld = inverseInertiaTensor * angularInertiaWorld;
+				angularInertiaWorld = Math::Cross(angularInertiaWorld, m_RelativeContactPosition[i]);
+				angularInertia[i] = Math::Dot(angularInertiaWorld, contactNormal);
+
+				// The linear component is simply the inverse mass
+				linearInertia[i] = bodies[i]->GetInverseMass();
+
+				// Keep track of the total inertia from all components
+				totalInertia += linearInertia[i] + angularInertia[i];
+
+				// We break the loop here so that the totalInertia value is
+				// completely calculated (by both iterations) before
+				// continuing.
+			}
+
+		// Loop through again calculating and applying the changes
+		for (unsigned i = 0; i < 2; i++) if (bodies[i])
+			{
+				// The linear and angular movements required are in proportion to
+				// the two inverse inertias.
+				Real sign = (i == 0)?1:-1;
+				angularMove[i] =
+						sign * penetration * (angularInertia[i] / totalInertia);
+				linearMove[i] =
+						sign * penetration * (linearInertia[i] / totalInertia);
+
+				// To avoid angular projections that are too great (when mass is large
+				// but inertia tensor is small) limit the angular move.
+				Vec3 projection = m_RelativeContactPosition[i];
+				projection += contactNormal * -Math::Dot(m_RelativeContactPosition[i], contactNormal);
+
+				// Use the small angle approximation for the sine of the angle (i.e.
+				// the magnitude would be sine(angularLimit) * projection.magnitude
+				// but we approximate sine(angularLimit) to angularLimit).
+				Real maxMagnitude = angularLimit * Math::Magnitude(projection);
+
+				if (angularMove[i] < -maxMagnitude)
+				{
+					Real totalMove = angularMove[i] + linearMove[i];
+					angularMove[i] = -maxMagnitude;
+					linearMove[i] = totalMove - angularMove[i];
+				}
+				else if (angularMove[i] > maxMagnitude)
+				{
+					Real totalMove = angularMove[i] + linearMove[i];
+					angularMove[i] = maxMagnitude;
+					linearMove[i] = totalMove - angularMove[i];
+				}
+
+				// We have the linear amount of movement required by turning
+				// the rigid body (in angularMove[i]). We now need to
+				// calculate the desired rotation to achieve that.
+				if (angularMove[i] == 0)
+				{
+					// Easy case - no angular movement means no rotation.
+					angularChange[i] = {0,0,0};
+				}
+				else
+				{
+					// Work out the direction we'd like to rotate in.
+					Vec3 targetAngularDirection =
+							Math::Cross(m_RelativeContactPosition[i], contactNormal);
+
+					Mat3 inverseInertiaTensor;
+					bodies[i]->GetInverseInertiaTensorWorld(inverseInertiaTensor);
+
+					// Work out the direction we'd need to rotate to achieve that
+					angularChange[i] =
+							(inverseInertiaTensor * targetAngularDirection) *
+							(angularMove[i] / angularInertia[i]);
+				}
+
+				// Velocity change is easier - it is just the linear movement
+				// along the contact normal.
+				linearChange[i] = contactNormal * linearMove[i];
+
+				// Now we can start to apply the values we've calculated.
+				// Apply the linear movement
+				Vec3 pos = bodies[i]->GetPosition();
+				pos += contactNormal * linearMove[i];
+				bodies[i]->SetPosition(pos);
+
+				// And the change in orientation
+				Quat q = bodies[i]->GetOrientation();
+				Math::AddScaledVector(q, angularChange[i], Real(1.0));
+				bodies[i]->SetOrientation(q);
+			}
+	}
+
+	void RigidbodyContact::ApplyVelocityChange(std::array<Vec3, 2>& linearChange, std::array<Vec3, 2>& angularChange)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Get hold of the inverse mass and inverse inertia tensor, both in
+		// world coordinates.
+		std::array<Mat3,2> inverseInertiaTensor;
+		bodies[0]->GetInverseInertiaTensorWorld(inverseInertiaTensor[0]);
+		if (bodies[1]) {
+			bodies[1]->GetInverseInertiaTensorWorld(inverseInertiaTensor[1]);
+		}
+
+		// We will calculate the impulse for each contact axis
+		Vec3 impulseContact;
+
+		if (friction == (Real)0.0)
+		{
+			// Use the short format for frictionless contacts
+			impulseContact = CalculateFrictionlessImpulse(inverseInertiaTensor);
+		}
+		else
+		{
+			// Otherwise we may have impulses that aren't in the direction of the
+			// contact, so we need the more complex version.
+			impulseContact = CalculateFrictionImpulse(inverseInertiaTensor);
+		}
+
+		// Convert impulse to world coordinates
+		Vec3 impulse = m_ContactToWorld * impulseContact;
+
+		// Split in the impulse into linear and rotational components
+		Vec3 impulsiveTorque = Math::Cross(m_RelativeContactPosition[0], impulse);
+		angularChange[0] = inverseInertiaTensor[0] * impulsiveTorque;
+		linearChange[0] = {0,0,0};
+		linearChange[0] += impulse * bodies[0]->GetInverseMass();
+
+		// Apply the changes
+		bodies[0]->AddLinearVelocity(linearChange[0]);
+		bodies[0]->AddAngularVelocity(angularChange[0]);
+
+		if (bodies[1])
+		{
+			// Work out body one's linear and angular changes
+			Vec3 impulsiveTorque = Math::Cross(impulse, m_RelativeContactPosition[1]);
+			angularChange[1] = inverseInertiaTensor[1] * impulsiveTorque;
+			linearChange[1] = {0,0,0};
+			linearChange[1] += impulse * -bodies[1]->GetInverseMass();
+
+			// And apply them.
+			bodies[1]->AddLinearVelocity(linearChange[1]);
+			bodies[1]->AddAngularVelocity(angularChange[1]);
+		}
+	}
+
+
+	Vec3 RigidbodyContact::CalculateFrictionlessImpulse(const std::array<Mat3, 2>& inverseInertiaTensor)
+	{
+		VXM_PROFILE_FUNCTION();
+		Vec3 impulseContact;
+
+		// Build a vector that shows the change in velocity in
+		// world space for a unit impulse in the direction of the contact
+		// normal.
+		Vec3 deltaVelWorld = Math::Cross(m_RelativeContactPosition[0], contactNormal);
+		deltaVelWorld = inverseInertiaTensor[0] * (deltaVelWorld);
+		deltaVelWorld = Math::Cross(deltaVelWorld, m_RelativeContactPosition[0]);
+
+		// Work out the change in velocity in contact coordiantes.
+		Real deltaVelocity = Math::Dot(deltaVelWorld, contactNormal);
+
+		// Add the linear component of velocity change
+		deltaVelocity += bodies[0]->GetInverseMass();
+
+		// Check if we need to the second body's data
+		if (bodies[1])
+		{
+			// Go through the same transformation sequence again
+			Vec3 deltaVelWorld = Math::Cross(m_RelativeContactPosition[1], contactNormal);
+			deltaVelWorld = inverseInertiaTensor[1] * deltaVelWorld;
+			deltaVelWorld = Math::Cross(deltaVelWorld, m_RelativeContactPosition[1]);
+
+			// Add the change in velocity due to rotation
+			deltaVelocity += Math::Dot(deltaVelWorld, contactNormal);
+
+			// Add the change in velocity due to linear motion
+			deltaVelocity += bodies[1]->GetInverseMass();
+		}
+
+		// Calculate the required size of the impulse
+		impulseContact.x = m_DesiredDeltaVelocity / deltaVelocity;
+		impulseContact.y = 0;
+		impulseContact.z = 0;
+		return impulseContact;
+	}
+
+	Vec3 RigidbodyContact::CalculateFrictionImpulse(const std::array<Mat3, 2>& inverseInertiaTensor)
+	{
+		VXM_PROFILE_FUNCTION();
+		Vec3 impulseContact;
+		Real inverseMass = bodies[0]->GetInverseMass();
+
+		// The equivalent of a cross product in matrices is multiplication
+		// by a skew symmetric matrix - we build the matrix for converting
+		// between linear and angular quantities.
+		Mat3 impulseToTorque = Math::SetSkewSymmetric(m_RelativeContactPosition[0]);
+
+		// Build the matrix to convert contact impulse to change in velocity
+		// in world coordinates.
+		Mat3 deltaVelWorld = impulseToTorque;
+		deltaVelWorld *= inverseInertiaTensor[0];
+		deltaVelWorld *= impulseToTorque;
+		deltaVelWorld *= -1;
+
+		// Check if we need to add body two's data
+		if (bodies[1])
+		{
+			// Set the cross product matrix
+			impulseToTorque = Math::SetSkewSymmetric(m_RelativeContactPosition[1]);
+
+			// Calculate the velocity change matrix
+			Mat3 deltaVelWorld2 = impulseToTorque;
+			deltaVelWorld2 *= inverseInertiaTensor[1];
+			deltaVelWorld2 *= impulseToTorque;
+			deltaVelWorld2 *= -1;
+
+			// Add to the total delta velocity.
+			deltaVelWorld += deltaVelWorld2;
+
+			// Add to the inverse mass
+			inverseMass += bodies[1]->GetInverseMass();
+		}
+
+		// Do a change of basis to convert into contact coordinates.
+		Mat3 deltaVelocity = glm::transpose(m_ContactToWorld);
+		deltaVelocity *= deltaVelWorld;
+		deltaVelocity *= m_ContactToWorld;
+
+		// Add in the linear velocity change
+		deltaVelocity[0][0] += inverseMass;
+		deltaVelocity[1][1] += inverseMass;
+		deltaVelocity[2][2] += inverseMass;
+
+		// Invert to get the impulse needed per unit velocity
+		Mat3 impulseMatrix = Math::Inverse(deltaVelocity);
+
+		// Find the target velocities to kill
+		Vec3 velKill(m_DesiredDeltaVelocity,
+						-m_ContactVelocity.y,
+						-m_ContactVelocity.z);
+
+		// Find the impulse to kill target velocities
+		impulseContact = impulseMatrix * (velKill);
+
+		// Check for exceeding friction
+		Real planarImpulse = Math::Sqrt(
+				impulseContact.y*impulseContact.y +
+				impulseContact.z*impulseContact.z
+		);
+		if (planarImpulse > impulseContact.x * friction)
+		{
+			// We need to use dynamic friction
+			impulseContact.y /= planarImpulse;
+			impulseContact.z /= planarImpulse;
+
+			impulseContact.x = deltaVelocity[0][0] +
+							   deltaVelocity[1][0]*friction*impulseContact.y +
+							   deltaVelocity[2][0]*friction*impulseContact.z;
+			impulseContact.x = m_DesiredDeltaVelocity / impulseContact.x;
+			impulseContact.y *= friction * impulseContact.x;
+			impulseContact.z *= friction * impulseContact.x;
+		}
+		return impulseContact;
+	}
+
 	void RigidbodyContact::CalculateInternals(TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();

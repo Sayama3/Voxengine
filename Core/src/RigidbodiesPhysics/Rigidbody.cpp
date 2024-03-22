@@ -6,10 +6,85 @@
 
 namespace Voxymore::Core
 {
+	namespace Helper
+	{
+
+		/**
+		 * Internal function to do an intertia tensor transform by a quaternion.
+		 * Note that the implementation of this function was created by an
+		 * automated code-generator and optimizer.
+		 */
+		static inline void _transformInertiaTensor(Mat3 &iitWorld,
+												   const Quat &q,
+												   const Mat3 &iitBody,
+												   const Mat4 &rotmat)
+		{
+			VXM_PROFILE_FUNCTION();
+			Real t4 = rotmat[0][0]*iitBody[0][0]+
+					  rotmat[1][0]*iitBody[0][1]+
+					  rotmat[2][0]*iitBody[0][2];
+			Real t9 = rotmat[0][0]*iitBody[1][0]+
+					  rotmat[1][0]*iitBody[1][1]+
+					  rotmat[2][0]*iitBody[1][2];
+			Real t14 = rotmat[0][0]*iitBody[2][0]+
+					   rotmat[1][0]*iitBody[2][1]+
+					   rotmat[2][0]*iitBody[2][2];
+
+			Real t28 = rotmat[0][1]*iitBody[0][0]+
+					   rotmat[1][1]*iitBody[0][1]+
+					   rotmat[2][1]*iitBody[0][2];
+			Real t33 = rotmat[0][1]*iitBody[1][0]+
+					   rotmat[1][1]*iitBody[1][1]+
+					   rotmat[2][1]*iitBody[1][2];
+			Real t38 = rotmat[0][1]*iitBody[2][0]+
+					   rotmat[1][1]*iitBody[2][1]+
+					   rotmat[2][1]*iitBody[2][2];
+
+			Real t52 = rotmat[0][2]*iitBody[0][0]+
+					   rotmat[1][2]*iitBody[0][1]+
+					   rotmat[2][2]*iitBody[0][2];
+			Real t57 = rotmat[0][2]*iitBody[1][0]+
+					   rotmat[1][2]*iitBody[1][1]+
+					   rotmat[2][2]*iitBody[1][2];
+			Real t62 = rotmat[0][2]*iitBody[2][0]+
+					   rotmat[1][2]*iitBody[2][1]+
+					   rotmat[2][2]*iitBody[2][2];
+
+			iitWorld[0][0] = t4*rotmat[0][0]+
+							 t9*rotmat[1][0]+
+							 t14*rotmat[2][0];
+			iitWorld[1][0] = t4*rotmat[0][1]+
+							 t9*rotmat[1][1]+
+							 t14*rotmat[2][1];
+			iitWorld[2][0] = t4*rotmat[0][2]+
+							 t9*rotmat[1][2]+
+							 t14*rotmat[2][2];
+			iitWorld[0][1] = t28*rotmat[0][0]+
+							 t33*rotmat[1][0]+
+							 t38*rotmat[2][0];
+			iitWorld[1][1] = t28*rotmat[0][1]+
+							 t33*rotmat[1][1]+
+							 t38*rotmat[2][1];
+			iitWorld[2][1] = t28*rotmat[0][2]+
+							 t33*rotmat[1][2]+
+							 t38*rotmat[2][2];
+			iitWorld[0][2] = t52*rotmat[0][0]+
+							 t57*rotmat[1][0]+
+							   t62*rotmat[2][0];
+			iitWorld[1][2] = t52*rotmat[0][1]+
+							 t57*rotmat[1][1]+
+							 t62*rotmat[2][1];
+			iitWorld[2][2] = t52*rotmat[0][2]+
+							 t57*rotmat[1][2]+
+							 t62*rotmat[2][2];
+		}
+	}
+
 	Rigidbody::Rigidbody(Real inverseMass, Real linearDamping, TransformComponent* transform, Mat3 inverseInertiaTensor)
 		: m_InverseMass(inverseMass), m_LinearDamping(linearDamping), m_Transform(transform), m_InverseInertiaTensor(inverseInertiaTensor)
 	{
 	}
+
 	void Rigidbody::Integrate(Real ts)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -66,6 +141,22 @@ namespace Voxymore::Core
 	const Mat3& Rigidbody::GetInverseInertiaTensor() const
 	{
 		return m_InverseInertiaTensor;
+	}
+
+	Mat3 Rigidbody::GetInverseInertiaTensorWorld() const
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
+		Mat3 iitWorld;
+		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor, m_Transform->GetTransform());
+		return iitWorld;
+	}
+
+	void Rigidbody::GetInverseInertiaTensorWorld(Mat3& iitWorld) const
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
+		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor, m_Transform->GetTransform());
 	}
 
 	Mat3 Rigidbody::CalculateWorldInverseInertiaTensor() const

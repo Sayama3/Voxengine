@@ -41,6 +41,8 @@ namespace Voxymore::Core
 		void SetInertiaTensor(const Mat3& inertiaTensor);
 		void SetInverseInertiaTensor(const Mat3& inverseInertiaTensor);
 		const Mat3& GetInverseInertiaTensor() const;
+		Mat3 GetInverseInertiaTensorWorld() const;
+		void GetInverseInertiaTensorWorld(Mat3& iitWorld) const;
 
 		void AddForce(const Vec3& force);
 		void AddAcceleration(const Vec3& acceleration);

@@ -21,14 +21,17 @@ namespace Voxymore::Core
 		void SetBodyData(Rigidbody* one, Rigidbody* two, Real friction, Real restitution);
 		operator bool() const;
 	private:
-		void ApplyPositionChange(const std::array<Vec3, 2>& linearChanges, const std::array<Vec3, 2>& angularChanges, Real penetration);
-		void ApplyVelocityChange(const std::array<Vec3, 2>& linearChanges, const std::array<Vec3, 2>& angularChanges);
+		void ApplyPositionChange(std::array<Vec3, 2>& linearChange, std::array<Vec3, 2>& angularChange, Real penetration);
+		void ApplyVelocityChange(std::array<Vec3, 2>&linearChange, std::array<Vec3, 2>&angularChange);
 		void CalculateInternals(TimeStep ts);
 
 		void SwapBodies();
 		void CalculateContactBasis();
 		Vec3 CalculateLocalVelocity(uint32_t bodyIndex, TimeStep ts);
 		void CalculateDesiredDeltaVelocity(TimeStep ts);
+
+		Vec3 CalculateFrictionlessImpulse(const std::array<Mat3, 2>& inverseInertiaTensorWorld);
+		Vec3 CalculateFrictionImpulse(const std::array<Mat3, 2>& inverseInertiaTensorWorld);
 
 		[[nodiscard]] const Mat3& GetContactToWorld() const;
 		[[nodiscard]] Mat3 GetWorldToContact() const;
