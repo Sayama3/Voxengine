@@ -8,75 +8,22 @@ namespace Voxymore::Core
 {
 	namespace Helper
 	{
-
-		/**
-		 * Internal function to do an intertia tensor transform by a quaternion.
-		 * Note that the implementation of this function was created by an
-		 * automated code-generator and optimizer.
-		 */
-		static inline void _transformInertiaTensor(Mat3 &iitWorld,
-												   const Quat &q,
-												   const Mat3 &iitBody,
-												   const Mat4 &rotmat)
+		static inline Mat3 _transformInertiaTensor(const Quat &q, const Mat3 &invI_local)
 		{
 			VXM_PROFILE_FUNCTION();
-			Real t4 = rotmat[0][0]*iitBody[0][0]+
-					  rotmat[1][0]*iitBody[0][1]+
-					  rotmat[2][0]*iitBody[0][2];
-			Real t9 = rotmat[0][0]*iitBody[1][0]+
-					  rotmat[1][0]*iitBody[1][1]+
-					  rotmat[2][0]*iitBody[1][2];
-			Real t14 = rotmat[0][0]*iitBody[2][0]+
-					   rotmat[1][0]*iitBody[2][1]+
-					   rotmat[2][0]*iitBody[2][2];
+			glm::mat3 rotate = glm::toMat3(q);
 
-			Real t28 = rotmat[0][1]*iitBody[0][0]+
-					   rotmat[1][1]*iitBody[0][1]+
-					   rotmat[2][1]*iitBody[0][2];
-			Real t33 = rotmat[0][1]*iitBody[1][0]+
-					   rotmat[1][1]*iitBody[1][1]+
-					   rotmat[2][1]*iitBody[1][2];
-			Real t38 = rotmat[0][1]*iitBody[2][0]+
-					   rotmat[1][1]*iitBody[2][1]+
-					   rotmat[2][1]*iitBody[2][2];
+			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
+			return rotate * invI_local * glm::transpose(rotate);
+		}
 
-			Real t52 = rotmat[0][2]*iitBody[0][0]+
-					   rotmat[1][2]*iitBody[0][1]+
-					   rotmat[2][2]*iitBody[0][2];
-			Real t57 = rotmat[0][2]*iitBody[1][0]+
-					   rotmat[1][2]*iitBody[1][1]+
-					   rotmat[2][2]*iitBody[1][2];
-			Real t62 = rotmat[0][2]*iitBody[2][0]+
-					   rotmat[1][2]*iitBody[2][1]+
-					   rotmat[2][2]*iitBody[2][2];
+		static inline void _transformInertiaTensor(Mat3& invI_world, const Quat &q, const Mat3 &invI_local)
+		{
+			VXM_PROFILE_FUNCTION();
+			invI_world = glm::toMat3(q);
 
-			iitWorld[0][0] = t4*rotmat[0][0]+
-							 t9*rotmat[1][0]+
-							 t14*rotmat[2][0];
-			iitWorld[1][0] = t4*rotmat[0][1]+
-							 t9*rotmat[1][1]+
-							 t14*rotmat[2][1];
-			iitWorld[2][0] = t4*rotmat[0][2]+
-							 t9*rotmat[1][2]+
-							 t14*rotmat[2][2];
-			iitWorld[0][1] = t28*rotmat[0][0]+
-							 t33*rotmat[1][0]+
-							 t38*rotmat[2][0];
-			iitWorld[1][1] = t28*rotmat[0][1]+
-							 t33*rotmat[1][1]+
-							 t38*rotmat[2][1];
-			iitWorld[2][1] = t28*rotmat[0][2]+
-							 t33*rotmat[1][2]+
-							 t38*rotmat[2][2];
-			iitWorld[0][2] = t52*rotmat[0][0]+
-							 t57*rotmat[1][0]+
-							   t62*rotmat[2][0];
-			iitWorld[1][2] = t52*rotmat[0][1]+
-							 t57*rotmat[1][1]+
-							 t62*rotmat[2][1];
-			iitWorld[2][2] = t52*rotmat[0][2]+
-							 t57*rotmat[1][2]+
-							 t62*rotmat[2][2];
+			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
+			invI_world = invI_world * invI_local * glm::transpose(invI_world);
 		}
 	}
 
@@ -147,16 +94,14 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
-		Mat3 iitWorld;
-		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor, m_Transform->GetTransform());
-		return iitWorld;
+		return Helper::_transformInertiaTensor(m_Transform->GetRotation(), m_InverseInertiaTensor);
 	}
 
 	void Rigidbody::GetInverseInertiaTensorWorld(Mat3& iitWorld) const
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
-		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor, m_Transform->GetTransform());
+		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor);
 	}
 
 	Mat3 Rigidbody::CalculateWorldInverseInertiaTensor() const
