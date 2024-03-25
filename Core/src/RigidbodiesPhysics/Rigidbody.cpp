@@ -11,7 +11,7 @@ namespace Voxymore::Core
 		static inline Mat3 _transformInertiaTensor(const Quat &q, const Mat3 &invI_local)
 		{
 			VXM_PROFILE_FUNCTION();
-			glm::mat3 rotate = glm::toMat3(q);
+			Mat3 rotate = Math::ToMat3(q);
 
 			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
 			return rotate * invI_local * glm::transpose(rotate);
@@ -20,7 +20,7 @@ namespace Voxymore::Core
 		static inline void _transformInertiaTensor(Mat3& invI_world, const Quat &q, const Mat3 &invI_local)
 		{
 			VXM_PROFILE_FUNCTION();
-			invI_world = glm::toMat3(q);
+			invI_world = Math::ToMat3(q);
 
 			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
 			invI_world = invI_world * invI_local * glm::transpose(invI_world);
