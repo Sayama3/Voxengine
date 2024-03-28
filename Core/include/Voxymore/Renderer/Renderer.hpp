@@ -52,13 +52,20 @@ namespace Voxymore {
 				int lightCount;
 			};
 
+			struct CurveParameters
+			{
+				int NumberOfSegment;
+			};
+
 			CameraData CameraBuffer;
 			ModelData ModelBuffer;
 			LightData LightBuffer;
+			CurveParameters CurveBuffer;
 			Ref<UniformBuffer> CameraUniformBuffer;
 			Ref<UniformBuffer> ModelUniformBuffer;
 			Ref<UniformBuffer> LightUniformBuffer;
 			Ref<UniformBuffer> MaterialUniformBuffer;
+			Ref<UniformBuffer> CurveParametersBuffer;
 			std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
 			std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
 		};
@@ -84,6 +91,8 @@ namespace Voxymore {
 			static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 			static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+			static void Submit(const std::array<Vertex, 4>& bezierControlPoints, int entityId = -1);
+			static void Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int entityId = -1);
 
 			inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		private:

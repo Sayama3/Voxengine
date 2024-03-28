@@ -46,6 +46,20 @@ namespace Voxymore {
             glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
         }
 
+        void OpenGLRenderAPI::DrawIndexed(DrawMode drawMode, const Ref<VertexArray> &vertexArray) {
+            VXM_PROFILE_FUNCTION();
+			switch (drawMode) {
+
+				case DrawMode::Points: break;
+					glDrawElements(GL_POINTS, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+				case DrawMode::Lines: break;
+					glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+				case DrawMode::Triangles:
+				default:
+					glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			}
+        }
+
         void OpenGLRenderAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
             VXM_PROFILE_FUNCTION();
             glViewport(static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height));
@@ -56,5 +70,25 @@ namespace Voxymore {
 			VXM_PROFILE_FUNCTION();
 			glBindTextureUnit(slot, 0);
 		}
+
+		void OpenGLRenderAPI::DrawPatches(uint32_t verticesPerPatch)
+		{
+			VXM_PROFILE_FUNCTION();
+			SetPatchSize(verticesPerPatch);
+
+			glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(verticesPerPatch));
+		}
+		void OpenGLRenderAPI::SetPatchSize(int32_t verticesPerPatch)
+		{
+			VXM_PROFILE_FUNCTION();
+			VXM_CORE_ASSERT(verticesPerPatch > 0, "Must have a positif number of patches ({0}).", verticesPerPatch);
+#ifdef VXM_DEBUG
+			GLint maxPatch;
+			glGetIntegerv(GL_MAX_PATCH_VERTICES, &maxPatch);
+			VXM_CORE_ASSERT(verticesPerPatch < maxPatch, "Too many patch ({0}), the maximum on this hardware is {1}.", verticesPerPatch, maxPatch);
+#endif
+			glPatchParameteri(GL_PATCH_VERTICES, verticesPerPatch);
+		}
+
 	} // Voxymore
 } // Core

@@ -224,7 +224,7 @@ void main()
         }
     }
 
-    if(materialParameters.AlphaMode == ALPHA_MODE_MASK && o_Color.a <= materialParameters.AlphaCutoff) discard;
+    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
 
     vec3 result = vec3(0.0);
 

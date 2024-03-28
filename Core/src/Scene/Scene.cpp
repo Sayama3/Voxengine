@@ -7,6 +7,7 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
+#include "Voxymore/Components/BezierCurve.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
@@ -202,6 +203,17 @@ namespace Voxymore::Core
 
 		Renderer::BeginScene(camera, lights);
 		{
+			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for (auto entity: bezierView) {
+				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
+				Mat4 trs = transform.GetTransform();
+				std::array<Vertex, 4> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				for (int i = 0; i < 4; ++i) {
+					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
+				}
+				Renderer::Submit(controlPoints);
+			}
+
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
@@ -328,6 +340,18 @@ namespace Voxymore::Core
 			}
 
 			Renderer::BeginScene(*mainCamera, cameraTransform, lights);
+
+
+			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for (auto entity: bezierView) {
+				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
+				Mat4 trs = transform.GetTransform();
+				std::array<Vertex, 4> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				for (int i = 0; i < 4; ++i) {
+					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
+				}
+				Renderer::Submit(controlPoints);
+			}
 
 			{
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);

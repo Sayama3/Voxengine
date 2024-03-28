@@ -89,24 +89,30 @@ layout(std140, binding = 3) uniform MaterialParameters
     MaterialParams materialParameters;
 };
 
+layout (location = 0) out vec4 o_Color;
+layout (location = 1) out int o_Entity; // -1 = no entity. (for now.)
 
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in vec4 a_Color;
+layout (binding = 0) uniform sampler2D u_Textures[32];
 
-layout (location = 0) out vec3 v_Position;
-layout (location = 1) out vec3 v_Normal;
-layout (location = 2) out vec2 v_TexCoord;
-layout (location = 3) out vec4 v_Color;
-layout (location = 4) out flat int v_EntityId;
+bool approx(float a, float b)
+{
+    return abs(b-a) < EPSILON;
+}
 
-void main() {
-    gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
-    v_Position = (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
-    v_Normal = normalize((u_NormalMatrix * vec4(a_Normal, 1.0)).xyz);
-//    v_Normal = a_Normal;
-    v_TexCoord = a_TexCoord;
-    v_Color = a_Color;
-    v_EntityId = u_EntityId;
+
+void main()
+{
+    o_Entity = u_EntityId;
+    o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
+
+//    if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
+//    {
+//        o_Color *= SampleTexture(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index);
+//        if(materialParameters.PbrMetallicRoughness.BaseColorTexture.TexCoord > 0)
+//        {
+//            o_Color = vec4(0.8, 0.2, 0.3, 1.0);
+//        }
+//    }
+
+    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
 }

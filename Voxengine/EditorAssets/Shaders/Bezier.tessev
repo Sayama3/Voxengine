@@ -55,13 +55,13 @@ struct Light
     vec4 Direction;
     float Range;
     float Intensity;
-    int Type; //0 = Directional ; 2 = Spot ; 1 = Point
+    float Cutoff;
+    int Type; //0 = Directional ; 1 = Point ; 2 = Spot
 };
 
 struct LightData
 {
     Light lights[MAX_LIGHT_COUNT];
-//    Light lights;
     int lightCount;
 };
 
@@ -89,24 +89,32 @@ layout(std140, binding = 3) uniform MaterialParameters
     MaterialParams materialParameters;
 };
 
+layout(std140, binding = 4) uniform CurveParameters
+{
+    int u_NumberOfSegment;
+};
 
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in vec4 a_Color;
+layout(isolines) in;
 
-layout (location = 0) out vec3 v_Position;
-layout (location = 1) out vec3 v_Normal;
-layout (location = 2) out vec2 v_TexCoord;
-layout (location = 3) out vec4 v_Color;
-layout (location = 4) out flat int v_EntityId;
 
 void main() {
-    gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
-    v_Position = (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
-    v_Normal = normalize((u_NormalMatrix * vec4(a_Normal, 1.0)).xyz);
-//    v_Normal = a_Normal;
-    v_TexCoord = a_TexCoord;
-    v_Color = a_Color;
-    v_EntityId = u_EntityId;
+    float t = gl_TessCoord.x;
+
+    vec3 p0 = gl_in[0].gl_Position.xyz;
+    vec3 p1 = gl_in[1].gl_Position.xyz;
+    vec3 p2 = gl_in[2].gl_Position.xyz;
+    vec3 p3 = gl_in[3].gl_Position.xyz;
+
+    float t1 = 1.0 - t;
+    float t2 = t * t;
+
+    // Bertsein polynomials
+    float b0 = t1 * t1 * t1;
+    float b1 = 3.0 * t * t1 * t1;
+    float b2 = 3.0 * t2 * t1;
+    float b3 = t2 * t;
+
+    vec3 p = p0 * b0 + p1 * b1 + p2 * b2 + p3 * b3;
+
+    gl_Position = u_ViewProjectionMatrix * vec4(p, 1.0);
 }

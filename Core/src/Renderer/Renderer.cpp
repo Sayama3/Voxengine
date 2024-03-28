@@ -18,12 +18,14 @@ namespace Voxymore::Core {
 		s_Data.ModelUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ModelData), 1);
 		s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(RendererData::LightData), 2);
 		s_Data.MaterialUniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), 3);
+		s_Data.CurveParametersBuffer = UniformBuffer::Create(sizeof(RendererData::CurveParameters), 4);
 
 		RenderCommand::Init();
 	}
 
 	void Renderer::Shutdown() {
 		VXM_PROFILE_FUNCTION();
+
 
 		RenderCommand::Shutdown();
 	}
@@ -241,6 +243,64 @@ namespace Voxymore::Core {
 				Submit(model, model->GetNode(i), currentTransform, entityId);
 			}
 		}
+	}
+
+	const uint64_t NumberOfPoints = 100;
+
+	void Renderer::Submit(const std::array<Vertex, 4>& bezierControlPoints, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate("Bezier", "Bezier");
+		Ref<Mesh> mesh = CreateRef<Mesh>(std::vector<Vertex>{bezierControlPoints[0], bezierControlPoints[1], bezierControlPoints[2], bezierControlPoints[3]}, std::vector<uint32_t>{0,1,1,2,2,3});
+		mesh->SetMaterial(material);
+		mesh->SetDrawMode(DrawMode::Lines);
+
+		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
+		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
+		s_Data.ModelBuffer.EntityId = entityId;
+
+		s_Data.CurveBuffer.NumberOfSegment = 1000;
+
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
+		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
+
+		mesh->Bind();
+		if(material->GetShaderName() != s_BindedShader)
+		{
+			material->Bind();
+			s_BindedShader = material->GetShaderName();
+		}
+		RenderCommand::DrawPatches(4);
+//		RenderCommand::DrawIndexed(mesh->GetDrawMode(), mesh->GetVertexArray());
+	}
+
+	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate("Bezier", "Bezier");
+		Ref<Mesh> mesh = CreateRef<Mesh>(std::vector<Vertex>{controlPoint0, controlPoint1, controlPoint2, controlPoint3}, std::vector<uint32_t>{0,1,1,2,2,3});
+		mesh->SetMaterial(material);
+		mesh->SetDrawMode(DrawMode::Lines);
+
+		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
+		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
+		s_Data.ModelBuffer.EntityId = entityId;
+
+		s_Data.CurveBuffer.NumberOfSegment = 1000;
+
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
+		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
+
+		mesh->Bind();
+		if(material->GetShaderName() != s_BindedShader)
+		{
+			material->Bind();
+			s_BindedShader = material->GetShaderName();
+		}
+		RenderCommand::DrawPatches(4);
+//		RenderCommand::DrawIndexed(mesh->GetDrawMode(), mesh->GetVertexArray());
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

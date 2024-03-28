@@ -919,6 +919,13 @@ namespace Voxymore::Editor {
         ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.vert"}, {FileSource::EditorAsset, "Shaders/FlatColor.frag"});
         ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.vert"}, {FileSource::EditorAsset, "Shaders/TextureShader.frag"});
         ShaderLibrary::GetInstance().Load("Default", {FileSource::EditorAsset, "Shaders/DefaultShader.vert"}, {FileSource::EditorAsset, "Shaders/DefaultShader.frag"});
+        ShaderLibrary::GetInstance().Load("Bezier", std::unordered_map<ShaderType, Path>{
+															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier.vert"}},
+															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier.frag"}},
+															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier.tessco"}},
+															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier.tessev"}},
+//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier.geom"}},
+													});
 
         Assets::ReloadAll();
 
