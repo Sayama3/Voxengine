@@ -35,7 +35,7 @@ namespace Voxymore::Core
 		LightType m_LightType;
 	};
 
-	VXM_CREATE_COMPONENT(LightComponent)
+	static_block{LightComponent::RegisterComponent();}
 
 } // namespace Voxymore::Core
 

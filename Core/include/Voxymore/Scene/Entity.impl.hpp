@@ -20,7 +20,7 @@ namespace Voxymore::Core
 	inline T& Entity::GetComponent()
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component '{1}'.", static_cast<uint32_t>(m_EntityID), typeid(T).name());
 		return m_Scene->m_Registry.get<T>(m_EntityID);
 	}
 
@@ -28,7 +28,7 @@ namespace Voxymore::Core
 	inline const T& Entity::GetComponent() const
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component '{1}'.", static_cast<uint32_t>(m_EntityID), typeid(T).name());
 		return m_Scene->m_Registry.get<T>(m_EntityID);
 	}
 
@@ -36,7 +36,7 @@ namespace Voxymore::Core
 	inline T& Entity::AddComponent(Args &&...args)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
+		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component '{1}'.", static_cast<uint32_t>(m_EntityID), typeid(T).name());
 		T& component = m_Scene->m_Registry.emplace<T>(m_EntityID, std::forward<Args>(args)...);
 		// Using the operator in case later on we change this to take our Entity
 		m_Scene->OnComponentAdded<T>(*this, component);
@@ -47,7 +47,7 @@ namespace Voxymore::Core
 	inline void Entity::AddEmptyComponent()
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component.", static_cast<uint32_t>(m_EntityID));
+		VXM_CORE_ASSERT(!HasComponent<T>(), "The entity ID: {0} already have the component '{1}'.", static_cast<uint32_t>(m_EntityID), typeid(T).name());
 		m_Scene->m_Registry.emplace<T>(m_EntityID);
 		// Using the operator in case later on we change this to take our Entity
 		m_Scene->OnEmptyComponentAdded<T>(*this);
@@ -71,7 +71,7 @@ namespace Voxymore::Core
 	inline void Entity::RemoveComponent()
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component.", static_cast<uint32_t>(m_EntityID));
+		VXM_CORE_ASSERT(HasComponent<T>(), "The entity ID: {0} do not have the component '{1}'.", static_cast<uint32_t>(m_EntityID), typeid(T).name());
 		m_Scene->m_Registry.remove<T>(m_EntityID);
 	}
 } // namespace Voxymore::Core

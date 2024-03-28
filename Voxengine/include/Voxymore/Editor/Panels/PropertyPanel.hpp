@@ -19,6 +19,7 @@ private:
         friend class SceneHierarchyPanel;
     public:
         void OnImGuiRender();
+		void DrawGizmos(const float* viewMatrix, const float* projectionMatrix);
     private:
         template<typename T, typename UIFunction>
         inline static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, bool canBeDeleted = true)
@@ -75,6 +76,8 @@ private:
 
         inline Entity GetSelectedEntity() { return m_SelectedEntity; }
         inline void SetSelectedEntity(Entity entity) { m_SelectedEntity = entity; }
+
+	private:
     };
 
 } // Voxymore

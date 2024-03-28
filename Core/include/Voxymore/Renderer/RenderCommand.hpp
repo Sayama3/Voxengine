@@ -26,6 +26,14 @@ namespace Voxymore::Core {
         	VXM_PROFILE_FUNCTION();
             s_RendererAPI->DrawIndexed(vertexArray);
         }
+        inline static void DrawIndexed(DrawMode drawMode, const Ref<VertexArray> &vertexArray) {
+        	VXM_PROFILE_FUNCTION();
+            s_RendererAPI->DrawIndexed(drawMode, vertexArray);
+        }
+        inline static void DrawPatches(uint32_t patchCount) {
+        	VXM_PROFILE_FUNCTION();
+            s_RendererAPI->DrawPatches(patchCount);
+        }
         inline static void SetClearColor(const glm::vec4& color) {
         	VXM_PROFILE_FUNCTION();
             s_RendererAPI->SetClearColor(color);

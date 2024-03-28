@@ -16,6 +16,7 @@
 #include "Voxymore/Renderer/Texture.hpp"
 #include "Voxymore/Renderer/UniformBuffer.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
+#include "Voxymore/Renderer/RendererAPI.hpp"
 #include <optional>
 #include <vector>
 
@@ -32,6 +33,7 @@ namespace Voxymore::Core
 		glm::vec4 Color = glm::vec4(1.0f);
 		//TODO: Add Material ID.
 		inline Vertex() = default;
+		inline ~Vertex() = default;
 		Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color = glm::vec4(1.0f));
 
 		inline static BufferLayout Layout()
@@ -48,8 +50,8 @@ namespace Voxymore::Core
 		inline static Vertex UpdateVertex(Vertex v, const glm::mat4& transform)
 		{
 			VXM_PROFILE_FUNCTION();
-			v.Position = transform * glm::vec4(v.Position, 1.0);
-			v.Normal = glm::transpose(glm::inverse(transform)) * glm::vec4(v.Normal, 0.0f);
+			v.Position = Math::TransformPoint(transform, v.Position);
+			v.Normal = Math::TransformDirection(glm::transpose(glm::inverse(transform)), v.Normal);
 			return v;
 		}
 	};
@@ -93,6 +95,9 @@ namespace Voxymore::Core
 		[[nodiscard]] inline UUID id() const { return m_Id; }
 
 		inline const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
+
+		inline void SetDrawMode(DrawMode drawMode) { m_DrawMode = drawMode; }
+		inline DrawMode GetDrawMode() const { return m_DrawMode; }
 	private:
 		UUID m_Id;
 		Ref<VertexArray> m_VertexArray;
@@ -101,6 +106,7 @@ namespace Voxymore::Core
 		Ref<Material> m_Material;
 		BufferLayout m_BufferLayout;
 		BoundingBox m_BoundingBox;
+		DrawMode m_DrawMode = DrawMode::Triangles;
 	};
 
 	class PrimitiveMesh

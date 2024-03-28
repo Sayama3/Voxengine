@@ -165,6 +165,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
         include/Voxymore/Core/TypeHelpers.hpp
+        src/Components/BezierCurve.cpp
+        include/Voxymore/Components/BezierCurve.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

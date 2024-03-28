@@ -20,6 +20,12 @@ namespace Voxymore::Core {
 			virtual void UnbindTexture(uint32_t slot) override;
 
             virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
+			virtual void DrawIndexed(DrawMode drawMode, const Ref<VertexArray>& vertexArray) override;
+
+			// TODO? add a starting index
+			virtual void DrawPatches(uint32_t verticesPerPatch) override;
+		private:
+			void SetPatchSize(int32_t verticesPerPatch);
         };
 
     } // Core
