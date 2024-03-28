@@ -98,6 +98,7 @@ layout(isolines) in;
 
 
 void main() {
+    // value between 0 & 1 that give the position of our line. And so usefull to calculate our position inside using the quadratic formula
     float t = gl_TessCoord.x;
 
     vec3 p0 = gl_in[0].gl_Position.xyz;
@@ -105,6 +106,7 @@ void main() {
     vec3 p2 = gl_in[2].gl_Position.xyz;
     vec3 p3 = gl_in[3].gl_Position.xyz;
 
+    // Precalculate some redondant variables
     float t1 = 1.0 - t;
     float t2 = t * t;
 

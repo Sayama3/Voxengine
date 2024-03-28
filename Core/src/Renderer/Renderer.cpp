@@ -245,37 +245,12 @@ namespace Voxymore::Core {
 		}
 	}
 
-	const uint64_t NumberOfPoints = 100;
-
-	void Renderer::Submit(const std::array<Vertex, 4>& bezierControlPoints, int entityId)
+	void Renderer::Submit(const std::array<Vertex, 4>& bezierControlPoints, int lineDefinition, int entityId)
 	{
-		VXM_PROFILE_FUNCTION();
-		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate("Bezier", "Bezier");
-		Ref<Mesh> mesh = CreateRef<Mesh>(std::vector<Vertex>{bezierControlPoints[0], bezierControlPoints[1], bezierControlPoints[2], bezierControlPoints[3]}, std::vector<uint32_t>{0,1,1,2,2,3});
-		mesh->SetMaterial(material);
-		mesh->SetDrawMode(DrawMode::Lines);
-
-		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.EntityId = entityId;
-
-		s_Data.CurveBuffer.NumberOfSegment = 1000;
-
-		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
-
-		mesh->Bind();
-		if(material->GetShaderName() != s_BindedShader)
-		{
-			material->Bind();
-			s_BindedShader = material->GetShaderName();
-		}
-		RenderCommand::DrawPatches(4);
-//		RenderCommand::DrawIndexed(mesh->GetDrawMode(), mesh->GetVertexArray());
+		Submit(bezierControlPoints[0], bezierControlPoints[1], bezierControlPoints[2], bezierControlPoints[3], lineDefinition, entityId);
 	}
 
-	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int entityId)
+	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate("Bezier", "Bezier");
@@ -287,7 +262,7 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
 		s_Data.ModelBuffer.EntityId = entityId;
 
-		s_Data.CurveBuffer.NumberOfSegment = 1000;
+		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
 
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
@@ -300,7 +275,6 @@ namespace Voxymore::Core {
 			s_BindedShader = material->GetShaderName();
 		}
 		RenderCommand::DrawPatches(4);
-//		RenderCommand::DrawIndexed(mesh->GetDrawMode(), mesh->GetVertexArray());
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

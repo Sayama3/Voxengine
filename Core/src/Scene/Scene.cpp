@@ -211,7 +211,7 @@ namespace Voxymore::Core
 				for (int i = 0; i < 4; ++i) {
 					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
-				Renderer::Submit(controlPoints);
+				Renderer::Submit(controlPoints, bezier.Definition, static_cast<int>(entity));
 			}
 
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
@@ -350,7 +350,7 @@ namespace Voxymore::Core
 				for (int i = 0; i < 4; ++i) {
 					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
-				Renderer::Submit(controlPoints);
+				Renderer::Submit(controlPoints, bezier.Definition, static_cast<int>(entity));
 			}
 
 			{

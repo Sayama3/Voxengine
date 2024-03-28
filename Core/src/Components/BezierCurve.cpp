@@ -23,6 +23,10 @@ namespace Voxymore
 				}
 			}
 
+			if(node["Definition"]){
+				Definition = node["Definition"].as<int>(1000);
+			}
+
 		}
 
 		void BezierCurve::SerializeComponent(YAML::Emitter &out, Entity e)
@@ -34,6 +38,8 @@ namespace Voxymore
 				out << cp;
 			}
 			out << YAML::EndSeq;
+
+			out << KEYVAL("Definition",Definition);
 		}
 
 		bool BezierCurve::OnImGuiRender(Entity e)
@@ -44,6 +50,7 @@ namespace Voxymore
 			changed |= ImGuiLib::DrawVec3Control("Control Point 2", LocalControlPoints[1]);
 			changed |= ImGuiLib::DrawVec3Control("Control Point 3", LocalControlPoints[2]);
 			changed |= ImGuiLib::DrawVec3Control("Control Point 4", LocalControlPoints[3]);
+			changed |= ImGui::DragInt("Definition", &Definition, 1, 0, INT_MAX);
 			return changed;
 		}
 
@@ -67,6 +74,26 @@ namespace Voxymore
 				ImGuizmo::PopID();
 			}
 			return changed;
+		}
+
+		BoundingBox BezierCurve::GetBoundingWorldBox(const Mat4& localToWorld) const
+		{
+			VXM_PROFILE_FUNCTION();
+			std::array<Vec3, 4> worldPoints = LocalControlPoints;
+			for (auto& p : worldPoints) {
+				p = Math::TransformPoint(localToWorld, p);
+			}
+			return worldPoints;
+		}
+
+		BoundingSphere BezierCurve::GetBoundingWorldSphere(const Mat4& localToWorld) const
+		{
+			VXM_PROFILE_FUNCTION();
+			std::array<Vec3, 4> worldPoints = LocalControlPoints;
+			for (auto& p : worldPoints) {
+				p = Math::TransformPoint(localToWorld, p);
+			}
+			return worldPoints;
 		}
 	}// namespace Core
 }// namespace Voxymore
