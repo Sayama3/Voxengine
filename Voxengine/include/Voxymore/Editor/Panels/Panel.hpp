@@ -14,6 +14,7 @@ namespace Voxymore::Editor
 		inline virtual ~Panel() {}
 
 		virtual void OnImGuiRender() = 0;
+		virtual void OnImGuizmo();
 		virtual void Open();
 		virtual void Close();
 	protected:

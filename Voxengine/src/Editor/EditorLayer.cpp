@@ -458,7 +458,7 @@ namespace Voxymore::Editor {
                 if (m_ViewportHovered)
                 {
                     if(!m_SceneHierarchyPanel.GetSelectedEntity().IsValid() || m_GizmoOperation == GizmoOperation::NONE) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
-                    else if (!ImGuizmo::IsOver() && !ImGuizmo::IsUsing() && !control && !shift && !alt) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+                    else if (m_HoveredEntity.IsValid() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
                 }
                 break;
             }
@@ -788,6 +788,9 @@ namespace Voxymore::Editor {
                 tc.SetRotation(rotation);
                 tc.SetScale(scale);
             }
+
+			//TODO: Panel ImGuizmo drawing
+			m_SceneHierarchyPanel.OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
         }
     }
 
