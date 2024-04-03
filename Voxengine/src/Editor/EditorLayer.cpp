@@ -23,8 +23,8 @@ namespace Voxymore::Editor {
 		VXM_CORE_CHECK(imgui, "ImGui must be set before adding the EditorLayer.")
 		if(imgui) {
 			auto &imguiLayer = *imgui;
-			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
-			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
+			imguiLayer.AddFont({FileSource::EditorAsset, "Fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
+			imguiLayer.AddFont({FileSource::EditorAsset, "Fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
 		}
 
         m_OnProjectReloadId = Project::AddOnLoad(VXM_BIND_EVENT_FN(ReloadAssets));
