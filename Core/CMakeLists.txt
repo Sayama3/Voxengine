@@ -179,6 +179,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DIST)
 endif()
 
+target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_LOG)
+
 target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
 if(VXM_USE_DOUBLE)
     message(STATUS "Voxymore::Core is using Double as the main floating number system.")
