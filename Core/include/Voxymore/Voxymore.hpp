@@ -40,6 +40,7 @@
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
 #include "Voxymore/Components/BezierCurve.hpp"
+#include "Voxymore/Components/GenericBezierCurve.hpp"
 
 #include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
 #include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"

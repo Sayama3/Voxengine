@@ -167,6 +167,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Core/TypeHelpers.hpp
         src/Components/BezierCurve.cpp
         include/Voxymore/Components/BezierCurve.hpp
+        src/Components/GenericBezierCurve.cpp
+        include/Voxymore/Components/GenericBezierCurve.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

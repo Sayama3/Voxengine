@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Voxymore/Math/Math.hpp"
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
+#include "Voxymore/Math/Math.hpp"
 
 #define KEY(x) YAML::Key << x
 #define VAL(x) YAML::Value << x
@@ -49,8 +49,10 @@ namespace Voxymore::Core
 		out << YAML::EndSeq;
 		return out;
 	}
+
 	YAML::Emitter &operator<<(YAML::Emitter &out, const std::filesystem::path &v);
 }
+
 namespace YAML
 {
 	template<glm::length_t L, typename T, glm::qualifier Q>
