@@ -15,6 +15,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		m_Continuity = node["Continuity"].as<Continuity>(Continuity::Position);
 		m_ControlPoints = node["ControlPoints"].as<int>(2);
+		Definition = node["Definition"].as<int>(1000);
 		ShaderName = node["ShaderName"].as<std::string>("Bezier");
 
 		m_Points.clear();
@@ -44,6 +45,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		out << KEYVAL("Continuity", m_Continuity);
+		out << KEYVAL("Definition", Definition);
 		out << KEYVAL("ControlPoints", m_ControlPoints);
 		out << KEYVAL("ShaderName", ShaderName);
 		out << KEYVAL("Points", YAML::BeginSeq);
@@ -73,7 +75,9 @@ namespace Voxymore::Core
 			ContinuityChanged();
 		}
 
-		if(ImGui::DragInt("Control Points", &m_ControlPoints, 1, 0, INT_MAX))
+		changed |= ImGui::DragInt("Definition", &Definition, 1, 0, INT_MAX);
+
+		if(ImGui::DragInt("Control Points", &m_ControlPoints, 1, 0, 30))
 		{
 			changed = true;
 			ControlPointsChanged();
@@ -126,6 +130,18 @@ namespace Voxymore::Core
 		{
 			ImGui::PushID("Points");
 			const int totalControlPoints = GetTotalControlPoints();
+
+			if(ImGui::Button("Add Point")) {
+				AddPoints();
+			}
+			//TODO: Add button to add Points
+			ImGui::BeginDisabled(m_Points.empty());
+			if(ImGui::Button("Delete First Segment"))
+			{
+				m_Points.erase(m_Points.begin(), m_Points.begin() + totalControlPoints);
+			}
+			ImGui::EndDisabled();
+
 			if(!m_Points.empty())
 			{
 				bool previousPointsChanged = false;
@@ -147,19 +163,28 @@ namespace Voxymore::Core
 					ImGui::Text("Control Segment %d", controlPoints/totalControlPoints);
 					ImGui::BeginDisabled(true);
 					for (int pointIndex = 0; pointIndex < totalControlPoints; ++pointIndex) {
-						const bool isDisabled = pointIndex < (int)m_Continuity;
 						if(pointIndex == (int)m_Continuity) ImGui::EndDisabled();
 						const int index = controlPoints + pointIndex;
 						Vec3& point = m_Points[index];
 						previousPointsChanged |= ImGuiLib::DrawVec3Control(std::format("Point {0}", pointIndex), point);
-						changed |= previousPointsChanged;
 					}
-					if(totalControlPoints >= (int)m_Continuity) ImGui::EndDisabled();
+					if((int)m_Continuity >= totalControlPoints) ImGui::EndDisabled();
+					if(ImGui::Button("Delete Segment"))
+					{
+						m_Points.erase(m_Points.begin() + controlPoints, m_Points.begin() + controlPoints + totalControlPoints);
+						controlPoints -= totalControlPoints;
+					}
 					ImGui::PopID();
+				}
+
+				if(previousPointsChanged) {
+					RecalculatePoints();
+					changed = true;
 				}
 			}
 			ImGui::PopID();
 		}
+		return changed;
 	}
 
 	bool GenericBezierCurve::OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix)
@@ -210,8 +235,15 @@ namespace Voxymore::Core
 	void GenericBezierCurve::ControlPointsChanged()
 	{
 		VXM_PROFILE_FUNCTION();
-//		auto size =
-
+		int amountNeeded = m_Points.size() % GetTotalControlPoints();
+		if(amountNeeded != 0) {
+			for (int i = 0; i < GetTotalControlPoints() - amountNeeded; ++i) {
+				const auto& l1 = m_Points[m_Points.size() - 2];
+				const auto& l2 = m_Points[m_Points.size() - 1];
+				m_Points.push_back(l2 + l2 - l1);
+			}
+		}
+		RecalculatePoints();
 	}
 
 	void GenericBezierCurve::AddPoints()
@@ -296,26 +328,23 @@ namespace Voxymore::Core
 	BoundingBox GenericBezierCurve::GetBoundingWorldBox(const Mat4& localToWorld) const
 	{
 		VXM_PROFILE_FUNCTION();
-		auto matrix = Math::Identity<glm::mat4>();
-		for(const auto& mat : m_Matrices) matrix = mat * matrix;
-		matrix = localToWorld * matrix;
-		std::vector<Vec3> worldPoints = m_Points;
-		for (auto& p : worldPoints) {
-			p = Math::TransformPoint(matrix, p);
-		}
-		return worldPoints;
+		return GetWorldPoints(localToWorld);
 	}
 
 	BoundingSphere GenericBezierCurve::GetBoundingWorldSphere(const Mat4& localToWorld) const
 	{
 		VXM_PROFILE_FUNCTION();
+		return GetWorldPoints(localToWorld);
+	}
+
+	std::vector<Vec3> GenericBezierCurve::GetWorldPoints(const Mat4 &transform) const
+	{
+		VXM_PROFILE_FUNCTION();
+		std::vector<Vec3> result(m_Points.size());
 		auto matrix = Math::Identity<glm::mat4>();
 		for(const auto& mat : m_Matrices) matrix = mat * matrix;
-		matrix = localToWorld * matrix;
-		std::vector<Vec3> worldPoints = m_Points;
-		for (auto& p : worldPoints) {
-			p = Math::TransformPoint(matrix, p);
-		}
-		return worldPoints;
+		matrix = transform * matrix;
+		std::transform(m_Points.begin(), m_Points.end(), result.begin(), [&matrix](const Vec3& p) {return Math::TransformPoint(matrix, p);});
+		return result;
 	}
 }// namespace Voxymore::Core

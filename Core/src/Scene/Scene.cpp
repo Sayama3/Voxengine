@@ -8,6 +8,7 @@
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Components/BezierCurve.hpp"
+#include "Voxymore/Components/GenericBezierCurve.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
@@ -207,11 +208,28 @@ namespace Voxymore::Core
 			for (auto entity: bezierView) {
 				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
 				Mat4 trs = transform.GetTransform();
-				std::array<Vertex, 4> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
 				for (int i = 0; i < 4; ++i) {
 					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
-				Renderer::Submit(controlPoints, bezier.Definition, static_cast<int>(entity));
+				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+			}
+
+			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for(auto entity : genericBezierView)
+			{
+				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
+
+				auto points = bezier.GetWorldPoints(transform.GetTransform());
+
+				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
+				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
+				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
+					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
+						controlPoints[j].Position = points[i+j];
+					}
+					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+				}
 			}
 
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
@@ -346,11 +364,28 @@ namespace Voxymore::Core
 			for (auto entity: bezierView) {
 				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
 				Mat4 trs = transform.GetTransform();
-				std::array<Vertex, 4> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
 				for (int i = 0; i < 4; ++i) {
 					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
-				Renderer::Submit(controlPoints, bezier.Definition, static_cast<int>(entity));
+				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+			}
+
+			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for(auto entity : genericBezierView)
+			{
+				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
+
+				auto points = bezier.GetWorldPoints(transform.GetTransform());
+
+				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
+				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
+				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
+					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
+						controlPoints[j].Position = points[i+j];
+					}
+					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+				}
 			}
 
 			{

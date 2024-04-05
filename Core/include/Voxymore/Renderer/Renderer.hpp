@@ -55,6 +55,7 @@ namespace Voxymore {
 			struct CurveParameters
 			{
 				int NumberOfSegment;
+				int NumberOfControlPoint;
 			};
 
 			CameraData CameraBuffer;
@@ -91,8 +92,9 @@ namespace Voxymore {
 			static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 			static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-			static void Submit(const std::array<Vertex, 4>& bezierControlPoints, int lineDefintion = 1000, int entityId = -1);
-			static void Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefintion = 1000, int entityId = -1);
+
+			static void Submit(const std::vector<Vertex>& bezierControlPoints, int lineDefintion = 1000, const std::string& shaderName = "Bezier", int entityId = -1);
+			static void Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefintion = 1000, const std::string& shaderName = "Bezier4", int entityId = -1);
 
 			inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		private:

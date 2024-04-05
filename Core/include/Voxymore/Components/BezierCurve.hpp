@@ -32,6 +32,8 @@ namespace Voxymore::Core
 
 		std::array<Vec3, 4> LocalControlPoints = {Vec3{-1,0,0}, Vec3{0,1,1}, Vec3{0,-1,-1}, Vec3{1,0,0}};
 		int Definition = 1000;
+
+		inline std::string GetShaderName() const { return "Bezier4";}
 	};
 
 	VXM_CREATE_COMPONENT(BezierCurve)

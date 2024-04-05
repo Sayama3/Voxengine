@@ -245,16 +245,18 @@ namespace Voxymore::Core {
 		}
 	}
 
-	void Renderer::Submit(const std::array<Vertex, 4>& bezierControlPoints, int lineDefinition, int entityId)
-	{
-		Submit(bezierControlPoints[0], bezierControlPoints[1], bezierControlPoints[2], bezierControlPoints[3], lineDefinition, entityId);
-	}
-
-	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, int entityId)
+	void Renderer::Submit(const std::vector<Vertex>& bezierControlPoints, int lineDefinition, const std::string& shaderName, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate("Bezier", "Bezier");
-		Ref<Mesh> mesh = CreateRef<Mesh>(std::vector<Vertex>{controlPoint0, controlPoint1, controlPoint2, controlPoint3}, std::vector<uint32_t>{0,1,1,2,2,3});
+		VXM_CORE_ASSERT(bezierControlPoints.size() <= 32, "The shader might not support more than a 1000 control point...")
+		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate(shaderName, shaderName);
+		std::vector<uint32_t> indices;
+		indices.reserve((bezierControlPoints.size()-1)*2);
+		for (uint32_t i = 0; i < bezierControlPoints.size() - 1; ++i) {
+			indices.push_back(i);
+			indices.push_back(i+1);
+		}
+		Ref<Mesh> mesh = CreateRef<Mesh>(bezierControlPoints, indices);
 		mesh->SetMaterial(material);
 		mesh->SetDrawMode(DrawMode::Lines);
 
@@ -263,6 +265,7 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 
 		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
+		s_Data.CurveBuffer.NumberOfControlPoint = static_cast<int>(bezierControlPoints.size());
 
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
@@ -274,7 +277,13 @@ namespace Voxymore::Core {
 			material->Bind();
 			s_BindedShader = material->GetShaderName();
 		}
-		RenderCommand::DrawPatches(4);
+		RenderCommand::DrawPatches(bezierControlPoints.size());
+	}
+
+	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, const std::string& shaderName, int entityId)
+	{
+		VXM_PROFILE_FUNCTION();
+		Submit({controlPoint0, controlPoint1, controlPoint2, controlPoint3}, lineDefinition, shaderName, entityId);
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

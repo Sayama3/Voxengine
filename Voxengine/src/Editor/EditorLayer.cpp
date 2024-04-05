@@ -926,6 +926,13 @@ namespace Voxymore::Editor {
 															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessev"}},
 //															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.geom"}},
 													});
+        ShaderLibrary::GetInstance().Load("Bezier", std::unordered_map<ShaderType, Path>{
+															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.vert"}},
+															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.frag"}},
+															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessco"}},
+															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessev"}},
+//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.geom"}},
+													});
 
         Assets::ReloadAll();
 
