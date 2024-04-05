@@ -151,7 +151,7 @@ namespace Voxymore::Core
 				ImGui::PushID("First Control Segment");
 				ImGui::Text("First Control Segment");
 				for (int pointIndex = 0; pointIndex < totalControlPoints; ++pointIndex) {
-					previousPointsChanged |= ImGuiLib::DrawVec3Control(std::format("Point {0}", pointIndex), m_Points[pointIndex]);
+					previousPointsChanged |= ImGuiLib::DrawVec3Control(fmt::format("Point {0}", pointIndex), m_Points[pointIndex]);
 				}
 				ImGui::PopID();
 
@@ -166,7 +166,7 @@ namespace Voxymore::Core
 						if(pointIndex == (int)m_Continuity) ImGui::EndDisabled();
 						const int index = controlPoints + pointIndex;
 						Vec3& point = m_Points[index];
-						previousPointsChanged |= ImGuiLib::DrawVec3Control(std::format("Point {0}", pointIndex), point);
+						previousPointsChanged |= ImGuiLib::DrawVec3Control(fmt::format("Point {0}", pointIndex), point);
 					}
 					if((int)m_Continuity >= totalControlPoints) ImGui::EndDisabled();
 					if(ImGui::Button("Delete Segment"))
