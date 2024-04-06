@@ -7,7 +7,7 @@
 
 namespace Voxymore::Editor
 {
-	void BasePanel::OnImGuizmo(Core::UUID id, const float* viewMatrix, const float* projectionMatrix)
+	void BasePanel::OnImGuizmo(const float* viewMatrix, const float* projectionMatrix)
 	{
 
 	}

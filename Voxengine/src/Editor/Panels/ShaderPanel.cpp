@@ -8,7 +8,7 @@ using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
-	void ShaderPanel::OnImGuiRender(UUID id)
+	void ShaderPanel::OnImGuiRender()
 	{
 		VXM_PROFILE_FUNCTION();
 		ImGui::Checkbox("Auto Reload", &m_AutoReload);

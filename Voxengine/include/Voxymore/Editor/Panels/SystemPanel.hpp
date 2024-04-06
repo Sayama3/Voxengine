@@ -15,6 +15,6 @@ private:
         void DrawSystem(const std::string& systemName);
 public:
 		VXM_IMPLEMENT_PANEL("Systems");
-		virtual void OnImGuiRender(Core::UUID) override;
+		virtual void OnImGuiRender() override;
     };
 } // namespace Voxymore::Editor

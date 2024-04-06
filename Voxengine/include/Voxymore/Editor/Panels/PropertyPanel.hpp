@@ -25,8 +25,8 @@ private:
 		inline static void SetSelectedEntity(Entity entity) { s_SelectedEntity = entity; }
 
 	public:
-        virtual void OnImGuiRender(Core::UUID) override;
-		virtual void OnImGuizmo(Core::UUID, const float* viewMatrix, const float* projectionMatrix) override;
+        virtual void OnImGuiRender() override;
+		virtual void OnImGuizmo(const float* viewMatrix, const float* projectionMatrix) override;
     private:
         template<typename T, typename UIFunction>
         inline static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, bool canBeDeleted = true)

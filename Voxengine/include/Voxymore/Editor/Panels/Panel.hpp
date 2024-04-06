@@ -15,12 +15,19 @@ namespace Voxymore::Editor
 	class BasePanel
 	{
 	public:
+		typedef Core::UUID PanelHandle;
+	public:
+
 		inline virtual ~BasePanel() {}
 
 		virtual uint64_t GetTypeID() = 0;
 		virtual std::string GetName() = 0;
-		virtual void OnImGuiRender(Core::UUID id) = 0;
-		virtual void OnImGuizmo(Core::UUID, const float* viewMatrix, const float* projectionMatrix);
+		virtual void OnImGuiRender() = 0;
+		virtual void OnImGuizmo(const float* viewMatrix, const float* projectionMatrix);
+
+		PanelHandle GetHandle() const { return m_ID;}
+	private:
+		PanelHandle m_ID;
 	};
 
 	template<class SubPanel>

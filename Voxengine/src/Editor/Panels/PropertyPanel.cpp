@@ -15,7 +15,7 @@
 namespace Voxymore::Editor {
 	Entity PropertyPanel::s_SelectedEntity = Entity();
 
-	void PropertyPanel::OnImGuiRender(UUID id) {
+	void PropertyPanel::OnImGuiRender() {
 		VXM_PROFILE_FUNCTION();
 		if (s_SelectedEntity.IsValid()) {
 			bool enable = s_SelectedEntity.IsActive();
@@ -203,7 +203,7 @@ namespace Voxymore::Editor {
 		}
 	}
 
-	void PropertyPanel::OnImGuizmo(UUID id, const float *viewMatrix, const float *projectionMatrix)
+	void PropertyPanel::OnImGuizmo(const float *viewMatrix, const float *projectionMatrix)
 	{
 		VXM_PROFILE_FUNCTION();
 		if (s_SelectedEntity.IsValid()) {

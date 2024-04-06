@@ -349,7 +349,7 @@ namespace Voxymore::Editor {
 		{
 			for (auto&& [name, createPanelFunc] : m_PanelCreator) {
 				if (ImGui::MenuItem(name.c_str())) {
-					m_Panels.emplace_back(UUID(), createPanelFunc());
+					m_Panels.push_back(createPanelFunc());
 				}
 			}
 
@@ -650,15 +650,15 @@ namespace Voxymore::Editor {
 		for(size_t i = 0; i < m_Panels.size(); ++i)
 		{
 			auto& panel = m_Panels[i];
-			auto id = panel.first;
-			BasePanel& basePanel = *panel.second;
+			auto id = panel->GetHandle();
+			BasePanel& basePanel = *panel;
 			{
 				bool open = true;
 				std::string str = basePanel.GetName() + "##" + Math::ToString(static_cast<uint64_t>(id));
 				ImGui::PushID(str.c_str());
 				ImGui::Begin(str.c_str(), &open);
 				{
-					basePanel.OnImGuiRender(id);
+					basePanel.OnImGuiRender();
 				}
 				ImGui::End();
 				if(!open) {
@@ -815,8 +815,8 @@ namespace Voxymore::Editor {
         }
 
 		for (auto& panel : m_Panels) {
-			ImGuizmo::PushID((const void*)static_cast<uint64_t>(panel.first));
-			panel.second->OnImGuizmo(panel.first, glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
+			ImGuizmo::PushID((const void*)static_cast<uint64_t>(panel->GetHandle()));
+			panel->OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
 			ImGuizmo::PopID();
 		}
     }

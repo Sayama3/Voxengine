@@ -36,7 +36,7 @@ namespace Voxymore::Editor {
 		s_Context = scene;
     }
 
-    void SceneHierarchyPanel::OnImGuiRender(UUID id)
+    void SceneHierarchyPanel::OnImGuiRender()
     {
 		VXM_PROFILE_FUNCTION();
         {
@@ -81,7 +81,7 @@ namespace Voxymore::Editor {
         }
     }
 
-	void SceneHierarchyPanel::OnImGuizmo(UUID id, const float* view, const float* projection)
+	void SceneHierarchyPanel::OnImGuizmo(const float* view, const float* projection)
 	{
 		VXM_PROFILE_FUNCTION();
 //		m_PropertyPanel.OnImGuizmo(view, projection);

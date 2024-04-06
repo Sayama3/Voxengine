@@ -80,7 +80,7 @@ namespace Voxymore::Editor {
 //        SystemPanel m_SystemPanel;
 //		ShaderPanel m_ShaderPanel;
 		std::map<std::string, Core::Ref<BasePanel>(*)(void)> m_PanelCreator;
-		std::vector<std::pair<UUID, Core::Ref<BasePanel>>> m_Panels;
+		std::vector<Core::Ref<BasePanel>> m_Panels;
 
         Ref<Scene> m_ActiveScene;
         Ref<Scene> m_CacheScene = nullptr;

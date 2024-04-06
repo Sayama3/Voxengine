@@ -14,7 +14,7 @@ namespace Voxymore::Editor
 	{
 	public:
 		VXM_IMPLEMENT_PANEL("Shader Panel");
-		virtual void OnImGuiRender(Core::UUID) override;
+		virtual void OnImGuiRender() override;
 	private:
 		bool m_AutoReload = false;
 	};

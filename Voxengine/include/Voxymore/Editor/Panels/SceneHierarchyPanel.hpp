@@ -20,8 +20,8 @@ namespace Voxymore::Editor {
         inline SceneHierarchyPanel() = default;
         static void SetContext(const Ref<Scene>& scene);
 
-        virtual void OnImGuiRender(Core::UUID) override;
-        virtual void OnImGuizmo(Core::UUID, const float* view, const float* projection) override;
+        virtual void OnImGuiRender() override;
+        virtual void OnImGuizmo(const float* view, const float* projection) override;
     private:
         void DrawEntityNode(Entity entity);
 		void DrawHierarchyOptions();

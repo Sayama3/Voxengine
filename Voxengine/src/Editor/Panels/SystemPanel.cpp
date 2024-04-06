@@ -8,7 +8,7 @@ namespace Voxymore::Editor
 	std::vector<std::string> SystemPanel::m_SceneNames = {};
 	std::vector<UUID> SystemPanel::m_SceneIds = {};
 
-    void SystemPanel::OnImGuiRender(UUID id)
+    void SystemPanel::OnImGuiRender()
     {
 		VXM_PROFILE_FUNCTION();
 		m_SceneIds = SceneManager::GetSceneIds();
