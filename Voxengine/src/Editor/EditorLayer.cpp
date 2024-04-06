@@ -66,6 +66,11 @@ namespace Voxymore::Editor {
         {
             CreateNewScene();
         }
+
+		m_PanelCreator.insert({PropertyPanel::StaticGetName(), &PropertyPanel::CreatePanel});
+		m_PanelCreator.insert({ShaderPanel::StaticGetName(), &ShaderPanel::CreatePanel});
+		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetName(), &SceneHierarchyPanel::CreatePanel});
+		m_PanelCreator.insert({SystemPanel::StaticGetName(), &SystemPanel::CreatePanel});
     }
 
     void EditorLayer::OnDetach()
@@ -73,6 +78,8 @@ namespace Voxymore::Editor {
         VXM_PROFILE_FUNCTION();
 
         Project::RemoveOnLoad(m_OnProjectReloadId);
+		m_PanelCreator.clear();
+		m_Panels.clear();
     }
 
     //TODO: Pause the update when m_SceneState == SceneState::Pause
@@ -340,13 +347,19 @@ namespace Voxymore::Editor {
 
 		if(ImGui::BeginMenu("Panels"))
 		{
-			if (ImGui::MenuItem("Shader Panel")) {
-				m_ShaderPanel.Open();
+			for (auto&& [name, createPanelFunc] : m_PanelCreator) {
+				if (ImGui::MenuItem(name.c_str())) {
+					m_Panels.emplace_back(UUID(), createPanelFunc());
+				}
 			}
 
-			if (ImGui::MenuItem("Systems")) {
-				m_SystemPanel.Open();
-			}
+//			if (ImGui::MenuItem("Shader BasePanel")) {
+//				m_ShaderPanel.Open();
+//			}
+//
+//			if (ImGui::MenuItem("Systems")) {
+//				m_SystemPanel.Open();
+//			}
 
 			ImGui::EndMenu();
 		}
@@ -429,7 +442,7 @@ namespace Voxymore::Editor {
             {
                 if(!rightClick && !(control || shift || alt))
                 {
-                    auto selected = m_SceneHierarchyPanel.GetSelectedEntity();
+                    auto selected = PropertyPanel::GetSelectedEntity();
                     if (selected) {
                         auto selectedTc = selected.GetComponent<TransformComponent>();
                         m_EditorCamera.SetFocusTarget(selectedTc.GetPosition());
@@ -457,8 +470,8 @@ namespace Voxymore::Editor {
             {
                 if (m_ViewportHovered)
                 {
-                    if(!m_SceneHierarchyPanel.GetSelectedEntity().IsValid() || m_GizmoOperation == GizmoOperation::NONE) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
-                    else if (m_HoveredEntity.IsValid() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+                    if(!PropertyPanel::GetSelectedEntity().IsValid() || m_GizmoOperation == GizmoOperation::NONE) PropertyPanel::SetSelectedEntity(m_HoveredEntity);
+                    else if (m_HoveredEntity.IsValid() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) PropertyPanel::SetSelectedEntity(m_HoveredEntity);
                 }
                 break;
             }
@@ -551,7 +564,7 @@ namespace Voxymore::Editor {
         m_FilePath = std::string();
         m_ActiveScene = SceneManager::CreateScene();
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneHierarchyPanel::SetContext(m_ActiveScene);
 
 		// Creating a default light on the empty scenes.
 		auto e = m_ActiveScene->CreateEntity("Directional Light");
@@ -610,7 +623,7 @@ namespace Voxymore::Editor {
         VXM_CORE_TRACE("Open Scene from path {0}", path.string());
         m_FilePath = path.string();
         m_ActiveScene = SceneManager::CreateScene(path, m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneHierarchyPanel::SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OpenScene(UUID id)
@@ -627,16 +640,34 @@ namespace Voxymore::Editor {
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         //TODO: Get the associated file path.
         m_FilePath = std::string();
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneHierarchyPanel::SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnImGuiRender() {
         VXM_PROFILE_FUNCTION();
         RenderDockspace();
 
-        m_SceneHierarchyPanel.OnImGuiRender();
-        m_SystemPanel.OnImGuiRender();
-		m_ShaderPanel.OnImGuiRender();
+		for(size_t i = 0; i < m_Panels.size(); ++i)
+		{
+			auto& panel = m_Panels[i];
+			auto id = panel.first;
+			BasePanel& basePanel = *panel.second;
+			{
+				bool open = true;
+				std::string str = basePanel.GetName() + "##" + Math::ToString(static_cast<uint64_t>(id));
+				ImGui::PushID(str.c_str());
+				ImGui::Begin(str.c_str(), &open);
+				{
+					basePanel.OnImGuiRender(id);
+				}
+				ImGui::End();
+				if(!open) {
+					m_Panels.erase(m_Panels.begin() + i);
+					--i;
+				}
+				ImGui::PopID();
+			}
+		}
 
         DrawImGuiViewport();
 
@@ -741,25 +772,18 @@ namespace Voxymore::Editor {
     void EditorLayer::DrawGizmos()
     {
         DrawGizmosWindow();
-        Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+
+		// Editor Camera
+		const glm::mat4 projectionMatrix = m_EditorCamera.GetProjectionMatrix();
+		const glm::mat4& viewMatrix = m_EditorCamera.GetViewMatrix();
+
+        Entity selectedEntity = PropertyPanel::GetSelectedEntity();
         if(selectedEntity)
         {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
 
             ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-            // Runtime Camera
-//            Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-//            const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
-//            const auto& transformComponent = cameraEntity.GetComponent<TransformComponent>();
-//
-//            const glm::mat4 projectionMatrix = cameraComponent.Camera.GetProjectionMatrix();
-//            const glm::mat4 viewMatrix = glm::inverse(transformComponent.GetTransform());
-
-            // Editor Camera
-            const glm::mat4 projectionMatrix = m_EditorCamera.GetProjectionMatrix();
-            const glm::mat4& viewMatrix = m_EditorCamera.GetViewMatrix();
 
             // Selected Entity
             auto& tc = selectedEntity.GetComponent<TransformComponent>();
@@ -788,10 +812,13 @@ namespace Voxymore::Editor {
                 tc.SetRotation(rotation);
                 tc.SetScale(scale);
             }
-
-			//TODO: Panel ImGuizmo drawing
-			m_SceneHierarchyPanel.OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
         }
+
+		for (auto& panel : m_Panels) {
+			ImGuizmo::PushID((const void*)static_cast<uint64_t>(panel.first));
+			panel.second->OnImGuizmo(panel.first, glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
+			ImGuizmo::PopID();
+		}
     }
 
     void EditorLayer::DrawGizmosWindow()
@@ -834,7 +861,7 @@ namespace Voxymore::Editor {
         m_CacheFilePath = m_FilePath;
         m_FilePath = "";
 
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneHierarchyPanel::SetContext(m_ActiveScene);
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         m_ActiveScene->StartScene();
 		ParticlePhysicsLayer* ppl;
@@ -874,7 +901,7 @@ namespace Voxymore::Editor {
         m_FilePath = m_CacheFilePath;
         m_CacheFilePath = "";
 
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SceneHierarchyPanel::SetContext(m_ActiveScene);
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
     }
 

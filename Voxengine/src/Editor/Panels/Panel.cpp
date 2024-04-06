@@ -7,18 +7,8 @@
 
 namespace Voxymore::Editor
 {
-	void Panel::OnImGuizmo()
+	void BasePanel::OnImGuizmo(Core::UUID id, const float* viewMatrix, const float* projectionMatrix)
 	{
 
-	}
-
-	void Panel::Open()
-	{
-		m_Open = true;
-	}
-
-	void Panel::Close()
-	{
-		m_Open = false;
 	}
 }

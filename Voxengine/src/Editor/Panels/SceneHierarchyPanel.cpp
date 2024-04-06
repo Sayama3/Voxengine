@@ -11,42 +11,36 @@
 
 
 namespace Voxymore::Editor {
-    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene) : m_Context(scene)
-    {
-    }
+	Ref<Scene> SceneHierarchyPanel::s_Context = nullptr;
 
     void SceneHierarchyPanel::SetContext(const Ref<Scene> &scene)
     {
 		VXM_PROFILE_FUNCTION();
-		if(m_PropertyPanel.m_SelectedEntity)
+		if(PropertyPanel::s_SelectedEntity)
 		{
-			auto id = m_PropertyPanel.m_SelectedEntity.id();
+			auto id = PropertyPanel::s_SelectedEntity.id();
 			auto e = scene->GetEntity(id);
 			if(e.IsValid())
 			{
-				m_PropertyPanel.m_SelectedEntity = e;
+				PropertyPanel::s_SelectedEntity = e;
 			}
 			else
 			{
-				m_PropertyPanel.m_SelectedEntity = {};
+				PropertyPanel::s_SelectedEntity = {};
 			}
 		}
 		else
 		{
-			m_PropertyPanel.m_SelectedEntity = {};
+			PropertyPanel::s_SelectedEntity = {};
 		}
-		m_Context = scene;
-
+		s_Context = scene;
     }
 
-    void SceneHierarchyPanel::OnImGuiRender()
+    void SceneHierarchyPanel::OnImGuiRender(UUID id)
     {
 		VXM_PROFILE_FUNCTION();
-        ImGui::Begin("Hierarchy");
-
-
         {
-            std::string idstr = std::to_string(m_Context->m_ID);
+            std::string idstr = std::to_string(s_Context->m_ID);
             ImGui::Text("%s", idstr.c_str());
         }
 
@@ -56,27 +50,27 @@ namespace Voxymore::Editor {
             const size_t bufferSize = 256;
             char buffer[bufferSize];
             buffer[bufferSize - 1] = 0;
-            std::strncpy(buffer, m_Context->m_Name.c_str(), sizeof(buffer) - 1);
+            std::strncpy(buffer, s_Context->m_Name.c_str(), sizeof(buffer) - 1);
             if (ImGui::InputText("##SceneName", buffer, bufferSize)) {
-                m_Context->m_Name = buffer;
+				s_Context->m_Name = buffer;
             }
         }
 
         ImGui::Separator();
 
-        auto transformView = m_Context->m_Registry.view<TagComponent>();
+        auto transformView = s_Context->m_Registry.view<TagComponent>();
         for (auto entity : transformView)
         {
-            DrawEntityNode({entity, m_Context.get()});
+            DrawEntityNode({entity, s_Context.get()});
         }
 
         if(ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
         {
-            m_PropertyPanel.m_SelectedEntity = {};
+            PropertyPanel::s_SelectedEntity = {};
         }
         else if(ImGui::IsKeyPressed(ImGuiKey_Escape) && ImGui::IsWindowFocused())
         {
-            m_PropertyPanel.m_SelectedEntity = {};
+            PropertyPanel::s_SelectedEntity = {};
         }
 
         // Right click on blank space
@@ -85,16 +79,12 @@ namespace Voxymore::Editor {
 			DrawHierarchyOptions();
             ImGui::EndPopup();
         }
-
-        ImGui::End();
-
-        m_PropertyPanel.OnImGuiRender();
     }
 
-	void SceneHierarchyPanel::OnImGuizmo(const float* view, const float* projection)
+	void SceneHierarchyPanel::OnImGuizmo(UUID id, const float* view, const float* projection)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_PropertyPanel.DrawGizmos(view, projection);
+//		m_PropertyPanel.OnImGuizmo(view, projection);
 	}
 
 	void SceneHierarchyPanel::DrawHierarchyOptions()
@@ -102,32 +92,32 @@ namespace Voxymore::Editor {
 		VXM_PROFILE_FUNCTION();
 		if(ImGui::MenuItem("Create Empty Entity"))
 		{
-			auto e = m_Context->CreateEntity();
-			m_PropertyPanel.m_SelectedEntity = e;
+			auto e = s_Context->CreateEntity();
+			PropertyPanel::s_SelectedEntity = e;
 		}
 
 		if(ImGui::MenuItem("Create Camera"))
 		{
 			static uint64_t entityCameraCount = 0;
-			auto e = m_Context->CreateEntity("Camera - " + std::to_string(entityCameraCount++));
+			auto e = s_Context->CreateEntity("Camera - " + std::to_string(entityCameraCount++));
 			e.AddComponent<CameraComponent>();
-			m_PropertyPanel.m_SelectedEntity = e;
+			PropertyPanel::s_SelectedEntity = e;
 		}
 
 		if(ImGui::MenuItem("Create Cube"))
 		{
 			static uint64_t entityCubeCount = 0;
-			auto e = m_Context->CreateEntity("Cube - " + std::to_string(entityCubeCount++));
+			auto e = s_Context->CreateEntity("Cube - " + std::to_string(entityCubeCount++));
 			e.AddComponent<PrimitiveComponent>(PrimitiveMesh::Type::Cube);
-			m_PropertyPanel.m_SelectedEntity = e;
+			PropertyPanel::s_SelectedEntity = e;
 		}
 
 		if(ImGui::MenuItem("Create Light"))
 		{
 			static uint64_t entityLightCount = 0;
-			auto e = m_Context->CreateEntity("Light - " + std::to_string(entityLightCount++));
+			auto e = s_Context->CreateEntity("Light - " + std::to_string(entityLightCount++));
 			e.AddComponent<LightComponent>();
-			m_PropertyPanel.m_SelectedEntity = e;
+			PropertyPanel::s_SelectedEntity = e;
 		}
 	}
 
@@ -137,13 +127,13 @@ namespace Voxymore::Editor {
         auto& tag = entity.GetComponent<TagComponent>().Tag;
         void* EntityID = (void*)(uint64_t)(uint32_t)entity;
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-        if(entity == m_PropertyPanel.m_SelectedEntity) flags |= ImGuiTreeNodeFlags_Selected;
+        if(entity == PropertyPanel::s_SelectedEntity) flags |= ImGuiTreeNodeFlags_Selected;
 
         bool open = ImGui::TreeNodeEx(EntityID, flags, tag.c_str());
         //TODO: change selected entity on selection changed.
         if(ImGui::IsItemClicked() || ImGui::IsItemActivated())
         {
-            m_PropertyPanel.m_SelectedEntity = entity;
+            PropertyPanel::s_SelectedEntity = entity;
         }
 
         bool deleteEntity = false;
@@ -170,8 +160,8 @@ namespace Voxymore::Editor {
 
         if(deleteEntity)
         {
-            if(m_PropertyPanel.m_SelectedEntity == entity) m_PropertyPanel.m_SelectedEntity = {};
-            m_Context->DestroyEntity(entity);
+            if(PropertyPanel::s_SelectedEntity == entity) PropertyPanel::s_SelectedEntity = {};
+			s_Context->DestroyEntity(entity);
         }
     }
 } // Voxymore

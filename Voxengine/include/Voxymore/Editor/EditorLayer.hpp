@@ -3,15 +3,18 @@
 //
 
 #pragma once
+
 #include "Voxymore/Core/PerspectiveCameraController.hpp"
-#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
-#include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
-#include "Voxymore/Editor/Panels/ShaderPanel.hpp"
-#include "Voxymore/Editor/Panels/SystemPanel.hpp"
 #include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Renderer/Framebuffer.hpp"
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Voxymore.hpp"
+
+#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
+#include "Voxymore/Editor/Panels/ShaderPanel.hpp"
+#include "Voxymore/Editor/Panels/SystemPanel.hpp"
+#include "Voxymore/Editor/Panels/Panel.hpp"
 
 using namespace Voxymore::Core;
 
@@ -71,11 +74,13 @@ namespace Voxymore::Editor {
     private:
         std::array<glm::vec2, 2> m_ViewportBounds;
     private:
-		// TODO: Create a panel system. (openable, closable, etc.)
+		// TODO: Create a SubPanel system. (openable, closable, etc.)
         // Panels
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-        SystemPanel m_SystemPanel;
-		ShaderPanel m_ShaderPanel;
+//		SceneHierarchyPanel m_SceneHierarchyPanel;
+//        SystemPanel m_SystemPanel;
+//		ShaderPanel m_ShaderPanel;
+		std::map<std::string, Core::Ref<BasePanel>(*)(void)> m_PanelCreator;
+		std::vector<std::pair<UUID, Core::Ref<BasePanel>>> m_Panels;
 
         Ref<Scene> m_ActiveScene;
         Ref<Scene> m_CacheScene = nullptr;

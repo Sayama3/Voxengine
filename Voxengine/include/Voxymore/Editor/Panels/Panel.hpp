@@ -4,21 +4,31 @@
 
 #pragma once
 
+#include <Voxymore/Voxymore.hpp>
+
+#define VXM_IMPLEMENT_PANEL(name) public:\
+inline static std::string StaticGetName() { return name; } \
+inline virtual std::string GetName() override { return StaticGetName(); }
 
 namespace Voxymore::Editor
 {
-
-	class Panel
+	class BasePanel
 	{
 	public:
-		inline virtual ~Panel() {}
+		inline virtual ~BasePanel() {}
 
-		virtual void OnImGuiRender() = 0;
-		virtual void OnImGuizmo();
-		virtual void Open();
-		virtual void Close();
-	protected:
-		bool m_Open;
+		virtual uint64_t GetTypeID() = 0;
+		virtual std::string GetName() = 0;
+		virtual void OnImGuiRender(Core::UUID id) = 0;
+		virtual void OnImGuizmo(Core::UUID, const float* viewMatrix, const float* projectionMatrix);
+	};
+
+	template<class SubPanel>
+	class Panel : public BasePanel
+	{
+	public:
+		inline virtual uint64_t GetTypeID() override { return typeid(SubPanel).hash_code(); };
+		inline static Core::Ref<BasePanel> CreatePanel() { return Core::CreateRef<SubPanel>(); }
 	};
 
 } // namespace Voxymore::Editor
