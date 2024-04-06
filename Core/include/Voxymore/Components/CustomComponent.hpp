@@ -24,6 +24,7 @@ public:
 		void (*SerializeComponent)(YAML::Emitter &/*emitter*/, Entity /*sourceEntity*/); //TODO: change for my own "serializer"
 		void (*DeserializeComponent)(YAML::Node& /*componentNode*/, Entity/*targetEntity*/); // TODO: Change for own "deserializer"
 		bool (*OnImGuiRender)(Entity/*sourceEntity*/);
+		bool (*OnImGuizmo)(Entity/*sourceEntity*/, const float* viewMatrix, const float* projectionMatrix) = nullptr;
 		void (*AddComponent)(Entity);
 		void (*RemoveComponent)(Entity);
 	};
@@ -62,6 +63,7 @@ public:
 		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<T>().DeserializeComponent(node);}
 		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out);}
 		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender();}
+		inline static bool StaticOnImGuizmo(::Voxymore::Core::Entity sourceEntity, const float* viewMatrix, const float* projectionMatrix) {return sourceEntity.GetComponent<T>().OnImGuizmo(viewMatrix, projectionMatrix);}
 		inline static std::string StaticGetName() { return T::GetName(); }
 
 		inline static void RegisterComponent()
@@ -77,6 +79,7 @@ public:
 			cc.SerializeComponent = T::StaticSerializeComponent;
 			cc.DeserializeComponent = T::StaticDeserializeComponent;
 			cc.OnImGuiRender = T::StaticOnImGuiRender;
+			cc.OnImGuizmo = T::StaticOnImGuizmo;
 			ComponentManager::AddComponent(cc);
 		}
 
@@ -98,6 +101,7 @@ public:
 		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {targetEntity.GetComponent<T>().DeserializeComponent(node, targetEntity);}
 		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out, sourceEntity);}
 		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender(sourceEntity);}
+		inline static bool StaticOnImGuizmo(::Voxymore::Core::Entity sourceEntity, const float* viewMatrix, const float* projectionMatrix) {return sourceEntity.GetComponent<T>().OnImGuizmo(sourceEntity, viewMatrix, projectionMatrix);}
 		inline static std::string StaticGetName() { return T::GetName(); }
 
 		inline static void RegisterComponent()
@@ -113,6 +117,7 @@ public:
 			cc.SerializeComponent = T::StaticSerializeComponent;
 			cc.DeserializeComponent = T::StaticDeserializeComponent;
 			cc.OnImGuiRender = T::StaticOnImGuiRender;
+			cc.OnImGuizmo = T::StaticOnImGuizmo;
 			ComponentManager::AddComponent(cc);
 		}
 
@@ -124,7 +129,9 @@ public:
 	};
 }
 
-#define VXM_IMPLEMENT_COMPONENT(COMP) public: inline static std::string GetName() { return #COMP;}
+#define VXM_IMPLEMENT_COMPONENT(COMP) public: inline static std::string GetName() { return #COMP;} inline bool OnImGuizmo(const float* viewMatrix, const float* projectionMatrix) {return false;}
+#define VXM_IMPLEMENT_SELFAWARECOMPONENT(COMP) public: inline static std::string GetName() { return #COMP;} inline bool OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix) {return false;}
+#define VXM_IMPLEMENT_NAME(COMP) public: inline static std::string GetName() { return #COMP;}
 
 
 #define VXM_CREATE_COMPONENT(COMP) static_block{COMP::RegisterComponent();}

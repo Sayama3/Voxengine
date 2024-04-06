@@ -91,6 +91,12 @@ namespace Voxymore::Editor {
         m_PropertyPanel.OnImGuiRender();
     }
 
+	void SceneHierarchyPanel::OnImGuizmo(const float* view, const float* projection)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_PropertyPanel.DrawGizmos(view, projection);
+	}
+
 	void SceneHierarchyPanel::DrawHierarchyOptions()
 	{
 		VXM_PROFILE_FUNCTION();

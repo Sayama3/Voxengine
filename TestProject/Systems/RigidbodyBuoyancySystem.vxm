@@ -1,0 +1,6 @@
+RigidbodyBuoyancySystem:
+  Enable: true
+  Scenes:
+    []
+  WaterHeight: 0
+  LiquidDensity: 1000

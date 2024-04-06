@@ -23,8 +23,8 @@ namespace Voxymore::Editor {
 		VXM_CORE_CHECK(imgui, "ImGui must be set before adding the EditorLayer.")
 		if(imgui) {
 			auto &imguiLayer = *imgui;
-			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
-			imguiLayer.AddFont({FileSource::EditorAsset, "fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
+			imguiLayer.AddFont({FileSource::EditorAsset, "Fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
+			imguiLayer.AddFont({FileSource::EditorAsset, "Fonts/OpenSans/OpenSans-Bold.ttf"}, 18.0f, FontType::Bold);
 		}
 
         m_OnProjectReloadId = Project::AddOnLoad(VXM_BIND_EVENT_FN(ReloadAssets));
@@ -458,7 +458,7 @@ namespace Voxymore::Editor {
                 if (m_ViewportHovered)
                 {
                     if(!m_SceneHierarchyPanel.GetSelectedEntity().IsValid() || m_GizmoOperation == GizmoOperation::NONE) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
-                    else if (!ImGuizmo::IsOver() && !ImGuizmo::IsUsing() && !control && !shift && !alt) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+                    else if (m_HoveredEntity.IsValid() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
                 }
                 break;
             }
@@ -788,6 +788,9 @@ namespace Voxymore::Editor {
                 tc.SetRotation(rotation);
                 tc.SetScale(scale);
             }
+
+			//TODO: Panel ImGuizmo drawing
+			m_SceneHierarchyPanel.OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
         }
     }
 
@@ -916,6 +919,20 @@ namespace Voxymore::Editor {
         ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.vert"}, {FileSource::EditorAsset, "Shaders/FlatColor.frag"});
         ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.vert"}, {FileSource::EditorAsset, "Shaders/TextureShader.frag"});
         ShaderLibrary::GetInstance().Load("Default", {FileSource::EditorAsset, "Shaders/DefaultShader.vert"}, {FileSource::EditorAsset, "Shaders/DefaultShader.frag"});
+        ShaderLibrary::GetInstance().Load("Bezier4", std::unordered_map<ShaderType, Path>{
+															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.vert"}},
+															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.frag"}},
+															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessco"}},
+															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessev"}},
+//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.geom"}},
+													});
+        ShaderLibrary::GetInstance().Load("Bezier", std::unordered_map<ShaderType, Path>{
+															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.vert"}},
+															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.frag"}},
+															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessco"}},
+															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessev"}},
+//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.geom"}},
+													});
 
         Assets::ReloadAll();
 

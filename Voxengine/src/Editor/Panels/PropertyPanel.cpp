@@ -8,6 +8,7 @@
 
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include <cstring>
 
 
@@ -200,6 +201,23 @@ namespace Voxymore::Editor {
 			}
 
 			ImGui::EndPopup();
+		}
+	}
+
+	void PropertyPanel::DrawGizmos(const float *viewMatrix, const float *projectionMatrix)
+	{
+		VXM_PROFILE_FUNCTION();
+		if (m_SelectedEntity.IsValid()) {
+			ImGuizmo::PushID(m_SelectedEntity);
+			for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
+				if(cc.OnImGuizmo && cc.HasComponent(m_SelectedEntity))
+				{
+					ImGuizmo::PushID((const void*)cc.ComponentHash);
+					cc.OnImGuizmo(m_SelectedEntity, viewMatrix, projectionMatrix);
+					ImGuizmo::PopID();
+				}
+			}
+			ImGuizmo::PopID();
 		}
 	}
 } // Voxymore

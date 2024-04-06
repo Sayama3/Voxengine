@@ -20,6 +20,7 @@ namespace Voxymore::Editor {
         void SetContext(const Ref<Scene>& scene);
 
         void OnImGuiRender();
+        void OnImGuizmo(const float* view, const float* projection);
 
         inline Entity GetSelectedEntity() { return m_PropertyPanel.GetSelectedEntity(); }
         inline void SetSelectedEntity(Entity entity) {m_PropertyPanel.SetSelectedEntity(entity); }

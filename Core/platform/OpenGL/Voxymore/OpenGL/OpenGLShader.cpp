@@ -524,6 +524,23 @@ namespace Voxymore::Core
 		CreateProgram();
 	}
 
+	OpenGLShader::OpenGLShader(const std::string& name, std::unordered_map<ShaderType, Path> paths) : m_Name(name), m_FilePaths(paths)
+	{
+		VXM_PROFILE_FUNCTION();
+		//Utils::CreateCacheDirectoryIfNeeded();
+
+		std::unordered_map<ShaderType, std::string> shaderSources;
+		if (!m_FilePaths.empty()) {
+			for (auto &p: m_FilePaths) {
+				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
+			}
+		}
+
+		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetOpenGLBinaries();
+		CreateProgram();
+	}
+
 	OpenGLShader::OpenGLShader(const std::string &name, const std::string &srcVertex, const std::string &srcFragment) : m_Name(name)
 	{
 		VXM_PROFILE_FUNCTION();

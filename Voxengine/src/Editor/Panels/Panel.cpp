@@ -7,6 +7,11 @@
 
 namespace Voxymore::Editor
 {
+	void Panel::OnImGuizmo()
+	{
+
+	}
+
 	void Panel::Open()
 	{
 		m_Open = true;
