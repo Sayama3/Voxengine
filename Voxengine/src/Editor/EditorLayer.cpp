@@ -348,7 +348,7 @@ namespace Voxymore::Editor {
 		{
 			if(ImGui::MenuItem("Viewport")) {
 				if(!m_UnloadedViewport.empty()) {
-					auto viewport = m_Viewports.back();
+					auto viewport = m_UnloadedViewport.back();
 					viewport->Open();
 					m_Viewports.push_back(viewport);
 					m_UnloadedViewport.pop_back();
