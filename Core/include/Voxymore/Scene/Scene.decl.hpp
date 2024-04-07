@@ -58,8 +58,12 @@ namespace Voxymore::Core
 		void StopScene();
 		inline bool IsStarted() const {return m_Started;}
 
-		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
-		void OnUpdateRuntime(TimeStep ts);
+		void OnUpdateEditor(TimeStep ts, EditorCamera* camera, bool doRendering = true);
+		void OnUpdateRuntime(TimeStep ts, bool doRendering = true);
+
+		void RenderEditor(TimeStep ts, EditorCamera& camera);
+		void RenderRuntime(TimeStep ts);
+
 		void SetViewportSize(uint32_t width, uint32_t height);
 
 		inline const std::string& GetName() const {return m_Name;}

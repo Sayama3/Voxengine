@@ -99,7 +99,19 @@ namespace Voxymore::Core
 	bool FileSystem::Exist(const Path& path)
 	{
 		VXM_PROFILE_FUNCTION();
-		return std::filesystem::exists(GetPath(path));
+		return Exist(GetPath(path));
+	}
+
+	bool FileSystem::Exist(const std::filesystem::path& path)
+	{
+		VXM_PROFILE_FUNCTION();
+		return std::filesystem::exists(path);
+	}
+
+	bool FileSystem::Exist(FileSource source)
+	{
+		VXM_PROFILE_FUNCTION();
+		return Exist(GetRootPath(source));
 	}
 
 	std::string FileSystem::ReadFileAsString(const Path &path)

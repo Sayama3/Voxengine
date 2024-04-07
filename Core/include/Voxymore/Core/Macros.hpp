@@ -84,3 +84,7 @@
 #define BIT(X) (1 << X)
 #endif
 
+#ifndef CHECK_BIT
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
+#endif
+
