@@ -17,7 +17,7 @@ namespace Voxymore::Editor
 	public:
 		typedef uint64_t PanelHandle;
 	private:
-		static PanelHandle s_BaseId;
+		static inline PanelHandle s_BaseId = 0;
 	public:
 
 		BasePanel();
@@ -46,7 +46,7 @@ namespace Voxymore::Editor
 	class Panel : public BasePanel
 	{
 	private:
-		static PanelHandle s_Id;
+		static inline PanelHandle s_Id = 0;
 	public:
 		inline Panel<SubPanel>() : BasePanel(s_Id++) {}
 
@@ -54,9 +54,6 @@ namespace Voxymore::Editor
 		inline virtual uint64_t GetTypeID() override { return StaticGetTypeID(); };
 		inline static Core::Ref<BasePanel> CreatePanel() { return Core::CreateRef<SubPanel>(); }
 	};
-
-	template<class SubPanel>
-	BasePanel::PanelHandle Panel<SubPanel>::s_Id = 0u;
 
 } // namespace Voxymore::Editor
 

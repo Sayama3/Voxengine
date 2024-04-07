@@ -9,7 +9,6 @@ using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
-	BasePanel::PanelHandle BasePanel::s_BaseId = 0;
 	BasePanel::BasePanel() : m_ID(s_BaseId++) {}
 	BasePanel::BasePanel(PanelHandle id) : m_ID(id) {}
 
