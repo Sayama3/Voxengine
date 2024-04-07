@@ -67,10 +67,17 @@ namespace Voxymore::Editor {
             CreateNewScene();
         }
 
-		m_PanelCreator.insert({PropertyPanel::StaticGetName(), &PropertyPanel::CreatePanel});
-		m_PanelCreator.insert({ShaderPanel::StaticGetName(), &ShaderPanel::CreatePanel});
-		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetName(), &SceneHierarchyPanel::CreatePanel});
-		m_PanelCreator.insert({SystemPanel::StaticGetName(), &SystemPanel::CreatePanel});
+		m_PanelCreator.insert({PropertyPanel::StaticGetTypeID(), PanelMetadata(PropertyPanel::StaticGetName(), PropertyPanel::StaticGetTypeID(), &PropertyPanel::CreatePanel)});
+		m_PanelCreator.insert({ShaderPanel::StaticGetTypeID(), PanelMetadata(ShaderPanel::StaticGetName(), ShaderPanel::StaticGetTypeID(), &ShaderPanel::CreatePanel)});
+		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetTypeID(), PanelMetadata(SceneHierarchyPanel::StaticGetName(), SceneHierarchyPanel::StaticGetTypeID(), &SceneHierarchyPanel::CreatePanel)});
+		m_PanelCreator.insert({SystemPanel::StaticGetTypeID(), PanelMetadata(SystemPanel::StaticGetName(), SystemPanel::StaticGetTypeID(), &SystemPanel::CreatePanel)});
+
+		// Create the default panels'
+		// TODO: Make a system to be able to save and load the last Panel Configuration.
+		for (auto&& [name, metadata] : m_PanelCreator) {
+			Ref<BasePanel> panel = metadata.createPanelFunc();
+			m_Panels.push_back(panel);
+		}
     }
 
     void EditorLayer::OnDetach()
@@ -347,19 +354,19 @@ namespace Voxymore::Editor {
 
 		if(ImGui::BeginMenu("Panels"))
 		{
-			for (auto&& [name, createPanelFunc] : m_PanelCreator) {
-				if (ImGui::MenuItem(name.c_str())) {
-					m_Panels.push_back(createPanelFunc());
+			for (auto&& [typeId, panelMetadata] : m_PanelCreator) {
+				if (ImGui::MenuItem(panelMetadata.name.c_str())) {
+					auto it = m_UnloadedPanels.find(typeId);
+					if(it != m_UnloadedPanels.end()) {
+						Ref<BasePanel> panel = it->second;
+						panel->Open();
+						m_Panels.push_back(panel);
+						m_UnloadedPanels.erase(it);
+					} else {
+						m_Panels.push_back(panelMetadata.createPanelFunc());
+					}
 				}
 			}
-
-//			if (ImGui::MenuItem("Shader BasePanel")) {
-//				m_ShaderPanel.Open();
-//			}
-//
-//			if (ImGui::MenuItem("Systems")) {
-//				m_SystemPanel.Open();
-//			}
 
 			ImGui::EndMenu();
 		}
@@ -647,30 +654,22 @@ namespace Voxymore::Editor {
         VXM_PROFILE_FUNCTION();
         RenderDockspace();
 
-		for(size_t i = 0; i < m_Panels.size(); ++i)
+		for(uint32_t i = 0; i < m_Panels.size(); ++i)
 		{
-			auto& panel = m_Panels[i];
-			auto id = panel->GetHandle();
-			BasePanel& basePanel = *panel;
+			Ref<BasePanel> panel = m_Panels[i];
 			{
-				bool open = true;
-				std::string str = basePanel.GetName() + "##" + Math::ToString(static_cast<uint64_t>(id));
-				ImGui::PushID(str.c_str());
-				ImGui::Begin(str.c_str(), &open);
-				{
-					basePanel.OnImGuiRender();
-				}
-				ImGui::End();
-				if(!open) {
+				panel->BeginPanel();
+				panel->OnImGuiRender();
+				panel->EndPanel();
+				if(!panel->IsOpen()) {
+					m_UnloadedPanels.insert({panel->GetTypeID(), panel});
 					m_Panels.erase(m_Panels.begin() + i);
 					--i;
 				}
-				ImGui::PopID();
 			}
 		}
 
         DrawImGuiViewport();
-
         DrawImGuiToolbar();
     }
 

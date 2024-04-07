@@ -15,28 +15,48 @@ namespace Voxymore::Editor
 	class BasePanel
 	{
 	public:
-		typedef Core::UUID PanelHandle;
+		typedef uint64_t PanelHandle;
+	private:
+		static PanelHandle s_BaseId;
 	public:
 
+		BasePanel();
+		BasePanel(PanelHandle id);
 		inline virtual ~BasePanel() {}
 
 		virtual uint64_t GetTypeID() = 0;
 		virtual std::string GetName() = 0;
 		virtual void OnImGuiRender() = 0;
+		virtual void BeginPanel();
+		virtual void EndPanel();
 		virtual void OnImGuizmo(const float* viewMatrix, const float* projectionMatrix);
 
-		PanelHandle GetHandle() const { return m_ID;}
+		inline bool IsOpen() const {return m_Open;}
+		inline void Open() {m_Open = true;}
+		inline void Close() {m_Open = false;}
+		inline void SetOpen(bool isOpen) {m_Open = isOpen;}
+		inline PanelHandle GetHandle() const { return m_ID;}
+		inline void SetHandle(PanelHandle handle) {m_ID = handle;}
 	private:
 		PanelHandle m_ID;
+		bool m_Open = true;
 	};
 
 	template<class SubPanel>
 	class Panel : public BasePanel
 	{
+	private:
+		static PanelHandle s_Id;
 	public:
-		inline virtual uint64_t GetTypeID() override { return typeid(SubPanel).hash_code(); };
+		inline Panel<SubPanel>() : BasePanel(s_Id++) {}
+
+		inline static uint64_t StaticGetTypeID() { return typeid(SubPanel).hash_code(); };
+		inline virtual uint64_t GetTypeID() override { return StaticGetTypeID(); };
 		inline static Core::Ref<BasePanel> CreatePanel() { return Core::CreateRef<SubPanel>(); }
 	};
+
+	template<class SubPanel>
+	BasePanel::PanelHandle Panel<SubPanel>::s_Id = 0u;
 
 } // namespace Voxymore::Editor
 

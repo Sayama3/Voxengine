@@ -16,6 +16,8 @@
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
 
+#include <map>
+
 using namespace Voxymore::Core;
 
 namespace Voxymore::Editor {
@@ -76,11 +78,17 @@ namespace Voxymore::Editor {
     private:
 		// TODO: Create a SubPanel system. (openable, closable, etc.)
         // Panels
-//		SceneHierarchyPanel m_SceneHierarchyPanel;
-//        SystemPanel m_SystemPanel;
-//		ShaderPanel m_ShaderPanel;
-		std::map<std::string, Core::Ref<BasePanel>(*)(void)> m_PanelCreator;
+		struct PanelMetadata {
+			inline PanelMetadata() =default;
+			inline ~PanelMetadata() =default;
+			inline PanelMetadata(std::string _name, uint64_t _typeId, Core::Ref<BasePanel>(* _createPanelFunc)(void)) : name(_name), typeId(_typeId), createPanelFunc(_createPanelFunc) {}
+			std::string name;
+			uint64_t typeId;
+			Core::Ref<BasePanel>(* createPanelFunc)(void);
+		};
+		std::map<uint64_t, PanelMetadata> m_PanelCreator;
 		std::vector<Core::Ref<BasePanel>> m_Panels;
+		std::multimap<uint64_t, Core::Ref<BasePanel>> m_UnloadedPanels;
 
         Ref<Scene> m_ActiveScene;
         Ref<Scene> m_CacheScene = nullptr;
