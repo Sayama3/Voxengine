@@ -20,7 +20,7 @@ namespace Voxymore::Editor {
         VXM_PROFILE_FUNCTION();
 
         auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
-		VXM_CORE_CHECK(imgui, "ImGui must be set before adding the EditorLayer.")
+		VXM_CHECK(imgui, "ImGui must be set before adding the EditorLayer.")
 		if(imgui) {
 			auto &imguiLayer = *imgui;
 			imguiLayer.AddFont({FileSource::EditorAsset, "Fonts/OpenSans/OpenSans-Regular.ttf"}, 18.0f, FontType::Regular, true);
@@ -136,7 +136,7 @@ namespace Voxymore::Editor {
                 }
 				default:
                 {
-                    VXM_CORE_ASSERT(false, "State {0} not handled yet.", static_cast<int>(m_SceneState));
+                    VXM_ASSERT(false, "State {0} not handled yet.", static_cast<int>(m_SceneState));
                     break;
                 }
             }
@@ -542,10 +542,10 @@ namespace Voxymore::Editor {
     {
         if(m_SceneState != SceneState::Edit)
         {
-            VXM_CORE_WARNING("Cannot save the scene if we are not in edit mode.");
+            VXM_WARNING("Cannot save the scene if we are not in edit mode.");
             return;
         }
-        VXM_CORE_TRACE("Save Scene As");
+        VXM_TRACE("Save Scene As");
         std::string file = FileDialogs::SaveFile({"Voxymore Scene (*.vxm)", "*.vxm"});
         if(!file.empty())
         {
@@ -561,14 +561,14 @@ namespace Voxymore::Editor {
 
     void EditorLayer::CreateNewScene()
     {
-        VXM_CORE_INFO("Unloading and Delete Previous Scene");
+        VXM_INFO("Unloading and Delete Previous Scene");
         if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->GetID()))
         {
             SceneManager::DeleteScene(m_ActiveScene->GetID());
             m_ActiveScene = nullptr;
         }
 
-        VXM_CORE_TRACE("Create New Scene");
+        VXM_TRACE("Create New Scene");
         m_FilePath = std::string();
         m_ActiveScene = SceneManager::CreateScene();
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
@@ -585,12 +585,12 @@ namespace Voxymore::Editor {
     {
         if(m_SceneState != SceneState::Edit)
         {
-            VXM_CORE_WARNING("Cannot save the scene if we are not in edit mode.");
+            VXM_WARNING("Cannot save the scene if we are not in edit mode.");
             return;
         }
         if(!m_FilePath.empty())
         {
-            VXM_CORE_TRACE("Save Scene");
+            VXM_TRACE("Save Scene");
             SceneSerializer serializer(m_ActiveScene);
             serializer.Serialize(m_FilePath);
         }
@@ -602,7 +602,7 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OpenScene()
     {
-        VXM_CORE_TRACE("Open Scene");
+        VXM_TRACE("Open Scene");
         std::filesystem::path file = FileDialogs::OpenFile({"Voxymore Scene (*.vxm)", "*.vxm"});
         if(!file.empty())
         {
@@ -612,7 +612,7 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OpenScene(const Path& path)
     {
-        VXM_CORE_TRACE("Open Scene with path");
+        VXM_TRACE("Open Scene with path");
         if(!path.empty())
         {
             OpenScene(path.GetFullPath());
@@ -621,14 +621,14 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
-        VXM_CORE_INFO("Unloading and Delete Previous Scene");
+        VXM_INFO("Unloading and Delete Previous Scene");
         if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
         {
             SceneManager::DeleteScene(m_ActiveScene->id());
             m_ActiveScene = nullptr;
         }
 
-        VXM_CORE_TRACE("Open Scene from path {0}", path.string());
+        VXM_TRACE("Open Scene from path {0}", path.string());
         m_FilePath = path.string();
         m_ActiveScene = SceneManager::CreateScene(path, m_ViewportSize.x, m_ViewportSize.y);
         SceneHierarchyPanel::SetContext(m_ActiveScene);
@@ -636,14 +636,14 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OpenScene(UUID id)
     {
-        VXM_CORE_INFO("Unloading and Delete Previous Scene");
+        VXM_INFO("Unloading and Delete Previous Scene");
         if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
         {
             SceneManager::DeleteScene(m_ActiveScene->id());
             m_ActiveScene = nullptr;
         }
 
-        VXM_CORE_ASSERT(SceneManager::HasScene(id), "No scene with the ID '{0}'", id);
+        VXM_ASSERT(SceneManager::HasScene(id), "No scene with the ID '{0}'", id);
         m_ActiveScene = SceneManager::GetScene(id);
         m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         //TODO: Get the associated file path.
