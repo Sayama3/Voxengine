@@ -3,22 +3,30 @@
 //
 
 #include "Voxymore/Editor/Panels/Panel.hpp"
+#include "Voxymore/Math/Math.hpp"
 
+using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
-	void Panel::OnImGuizmo()
+	BasePanel::BasePanel() : m_ID(s_BaseId++) {}
+	BasePanel::BasePanel(PanelHandle id) : m_ID(id) {}
+
+	void BasePanel::OnImGuizmo(const float* viewMatrix, const float* projectionMatrix)
 	{
 
 	}
 
-	void Panel::Open()
+	void BasePanel::BeginPanel()
 	{
-		m_Open = true;
+		std::string str = GetName() + "##" + Math::ToString(static_cast<uint64_t>(GetHandle()));
+		ImGui::PushID(str.c_str());
+		ImGui::Begin(str.c_str(), &m_Open);
 	}
 
-	void Panel::Close()
+	void BasePanel::EndPanel()
 	{
-		m_Open = false;
+		ImGui::End();
+		ImGui::PopID();
 	}
 }

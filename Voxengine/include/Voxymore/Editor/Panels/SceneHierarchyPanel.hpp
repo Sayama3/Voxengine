@@ -6,31 +6,27 @@
 
 #include <Voxymore/Voxymore.hpp>
 #include <Voxymore/Editor/Panels/PropertyPanel.hpp>
+#include <Voxymore/Editor/Panels/Panel.hpp>
 #include <imgui.h>
 
 using namespace Voxymore::Core;
 
 namespace Voxymore::Editor {
 
-    class SceneHierarchyPanel
+    class SceneHierarchyPanel : public Panel<SceneHierarchyPanel>
     {
     public:
+		VXM_IMPLEMENT_PANEL("Hierarchy");
         inline SceneHierarchyPanel() = default;
-        SceneHierarchyPanel(const Ref<Scene>& scene);
-        void SetContext(const Ref<Scene>& scene);
+        static void SetContext(const Ref<Scene>& scene);
 
-        void OnImGuiRender();
-        void OnImGuizmo(const float* view, const float* projection);
-
-        inline Entity GetSelectedEntity() { return m_PropertyPanel.GetSelectedEntity(); }
-        inline void SetSelectedEntity(Entity entity) {m_PropertyPanel.SetSelectedEntity(entity); }
+        virtual void OnImGuiRender() override;
+        virtual void OnImGuizmo(const float* view, const float* projection) override;
     private:
         void DrawEntityNode(Entity entity);
 		void DrawHierarchyOptions();
     private:
-        Ref<Scene> m_Context;
-//        Entity m_SelectionContext;
-        PropertyPanel m_PropertyPanel;
+        static Ref<Scene> s_Context;
     };
 } // Voxymore
 // Editor
