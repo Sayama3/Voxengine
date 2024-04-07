@@ -622,9 +622,9 @@ namespace Voxymore::Editor {
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
         VXM_CORE_INFO("Unloading and Delete Previous Scene");
-        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->GetID()))
+        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
         {
-            SceneManager::DeleteScene(m_ActiveScene->GetID());
+            SceneManager::DeleteScene(m_ActiveScene->id());
             m_ActiveScene = nullptr;
         }
 
@@ -637,9 +637,9 @@ namespace Voxymore::Editor {
     void EditorLayer::OpenScene(UUID id)
     {
         VXM_CORE_INFO("Unloading and Delete Previous Scene");
-        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->GetID()))
+        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
         {
-            SceneManager::DeleteScene(m_ActiveScene->GetID());
+            SceneManager::DeleteScene(m_ActiveScene->id());
             m_ActiveScene = nullptr;
         }
 
@@ -699,6 +699,16 @@ namespace Voxymore::Editor {
 
         uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		if(ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+			if (payload != nullptr) {
+				std::filesystem::path filePath = static_cast<const char *>(payload->Data);
+				OpenScene(filePath);
+			}
+			ImGui::EndDragDropTarget();
+		}
 
         if(m_SceneState == SceneState::Edit || m_SceneState == SceneState::Pause) DrawGizmos();
 

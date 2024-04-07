@@ -19,13 +19,15 @@ namespace Voxymore::Editor
 
 	void BasePanel::BeginPanel()
 	{
-		std::string str = GetName() + "##" + Math::ToString(static_cast<uint64_t>(GetHandle()));
+		VXM_PROFILE_FUNCTION();
+		std::string str = GetImGuiName();
 		ImGui::PushID(str.c_str());
 		ImGui::Begin(str.c_str(), &m_Open);
 	}
 
 	void BasePanel::EndPanel()
 	{
+		VXM_PROFILE_FUNCTION();
 		ImGui::End();
 		ImGui::PopID();
 	}

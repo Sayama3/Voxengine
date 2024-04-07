@@ -95,8 +95,9 @@ namespace Voxymore::Core
 		friend class Application;
 		friend struct Path;
 		static std::filesystem::path s_EditorPath;
-		static std::filesystem::path GetRootPath(FileSource source);
 	public:
+		static std::filesystem::path GetRootPath(FileSource source);
+
 		static std::ifstream ReadFileAsByte(const Path& path);
 		static std::stringstream ReadFileAsStringStream(const Path& path);
 		static std::string ReadFileAsString(const Path& path);
@@ -119,6 +120,8 @@ namespace Voxymore::Core
 
 		static std::filesystem::path GetPath(const Path& path);
 		static bool Exist(const Path& path);
+		static bool Exist(FileSource source);
+		static bool Exist(const std::filesystem::path& path);
 	};
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p);

@@ -15,6 +15,7 @@
 #include "Voxymore/Editor/Panels/ShaderPanel.hpp"
 #include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
+//#include "Voxymore/Editor/Panels/Viewport.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
 
 #include <map>
@@ -89,6 +90,7 @@ namespace Voxymore::Editor {
 		};
 		std::map<uint64_t, PanelMetadata> m_PanelCreator;
 		std::vector<Core::Ref<BasePanel>> m_Panels;
+//		std::vector<Core::Ref<Viewport>> m_Viewports;
 		std::multimap<uint64_t, Core::Ref<BasePanel>> m_UnloadedPanels;
 
         Ref<Scene> m_ActiveScene;

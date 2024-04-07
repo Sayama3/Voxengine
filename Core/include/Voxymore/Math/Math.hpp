@@ -142,6 +142,23 @@ namespace Voxymore::Core
 			return glm::inverse(mat);
 		}
 
+		template<typename T>
+		inline static T Min(const T& v1, const T& v2)
+		{
+			return glm::min(v1, v2);
+		}
+
+		template<typename T>
+		inline static T Max(const T& v1, const T& v2)
+		{
+			return glm::max(v1, v2);
+		}
+
+		template<typename T>
+		inline static T Clamp(const T& value, const T& min, const T& max) {
+			return Math::Max(Math::Min(value, max), min);
+		}
+
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
 		inline static Mat3 ToMat3(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat3(q); }
 
@@ -296,6 +313,34 @@ namespace Voxymore::Core
 	template<> inline std::string Math::ToString(const int16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::ToString(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::ToString(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+
+	template<> inline float Math::Min(const float& value, const float& other) { return std::min(value, other); }
+	template<> inline float Math::Max(const float& value, const float& other) { return std::max(value, other); }
+	template<> inline double Math::Min(const double& value, const double& other) { return std::min(value, other); }
+	template<> inline double Math::Max(const double& value, const double& other) { return std::max(value, other); }
+	template<> inline long double Math::Min(const long double& value, const long double& other) { return std::min(value, other); }
+	template<> inline long double Math::Max(const long double& value, const long double& other) { return std::max(value, other); }
+	template<> inline unsigned char Math::Min(const unsigned char& value, const unsigned char& other) { return std::min(value, other); }
+	template<> inline unsigned char Math::Max(const unsigned char& value, const unsigned char& other) { return std::max(value, other); }
+	template<> inline unsigned short Math::Min(const unsigned short& value, const unsigned short& other) { return std::min(value, other); }
+	template<> inline unsigned short Math::Max(const unsigned short& value, const unsigned short& other) { return std::max(value, other); }
+	template<> inline unsigned int Math::Min(const unsigned int& value, const unsigned int& other) { return std::min(value, other); }
+	template<> inline unsigned int Math::Max(const unsigned int& value, const unsigned int& other) { return std::max(value, other); }
+	template<> inline unsigned long int Math::Min(const unsigned long int& value, const unsigned long int& other) { return std::min(value, other); }
+	template<> inline unsigned long int Math::Max(const unsigned long int& value, const unsigned long int& other) { return std::max(value, other); }
+	template<> inline unsigned long long int Math::Min(const unsigned long long int& value, const unsigned long long int& other) { return std::min(value, other); }
+	template<> inline unsigned long long int Math::Max(const unsigned long long int& value, const unsigned long long int& other) { return std::max(value, other); }
+	template<> inline signed char Math::Min(const signed char& value, const signed char& other) { return std::min(value, other); }
+	template<> inline signed char Math::Max(const signed char& value, const signed char& other) { return std::max(value, other); }
+	template<> inline signed short Math::Min(const signed short& value, const signed short& other) { return std::min(value, other); }
+	template<> inline signed short Math::Max(const signed short& value, const signed short& other) { return std::max(value, other); }
+	template<> inline signed int Math::Min(const signed int& value, const signed int& other) { return std::min(value, other); }
+	template<> inline signed int Math::Max(const signed int& value, const signed int& other) { return std::max(value, other); }
+	template<> inline signed long int Math::Min(const signed long int& value, const signed long int& other) { return std::min(value, other); }
+	template<> inline signed long int Math::Max(const signed long int& value, const signed long int& other) { return std::max(value, other); }
+	template<> inline signed long long int Math::Min(const signed long long int& value, const signed long long int& other) { return std::min(value, other); }
+	template<> inline signed long long int Math::Max(const signed long long int& value, const signed long long int& other) { return std::max(value, other); }
+
 
 } // Voxymore::Core
 
