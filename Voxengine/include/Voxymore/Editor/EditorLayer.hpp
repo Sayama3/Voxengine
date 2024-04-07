@@ -13,6 +13,7 @@
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 #include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
 #include "Voxymore/Editor/Panels/ShaderPanel.hpp"
+#include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
 

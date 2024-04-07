@@ -71,6 +71,7 @@ namespace Voxymore::Editor {
 		m_PanelCreator.insert({ShaderPanel::StaticGetTypeID(), PanelMetadata(ShaderPanel::StaticGetName(), ShaderPanel::StaticGetTypeID(), &ShaderPanel::CreatePanel)});
 		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetTypeID(), PanelMetadata(SceneHierarchyPanel::StaticGetName(), SceneHierarchyPanel::StaticGetTypeID(), &SceneHierarchyPanel::CreatePanel)});
 		m_PanelCreator.insert({SystemPanel::StaticGetTypeID(), PanelMetadata(SystemPanel::StaticGetName(), SystemPanel::StaticGetTypeID(), &SystemPanel::CreatePanel)});
+		m_PanelCreator.insert({ContentBrowserPanel::StaticGetTypeID(), PanelMetadata(ContentBrowserPanel::StaticGetName(), ContentBrowserPanel::StaticGetTypeID(), &ContentBrowserPanel::CreatePanel)});
 
 		// Create the default panels'
 		// TODO: Make a system to be able to save and load the last Panel Configuration.
