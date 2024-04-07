@@ -15,68 +15,19 @@
 #include "Voxymore/Editor/Panels/ShaderPanel.hpp"
 #include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
-//#include "Voxymore/Editor/Panels/Viewport.hpp"
+#include "Voxymore/Editor/Panels/Viewport.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
 
+#include "Voxymore/Editor/EditorHelper.hpp"
 #include <map>
 
 using namespace Voxymore::Core;
 
 namespace Voxymore::Editor {
 
-    // Fetched from ImGuizmo
-    enum class GizmoOperation
-    {
-        NONE             = 0,
-        TRANSLATE_X      = (1u << 0),
-        TRANSLATE_Y      = (1u << 1),
-        TRANSLATE_Z      = (1u << 2),
-        ROTATE_X         = (1u << 3),
-        ROTATE_Y         = (1u << 4),
-        ROTATE_Z         = (1u << 5),
-        ROTATE_SCREEN    = (1u << 6),
-        SCALE_X          = (1u << 7),
-        SCALE_Y          = (1u << 8),
-        SCALE_Z          = (1u << 9),
-        BOUNDS           = (1u << 10),
-        SCALE_XU         = (1u << 11),
-        SCALE_YU         = (1u << 12),
-        SCALE_ZU         = (1u << 13),
-
-        TRANSLATE = TRANSLATE_X | TRANSLATE_Y | TRANSLATE_Z,
-        ROTATE = ROTATE_X | ROTATE_Y | ROTATE_Z | ROTATE_SCREEN,
-        SCALE = SCALE_X | SCALE_Y | SCALE_Z,
-        SCALEU = SCALE_XU | SCALE_YU | SCALE_ZU, // universal
-        UNIVERSAL = TRANSLATE | ROTATE | SCALEU
-
-    };
-    inline GizmoOperation operator|(GizmoOperation lhs, GizmoOperation rhs)
-    {
-        return static_cast<GizmoOperation>(static_cast<int>(lhs) | static_cast<int>(rhs));
-    }
-    inline GizmoOperation operator&(GizmoOperation lhs, GizmoOperation rhs)
-    {
-        return static_cast<GizmoOperation>(static_cast<int>(lhs) & static_cast<int>(rhs));
-    }
-    enum class GizmoMode
-    {
-        LOCAL,
-        WORLD
-    };
-
-    enum class SceneState
-    {
-        Edit = 0,
-        Play = 1,
-		Pause = 2,
-    };
-
     class EditorLayer : public Layer {
     private:
-        Ref<Framebuffer> m_Framebuffer;
         Ref<Texture2D> m_Texture;
-    private:
-        std::array<glm::vec2, 2> m_ViewportBounds;
     private:
 		// TODO: Create a SubPanel system. (openable, closable, etc.)
         // Panels
@@ -90,26 +41,27 @@ namespace Voxymore::Editor {
 		};
 		std::map<uint64_t, PanelMetadata> m_PanelCreator;
 		std::vector<Core::Ref<BasePanel>> m_Panels;
-//		std::vector<Core::Ref<Viewport>> m_Viewports;
+		std::vector<Core::Ref<Viewport>> m_Viewports;
 		std::multimap<uint64_t, Core::Ref<BasePanel>> m_UnloadedPanels;
+		std::vector<Core::Ref<Viewport>> m_UnloadedViewport;
 
-        Ref<Scene> m_ActiveScene;
+        Ref<Scene> m_ActiveScene = nullptr;
         Ref<Scene> m_CacheScene = nullptr;
-        Entity m_HoveredEntity;
         std::string m_FilePath;
         std::string m_CacheFilePath;
 
         // Editor.
-        EditorCamera m_EditorCamera;
+//        EditorCamera m_EditorCamera;
         SceneState m_SceneState = SceneState::Edit;
         Ref<Texture2D> m_PlayTexture;
         Ref<Texture2D> m_StopTexture;
         Ref<Texture2D> m_PauseTexture;
-    private:
-        glm::uvec2 m_ViewportSize = glm::uvec2(0);
-        bool m_ViewportFocused;
-        bool m_ViewportHovered;
-        bool m_CameraEnable = false;
+	private:
+//		Ref<Framebuffer> m_Framebuffer;
+//		std::array<glm::vec2, 2> m_ViewportBounds;
+//        glm::uvec2 m_ViewportSize = glm::uvec2(0);
+//        bool m_ViewportFocused;
+//        bool m_ViewportHovered;
     private: // Gizmo
         GizmoOperation m_GizmoOperation = GizmoOperation::TRANSLATE;
         GizmoMode m_GizmoMode = GizmoMode::LOCAL;
@@ -130,9 +82,7 @@ namespace Voxymore::Editor {
         virtual void OnAttach() override;
         virtual void OnDetach() override;
     private:
-        void DrawImGuiViewport();
         void RenderDockspace();
-        void DrawGizmos();
         void DrawGizmosWindow();
         void DrawImGuiToolbar();
 

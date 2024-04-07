@@ -170,7 +170,7 @@ namespace Voxymore::Core
 		m_Started = false;
 	}
 
-	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera* camera, bool doRendering)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -192,70 +192,13 @@ namespace Voxymore::Core
 			}
 		}
 
-		std::vector<Light> lights;
-		{
-			auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : lightsComps)
-			{
-				auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
-				lights.push_back(lc.AsLight(tc));
-			}
+		if(doRendering) {
+			VXM_ASSERT(camera, "Camera cannot be null if we do the Editor Rendering.");
+			RenderEditor(ts, *camera);
 		}
-
-		Renderer::BeginScene(camera, lights);
-		{
-			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bezierView) {
-				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
-				Mat4 trs = transform.GetTransform();
-				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
-				for (int i = 0; i < 4; ++i) {
-					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
-				}
-				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-			}
-
-			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for(auto entity : genericBezierView)
-			{
-				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
-
-				auto points = bezier.GetWorldPoints(transform.GetTransform());
-
-				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
-				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
-				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
-					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j].Position = points[i+j];
-					}
-					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-				}
-			}
-
-			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: modelsView) {
-				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-				if(model.IsLoaded())
-				{
-					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
-				}
-			}
-
-			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : primitives)
-			{
-				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
-				if(pc.IsLoaded())
-				{
-					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
-				}
-			}
-		}
-
-		Renderer::EndScene();
 	}
 
-	void Scene::OnUpdateRuntime(TimeStep ts)
+	void Scene::OnUpdateRuntime(TimeStep ts, bool doRendering)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -329,6 +272,82 @@ namespace Voxymore::Core
 																						   nsc.Instance->OnUpdate(ts);
 																						 });
 		}
+
+		if(doRendering) {
+			RenderRuntime(ts);
+		}
+	}
+
+
+	void Scene::RenderEditor(TimeStep ts, EditorCamera& camera)
+	{
+		VXM_PROFILE_FUNCTION();
+		std::vector<Light> lights;
+		{
+			auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : lightsComps)
+			{
+				auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
+				lights.push_back(lc.AsLight(tc));
+			}
+		}
+
+		Renderer::BeginScene(camera, lights);
+		{
+			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for (auto entity: bezierView) {
+				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
+				Mat4 trs = transform.GetTransform();
+				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				for (int i = 0; i < 4; ++i) {
+					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
+				}
+				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+			}
+
+			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
+			for(auto entity : genericBezierView)
+			{
+				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
+
+				auto points = bezier.GetWorldPoints(transform.GetTransform());
+
+				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
+				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
+				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
+					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
+						controlPoints[j].Position = points[i+j];
+					}
+					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
+				}
+			}
+
+			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (auto entity: modelsView) {
+				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+				if(model.IsLoaded())
+				{
+					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
+
+			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : primitives)
+			{
+				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
+				if(pc.IsLoaded())
+				{
+					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
+				}
+			}
+		}
+
+		Renderer::EndScene();
+	}
+
+	void Scene::RenderRuntime(TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
 
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;

@@ -23,8 +23,9 @@ add_executable(Voxengine
         src/Editor/Panels/Panel.cpp
         src/Editor/Panels/ContentBrowserPanel.cpp
         include/Voxymore/Editor/Panels/ContentBrowserPanel.hpp
-#        include/Voxymore/Editor/Panels/Viewport.cpp
-#        src/Editor/Panels/Viewport.hpp
+        include/Voxymore/Editor/EditorHelper.hpp
+        include/Voxymore/Editor/Panels/Viewport.hpp
+        src/Editor/Panels/Viewport.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)

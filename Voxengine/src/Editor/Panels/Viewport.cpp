@@ -2,28 +2,69 @@
 // Created by ianpo on 07/04/2024.
 //
 
+#include <Voxymore/Voxymore.hpp>
+#include <ImGuizmo.h>
 #include "Voxymore/Editor/Panels/Viewport.hpp"
+#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 
 using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
-	Viewport::Viewport(const Core::FramebufferSpecification& specs)
+	Viewport::Viewport(const Core::FramebufferSpecification& specs) : m_EditorCamera(60.0f, 1280.0f / 720.0f, 0.1f, 1000.0f)
 	{
+		VXM_PROFILE_FUNCTION();
 		m_Framebuffer = Framebuffer::Create(specs);
 		m_ViewportSize = {specs.Width, specs.Height};
 	}
+
 	Viewport::~Viewport()
 	{
 
 	}
+
 	void Viewport::OnImGuiRender()
 	{
+		VXM_PROFILE_FUNCTION();
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+		{
+			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+			auto viewportOffset = ImGui::GetWindowPos();
+			m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
+			m_ViewportFocused = ImGui::IsWindowFocused();
+			m_ViewportHovered = ImGui::IsWindowHovered();
+			auto* imgui = Application::Get().FindLayer<ImGuiLayer>();
+			if(imgui) {
+				imgui->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+			}
+			m_EditorCamera.SetViewportFocused(m_ViewportFocused);
+			m_EditorCamera.SetViewportHovered(m_ViewportHovered);
+
+			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			m_ViewportSize = glm::uvec2(static_cast<uint32_t>(viewportPanelSize.x), static_cast<uint32_t>(viewportPanelSize.y));
+
+			uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+			ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+			if(ImGui::BeginDragDropTarget())
+			{
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+				if (payload != nullptr) {
+					std::filesystem::path filePath = static_cast<const char *>(payload->Data);
+					VXM_INFO("We should load the scene {0}. Not available yet.", payload->Data);
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
+		ImGui::PopStyleVar();
 	}
 
 	void Viewport::PrepareFramebuffer()
 	{
+		VXM_PROFILE_FUNCTION();
 		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
@@ -31,5 +72,128 @@ namespace Voxymore::Editor
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
+	}
+
+	void Viewport::DrawGizmos(const std::vector<Core::Ref<BasePanel>>& panels, const GizmoOperation gizmoOperation, const GizmoMode gizmoMode, float gizmoTranslationSnapValue, float gizmoRotationSnapValue, float gizmoScaleSnapValue)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Editor Camera
+		const glm::mat4 projectionMatrix = m_EditorCamera.GetProjectionMatrix();
+		const glm::mat4& viewMatrix = m_EditorCamera.GetViewMatrix();
+
+		Entity selectedEntity = PropertyPanel::GetSelectedEntity();
+		if(selectedEntity)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+			// Selected Entity
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 modelMatrix = tc.GetTransform();
+
+			bool isSnapping = (Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl)) && gizmoOperation != GizmoOperation::UNIVERSAL;
+
+			float snapValue= gizmoOperation == GizmoOperation::TRANSLATE
+									  ? gizmoTranslationSnapValue
+									  : gizmoOperation == GizmoOperation::ROTATE
+												? gizmoRotationSnapValue
+												: gizmoScaleSnapValue;
+
+			float snapValues[3] = {snapValue, snapValue, snapValue};
+			bool manipulate = ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(gizmoOperation), static_cast<ImGuizmo::MODE>(gizmoMode), glm::value_ptr(modelMatrix), nullptr, isSnapping ? snapValues : nullptr);
+			m_EditorCamera.EnableMovement(!manipulate);
+			if(ImGuizmo::IsUsing())
+			{
+				glm::vec3 scale;
+				glm::vec3 position;
+				glm::quat rotation;
+
+				Math::DecomposeTransform(modelMatrix, position, rotation, scale);
+
+				tc.SetPosition(position);
+				tc.SetRotation(rotation);
+				tc.SetScale(scale);
+			}
+		}
+
+		for (const auto& panel : panels) {
+			ImGuizmo::PushID((const void*)static_cast<uint64_t>(panel->GetHandle()));
+			panel->OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
+			ImGuizmo::PopID();
+		}
+	}
+
+	void Viewport::BindFramebuffer()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+		RenderCommand::Clear();
+		m_Framebuffer->ClearColorAttachment(1, -1);
+	}
+
+	void Viewport::UnbindFramebuffer()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Framebuffer->Unbind();
+	}
+
+	void Viewport::PostRender(Scene* scenePtr)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto [fMouseX, fMouseY] = ImGui::GetMousePos();
+		fMouseX -= m_ViewportBounds[0].x;
+		fMouseY -= m_ViewportBounds[0].y;
+
+		auto viewportWidth = m_ViewportBounds[1].x - m_ViewportBounds[0].x;
+		auto viewportHeight = m_ViewportBounds[1].y - m_ViewportBounds[0].y;
+
+		//Reverse Y because the texture is reversed.
+		fMouseY = viewportHeight - fMouseY;
+
+		int mouseX = fMouseX;
+		int mouseY = fMouseY;
+
+		if(mouseX > 0 && mouseX < viewportWidth
+			&& mouseY > 0 && mouseY < viewportHeight)
+		{
+			int value = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			if(value < 0)
+			{
+				m_HoveredEntity = Entity();
+			}
+			else
+			{
+				auto entityId = static_cast<uint32_t>(value);
+				m_HoveredEntity = Entity(static_cast<entt::entity>(entityId), scenePtr);
+			}
+			//TODO: pick hovered entity.
+		}
+	}
+
+	void Viewport::SetFocusTarget(glm::vec3 focusTarget)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_EditorCamera.SetFocusTarget(focusTarget);
+	}
+
+	void Viewport::SetDistance(float distance)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_EditorCamera.SetDistance(distance);
+	}
+
+	void Viewport::OnEvent(Event &e)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_EditorCamera.OnEvent(e);
+	}
+
+	void Viewport::UpdateCamera(Core::TimeStep ts)
+	{
+		VXM_PROFILE_FUNCTION();
+		if(m_ViewportFocused && m_ViewportHovered) m_EditorCamera.OnUpdate(ts);
 	}
 }// namespace Voxymore::Editor
