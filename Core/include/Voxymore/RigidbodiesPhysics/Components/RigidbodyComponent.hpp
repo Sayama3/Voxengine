@@ -14,7 +14,7 @@ namespace Voxymore::Core
 
 	class RigidbodyComponent : public Rigidbody, public SelfAwareComponent<RigidbodyComponent>
 	{
-		VXM_IMPLEMENT_COMPONENT(RigidbodyComponent);
+		VXM_IMPLEMENT_SELFAWARECOMPONENT(RigidbodyComponent);
 	public:
 		void DeserializeComponent(YAML::Node& node, Entity entity);
 		void SerializeComponent(YAML::Emitter& out, Entity entity);

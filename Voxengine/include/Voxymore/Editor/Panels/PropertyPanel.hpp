@@ -7,18 +7,26 @@
 #include <Voxymore/Voxymore.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
+#include "Panel.hpp"
 
 using namespace Voxymore::Core;
 
 namespace Voxymore::Editor {
 
-    class PropertyPanel
+    class PropertyPanel : public Panel<PropertyPanel>
     {
 private:
-        Entity m_SelectedEntity;
+        static Entity s_SelectedEntity;
         friend class SceneHierarchyPanel;
-    public:
-        void OnImGuiRender();
+
+	public:
+		VXM_IMPLEMENT_PANEL("Properties");
+		inline static Entity GetSelectedEntity() { return s_SelectedEntity; }
+		inline static void SetSelectedEntity(Entity entity) { s_SelectedEntity = entity; }
+
+	public:
+        virtual void OnImGuiRender() override;
+		virtual void OnImGuizmo(const float* viewMatrix, const float* projectionMatrix) override;
     private:
         template<typename T, typename UIFunction>
         inline static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, bool canBeDeleted = true)
@@ -72,9 +80,7 @@ private:
 
         void DrawComponents();
         void DrawAddComponent();
-
-        inline Entity GetSelectedEntity() { return m_SelectedEntity; }
-        inline void SetSelectedEntity(Entity entity) { m_SelectedEntity = entity; }
+	private:
     };
 
 } // Voxymore

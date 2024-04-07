@@ -4,15 +4,16 @@
 
 #pragma once
 
-#include "Voxymore/Voxymore.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
+#include "Voxymore/Voxymore.hpp"
 
 namespace Voxymore::Editor
 {
 
-	class ShaderPanel : public Panel
+	class ShaderPanel : public Panel<ShaderPanel>
 	{
 	public:
+		VXM_IMPLEMENT_PANEL("Shader Panel");
 		virtual void OnImGuiRender() override;
 	private:
 		bool m_AutoReload = false;

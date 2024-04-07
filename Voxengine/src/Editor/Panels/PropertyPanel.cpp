@@ -8,24 +8,25 @@
 
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include <cstring>
 
 
 namespace Voxymore::Editor {
+	Entity PropertyPanel::s_SelectedEntity = Entity();
 
 	void PropertyPanel::OnImGuiRender() {
 		VXM_PROFILE_FUNCTION();
-		ImGui::Begin("Properties");
-		if (m_SelectedEntity.IsValid()) {
-			bool enable = m_SelectedEntity.IsActive();
+		if (s_SelectedEntity.IsValid()) {
+			bool enable = s_SelectedEntity.IsActive();
 			if (ImGui::Checkbox("##Enable", &enable)) {
-				m_SelectedEntity.SetActive(enable);
+				s_SelectedEntity.SetActive(enable);
 			}
 
 			ImGui::SameLine();
 
-			if (m_SelectedEntity.HasComponent<TagComponent>()) {
-				auto &tag = m_SelectedEntity.GetComponent<TagComponent>().Tag;
+			if (s_SelectedEntity.HasComponent<TagComponent>()) {
+				auto &tag = s_SelectedEntity.GetComponent<TagComponent>().Tag;
 				const size_t bufferSize = 256;
 				char buffer[bufferSize];
 				buffer[bufferSize - 1] = 0;
@@ -43,12 +44,11 @@ namespace Voxymore::Editor {
 		} else {
 			ImGui::Text("No entity selected.");
 		}
-		ImGui::End();
 	}
 
 	void PropertyPanel::DrawComponents() {
 		VXM_PROFILE_FUNCTION();
-		DrawComponent<TransformComponent>("Transform Component", m_SelectedEntity,
+		DrawComponent<TransformComponent>("Transform Component", s_SelectedEntity,
 										  [](TransformComponent &transformComponent) {
 											  glm::vec3 pos = transformComponent.GetPosition();
 											  if (ImGuiLib::DrawVec3Control("Position", pos)) {
@@ -66,11 +66,11 @@ namespace Voxymore::Editor {
 											  }
 										  }, false);
 
-//        DrawComponent<MeshComponent>("Mesh Component", m_SelectedEntity, [](MeshComponent& meshComponent){
+//        DrawComponent<MeshComponent>("Mesh Component", s_SelectedEntity, [](MeshComponent& meshComponent){
 //            ImGui::Text("Cannot modify the mesh component yet.");
 //        });
 
-		DrawComponent<CameraComponent>("Camera Component", m_SelectedEntity, [](CameraComponent &cameraComponent) {
+		DrawComponent<CameraComponent>("Camera Component", s_SelectedEntity, [](CameraComponent &cameraComponent) {
 			ImGui::Checkbox("Primary", &cameraComponent.Primary);
 			ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
 			if (cameraComponent.FixedAspectRatio) {
@@ -123,7 +123,7 @@ namespace Voxymore::Editor {
 		});
 
 		for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
-			DrawComponent(m_SelectedEntity, cc);
+			DrawComponent(s_SelectedEntity, cc);
 		}
 	}
 
@@ -181,25 +181,42 @@ namespace Voxymore::Editor {
 
 		ImGui::PopItemWidth();
 		if (ImGui::BeginPopup("AddComponentPopup")) {
-			if (!m_SelectedEntity.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera")) {
-				auto &newCam = m_SelectedEntity.AddComponent<CameraComponent>();
+			if (!s_SelectedEntity.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera")) {
+				auto &newCam = s_SelectedEntity.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
-			//                if(!m_SelectedEntity.HasComponent<MeshComponent>() && ImGui::MenuItem("Mesh Component"))
+			//                if(!s_SelectedEntity.HasComponent<MeshComponent>() && ImGui::MenuItem("Mesh Component"))
 			//                {
-			//                    m_SelectedEntity.AddComponent<MeshComponent>();
+			//                    s_SelectedEntity.AddComponent<MeshComponent>();
 			//                    ImGui::CloseCurrentPopup();
 			//                }
 
 			for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
-				if (!cc.HasComponent(m_SelectedEntity) && ImGui::MenuItem(cc.ComponentName.c_str())) {
-					cc.AddComponent(m_SelectedEntity);
+				if (!cc.HasComponent(s_SelectedEntity) && ImGui::MenuItem(cc.ComponentName.c_str())) {
+					cc.AddComponent(s_SelectedEntity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
 			ImGui::EndPopup();
+		}
+	}
+
+	void PropertyPanel::OnImGuizmo(const float *viewMatrix, const float *projectionMatrix)
+	{
+		VXM_PROFILE_FUNCTION();
+		if (s_SelectedEntity.IsValid()) {
+			ImGuizmo::PushID(s_SelectedEntity);
+			for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
+				if(cc.OnImGuizmo && cc.HasComponent(s_SelectedEntity))
+				{
+					ImGuizmo::PushID((const void*)cc.ComponentHash);
+					cc.OnImGuizmo(s_SelectedEntity, viewMatrix, projectionMatrix);
+					ImGuizmo::PopID();
+				}
+			}
+			ImGuizmo::PopID();
 		}
 	}
 } // Voxymore

@@ -45,12 +45,10 @@ namespace Voxymore::Core {
     OpenGLVertexArray::OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
         glGenVertexArrays(1, &m_RendererID);
-        VXM_CORE_TRACE("Create Vertex Array '{0}'", m_RendererID);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
-        VXM_CORE_TRACE("Delete Vertex Array '{0}'", m_RendererID);
         glDeleteVertexArrays(1, &m_RendererID);
     }
 

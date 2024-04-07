@@ -17,7 +17,7 @@ namespace Voxymore::Core
 
 	struct ColliderComponent : public SelfAwareComponent<ColliderComponent>
 	{
-		VXM_IMPLEMENT_COMPONENT(ColliderComponent);
+		VXM_IMPLEMENT_SELFAWARECOMPONENT(ColliderComponent);
 	public:
 		inline ColliderComponent() = default;
 		inline ~ColliderComponent() = default;

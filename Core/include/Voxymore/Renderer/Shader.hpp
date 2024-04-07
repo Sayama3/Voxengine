@@ -179,6 +179,7 @@ namespace Voxymore::Core {
 		static Ref<Shader> Create(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
 		static Ref<Shader> Create(const Path& vertexPath, const Path& fragmentPath);
 		static Ref<Shader> Create(std::unordered_map<ShaderType, Path> paths);
+		static Ref<Shader> Create(const std::string name, std::unordered_map<ShaderType, Path> paths);
 
 
 //        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
@@ -228,6 +229,7 @@ namespace Voxymore::Core {
 		Ref<Shader> Load(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
 		Ref<Shader> Load(const Path& vertexPath, const Path& fragmentPath);
 		Ref<Shader> Load(std::unordered_map<ShaderType, Path> paths);
+		Ref<Shader> Load(const std::string& name, std::unordered_map<ShaderType, Path> paths);
         Ref<Shader> Get(const std::string& name);
         bool Exists(const std::string& name) const;
 

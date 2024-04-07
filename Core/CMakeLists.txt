@@ -165,6 +165,10 @@ set(SRC_FILES src/Core/Application.cpp
         src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
         include/Voxymore/Core/TypeHelpers.hpp
+        src/Components/BezierCurve.cpp
+        include/Voxymore/Components/BezierCurve.hpp
+        src/Components/GenericBezierCurve.cpp
+        include/Voxymore/Components/GenericBezierCurve.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -176,6 +180,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "[Rr][Ee][Ll][Ee][Aa][Ss][Ee]")
 elseif(CMAKE_BUILD_TYPE MATCHES "[Dd][Ii][Ss][Tt]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DIST)
 endif()
+
+target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_LOG)
 
 target_compile_features( ${LIBRARY_TARGET_NAME} PUBLIC cxx_std_20)
 if(VXM_USE_DOUBLE)
