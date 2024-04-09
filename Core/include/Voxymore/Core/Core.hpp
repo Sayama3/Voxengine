@@ -20,5 +20,6 @@
 
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/TypeHelpers.hpp"
 #include "Voxymore/Debug/Profiling.hpp"

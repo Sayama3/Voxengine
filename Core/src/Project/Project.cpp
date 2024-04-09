@@ -11,19 +11,19 @@
 
 namespace Voxymore::Core
 {
-	std::unordered_map<UUID, VOID_FUNC_PTR>* Project::s_OnLoad = nullptr;
+	std::unordered_map<UUID, void_func_ptr>* Project::s_OnLoad = nullptr;
 	Ref<Project> Project::s_ActiveProject = nullptr;
 
-	std::unordered_map<UUID, VOID_FUNC_PTR>& Project::GetOnLoad()
+	std::unordered_map<UUID, void_func_ptr>& Project::GetOnLoad()
 	{
 		VXM_PROFILE_FUNCTION();
 		if(Project::s_OnLoad == nullptr) {
-			s_OnLoad = new std::unordered_map<UUID, VOID_FUNC_PTR>();
+			s_OnLoad = new std::unordered_map<UUID, void_func_ptr>();
 		}
 		return *Project::s_OnLoad;
 	}
 
-	UUID Project::AddOnLoad(CONST_REF_NAMED_VOID_FUNC_PTR(func))
+	UUID Project::AddOnLoad(const void_func_ptr& func)
 	{
 		VXM_PROFILE_FUNCTION();
 		UUID id;
@@ -194,7 +194,7 @@ namespace Voxymore::Core
 	{
         VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		s_ActiveProject->m_Config.startSceneId = scene->GetID();
+		s_ActiveProject->m_Config.startSceneId = scene->id();
 	}
 
 	UUID Project::GetMainScene()

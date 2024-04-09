@@ -128,6 +128,8 @@ namespace Voxymore::Editor {
 		{
 			if(!viewportPtr->IsVisible()) continue;
 
+			if(viewportPtr->GetSize().x == 0 || viewportPtr->GetSize().y == 0) continue;
+
 			// Resize
 			m_ActiveScene->SetViewportSize(viewportPtr->GetSize().x, viewportPtr->GetSize().y);
 

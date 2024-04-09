@@ -9,18 +9,15 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Assets/AssetManagerBase.hpp"
+#include "Voxymore/Assets/EditorAssetManager.hpp"
+#include "Voxymore/Assets/RuntimeAssetManager.hpp"
 
-//#define VOID_FUNC_PTR void(*)()
-//#define NAMED_VOID_FUNC_PTR(name) void(*name)()
-//#define CONST_REF_NAMED_VOID_FUNC_PTR(name) void(*name)()
-//#define CONST_REF_VOID_FUNC_PTR void(*)()
-#define VOID_FUNC_PTR std::function<void()>
-#define NAMED_VOID_FUNC_PTR(name) std::function<void()> name
-#define CONST_REF_NAMED_VOID_FUNC_PTR(name) const std::function<void()>& name
-#define CONST_REF_VOID_FUNC_PTR const std::function<void()>&
 
 namespace Voxymore::Core
 {
+	using void_func_ptr = std::function<void()>;
+
 	struct ProjectConfig {
 		std::string name = "Untitled";
 
@@ -33,18 +30,14 @@ namespace Voxymore::Core
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};
 
+
 	class Project
 	{
-	private:
-		static std::unordered_map<UUID, VOID_FUNC_PTR>* s_OnLoad;
-		static Ref<Project> s_ActiveProject;
-		friend class ProjectSerializer;
-	public:
-		Project();
-		Project(ProjectConfig parameters);
-		~Project();
-
+	public: // All the static methods
+		inline static Ref<Project> GetActive() { return s_ActiveProject; }
+		[[deprecated("use 'GetActive' instead.")]]
 		inline static Ref<Project> Get() { return s_ActiveProject; }
+
 		static std::filesystem::path GetAssetDirectory();
 		static std::filesystem::path GetCacheDirectory();
 		static std::filesystem::path GetSystemsDirectory();
@@ -57,7 +50,6 @@ namespace Voxymore::Core
 		static UUID GetMainScene();
 
 		static const ProjectConfig& GetConfig();
-
 		inline static bool ProjectIsLoaded() { return s_ActiveProject != nullptr; }
 
 		static Ref<Project> New();
@@ -65,21 +57,40 @@ namespace Voxymore::Core
 		static bool SaveActive(const std::filesystem::path& path);
 		static bool SaveActive();
 
-		static UUID AddOnLoad(CONST_REF_VOID_FUNC_PTR);
+		static UUID AddOnLoad(const void_func_ptr&);
 		static void RemoveOnLoad(UUID id);
+	public: // all the public members
+		Project();
+		Project(ProjectConfig parameters);
+		~Project();
 
-	private:
+		[[nodiscard]] inline Ref<AssetManagerBase> GetAssetManager() { return m_AssetManager; }
+
+		[[nodiscard]] inline Ref<EditorAssetManager> GetEditorAssetManager() {
+			VXM_PROFILE_FUNCTION();
+			return CastPtr<EditorAssetManager>(m_AssetManager);
+		}
+
+		[[nodiscard]] inline Ref<RuntimeAssetManager> GetRuntimeAssetManager() {
+			VXM_PROFILE_FUNCTION();
+			return CastPtr<RuntimeAssetManager>(m_AssetManager);
+		}
+	private: // the rest of the private things
 		void CallOnLoad();
-		static std::unordered_map<UUID, VOID_FUNC_PTR>& GetOnLoad();
+		static std::unordered_map<UUID, void_func_ptr>& GetOnLoad();
 	private:
-		std::filesystem::path GetAsset() const;
-		std::filesystem::path GetCache() const;
-		std::filesystem::path GetSystems() const;
-		const std::filesystem::path& GetFilePath() const;
-
+		[[nodiscard]]std::filesystem::path GetAsset() const;
+		[[nodiscard]]std::filesystem::path GetCache() const;
+		[[nodiscard]]std::filesystem::path GetSystems() const;
+		[[nodiscard]]const std::filesystem::path& GetFilePath() const;
 	private:
 		std::filesystem::path m_ProjectPath = "./Project.vxm";
 		ProjectConfig m_Config;
+		Ref<AssetManagerBase> m_AssetManager;
+	private:
+		static std::unordered_map<UUID, void_func_ptr>* s_OnLoad;
+		static Ref<Project> s_ActiveProject;
+		friend class ProjectSerializer;
 	};
 
 } // namespace Voxymore::Core

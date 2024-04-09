@@ -1,0 +1,26 @@
+//
+// Created by ianpo on 09/04/2024.
+//
+
+#pragma once
+
+#include "Asset.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+
+
+namespace Voxymore::Core
+{
+	using AssetMap = std::map<AssetHandle, Ref<Asset>>;
+
+	class AssetManagerBase
+	{
+	public:
+		inline virtual ~AssetManagerBase() {}
+
+		virtual bool IsAssetHandleValid(AssetHandle handle) const = 0;
+		virtual bool IsAssetLoaded(AssetHandle handle) const = 0;
+		virtual Ref<Asset> GetAsset(AssetHandle handle) = 0;
+	};
+
+} // namespace Voxymore::Core
+

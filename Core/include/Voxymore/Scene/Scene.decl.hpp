@@ -11,8 +11,9 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
-#include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Core/MultiThreading.hpp"
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
 #include <entt/entt.hpp>
 #include <algorithm>
 #include <execution>
@@ -28,13 +29,15 @@ namespace Voxymore::Core
 	class SceneSerializer;
 	class System;
 
-	class Scene
+	class Scene : public Asset
 	{
 	private:
 		friend class ::Voxymore::Editor::SceneHierarchyPanel;
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class System;
+	public:
+		VXM_IMPLEMENT_ASSET(AssetType::Scene);
 	public:
 		Scene();
 		Scene(std::string name);

@@ -10,7 +10,7 @@
 namespace Voxymore::Core
 {
 	class Application;
-	enum class FileSource
+	enum class FileSource : uint8_t
 	{
 		None = 0,
 		EditorAsset,
@@ -67,8 +67,8 @@ namespace Voxymore::Core
 		Path(const Path&) = default;
 		Path& operator=(const Path& t) = default;
 
-		FileSource source = FileSource::None;
 		std::filesystem::path path;
+		FileSource source = FileSource::None;
 		std::filesystem::path GetFullPath() const;
 
 		[[deprecated("Replaced by 'id()' which has a better consistency.")]]

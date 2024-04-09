@@ -8,6 +8,7 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/UUID.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 #include <variant>
 
 namespace Voxymore::Core {
@@ -56,7 +57,7 @@ namespace Voxymore::Core {
 		UUID id;
 		std::string name;
 
-		std::variant<Path, const void*> image;
+		const void* image;
 		uint32_t width = 0, height = 0, channels = 0;
 
 		TextureFilter filterMag = TextureFilter::Linear;
@@ -69,7 +70,8 @@ namespace Voxymore::Core {
 		PixelType pixelType = PixelType::PX_8;
 	};
 
-    class Texture {
+    class Texture : public Asset
+	{
     public:
         virtual ~Texture() = default;
         virtual uint32_t GetWidth() const = 0;
@@ -99,6 +101,8 @@ namespace Voxymore::Core {
 		virtual uint32_t GetChannelCount() const = 0;
 		//TODO: Add a 'T GetPixel<T>(uint32_t x, uint32_t y) const;' function.
 		//TODO: Add a 'void SetPixel<T>(uint32_t x, uint32_t y, T pixel);' function.
+
+		VXM_IMPLEMENT_ASSET(AssetType::Texture2D);
     };
 
 } // Core

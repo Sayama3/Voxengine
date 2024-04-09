@@ -101,8 +101,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Scene/Entity.cpp
         src/ImGui/ImGuiLib.cpp
         include/Voxymore/ImGui/ImGuiLib.hpp
-        src/Assets/Assets.cpp
-        include/Voxymore/Assets/Assets.hpp
         src/ParticlesPhysics/ParticlePhysicsLayer.cpp
         include/Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp
         include/Voxymore/ParticlesPhysics/Particle.hpp
@@ -169,6 +167,24 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Components/BezierCurve.hpp
         src/Components/GenericBezierCurve.cpp
         include/Voxymore/Components/GenericBezierCurve.hpp
+
+        src/Assets/Assets.cpp
+        include/Voxymore/Assets/Assets.hpp
+        src/Assets/Asset.cpp
+        include/Voxymore/Assets/Asset.hpp
+        src/Assets/AssetManager.cpp
+        include/Voxymore/Assets/AssetManager.hpp
+        src/Assets/AssetManagerBase.cpp
+        include/Voxymore/Assets/AssetManagerBase.hpp
+        src/Assets/RuntimeAssetManager.cpp
+        include/Voxymore/Assets/RuntimeAssetManager.hpp
+        src/Assets/EditorAssetManager.cpp
+        include/Voxymore/Assets/EditorAssetManager.hpp
+        include/Voxymore/Assets/AssetMetadata.hpp
+        src/Assets/AssetImporter.cpp
+        include/Voxymore/Assets/AssetImporter.hpp
+        src/Assets/Importers/TextureImporter.cpp
+        include/Voxymore/Assets/Importers/TextureImporter.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

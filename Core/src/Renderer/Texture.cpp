@@ -6,9 +6,6 @@
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/OpenGL/OpenGLTexture2D.hpp"
 
-
-
-
 namespace Voxymore::Core {
 	Ref<Texture2D> Core::Texture2D::Create(const Path& path) {
 		VXM_PROFILE_FUNCTION();
