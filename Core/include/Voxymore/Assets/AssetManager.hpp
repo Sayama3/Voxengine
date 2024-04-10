@@ -14,7 +14,7 @@ namespace Voxymore::Core
 
 	class AssetManager
 	{
-
+	public:
 		template<typename T>
 		static Ref<T> GetAssetAs(AssetHandle handle)
 		{

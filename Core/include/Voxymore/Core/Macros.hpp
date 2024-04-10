@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/PlatformDetection.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include <csignal>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM

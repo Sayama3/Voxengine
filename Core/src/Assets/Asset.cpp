@@ -2,7 +2,7 @@
 // Created by ianpo on 09/04/2024.
 //
 
-#include "Asset.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 
 namespace Voxymore
 {

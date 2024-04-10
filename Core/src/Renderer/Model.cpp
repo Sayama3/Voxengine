@@ -6,6 +6,9 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingBox.hpp"
+#include "Voxymore/Assets/AssetManager.hpp"
+#include "Voxymore/Assets/Importers/TextureImporter.hpp"
+#include "Voxymore/Project/Project.hpp"
 
 // PRIVATE USE ONLY
 #include "GLTFHelper.hpp"
@@ -38,7 +41,7 @@ namespace Voxymore::Core
 	std::pair<const T *, size_t> GetBuffer(const std::string &attribute, tinygltf::Model &model, tinygltf::Primitive &primitive)
 	{
 		VXM_PROFILE_FUNCTION();
-//		VXM_PROFILE_SCOPE("Model::Model -> Create Position Buffer");
+//		VXM_PROFILE_SCOPE("Model::Model -> Create Position RendererBuffer");
 		size_t sizeofValue = sizeof(T);
 		int value = primitive.attributes[attribute];
 		auto &accessor = model.accessors[value];
@@ -84,22 +87,22 @@ namespace Voxymore::Core
 		if (colorAccessor.type == GLTF::AccessorType::VEC4) {
 			switch ((GLTF::ComponentType) colorAccessor.componentType) {
 				case GLTF::ComponentType::UnsignedByte:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u8vec4), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u8vec4), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u8vec4), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u8vec4), verticesCount);
 					color = (static_cast<const glm::u8vec4 *>(colorBuffer)[index]);
 					color /= glm::vec4(255.0);
 					break;
 				case GLTF::ComponentType::UnsignedShort:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u16vec4), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u16vec4), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u16vec4), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u16vec4), verticesCount);
 					color = (static_cast<const glm::u16vec4 *>(colorBuffer)[index]);
 					color /= glm::vec4(65535.0);
 					break;
 				case GLTF::ComponentType::UnsignedInt:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u32vec4), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u32vec4), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u32vec4), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u32vec4), verticesCount);
 					color = (static_cast<const glm::u32vec4 *>(colorBuffer)[index]);
 					color /= glm::vec4(4294967295.0);
 					break;
 				case GLTF::ComponentType::Float:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::vec4), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::vec4), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::vec4), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::vec4), verticesCount);
 					color = (static_cast<const glm::vec4 *>(colorBuffer)[index]);
 					break;
 				default:
@@ -109,16 +112,16 @@ namespace Voxymore::Core
 		else if (colorAccessor.type == GLTF::AccessorType::VEC3) {
 			switch ((GLTF::ComponentType) colorAccessor.componentType) {
 				case GLTF::ComponentType::UnsignedByte:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u8vec3), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u8vec3), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u8vec3), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u8vec3), verticesCount);
 					color = Convertu8Vec3ToVec4(static_cast<const glm::u8vec3 *>(colorBuffer)[index]);
 				case GLTF::ComponentType::UnsignedShort:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u16vec3), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u16vec3), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u16vec3), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u16vec3), verticesCount);
 					color = Convertu16Vec3ToVec4(static_cast<const glm::u16vec3 *>(colorBuffer)[index]);
 				case GLTF::ComponentType::UnsignedInt:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u32vec3), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::u32vec3), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::u32vec3), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::u32vec3), verticesCount);
 					color = Convertu32Vec3ToVec4(static_cast<const glm::u32vec3 *>(colorBuffer)[index]);
 				case GLTF::ComponentType::Float:
-					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::vec3), "The Color Buffer only has {0} items instead of {1}", colorSize / sizeof(glm::vec3), verticesCount);
+					VXM_CORE_ASSERT(verticesCount == colorSize / sizeof(glm::vec3), "The Color RendererBuffer only has {0} items instead of {1}", colorSize / sizeof(glm::vec3), verticesCount);
 					color = ConvertVec3ToVec4(static_cast<const glm::vec3 *>(colorBuffer)[index]);
 				default: VXM_CORE_ASSERT(false, "The type {0} is not supported.", colorAccessor.componentType);
 			}
@@ -208,7 +211,10 @@ namespace Voxymore::Core
 					VXM_CORE_ASSERT(!image.uri.starts_with("http"), "The engine cannot fetch the image from the internet for now.");
 					VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif", "Cannot handle the image type {0}.", image.mimeType);
 					auto parentFolder = p.GetFullPath().parent_path();
-					m_Textures.push_back(Texture2D::Create(parentFolder / image.uri));
+//					Ref<Asset> asset = Project::GetActive()->GetEditorAssetManager().AddAsset(AssetMetadata(parentFolder / image.uri, AssetType::Texture2D));
+					// TODO: Use the AssetManager
+					Ref<Asset> asset = TextureImporter::ImportTexture2D({Path::GetPath(parentFolder / image.uri), AssetType::Texture2D});
+					m_Textures.push_back(CastPtr<Texture2D>(asset));
 				}
 			}
 		}
@@ -238,7 +244,7 @@ namespace Voxymore::Core
 					BoundingBox aabb;
 
 					{
-						VXM_PROFILE_SCOPE("Model::Model -> Create Vertex Buffer");
+						VXM_PROFILE_SCOPE("Model::Model -> Create Vertex RendererBuffer");
 						//TODO: Optimize this to be able to add the rest of the possible attributes. (at least multiple tex coords);
 						//TODO2: Add other render mode.
 						VXM_CORE_ASSERT(primitive.mode == GLTF::MeshRenderMode::TRIANGLES, "The Render Mode {0} cannot be used for the moment.", primitive.mode);
@@ -279,14 +285,14 @@ namespace Voxymore::Core
 						}
 					}
 
-					// Index Buffer
+					// Index RendererBuffer
 					{
-						VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer");
+						VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer");
 						auto &accessor = model.accessors[primitive.indices];
 						auto &&[indexBuffer, indexSize] = GetRawBuffer(primitive.indices, model, primitive);
 						switch ((GLTF::ComponentType) accessor.componentType) {
 							case GLTF::ComponentType::UnsignedByte: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedByte");
+								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedByte");
 								size_t sizeofValue = sizeof(uint8_t);
 								size_t bufferItemsCount = indexSize / sizeofValue;
 								const auto *bufferPtr = static_cast<const uint8_t *>(indexBuffer);
@@ -297,7 +303,7 @@ namespace Voxymore::Core
 								break;
 							}
 							case GLTF::ComponentType::UnsignedShort: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedShort");
+								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedShort");
 								size_t sizeofValue = sizeof(uint16_t);
 								size_t bufferItemsCount = indexSize / sizeofValue;
 								const auto *bufferPtr = static_cast<const uint16_t *>(indexBuffer);
@@ -308,7 +314,7 @@ namespace Voxymore::Core
 								break;
 							}
 							case GLTF::ComponentType::UnsignedInt: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index Buffer -> UnsignedInt");
+								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedInt");
 								size_t sizeofValue = sizeof(uint32_t);
 								size_t bufferItemsCount = indexSize / sizeofValue;
 								const auto *bufferPtr = static_cast<const uint32_t *>(indexBuffer);

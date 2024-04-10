@@ -11,25 +11,41 @@ namespace Voxymore::Core
 {
 	Ref<Asset> TextureImporter::ImportTexture2D(const AssetMetadata &metadata)
 	{
+		VXM_PROFILE_FUNCTION();
+		Buffer buffer;
 		Texture2DSpecification spec;
 		stbi_set_flip_vertically_on_load(true);
 
 		int width, height, channels;
-		std::string strPath = path.string();
-		VXM_CORE_ASSERT(FileSystem::Exist(metadata.), "The file {0} do not exist...", strPath);
+		std::string strPath = metadata.FilePath.string();
 
-		spec.image = stbi_load(strPath.c_str(), &width, &height, &channels, static_cast<int>(spec.channels));
-		VXM_CORE_ASSERT(spec.image, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
+		if(!FileSystem::Exist(metadata.FilePath)) {
+			VXM_CORE_ERROR("The file {0} do not exist.", strPath);
+			return nullptr;
+		}
 
-		if(spec.width && spec.width != width) VXM_CORE_WARNING("The width set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.width, width);
-		if(spec.height && spec.height != height) VXM_CORE_WARNING("The height set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.height, height);
-		if(spec.channels && spec.channels != channels) VXM_CORE_WARNING("The channels set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.channels, channels);
+		{
+			VXM_PROFILE_SCOPE("ImportTexture2D - stbi_load");
+			buffer.Data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
+		}
+
+		if(!buffer.Data) {
+			VXM_CORE_ERROR("Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
+			return nullptr;
+		}
 
 		spec.width = width;
 		spec.height = height;
 		spec.channels = channels;
 
+		//TODO: Handle HDR ?
+		buffer.Size = spec.width * spec.height * spec.channels;
+
 		spec.pixelType = PixelType::PX_8;
 		spec.pixelFormat = static_cast<PixelFormat>(channels);
+
+		Ref<Asset> asset = Texture2D::Create(spec, buffer);
+		buffer.Release();
+		return asset;
 	}
 }

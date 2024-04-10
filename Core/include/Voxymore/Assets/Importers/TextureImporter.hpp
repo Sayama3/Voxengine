@@ -7,6 +7,7 @@
 #include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Assets/AssetMetadata.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/Buffer.hpp"
 
 namespace Voxymore::Core
 {

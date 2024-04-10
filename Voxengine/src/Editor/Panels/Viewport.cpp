@@ -6,6 +6,7 @@
 #include <ImGuizmo.h>
 #include "Voxymore/Editor/Panels/Viewport.hpp"
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Editor/EditorLayer.hpp"
 
 using namespace Voxymore::Core;
 
@@ -54,7 +55,7 @@ namespace Voxymore::Editor
 				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
 				if (payload != nullptr) {
 					std::filesystem::path filePath = static_cast<const char *>(payload->Data);
-					VXM_INFO("We should load the scene {0}. Not available yet.", payload->Data);
+					Application::Get().FindLayer<EditorLayer>()->OpenScene(filePath);
 				}
 				ImGui::EndDragDropTarget();
 			}

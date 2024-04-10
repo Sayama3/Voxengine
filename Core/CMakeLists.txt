@@ -185,6 +185,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Assets/AssetImporter.hpp
         src/Assets/Importers/TextureImporter.cpp
         include/Voxymore/Assets/Importers/TextureImporter.hpp
+        src/Core/Buffer.cpp
+        include/Voxymore/Core/Buffer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

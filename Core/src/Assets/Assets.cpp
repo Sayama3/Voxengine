@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Assets/Assets.hpp"
+#include "Voxymore/Assets/Importers/TextureImporter.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Scene/SceneManager.hpp"
@@ -247,7 +248,7 @@ namespace Voxymore::Core
 		UUID fileId = GetOrCreateFileID(filePath);
 		if(s_Textures.contains(fileId)) return true;
 
-		Ref<Texture2D> texture = Texture2D::Create(filePath);
+		Ref<Texture2D> texture = CastPtr<Texture2D>(TextureImporter::ImportTexture2D({filePath, AssetType::Texture2D}));
 		if(texture != nullptr)
 		{
 			s_Textures[fileId] = texture;

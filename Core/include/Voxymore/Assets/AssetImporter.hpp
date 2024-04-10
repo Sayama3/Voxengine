@@ -17,6 +17,7 @@ namespace Voxymore::Core
 	{
 	public:
 		static Ref<Asset> ImportAsset(const AssetMetadata& metadata);
+	public:
 		static inline std::map<AssetType, AssetImportFunction> AssetLoaders = {
 				{AssetType::Texture2D, TextureImporter::ImportTexture2D},
 		};
