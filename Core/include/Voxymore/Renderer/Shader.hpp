@@ -220,6 +220,13 @@ namespace Voxymore::Core {
 	struct ShaderSource : public Asset
 	{
 		VXM_IMPLEMENT_ASSET(AssetType::ShaderSource);
+
+		inline ShaderSource() = default;
+		inline ~ShaderSource() = default;
+		ShaderSource(ShaderType type);
+		ShaderSource(std::string source);
+		ShaderSource(ShaderType type, std::string source);
+
 		std::string Source;
 		ShaderType Type;
 
@@ -240,6 +247,7 @@ namespace Voxymore::Core {
 		virtual void Reload() = 0;
 
         virtual std::string GetName() const = 0;
+        virtual void SetName(const std::string& name) = 0;
 
 		virtual std::vector<ShaderSourceField> GetSources() const = 0;
 		virtual void SetSources(const std::vector<ShaderSourceField>& sources) = 0;

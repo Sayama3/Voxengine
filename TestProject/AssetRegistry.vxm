@@ -1,82 +1,991 @@
 AssetRegistry:
   Assets:
+    - Handle: 12546364317619781
+      FilePath: {Source: 2, Path: Materials\NewMaterial_285.vxm_material}
+      Type: AssetType::Material
+    - Handle: 57783363000446751
+      FilePath: {Source: 2, Path: Shaders\Bezier4.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 110117802751229160
+      FilePath: {Source: 2, Path: Materials\NewMaterial_232.vxm_material}
+      Type: AssetType::Material
+    - Handle: 121069899020656243
+      FilePath: {Source: 2, Path: Materials\NewMaterial_160.vxm_material}
+      Type: AssetType::Material
+    - Handle: 166670469830984071
+      FilePath: {Source: 2, Path: Materials\NewMaterial_256.vxm_material}
+      Type: AssetType::Material
     - Handle: 238573773480364295
       FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.frag}
       Type: AssetType::ShaderSource
+    - Handle: 278313634789479571
+      FilePath: {Source: 2, Path: Materials\NewMaterial_254.vxm_material}
+      Type: AssetType::Material
+    - Handle: 299198279713023122
+      FilePath: {Source: 2, Path: Materials\NewMaterial_128.vxm_material}
+      Type: AssetType::Material
+    - Handle: 456029358116026736
+      FilePath: {Source: 2, Path: Materials\NewMaterial_17.vxm_material}
+      Type: AssetType::Material
+    - Handle: 538019028270268906
+      FilePath: {Source: 2, Path: Materials\NewMaterial_201.vxm_material}
+      Type: AssetType::Material
+    - Handle: 556352936700797106
+      FilePath: {Source: 2, Path: Materials\NewMaterial_95.vxm_material}
+      Type: AssetType::Material
+    - Handle: 557302458257306530
+      FilePath: {Source: 2, Path: Materials\NewMaterial_96.vxm_material}
+      Type: AssetType::Material
+    - Handle: 584041919991236117
+      FilePath: {Source: 2, Path: Materials\NewMaterial_83.vxm_material}
+      Type: AssetType::Material
+    - Handle: 653641839782374794
+      FilePath: {Source: 2, Path: Materials\NewMaterial_133.vxm_material}
+      Type: AssetType::Material
+    - Handle: 782447211086685139
+      FilePath: {Source: 2, Path: Materials\NewMaterial_196.vxm_material}
+      Type: AssetType::Material
+    - Handle: 814839459805196422
+      FilePath: {Source: 2, Path: Materials\NewMaterial_281.vxm_material}
+      Type: AssetType::Material
+    - Handle: 854209445015472076
+      FilePath: {Source: 2, Path: Materials\NewMaterial_248.vxm_material}
+      Type: AssetType::Material
+    - Handle: 974511012524674189
+      FilePath: {Source: 2, Path: Materials\NewMaterial_223.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1002651268002156801
+      FilePath: {Source: 2, Path: Materials\NewMaterial_279.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1021215801904552433
+      FilePath: {Source: 2, Path: Materials\NewMaterial_93.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1086214852919679273
+      FilePath: {Source: 2, Path: Materials\NewMaterial_28.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1168655930236236443
+      FilePath: {Source: 2, Path: Materials\NewMaterial_225.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1248563342518812122
+      FilePath: {Source: 2, Path: Materials\NewMaterial_234.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1302358430316823751
+      FilePath: {Source: 2, Path: Materials\NewMaterial_31.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1325521479119131193
+      FilePath: {Source: 2, Path: Materials\NewMaterial_67.vxm_material}
+      Type: AssetType::Material
     - Handle: 1327539612757469397
       FilePath: {Source: 2, Path: Shaders\NewShader_0.vxm_shader}
       Type: AssetType::Shader
-    - Handle: 2179113199840017384
-      FilePath: {Source: 2, Path: Shaders\Bezier.vxm_material}
+    - Handle: 1410613021853032242
+      FilePath: {Source: 2, Path: Materials\NewMaterial_161.vxm_material}
       Type: AssetType::Material
-    - Handle: 2728295460255601333
-      FilePath: {Source: 2, Path: Shaders\Bezier.vxm_shader}
-      Type: AssetType::Shader
+    - Handle: 1419130987855091882
+      FilePath: {Source: 2, Path: Materials\NewMaterial_51.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1424873959411892002
+      FilePath: {Source: 2, Path: Materials\NewMaterial_149.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1462132194189507054
+      FilePath: {Source: 2, Path: Materials\NewMaterial_105.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1469475602718436900
+      FilePath: {Source: 2, Path: Materials\NewMaterial_203.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1471598691532638711
+      FilePath: {Source: 2, Path: Materials\NewMaterial_87.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1542582119331009524
+      FilePath: {Source: 2, Path: Materials\NewMaterial_180.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1605267126510100714
+      FilePath: {Source: 2, Path: Materials\NewMaterial_91.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1612239645818885174
+      FilePath: {Source: 2, Path: Materials\NewMaterial_72.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1624392421773993790
+      FilePath: {Source: 2, Path: Materials\NewMaterial_206.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1726139537264795439
+      FilePath: {Source: 2, Path: Materials\NewMaterial_44.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1834046419800243767
+      FilePath: {Source: 2, Path: ShaderSources\BezierPascal.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 1902334488476118158
+      FilePath: {Source: 2, Path: Materials\NewMaterial_9.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2236943072873596290
+      FilePath: {Source: 2, Path: Materials\NewMaterial_165.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2420122575477575671
+      FilePath: {Source: 2, Path: Materials\NewMaterial_177.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2493182378782564058
+      FilePath: {Source: 2, Path: Materials\NewMaterial_183.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2503276621761828865
+      FilePath: {Source: 2, Path: Materials\NewMaterial_284.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2548310823551021591
+      FilePath: {Source: 2, Path: Materials\NewMaterial_12.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2648624603768744651
+      FilePath: {Source: 2, Path: Materials\NewMaterial_55.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2723066303155203194
+      FilePath: {Source: 2, Path: Materials\NewMaterial_214.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2790779490255860013
+      FilePath: {Source: 2, Path: Materials\NewMaterial_153.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2911277565677263061
+      FilePath: {Source: 2, Path: Materials\NewMaterial_204.vxm_material}
+      Type: AssetType::Material
+    - Handle: 2991703452986819279
+      FilePath: {Source: 2, Path: Materials\NewMaterial_26.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3075410539680544311
+      FilePath: {Source: 2, Path: Materials\NewMaterial_270.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3084057428993391189
+      FilePath: {Source: 2, Path: ShaderSources\BezierPascal.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 3112241389857728086
+      FilePath: {Source: 2, Path: Materials\NewMaterial_174.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3165145004056146819
+      FilePath: {Source: 2, Path: Materials\NewMaterial_102.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3194460086981778024
+      FilePath: {Source: 2, Path: Materials\NewMaterial_246.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3283845978050959360
+      FilePath: {Source: 2, Path: Materials\NewMaterial_218.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3298752314169057199
+      FilePath: {Source: 2, Path: Materials\NewMaterial_194.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3327242774040501980
+      FilePath: {Source: 2, Path: Materials\NewMaterial_288.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3328569304420778950
+      FilePath: {Source: 2, Path: Materials\NewMaterial_118.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3393292161942837524
+      FilePath: {Source: 2, Path: Materials\NewMaterial_277.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3583050509843244517
+      FilePath: {Source: 2, Path: Materials\NewMaterial_176.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3638657346630110741
+      FilePath: {Source: 2, Path: Materials\NewMaterial_250.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3661051172077990409
+      FilePath: {Source: 2, Path: Materials\NewMaterial_65.vxm_material}
+      Type: AssetType::Material
     - Handle: 3718198025322520803
       FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessev}
       Type: AssetType::ShaderSource
+    - Handle: 3758878074225838193
+      FilePath: {Source: 2, Path: Materials\NewMaterial_120.vxm_material}
+      Type: AssetType::Material
+    - Handle: 3820880437107484282
+      FilePath: {Source: 2, Path: Materials\NewMaterial_187.vxm_material}
+      Type: AssetType::Material
     - Handle: 3860311140666099463
       FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.frag}
       Type: AssetType::ShaderSource
+    - Handle: 3878964258739074060
+      FilePath: {Source: 2, Path: Materials\NewMaterial_173.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4039482472692021931
+      FilePath: {Source: 2, Path: Materials\Bezier4.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4073621757023340061
+      FilePath: {Source: 2, Path: Materials\NewMaterial_109.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4133428812239362275
+      FilePath: {Source: 2, Path: Materials\NewMaterial_23.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4162342041463661375
+      FilePath: {Source: 2, Path: Materials\NewMaterial_190.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4221040944843761673
+      FilePath: {Source: 2, Path: Materials\NewMaterial_271.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4276338853943948561
+      FilePath: {Source: 2, Path: Materials\NewMaterial_116.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4334169474636803316
+      FilePath: {Source: 2, Path: Materials\NewMaterial_25.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4380908404927555231
+      FilePath: {Source: 2, Path: Materials\NewMaterial_33.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4404250210158772242
+      FilePath: {Source: 2, Path: Materials\NewMaterial_266.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4464372317546281712
+      FilePath: {Source: 2, Path: Materials\NewMaterial_66.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4526529748642338780
+      FilePath: {Source: 2, Path: Materials\NewMaterial_32.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4542260428165824841
+      FilePath: {Source: 2, Path: Materials\NewMaterial_81.vxm_material}
+      Type: AssetType::Material
     - Handle: 4590982269912839582
       FilePath: {Source: 2, Path: Shaders\NewShader_0.vxm_shader}
       Type: AssetType::Shader
+    - Handle: 4611579977898336216
+      FilePath: {Source: 2, Path: Materials\NewMaterial_75.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4614474130183530674
+      FilePath: {Source: 2, Path: Materials\NewMaterial_82.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4641031660260658991
+      FilePath: {Source: 2, Path: Materials\NewMaterial_185.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4797504562678373523
+      FilePath: {Source: 2, Path: Materials\NewMaterial_166.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4807484603928832991
+      FilePath: {Source: 2, Path: Materials\NewMaterial_147.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4855215583161257425
+      FilePath: {Source: 2, Path: Materials\NewMaterial_129.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4855621921736237687
+      FilePath: {Source: 2, Path: Materials\NewMaterial_273.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4944718401387167171
+      FilePath: {Source: 2, Path: Materials\NewMaterial_241.vxm_material}
+      Type: AssetType::Material
+    - Handle: 4982252946144929397
+      FilePath: {Source: 2, Path: Materials\NewMaterial_221.vxm_material}
+      Type: AssetType::Material
     - Handle: 5045326193194912158
       FilePath: {Source: 2, Path: Scenes\BezierScene.vxm_scn}
       Type: AssetType::Scene
+    - Handle: 5153797453033111765
+      FilePath: {Source: 2, Path: Materials\NewMaterial_217.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5179794966199897894
+      FilePath: {Source: 2, Path: Materials\NewMaterial_169.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5295120701751001584
+      FilePath: {Source: 2, Path: Materials\NewMaterial_131.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5426803718605630009
+      FilePath: {Source: 2, Path: Materials\NewMaterial_222.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5637153445794865084
+      FilePath: {Source: 2, Path: Materials\NewMaterial_186.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5639126700639506719
+      FilePath: {Source: 2, Path: Materials\BezierDeCasteljau.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5716064685589184830
+      FilePath: {Source: 2, Path: Materials\NewMaterial_86.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5783185499334628012
+      FilePath: {Source: 2, Path: Materials\NewMaterial_202.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5810687212904791226
+      FilePath: {Source: 2, Path: Materials\BezierPascal.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5898877899210232263
+      FilePath: {Source: 2, Path: Materials\NewMaterial_207.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5901642627181216123
+      FilePath: {Source: 2, Path: Materials\NewMaterial_233.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5921987336177860713
+      FilePath: {Source: 2, Path: Materials\NewMaterial_242.vxm_material}
+      Type: AssetType::Material
+    - Handle: 5957146239592867762
+      FilePath: {Source: 2, Path: Shaders\BezierDeCasteljau.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 5977028457752578798
+      FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 6034563553036037495
+      FilePath: {Source: 2, Path: Materials\NewMaterial_79.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6075980735830955236
+      FilePath: {Source: 2, Path: ShaderSources\BezierDeCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 6132020490870230846
+      FilePath: {Source: 2, Path: Materials\NewMaterial_132.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6142893516290798917
+      FilePath: {Source: 2, Path: Materials\NewMaterial_265.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6200702701427391756
+      FilePath: {Source: 2, Path: Materials\NewMaterial_210.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6230573557509700145
+      FilePath: {Source: 2, Path: Materials\NewMaterial_276.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6368790027593276204
+      FilePath: {Source: 2, Path: Materials\NewMaterial_123.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6473759283775436476
+      FilePath: {Source: 2, Path: Materials\NewMaterial_219.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6498495248952669818
+      FilePath: {Source: 2, Path: Materials\NewMaterial_22.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6699858722924299448
+      FilePath: {Source: 2, Path: Materials\NewMaterial_144.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6706391522660955334
+      FilePath: {Source: 2, Path: Materials\NewMaterial_113.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6734989458226348756
+      FilePath: {Source: 2, Path: Materials\NewMaterial_151.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6819999210447859045
+      FilePath: {Source: 2, Path: Materials\NewMaterial_226.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6885649131608519360
+      FilePath: {Source: 2, Path: Materials\NewMaterial_92.vxm_material}
+      Type: AssetType::Material
+    - Handle: 6993669253736315046
+      FilePath: {Source: 2, Path: Materials\NewMaterial_146.vxm_material}
+      Type: AssetType::Material
     - Handle: 6994444039801465299
       FilePath: {Source: 2, Path: Shaders\NewShader_0.vxm_shader}
       Type: AssetType::Shader
-    - Handle: 8252897195912804996
-      FilePath: {Source: 2, Path: Shaders\NewMaterial_0.vxm_material}
+    - Handle: 7056672947032202922
+      FilePath: {Source: 2, Path: Materials\NewMaterial_126.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7060500997075087909
+      FilePath: {Source: 2, Path: Materials\NewMaterial_104.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7065063976423178610
+      FilePath: {Source: 2, Path: Materials\NewMaterial_115.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7124105823368116462
+      FilePath: {Source: 2, Path: Materials\NewMaterial_259.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7266172482694555001
+      FilePath: {Source: 2, Path: Materials\NewMaterial_193.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7357744456297202497
+      FilePath: {Source: 2, Path: Materials\NewMaterial_192.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7466713967207951579
+      FilePath: {Source: 2, Path: Materials\NewMaterial_249.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7467473522918869365
+      FilePath: {Source: 2, Path: Materials\NewMaterial_80.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7493385245160866479
+      FilePath: {Source: 2, Path: Materials\NewMaterial_54.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7559165329132415628
+      FilePath: {Source: 2, Path: Materials\NewMaterial_101.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7579921663631897145
+      FilePath: {Source: 2, Path: Materials\NewMaterial_134.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7688690553947950205
+      FilePath: {Source: 2, Path: Materials\NewMaterial_255.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7728360023788864096
+      FilePath: {Source: 2, Path: Materials\NewMaterial_199.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7744773803926575813
+      FilePath: {Source: 2, Path: Materials\NewMaterial_39.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7745935321456391359
+      FilePath: {Source: 2, Path: Materials\NewMaterial_77.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7789001022321493755
+      FilePath: {Source: 2, Path: Materials\NewMaterial_272.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7956387467478717854
+      FilePath: {Source: 2, Path: Materials\NewMaterial_36.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7960579012842140365
+      FilePath: {Source: 2, Path: Materials\NewMaterial_228.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8121002750463206674
+      FilePath: {Source: 2, Path: Materials\NewMaterial_34.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8181997717671103786
+      FilePath: {Source: 2, Path: Materials\NewMaterial_139.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8196921982017184047
+      FilePath: {Source: 2, Path: Materials\NewMaterial_125.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8232966202843226087
+      FilePath: {Source: 2, Path: Materials\NewMaterial_243.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8288728853920969554
+      FilePath: {Source: 2, Path: Materials\NewMaterial_111.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8310450564717980730
+      FilePath: {Source: 2, Path: Materials\NewMaterial_138.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8390122016042418944
+      FilePath: {Source: 2, Path: Materials\NewMaterial_7.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8397857598840315370
+      FilePath: {Source: 2, Path: ShaderSources\BezierDeCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 8410490306682432960
+      FilePath: {Source: 1, Path: Shaders\TextureShader.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 8428673878375853106
+      FilePath: {Source: 2, Path: Shaders\BezierPascal.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 8488720371615798393
+      FilePath: {Source: 2, Path: Materials\NewMaterial_239.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8593405225991407124
+      FilePath: {Source: 2, Path: Materials\NewMaterial_167.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8675863713163766223
+      FilePath: {Source: 2, Path: Materials\NewMaterial_198.vxm_material}
       Type: AssetType::Material
     - Handle: 8684970729791342988
       FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.geom}
       Type: AssetType::ShaderSource
+    - Handle: 8829391768357428197
+      FilePath: {Source: 2, Path: Materials\NewMaterial_18.vxm_material}
+      Type: AssetType::Material
+    - Handle: 8869431674967683927
+      FilePath: {Source: 2, Path: Materials\NewMaterial_145.vxm_material}
+      Type: AssetType::Material
     - Handle: 9085945631287950419
       FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessco}
       Type: AssetType::ShaderSource
+    - Handle: 9093094901578643543
+      FilePath: {Source: 2, Path: Materials\NewMaterial_40.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9179981996178735967
+      FilePath: {Source: 2, Path: Materials\NewMaterial_110.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9195428667951715800
+      FilePath: {Source: 2, Path: Materials\NewMaterial_197.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9215337010348378148
+      FilePath: {Source: 2, Path: Materials\NewMaterial_24.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9233503999666474566
+      FilePath: {Source: 2, Path: Materials\NewMaterial_154.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9440848500717846445
+      FilePath: {Source: 2, Path: Materials\NewMaterial_89.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9443386277987351956
+      FilePath: {Source: 2, Path: Materials\NewMaterial_182.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9503503499613501778
+      FilePath: {Source: 2, Path: Materials\NewMaterial_283.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9567263956913001434
+      FilePath: {Source: 2, Path: Materials\NewMaterial_181.vxm_material}
+      Type: AssetType::Material
     - Handle: 9693833186828928301
       FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.vert}
       Type: AssetType::ShaderSource
     - Handle: 9757244415359527330
       FilePath: {Source: 2, Path: Shaders\NewShader_1.vxm_shader}
       Type: AssetType::Shader
+    - Handle: 9885769221575692573
+      FilePath: {Source: 2, Path: Materials\NewMaterial_253.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9888211807157151421
+      FilePath: {Source: 2, Path: Materials\NewMaterial_29.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9898511516699629938
+      FilePath: {Source: 2, Path: Materials\NewMaterial_237.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9967954755047970841
+      FilePath: {Source: 2, Path: Materials\NewMaterial_143.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10026536066242181281
+      FilePath: {Source: 2, Path: Materials\NewMaterial_220.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10070942983586663198
+      FilePath: {Source: 2, Path: Materials\NewMaterial_252.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10093223065185358522
+      FilePath: {Source: 2, Path: Materials\NewMaterial_244.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10136314873127716112
+      FilePath: {Source: 2, Path: Materials\NewMaterial_155.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10160887304118322296
+      FilePath: {Source: 2, Path: Materials\NewMaterial_162.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10173784386651987670
+      FilePath: {Source: 2, Path: Materials\NewMaterial_137.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10204444331233255869
+      FilePath: {Source: 2, Path: Materials\NewMaterial_261.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10295205871058118650
+      FilePath: {Source: 2, Path: ShaderSources\New ShaderSource.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 10325353478511381581
+      FilePath: {Source: 2, Path: Materials\NewMaterial_49.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10451574948160617617
+      FilePath: {Source: 2, Path: Materials\NewMaterial_38.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10479033506325931179
+      FilePath: {Source: 2, Path: Materials\NewMaterial_224.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10494700359014722463
+      FilePath: {Source: 2, Path: Materials\NewMaterial_121.vxm_material}
+      Type: AssetType::Material
     - Handle: 10522820326463182042
       FilePath: {Source: 1, Path: Shaders\DefaultShader.frag}
       Type: AssetType::ShaderSource
+    - Handle: 10710786644869447369
+      FilePath: {Source: 2, Path: Materials\NewMaterial_19.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10781872320936027080
+      FilePath: {Source: 2, Path: Materials\NewMaterial_282.vxm_material}
+      Type: AssetType::Material
     - Handle: 10801932215817659609
       FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessev}
       Type: AssetType::ShaderSource
+    - Handle: 10868188465398554184
+      FilePath: {Source: 2, Path: Materials\NewMaterial_263.vxm_material}
+      Type: AssetType::Material
+    - Handle: 10978455165997168023
+      FilePath: {Source: 2, Path: Materials\NewMaterial_41.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11019477466227969644
+      FilePath: {Source: 2, Path: Materials\NewMaterial_70.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11032810451560193038
+      FilePath: {Source: 2, Path: Materials\NewMaterial_62.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11076807620076232300
+      FilePath: {Source: 2, Path: Materials\NewMaterial_84.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11100530320343490090
+      FilePath: {Source: 2, Path: Materials\NewMaterial_2.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11181993018014957455
+      FilePath: {Source: 2, Path: Materials\NewMaterial_150.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11188751528769501440
+      FilePath: {Source: 2, Path: Materials\NewMaterial_251.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11198253109236489663
+      FilePath: {Source: 2, Path: Materials\NewMaterial_48.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11247078066176995956
+      FilePath: {Source: 2, Path: Materials\NewMaterial_227.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11379120065716968564
+      FilePath: {Source: 2, Path: Materials\NewMaterial_257.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11383688450469276272
+      FilePath: {Source: 2, Path: Materials\NewMaterial_10.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11493522436855597574
+      FilePath: {Source: 2, Path: Materials\NewMaterial_171.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11627161281093221625
+      FilePath: {Source: 2, Path: Materials\NewMaterial_14.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11657897012839013868
+      FilePath: {Source: 2, Path: ShaderSources\BezierCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 11753684127046769980
+      FilePath: {Source: 2, Path: Materials\NewMaterial_46.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11811650404651188514
+      FilePath: {Source: 2, Path: Materials\NewMaterial_278.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11852988794475504482
+      FilePath: {Source: 2, Path: Materials\NewMaterial_60.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11871386524844670022
+      FilePath: {Source: 2, Path: Materials\NewMaterial_135.vxm_material}
+      Type: AssetType::Material
+    - Handle: 11934040362831738236
+      FilePath: {Source: 2, Path: Materials\NewMaterial_168.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12011880891352431610
+      FilePath: {Source: 2, Path: Materials\NewMaterial_30.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12109546954956664111
+      FilePath: {Source: 2, Path: Materials\NewMaterial_230.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12163757776474528261
+      FilePath: {Source: 2, Path: Materials\NewMaterial_274.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12204057586583082757
+      FilePath: {Source: 2, Path: Materials\NewMaterial_280.vxm_material}
+      Type: AssetType::Material
     - Handle: 12211347488127175229
       FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.geom}
       Type: AssetType::ShaderSource
     - Handle: 12228858086496165592
       FilePath: {Source: 2, Path: Shaders\NewMaterial_0.vxm_material}
       Type: AssetType::Material
-    - Handle: 13513516617355007303
-      FilePath: {Source: 2, Path: Shaders\Bezier4.vxm_shader}
-      Type: AssetType::Shader
+    - Handle: 12235395718930086712
+      FilePath: {Source: 2, Path: Materials\NewMaterial_231.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12242656878140098084
+      FilePath: {Source: 2, Path: Materials\NewMaterial_108.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12367364466699878166
+      FilePath: {Source: 2, Path: Materials\NewMaterial_287.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12418230400165082510
+      FilePath: {Source: 2, Path: Materials\NewMaterial_78.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12452737042741849027
+      FilePath: {Source: 2, Path: Materials\NewMaterial_260.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12469323253269976756
+      FilePath: {Source: 2, Path: Materials\NewMaterial_184.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12652806774115856508
+      FilePath: {Source: 2, Path: Materials\NewMaterial_47.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12693346037751587276
+      FilePath: {Source: 2, Path: Materials\NewMaterial_98.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12699275960746501771
+      FilePath: {Source: 2, Path: Materials\NewMaterial_94.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12780207534500358746
+      FilePath: {Source: 2, Path: Materials\NewMaterial_45.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12810929109774864725
+      FilePath: {Source: 2, Path: Materials\NewMaterial_74.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12817649677736642244
+      FilePath: {Source: 2, Path: Materials\NewMaterial_209.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12863451416638715586
+      FilePath: {Source: 2, Path: Materials\NewMaterial_107.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12908247926054077441
+      FilePath: {Source: 2, Path: Materials\NewMaterial_27.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12950008690351862044
+      FilePath: {Source: 2, Path: Materials\NewMaterial_178.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12950906539927869136
+      FilePath: {Source: 2, Path: Materials\NewMaterial_76.vxm_material}
+      Type: AssetType::Material
+    - Handle: 12969615030530428971
+      FilePath: {Source: 2, Path: Materials\NewMaterial_0.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13013825962453325308
+      FilePath: {Source: 2, Path: Materials\NewMaterial_37.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13194709332828223949
+      FilePath: {Source: 2, Path: Materials\NewMaterial_58.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13195824152266744651
+      FilePath: {Source: 2, Path: ShaderSources\BezierCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 13210146648564337531
+      FilePath: {Source: 2, Path: Materials\NewMaterial_42.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13247030889645180363
+      FilePath: {Source: 2, Path: Materials\NewMaterial_20.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13252217467332758122
+      FilePath: {Source: 2, Path: Materials\NewMaterial_53.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13299132495814690265
+      FilePath: {Source: 2, Path: Materials\NewMaterial_11.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13438940236330651258
+      FilePath: {Source: 2, Path: Materials\NewMaterial_275.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13440788439580215407
+      FilePath: {Source: 2, Path: Materials\NewMaterial_35.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13511816071571476610
+      FilePath: {Source: 2, Path: Materials\NewMaterial_216.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13585688542683302756
+      FilePath: {Source: 2, Path: Materials\NewMaterial_158.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13686528972170297928
+      FilePath: {Source: 2, Path: Materials\NewMaterial_43.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13695241803896856155
+      FilePath: {Source: 2, Path: Materials\NewMaterial_3.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13734488765582663960
+      FilePath: {Source: 2, Path: Materials\NewMaterial_69.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13757012095910927631
+      FilePath: {Source: 2, Path: Materials\NewMaterial_61.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13876085181687773973
+      FilePath: {Source: 2, Path: Materials\NewMaterial_50.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13927088390615392021
+      FilePath: {Source: 2, Path: Materials\NewMaterial_236.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13945286736127296721
+      FilePath: {Source: 2, Path: Materials\NewMaterial_73.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13967211290301493597
+      FilePath: {Source: 2, Path: Materials\NewMaterial_56.vxm_material}
+      Type: AssetType::Material
+    - Handle: 13971384923027159219
+      FilePath: {Source: 2, Path: Materials\NewMaterial_100.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14003323312469800449
+      FilePath: {Source: 2, Path: Materials\NewMaterial_103.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14028697327854669483
+      FilePath: {Source: 2, Path: Materials\NewMaterial_286.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14109386283852099002
+      FilePath: {Source: 2, Path: Materials\NewMaterial_191.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14139513408368083868
+      FilePath: {Source: 2, Path: Materials\NewMaterial_267.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14195899879110477727
+      FilePath: {Source: 2, Path: Materials\NewMaterial_6.vxm_material}
+      Type: AssetType::Material
     - Handle: 14301274278379794968
       FilePath: {Source: 4, Path: MemoryAssets/14301274278379794968.vxm_memory}
+      Type: AssetType::Material
+    - Handle: 14302602055523482002
+      FilePath: {Source: 2, Path: Materials\NewMaterial_127.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14474363614927019891
+      FilePath: {Source: 2, Path: Materials\NewMaterial_4.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14477587058920167219
+      FilePath: {Source: 2, Path: Materials\NewMaterial_269.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14492638179927629957
+      FilePath: {Source: 2, Path: Materials\NewMaterial_212.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14529241498879429434
+      FilePath: {Source: 2, Path: Materials\NewMaterial_189.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14661698010054877101
+      FilePath: {Source: 2, Path: Materials\NewMaterial_130.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14955582788394757907
+      FilePath: {Source: 2, Path: Materials\NewMaterial_238.vxm_material}
       Type: AssetType::Material
     - Handle: 14992402165962048365
       FilePath: {Source: 1, Path: Shaders\TextureShader.vert}
       Type: AssetType::ShaderSource
+    - Handle: 15000089821077695215
+      FilePath: {Source: 2, Path: Materials\NewMaterial_195.vxm_material}
+      Type: AssetType::Material
+    - Handle: 15116536806365818031
+      FilePath: {Source: 2, Path: Materials\NewMaterial_179.vxm_material}
+      Type: AssetType::Material
+    - Handle: 15396671238892315928
+      FilePath: {Source: 2, Path: Materials\NewMaterial_88.vxm_material}
+      Type: AssetType::Material
     - Handle: 15408111314344900982
       FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessco}
       Type: AssetType::ShaderSource
+    - Handle: 15466085212421039652
+      FilePath: {Source: 2, Path: Materials\NewMaterial_21.vxm_material}
+      Type: AssetType::Material
     - Handle: 15614329875263310796
       FilePath: {Source: 2, Path: Models\Cube_B.glb}
       Type: AssetType::Model
+    - Handle: 15639149944948143215
+      FilePath: {Source: 2, Path: Materials\NewMaterial_97.vxm_material}
+      Type: AssetType::Material
+    - Handle: 15900026310095681721
+      FilePath: {Source: 2, Path: Materials\NewMaterial_264.vxm_material}
+      Type: AssetType::Material
+    - Handle: 15967109293830402208
+      FilePath: {Source: 2, Path: Materials\NewMaterial_64.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16084482223567252794
+      FilePath: {Source: 2, Path: Materials\NewMaterial_163.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16197382551223974992
+      FilePath: {Source: 2, Path: Materials\NewMaterial_106.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16245288991780223482
+      FilePath: {Source: 2, Path: Materials\NewMaterial_71.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16246922764424904481
+      FilePath: {Source: 2, Path: Materials\NewMaterial_59.vxm_material}
+      Type: AssetType::Material
     - Handle: 16312117688053368509
       FilePath: {Source: 4, Path: MemoryAssets/16312117688053368509.vxm_memory}
       Type: AssetType::Mesh
+    - Handle: 16381273624323272222
+      FilePath: {Source: 2, Path: Materials\NewMaterial_175.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16399521535503960964
+      FilePath: {Source: 2, Path: Materials\NewMaterial_215.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16412966974832038608
+      FilePath: {Source: 2, Path: Materials\NewMaterial_16.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16501161854227284714
+      FilePath: {Source: 2, Path: Materials\NewMaterial_247.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16516998741781411498
+      FilePath: {Source: 2, Path: Materials\NewMaterial_268.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16519800505010217806
+      FilePath: {Source: 2, Path: Materials\NewMaterial_211.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16525925512116502003
+      FilePath: {Source: 2, Path: Materials\NewMaterial_258.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16527210251286789884
+      FilePath: {Source: 2, Path: Materials\NewMaterial_156.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16551833009238294808
+      FilePath: {Source: 2, Path: Materials\NewMaterial_170.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16588053773514666735
+      FilePath: {Source: 2, Path: Materials\NewMaterial_124.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16604544442308945661
+      FilePath: {Source: 2, Path: Materials\NewMaterial_140.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16617840840366238686
+      FilePath: {Source: 2, Path: Scenes\RBBuoyancy.vxm_scn}
+      Type: AssetType::Scene
+    - Handle: 16620982584246822321
+      FilePath: {Source: 2, Path: Materials\NewMaterial_90.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16630947386115705591
+      FilePath: {Source: 2, Path: Materials\NewMaterial_85.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16674082992042165319
+      FilePath: {Source: 2, Path: Materials\NewMaterial_15.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16695149153413309312
+      FilePath: {Source: 2, Path: Materials\NewMaterial_63.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16714898723455012935
+      FilePath: {Source: 2, Path: Materials\NewMaterial_52.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16725772673235195720
+      FilePath: {Source: 2, Path: Materials\NewMaterial_172.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16732417570282236192
+      FilePath: {Source: 2, Path: ShaderSources\BezierCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 16757712665670161391
+      FilePath: {Source: 2, Path: Materials\NewMaterial_141.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16766471743593831109
+      FilePath: {Source: 2, Path: Materials\NewMaterial_208.vxm_material}
+      Type: AssetType::Material
     - Handle: 16774328199334539099
       FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.vert}
       Type: AssetType::ShaderSource
+    - Handle: 16852282772796044863
+      FilePath: {Source: 2, Path: Materials\NewMaterial_157.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16872006882815596757
+      FilePath: {Source: 2, Path: Materials\NewMaterial_99.vxm_material}
+      Type: AssetType::Material
+    - Handle: 16994734460128061604
+      FilePath: {Source: 2, Path: Materials\NewMaterial_68.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17060119102349230871
+      FilePath: {Source: 2, Path: Materials\NewMaterial_142.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17124375693157529069
+      FilePath: {Source: 2, Path: Materials\NewMaterial_205.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17156848880162597464
+      FilePath: {Source: 2, Path: Materials\NewMaterial_159.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17183733991253502605
+      FilePath: {Source: 2, Path: Materials\NewMaterial_188.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17190472542792489900
+      FilePath: {Source: 2, Path: Materials\NewMaterial_164.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17194290555331561478
+      FilePath: {Source: 2, Path: Materials\NewMaterial_1.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17371099785354602824
+      FilePath: {Source: 2, Path: Materials\NewMaterial_136.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17374132030549770187
+      FilePath: {Source: 2, Path: Materials\NewMaterial_240.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17390522060242776469
+      FilePath: {Source: 2, Path: Materials\NewMaterial_213.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17395462787293363582
+      FilePath: {Source: 2, Path: Materials\NewMaterial_229.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17404524997454231085
+      FilePath: {Source: 2, Path: Materials\NewMaterial_117.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17409452938355148349
+      FilePath: {Source: 2, Path: Materials\NewMaterial_8.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17430512639445987525
+      FilePath: {Source: 2, Path: Materials\NewMaterial_200.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17435831619884659303
+      FilePath: {Source: 2, Path: Materials\NewMaterial_114.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17466207661438330072
+      FilePath: {Source: 2, Path: Materials\NewMaterial_148.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17518709969167135558
+      FilePath: {Source: 2, Path: Materials\NewMaterial_57.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17538109922470064547
+      FilePath: {Source: 2, Path: Materials\NewMaterial_262.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17559100325314343577
+      FilePath: {Source: 2, Path: Materials\NewMaterial_13.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17777691552753743477
+      FilePath: {Source: 2, Path: Materials\NewMaterial_112.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17829706467686063982
+      FilePath: {Source: 2, Path: Materials\NewMaterial_245.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17922338602312669406
+      FilePath: {Source: 2, Path: Materials\NewMaterial_152.vxm_material}
+      Type: AssetType::Material
+    - Handle: 17947082029247562641
+      FilePath: {Source: 2, Path: Materials\NewMaterial_5.vxm_material}
+      Type: AssetType::Material
     - Handle: 18028949616321301401
       FilePath: {Source: 2, Path: Shaders\NewMaterial_0.vxm_material}
+      Type: AssetType::Material
+    - Handle: 18059562081107606137
+      FilePath: {Source: 2, Path: Materials\NewMaterial_289.vxm_material}
+      Type: AssetType::Material
+    - Handle: 18087277414997005220
+      FilePath: {Source: 2, Path: Materials\NewMaterial_235.vxm_material}
+      Type: AssetType::Material
+    - Handle: 18209566538558674135
+      FilePath: {Source: 2, Path: Materials\NewMaterial_122.vxm_material}
+      Type: AssetType::Material
+    - Handle: 18430457030348774327
+      FilePath: {Source: 2, Path: Materials\NewMaterial_119.vxm_material}
       Type: AssetType::Material
 ---
 Type

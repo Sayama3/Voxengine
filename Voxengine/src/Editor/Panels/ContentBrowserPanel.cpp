@@ -3,19 +3,127 @@
 //
 
 #include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
-#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Assets/EditorAssetManager.hpp"
-#include "Voxymore/Assets/Importers/TextureImporter.hpp"
+#include "Voxymore/Assets/ImGui/ShaderImGui.hpp"
 #include "Voxymore/Assets/Importers/MaterialSerializer.hpp"
 #include "Voxymore/Assets/Importers/MeshImporter.hpp"
 #include "Voxymore/Assets/Importers/SceneImporter.hpp"
 #include "Voxymore/Assets/Importers/ShaderSerializer.hpp"
-#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/Importers/TextureImporter.hpp"
+#include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
+#include <cstring>
 #include <imgui_internal.h>
 
 using namespace Voxymore::Core;
 namespace fs = std::filesystem;
+
+static constexpr const char* c_DefaultShader = R"(
+#version 450 core
+
+#define ALPHA_MODE_OPAQUE 0
+#define ALPHA_MODE_MASK 1
+#define ALPHA_MODE_BLEND 2
+
+#define MAX_LIGHT_COUNT 20
+#define EPSILON 0.1
+
+struct TextureInfo
+{
+    int Index;
+    int TexCoord;
+};
+
+struct NormalTextureInfo
+{
+    int Index;
+    int TexCoord;
+    float Scale;
+};
+
+struct OcclusionTextureInfo
+{
+    int Index;
+    int TexCoord;
+    float Strenght;
+};
+
+struct MetallicRoughtness
+{
+    vec4 BaseColorFactor;
+    TextureInfo BaseColorTexture;
+    float MetallicFactor;
+    float RoughtnessFactor;
+    TextureInfo MetallicRoughnessTexture;
+};
+
+struct MaterialParams
+{
+    MetallicRoughtness PbrMetallicRoughness;
+    NormalTextureInfo NormalTexture;
+    OcclusionTextureInfo OcclusionTexture;
+    TextureInfo EmissiveTexture;
+    vec4 EmissiveFactor;
+    int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
+    float AlphaCutoff;
+    int DoubleSided;
+};
+
+struct Light
+{
+    vec4 Color;
+    vec4 Position;
+    vec4 Direction;
+    float Range;
+    float Intensity;
+    float Cutoff;
+    int Type; //0 = Directional ; 1 = Point ; 2 = Spot
+};
+
+struct LightData
+{
+    Light lights[MAX_LIGHT_COUNT];
+//    Light lights;
+    int lightCount;
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+    mat4 u_ViewProjectionMatrix;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
+};
+
+layout(std140, binding = 1) uniform Model
+{
+    mat4 u_ModelMatrix;
+    mat4 u_NormalMatrix;
+    int u_EntityId;
+};
+
+layout(std140, binding = 2) uniform Lights
+{
+    LightData lights;
+};
+
+layout(std140, binding = 3) uniform MaterialParameters
+{
+    MaterialParams materialParameters;
+};
+
+layout(std140, binding = 4) uniform CurveParameters
+{
+    int u_NumberOfSegment;
+    int u_NumberControlPoint; // 4 by default.
+};
+
+
+void main() {
+
+}
+
+)";
 
 namespace Voxymore::Editor
 {
@@ -43,8 +151,8 @@ namespace Voxymore::Editor
 
 	ContentBrowserPanel::ContentBrowserPanel(Core::Path p) : m_Path(p), m_ThumbnailSize(s_ThumbnailSize), m_Padding(s_Padding)
 	{
-		Ref<EditorAssetManager> assetManager = Project::GetActive()->GetEditorAssetManager();
 		VXM_PROFILE_FUNCTION();
+		Ref<EditorAssetManager> assetManager = Project::GetActive()->GetEditorAssetManager();
 		if(s_BackTexture == nullptr) {
 			s_BackTexture = CastPtr<Texture2D>(assetManager->GetOrCreateAsset({FileSource::EditorAsset, "Images/FileSystem/folder-up-256.png"}));
 		}
@@ -111,43 +219,208 @@ namespace Voxymore::Editor
 			}
 		}
 
+		auto assetManager = Project::GetActive()->GetEditorAssetManager();
+
+		enum class PopupToOpen {
+			None,
+			NewFolder,
+			NewShaderSource,
+			NewShader,
+			NewMaterial,
+		};
+
+		PopupToOpen popupToOpen = PopupToOpen::None;
+
 		if (ImGui::BeginPopup("ContentBrowserContextMenu")) {
 			bool isAsset = m_Path.source == Core::FileSource::Asset;
-			if(isAsset) {
-				auto assetManager = Project::GetActive()->GetEditorAssetManager();
-				if(ImGui::MenuItem("New Folder")) {
-					static uint64_t folderCounter = 0;
-					auto newFolder = m_Path;
-					newFolder.path /= "NewFolder_" + std::to_string(folderCounter++);
-					if(!FileSystem::Exist(newFolder)) {
-						std::filesystem::create_directory(newFolder);
-					} else {
-						VXM_CORE_ERROR("A folder named 'New Folder' already exist here.");
-					}
-					ImGui::CloseCurrentPopup();
-				}
 
-				if(ImGui::MenuItem("New Shader")) {
-					static uint64_t shaderCounter = 0;
-					auto newShaderPath = m_Path;
-					newShaderPath.path /= "NewShader_" + std::to_string(shaderCounter++) + ShaderExtension;
-					Ref<Shader> shader = Shader::Create(newShaderPath.path.stem().string(), std::unordered_map<ShaderType, ShaderSourceField>{});
-					if(assetManager->AddAsset(shader, newShaderPath)) {
-						ShaderSerializer::ExportEditorShader(assetManager->GetMetadata(shader->Handle), shader);
-					}
-					ImGui::CloseCurrentPopup();
-				}
+			VXM_CORE_ASSERT(isAsset, "Should be in the Asset folder.");
 
-				if(ImGui::MenuItem("New Material")) {
-					static uint64_t materialCount = 0;
-					auto newMaterialPath = m_Path;
-					newMaterialPath.path /= "NewMaterial_" + std::to_string(materialCount++) + MaterialExtension;
+			if(ImGui::MenuItem("New Folder")) {
+				ClearFileNameBuffer();
+				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Folder");
+				popupToOpen = PopupToOpen::NewFolder;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if(ImGui::MenuItem("New Source")) {
+				ClearFileNameBuffer();
+				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New ShaderSource");
+				popupToOpen = PopupToOpen::NewShaderSource;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if(ImGui::MenuItem("New Shader")) {
+				ClearFileNameBuffer();
+				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Shader");
+				popupToOpen = PopupToOpen::NewShader;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if(ImGui::MenuItem("New Material")) {
+				ClearFileNameBuffer();
+				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Material");
+				popupToOpen = PopupToOpen::NewMaterial;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+		switch (popupToOpen) {
+			case PopupToOpen::NewFolder: {
+				ImGui::OpenPopup("ContentBrowserCreateFolder");
+				break;
+			}
+			case PopupToOpen::NewShaderSource: {
+				ImGui::OpenPopup("ContentBrowserCreateShaderSource");
+				break;
+			}
+			case PopupToOpen::NewShader: {
+				ImGui::OpenPopup("ContentBrowserCreateShader");
+				break;
+			}
+			case PopupToOpen::NewMaterial: {
+				ImGui::OpenPopup("ContentBrowserCreateMaterial");
+				break;
+			}
+			default:
+			{}
+		}
+
+
+		if (ImGui::BeginPopupModal("ContentBrowserCreateFolder")) {
+
+			ImGui::InputText("New Folder Name", m_FileNameBuffer.data(), m_FileNameBuffer.size());
+
+			if(ImGui::Button("Create Folder")) {
+				auto newFolder = m_Path;
+				newFolder.path /= m_FileNameBuffer.data();
+				if (!FileSystem::Exist(newFolder)) {
+					std::filesystem::create_directory(newFolder);
+				}
+				else {
+					VXM_CORE_ERROR("A folder named 'New Folder' already exist here.");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if(ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopupModal("ContentBrowserCreateMaterial")) {
+
+			ImGui::InputText("New Material Name", m_FileNameBuffer.data(), m_FileNameBuffer.size()-1);
+
+			if(ImGui::Button("Create Material")) {
+				auto newMaterialPath = m_Path;
+				newMaterialPath.path /= m_FileNameBuffer.data() + std::string(MaterialExtension);
+				if (!FileSystem::Exist(newMaterialPath)) {
 					Ref<Material> material = assetManager->CreateAsset<Material>(newMaterialPath, newMaterialPath.path.stem().string());
 					if(material) {
 						MaterialSerializer::ExportEditorMaterial(assetManager->GetMetadata(material->Handle), material);
 					}
-					ImGui::CloseCurrentPopup();
 				}
+				else {
+					VXM_CORE_ERROR("A material named '{0}' already exist here.", m_FileNameBuffer.data());
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if(ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopupModal("ContentBrowserCreateShader")) {
+
+			ImGui::InputText("New Shader Name", m_FileNameBuffer.data(), m_FileNameBuffer.size()-1);
+
+			if(ImGui::Button("Create Shader")) {
+				auto newShaderPath = m_Path;
+				newShaderPath.path /= m_FileNameBuffer.data() + std::string(ShaderExtension);
+				if (!FileSystem::Exist(newShaderPath)) {
+					Ref<Shader> shader = Shader::Create(newShaderPath.path.stem().string(), std::unordered_map<ShaderType, ShaderSourceField>{});
+					if(assetManager->AddAsset(shader, newShaderPath)) {
+						ShaderSerializer::ExportEditorShader(assetManager->GetMetadata(shader->Handle), shader);
+					}
+				}
+				else {
+					VXM_CORE_ERROR("A shader named '{0}' already exist here.", m_FileNameBuffer.data());
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if(ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopupModal("ContentBrowserCreateShaderSource")) {
+			static ShaderType s_Type = ShaderType::None;
+			ImGui::InputText("New Shader Source Name", m_FileNameBuffer.data(), m_FileNameBuffer.size()-1);
+
+			ShaderImGui::ShaderTypeCombo("Shader Type", &s_Type);
+			//TODO: Shader Type
+
+			if(ImGui::Button("Create ShaderSource")) {
+				auto newShaderSourcePath = m_Path;
+				newShaderSourcePath.path /= m_FileNameBuffer.data();
+				switch (s_Type) {
+					case ShaderType::None: {
+						newShaderSourcePath.path += ".glsl";
+						break;
+					}
+					case ShaderType::COMPUTE_SHADER: {
+						newShaderSourcePath.path += ".compute";
+						break;
+					}
+					case ShaderType::VERTEX_SHADER: {
+						newShaderSourcePath.path += ".vert";
+						break;
+					}
+					case ShaderType::TESS_CONTROL_SHADER: {
+						newShaderSourcePath.path += ".tessco";
+						break;
+					}
+					case ShaderType::TESS_EVALUATION_SHADER: {
+						newShaderSourcePath.path += ".tessev";
+						break;
+					}
+					case ShaderType::GEOMETRY_SHADER: {
+						newShaderSourcePath.path += ".geom";
+						break;
+					}
+					case ShaderType::FRAGMENT_SHADER: {
+						newShaderSourcePath.path += ".frag";
+						break;
+					}
+				}
+
+				if (!FileSystem::Exist(newShaderSourcePath)) {
+					Ref<ShaderSource> shaderSource = assetManager->CreateAsset<ShaderSource>(newShaderSourcePath, s_Type, c_DefaultShader);
+					if(shaderSource) {
+						FileSystem::Write(newShaderSourcePath, shaderSource->Source.c_str(), shaderSource->Source.size());
+						ShaderSerializer::ExportEditorShaderSource(assetManager->GetMetadata(shaderSource->Handle), shaderSource);
+					}
+				}
+				else {
+					VXM_CORE_ERROR("A shader source named '{0}' already exist here.", m_FileNameBuffer.data());
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if(ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
@@ -248,7 +521,7 @@ namespace Voxymore::Editor
 						}
 					}
 				}
-				else if (state == STATE_HOVERED && isFile) {
+				else if (state == STATE_HOVERED) {
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 						ImGui::OpenPopup(pathStr.c_str());
 					}
@@ -273,33 +546,37 @@ namespace Voxymore::Editor
 					auto metadata = assetManager->GetMetadata(assetPath);
 
 					if (ImGui::MenuItem("Delete")) {
-						if (metadata) {
+						if (isFile && metadata) {
 							assetManager->RemoveAsset(metadata.Handle);
 						}
 						std::filesystem::remove(assetPath);
 						ImGui::CloseCurrentPopup();
 					}
-					else if (!metadata && AssetImporter::GetAssetType(assetPath) != AssetType::None && ImGui::MenuItem("Import")) {
-						assetManager->ImportAsset(assetPath);
-						if (assetManager) {
-							VXM_CORE_INFO("Asset '{0}' was successfully imported.", filename);
-						}
-						else {
-							VXM_CORE_ERROR("Asset '{0}' failed to be imported.", filename);
-						}
-						ImGui::CloseCurrentPopup();
-					}
-					else if (metadata) {
-						if (assetManager->IsAssetLoaded(metadata.Handle)) {
-							if (ImGui::MenuItem("Unload")) {
-								assetManager->UnloadAsset(metadata.Handle);
-								ImGui::CloseCurrentPopup();
+					if(isFile) {
+						if (!metadata && AssetImporter::GetAssetType(assetPath) != AssetType::None && ImGui::MenuItem("Import"))
+						{
+							assetManager->ImportAsset(assetPath);
+							if (assetManager) {
+								VXM_CORE_INFO("Asset '{0}' was successfully imported.", filename);
 							}
+							else {
+								VXM_CORE_ERROR("Asset '{0}' failed to be imported.", filename);
+							}
+							ImGui::CloseCurrentPopup();
 						}
-						else {
-							if (ImGui::MenuItem("Load")) {
-								assetManager->GetAsset(metadata.Handle);
-								ImGui::CloseCurrentPopup();
+						else if (metadata)
+						{
+							if (assetManager->IsAssetLoaded(metadata.Handle)) {
+								if (ImGui::MenuItem("Unload")) {
+									assetManager->UnloadAsset(metadata.Handle);
+									ImGui::CloseCurrentPopup();
+								}
+							}
+							else {
+								if (ImGui::MenuItem("Load")) {
+									assetManager->GetAsset(metadata.Handle);
+									ImGui::CloseCurrentPopup();
+								}
 							}
 						}
 					}
@@ -313,10 +590,10 @@ namespace Voxymore::Editor
 					std::memcpy(tmpFileName.data(), filename.c_str(), std::min(filename.size(), tmpFileName.size() - 1));
 
 					if (ImGui::InputText("##FileName", tmpFileName.data(), tmpFileName.size(), ImGuiInputTextFlags_AlwaysOverwrite)) {
-							filename = tmpFileName.data();
-							auto fullAssetPath = assetPath.GetFullPath();
-							auto newPath = fullAssetPath.parent_path() / filename;
-							fs::rename(fullAssetPath, newPath);
+						filename = tmpFileName.data();
+						auto fullAssetPath = assetPath.GetFullPath();
+						auto newPath = fullAssetPath.parent_path() / filename;
+						fs::rename(fullAssetPath, newPath);
 
 					}
 //					if(ImGui::)

@@ -31,6 +31,7 @@ namespace Voxymore::Core {
         virtual void Unbind() const override;
         virtual void Reload() override;
         inline virtual std::string GetName() const override { return m_Name; }
+		inline virtual void SetName(const std::string& name) override { m_Name = name;}
 		virtual std::vector<ShaderSourceField> GetSources() const override;
 		virtual void SetSources(const std::vector<ShaderSourceField>& sources) override;
 	private:

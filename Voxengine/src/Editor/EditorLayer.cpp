@@ -5,6 +5,7 @@
 #include "Voxymore/Editor/EditorLayer.hpp"
 #include "Voxymore/Assets/Importers/TextureImporter.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
+#include "Voxymore/Editor/Panels/AssetManagerPanel.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 #include <ImGuizmo.h>
 
@@ -73,6 +74,7 @@ namespace Voxymore::Editor {
 		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetTypeID(), PanelMetadata(SceneHierarchyPanel::StaticGetName(), SceneHierarchyPanel::StaticGetTypeID(), &SceneHierarchyPanel::CreatePanel)});
 		m_PanelCreator.insert({SystemPanel::StaticGetTypeID(), PanelMetadata(SystemPanel::StaticGetName(), SystemPanel::StaticGetTypeID(), &SystemPanel::CreatePanel)});
 		m_PanelCreator.insert({ContentBrowserPanel::StaticGetTypeID(), PanelMetadata(ContentBrowserPanel::StaticGetName(), ContentBrowserPanel::StaticGetTypeID(), &ContentBrowserPanel::CreatePanel)});
+//		m_PanelCreator.insert({AssetManagerPanel::StaticGetTypeID(), PanelMetadata(AssetManagerPanel::StaticGetName(), AssetManagerPanel::StaticGetTypeID(), &AssetManagerPanel::CreatePanel)});
 
 		// Create the default panels'
 		// TODO: Make a system to be able to save and load the last Panel Configuration.

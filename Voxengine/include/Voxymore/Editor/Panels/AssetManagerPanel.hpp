@@ -19,10 +19,11 @@ namespace Voxymore::Editor
 			STATE_DOUBLE_CLICKED,
 		};
 	public:
-		VXM_IMPLEMENT_PANEL("Content Browser")
+		VXM_IMPLEMENT_PANEL("Asset Manager Panel")
 	public:
 		AssetManagerPanel();
 		virtual void OnImGuiRender() override;
+		virtual void BeginPanel() override;
 	private:
 		static ButtonClickState ImageButton(uint64_t id, float size);
 	private:

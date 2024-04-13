@@ -1,6 +1,6 @@
 Material:
-  MaterialName: NewMaterial_0
-  Shader: 13513516617355007303
+  MaterialName: BezierDeCasteljau
+  Shader: 5957146239592867762
   Textures:
     - 0
     - 0
@@ -38,7 +38,7 @@ Material:
     AlphaMode: 0
     AlphaCutoff: 0.5
     DoubleSided: 0
-    BaseColor: [1, 1, 1, 1]
+    BaseColor: [0.135776132, 0.545630515, 0.799227834, 1]
     BaseColorIndex: -1
     BaseColorTexCoord: 0
     MetallicFactor: 1

@@ -33,4 +33,16 @@ namespace Voxymore::Core{
 		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
 		return nullptr;
 	}
+
+	ShaderSource::ShaderSource(ShaderType type) : Type(type)
+	{
+	}
+
+	ShaderSource::ShaderSource(std::string source) : Source(source)
+	{
+	}
+
+	ShaderSource::ShaderSource(ShaderType type, std::string source) : Type(type), Source(source)
+	{
+	}
 }

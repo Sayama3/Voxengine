@@ -83,10 +83,14 @@ namespace Voxymore::Core
 		metaFilePath.path += ".meta";
 
 		YAML::Emitter out;
-		out << KEYVAL("Type", AssetTypeToString(AssetType::ShaderSource));
-		out << KEYVAL("ShaderSource", YAML::BeginMap);
+		out << YAML::BeginMap;
 		{
-			out << KEYVAL("ShaderType", Utils::ShaderTypeToString(source->Type));
+			out << KEYVAL("Type", AssetTypeToString(AssetType::ShaderSource));
+			out << KEYVAL("ShaderSource", YAML::BeginMap);
+			{
+				out << KEYVAL("ShaderType", Utils::ShaderTypeToString(source->Type));
+			}
+			out << YAML::EndMap;
 		}
 		out << YAML::EndMap;
 

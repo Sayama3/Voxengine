@@ -58,5 +58,13 @@ namespace Voxymore::Editor
 		}
 		return result;
 	}
+	void AssetManagerPanel::BeginPanel()
+	{
+		static bool is_open = true;
+		if(is_open) {
+			ImGui::ShowDemoWindow(&is_open);
+		}
+		BasePanel::BeginPanel();
+	}
 }
 // namespace Voxymore::Core

@@ -9,24 +9,23 @@
 
 namespace Voxymore::Core
 {
-	bool ShaderImGui::OnShaderSourceImGui(Ref<Asset> asset)
+
+	bool ShaderImGui::ShaderTypeCombo(const char *label, ShaderType* shaderType)
 	{
-		if(asset->GetType() != ShaderSource::GetStaticType()) return false;
-		Ref<ShaderSource> shaderSource = CastPtr<ShaderSource>(asset);
 		bool changed = false;
 
-		std::string shaderTypeName = Utils::ShaderTypeToString(shaderSource->Type);
+		std::string shaderTypeName = Utils::ShaderTypeToString(*shaderType);
 
 		if(ImGui::BeginCombo("Shader Type", shaderTypeName.c_str()))
 		{
 			for (int i = 0; i <= ShaderTypeCount; ++i) {
-				const bool is_selected = (i == (int)shaderSource->Type);
-				ShaderType type = (ShaderType)i;
+				auto type = (ShaderType)i;
+				const bool is_selected = type == (*shaderType);
 				if(ImGui::Selectable(Utils::ShaderTypeToString(type).c_str(), is_selected))
 				{
-					changed |= shaderSource->Type != type;
-					shaderSource->Type = type;
-					ShaderSerializer::ExportEditorShaderSource(Project::GetActive()->GetEditorAssetManager()->GetMetadata(shaderSource->Handle), shaderSource);
+					changed |= (*shaderType) != type;
+					(*shaderType) = type;
+					//ShaderSerializer::ExportEditorShaderSource(Project::GetActive()->GetEditorAssetManager()->GetMetadata(shaderSource->Handle), shaderSource);
 				}
 
 				if(is_selected) ImGui::SetItemDefaultFocus();
@@ -35,10 +34,22 @@ namespace Voxymore::Core
 			ImGui::EndCombo();
 		}
 
+		return changed;
+	}
+	bool ShaderImGui::OnShaderSourceImGui(Ref<Asset> asset)
+	{
+		if(asset->GetType() != ShaderSource::GetStaticType()) return false;
+		Ref<ShaderSource> shaderSource = CastPtr<ShaderSource>(asset);
+		bool changed = false;
+
+		if(ShaderTypeCombo("Shader Type", &shaderSource->Type))
+		{
+			ShaderSerializer::ExportEditorShaderSource(Project::GetActive()->GetEditorAssetManager()->GetMetadata(shaderSource->Handle), shaderSource);
+		}
+
 		if(ImGui::CollapsingHeader("Sources"))
 		{
-			if(shaderSource->Source.capacity() < shaderSource->Source.size() * 1.25) shaderSource->Source.reserve(shaderSource->Source.size() * 2);
-			ImGui::InputTextMultiline("##ShaderSource", shaderSource->Source.data(), shaderSource->Source.capacity(), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+			changed |= ImGuiLib::InputTextMultiline("##ShaderSource", &(shaderSource->Source), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
 		}
 
 		if (ImGui::Button("Save")) {
@@ -56,6 +67,11 @@ namespace Voxymore::Core
 		if(asset->GetType() != Shader::GetStaticType()) return false;
 		Ref<Shader> shader = CastPtr<Shader>(asset);
 		bool changed = false;
+		std::string name = shader->GetName();
+
+		if(ImGuiLib::InputText("Name", &name)) {
+			shader->SetName(name);
+		}
 
 		if(ImGui::CollapsingHeader("Sources")) {
 			bool shaderSourcesChanged = false;

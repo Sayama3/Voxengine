@@ -1,0 +1,8 @@
+Type: AssetType::Shader
+Shader:
+  Name: BezierPascal
+  Sources:
+    - 1834046419800243767
+    - 3860311140666099463
+    - 15408111314344900982
+    - 9693833186828928301

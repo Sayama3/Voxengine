@@ -1,6 +1,6 @@
 Type: AssetType::Shader
 Shader:
-  Name: NewShader_1
+  Name: Bezier4
   Sources:
     - 238573773480364295
     - 9085945631287950419

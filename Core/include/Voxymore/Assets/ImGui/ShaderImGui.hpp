@@ -16,6 +16,8 @@ namespace Voxymore::Core
 	class ShaderImGui
 	{
 	public:
+		static bool ShaderTypeCombo(const char* label, ShaderType* shaderType);
+
 		static bool OnShaderSourceImGui(Ref<Asset> asset);
 
 		static bool OnShaderImGui(Ref<Asset> asset);
