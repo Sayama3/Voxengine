@@ -571,15 +571,15 @@ namespace Voxymore::Editor {
             return;
         }
         VXM_TRACE("Save Scene As");
-        std::string file = FileDialogs::SaveFile({"Voxymore Scene (*.vxm)", "*.vxm"});
+        std::string file = FileDialogs::SaveFile({"Voxymore Scene (*.vxm_scn)", "*.vxm_scn"});
         if(!file.empty())
         {
-            if(!file.ends_with(".vxm")) file.append(".vxm");
+            if(!file.ends_with(".vxm_scn")) file.append(".vxm_scn");
             SceneSerializer serializer(m_ActiveScene);
             if(serializer.Serialize(file))
             {
                 m_FilePath = file;
-                if(!SceneManager::HasScene(m_ActiveScene->GetID())) SceneManager::AddScene(m_ActiveScene);
+				Project::GetActive()->GetEditorAssetManager()->SetPath(m_ActiveScene->Handle, Path::GetPath(m_FilePath));
             }
         }
     }
@@ -587,15 +587,10 @@ namespace Voxymore::Editor {
     void EditorLayer::CreateNewScene()
     {
         VXM_INFO("Unloading and Delete Previous Scene");
-        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
-        {
-            SceneManager::DeleteScene(m_ActiveScene->id());
-            m_ActiveScene = nullptr;
-        }
 
         VXM_TRACE("Create New Scene");
         m_FilePath = std::string();
-        m_ActiveScene = SceneManager::CreateScene();
+        m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
         m_ActiveScene->SetViewportSize(1280, 720);
         SceneHierarchyPanel::SetContext(m_ActiveScene);
 
@@ -646,21 +641,16 @@ namespace Voxymore::Editor {
 
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
-        VXM_INFO("Unloading and Delete Previous Scene");
-        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
-        {
-            SceneManager::DeleteScene(m_ActiveScene->id());
-            m_ActiveScene = nullptr;
-        }
-
         VXM_TRACE("Open Scene from path {0}", path.string());
-        m_FilePath = path.string();
 		Ref<Asset> asset = Project::GetActive()->GetEditorAssetManager()->GetOrCreateAsset(Path::GetPath(path));
 		if(asset && asset->GetType() == AssetType::Scene) {
 			m_ActiveScene = CastPtr<Scene>(asset);
+			m_FilePath = Project::GetActive()->GetEditorAssetManager()->GetFilePath(asset->Handle);
 			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		} else {
-			m_ActiveScene = CreateRef<Scene>();
+			VXM_CORE_ERROR("Fail to load the scene '{0}'.", path.string());
+			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
+			m_FilePath = "";
 			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		}
     }
@@ -674,6 +664,11 @@ namespace Voxymore::Editor {
 		{
 			auto metadata = Project::GetActive()->GetEditorAssetManager()->GetMetadata(id);
 			m_FilePath = metadata.FilePath;
+		} else {
+			VXM_CORE_ERROR("Fail to load the scene '{0}'.", id.string());
+			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
+			m_FilePath = "";
+			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		}
 		SceneHierarchyPanel::SetContext(m_ActiveScene);
     }

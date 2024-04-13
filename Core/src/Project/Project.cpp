@@ -43,12 +43,16 @@ namespace Voxymore::Core
 
 	Project::Project()
 	{
-
+		if(m_ProjectPath.is_relative()) {
+			m_ProjectPath = std::filesystem::current_path() / m_ProjectPath;
+		}
 	}
 
 	Project::Project(ProjectConfig parameters) : m_Config(std::move(parameters))
 	{
-
+		if(m_ProjectPath.is_relative()) {
+			m_ProjectPath = std::filesystem::current_path() / m_ProjectPath;
+		}
 	}
 
 	Project::~Project()

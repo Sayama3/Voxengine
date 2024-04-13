@@ -66,7 +66,6 @@
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
-#include "Voxymore/Scene/SceneManager.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"

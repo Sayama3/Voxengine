@@ -56,7 +56,7 @@ namespace Voxymore::Core
 					for (entt::entity id : *GetScene().m_Registry.storage<entt::entity>()) {
 						Scene* ptr = std::visit<Scene*>(overloads{[](Scene* s){return s;}, [](Ref<Scene> s){return s.get();}}, m_Scene);
 						Entity entity(id, ptr);
-						if (!entity) continue;
+						if (!entity || !GetScene().m_Registry.valid(entity)) continue;
 						out << YAML::BeginMap;// Entity
 						{
 							SerializeEntity(out, entity);

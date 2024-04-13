@@ -2,6 +2,6 @@ Project:
   Name: TestProject
   AssetDirectory: Asset
   CacheDirectory: Cache
-  SystemDirectory: AssetRegistry.vxm
+  SystemDirectory: System
   AssetRegistryPath: AssetRegistry.vxm
-  StartSceneId: 5045326193194912158
+  StartSceneId: 8676590476146596977

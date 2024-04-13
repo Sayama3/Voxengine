@@ -495,6 +495,7 @@ namespace Voxymore::Editor
 				const fs::path &path = entry.path();
 				std::string pathStr = entry.path().string();
 				std::string filename = path.filename().string();
+				std::string stem = path.stem().string();
 				if (filename.ends_with(".meta")) {
 					continue;
 				}
@@ -541,15 +542,40 @@ namespace Voxymore::Editor
 					}
 				}
 
+				bool shouldRename = false;
+
 				if (ImGui::BeginPopup(pathStr.c_str())) {
 					auto assetManager = Project::GetActive()->GetEditorAssetManager();
 					auto metadata = assetManager->GetMetadata(assetPath);
 
 					if (ImGui::MenuItem("Delete")) {
 						if (isFile && metadata) {
+							VXM_CORE_INFO("Delete Asset '{0}'", assetPath.string());
 							assetManager->RemoveAsset(metadata.Handle);
+						} else if (isDirectory){
+							VXM_CORE_INFO("Delete Folder '{0}'", assetPath.string());
+							for (const auto& recurse_entry : fs::recursive_directory_iterator(assetPath)) {
+								if(recurse_entry.is_directory()) continue;
+
+								auto childPath = recurse_entry.path();
+
+								auto assetManager = Project::GetActive()->GetEditorAssetManager();
+								auto childMetadata = assetManager->GetMetadata(Path::GetPath(childPath));
+								if(childMetadata) {
+									VXM_CORE_INFO("Delete Asset '{0}'", childPath.string());
+									assetManager->RemoveAsset(childMetadata.Handle);
+									std::filesystem::remove(childPath);
+								}
+							}
+						} else {
+							VXM_CORE_INFO("Delete '{0}'", assetPath.string());
 						}
-						std::filesystem::remove(assetPath);
+
+						uint64_t numberThingDeleted = std::filesystem::remove_all(assetPath);
+						ImGui::CloseCurrentPopup();
+					}
+					if (isInData && ImGui::MenuItem("Rename")) {
+						shouldRename = true;
 						ImGui::CloseCurrentPopup();
 					}
 					if(isFile) {
@@ -583,25 +609,66 @@ namespace Voxymore::Editor
 					ImGui::EndPopup();
 				}
 
-				if (isFile && isInData)
-				{
-					std::array<char, 255> tmpFileName{};
-					std::fill(tmpFileName.begin(), tmpFileName.end(), (char) 0);
-					std::memcpy(tmpFileName.data(), filename.c_str(), std::min(filename.size(), tmpFileName.size() - 1));
+				auto id = "Rename " + filename;
+				if(shouldRename) {
+					ClearFileNameBuffer();
+					strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size() - 1, isDirectory ? filename.c_str() : stem.c_str());
+					ImGui::OpenPopup(id.c_str());
+				}
 
-					if (ImGui::InputText("##FileName", tmpFileName.data(), tmpFileName.size(), ImGuiInputTextFlags_AlwaysOverwrite)) {
-						filename = tmpFileName.data();
-						auto fullAssetPath = assetPath.GetFullPath();
-						auto newPath = fullAssetPath.parent_path() / filename;
-						fs::rename(fullAssetPath, newPath);
+				if(ImGui::BeginPopupModal(id.c_str())){
 
+					if(ImGui::Button("Reset")) {
+						ClearFileNameBuffer();
+						strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size() - 1, isDirectory ? filename.c_str() : stem.c_str());
 					}
-//					if(ImGui::)
+					ImGui::SameLine();
+					ImGui::InputText("File Name", m_FileNameBuffer.data(), m_FileNameBuffer.size());
+
+					if(ImGui::Button("Rename")) {
+						if(isDirectory) {
+							auto fullAssetPath = assetPath.GetFullPath();
+							auto newPath = fullAssetPath.parent_path() / m_FileNameBuffer.data();
+							VXM_CORE_INFO("Rename directory '{0}' in '{1}'", fullAssetPath.string(), newPath.string());
+							for (const auto& recurse_entry : fs::recursive_directory_iterator(fullAssetPath)) {
+								if(recurse_entry.is_directory()) continue;
+
+								auto childPath = recurse_entry.path();
+								auto relChildPath = fs::relative(childPath, fullAssetPath);
+								auto newChildPath = newPath / relChildPath;
+
+								auto assetManager = Project::GetActive()->GetEditorAssetManager();
+								auto metadata = assetManager->GetMetadata(Path::GetPath(childPath));
+								if(metadata) {
+									VXM_CORE_INFO("Rename asset '{0}' in '{1}'", childPath.string(), newChildPath.string());
+									assetManager->SetPath(metadata.Handle, Path::GetPath(newChildPath));
+								}
+							}
+							fs::rename(fullAssetPath, newPath);
+						} else {
+							auto assetManager = Project::GetActive()->GetEditorAssetManager();
+							auto metadata = assetManager->GetMetadata(assetPath);
+
+							auto extension = assetPath.path.extension();
+							auto newPath = assetPath;
+							newPath.path = assetPath.path.parent_path() / m_FileNameBuffer.data();
+							newPath.path += extension;
+							fs::rename(assetPath, newPath);
+							if(metadata) {
+								VXM_CORE_INFO("Rename asset '{0}' in '{1}'", assetPath.string(), newPath.string());
+								assetManager->SetPath(metadata.Handle, newPath);
+							}
+						}
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel")) {
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
 				}
-				else
-				{
-					ImGui::TextWrapped("%s", filename.c_str());
-				}
+
+				ImGui::TextWrapped("%s", filename.c_str());
 
 				//TODO: Use Table API
 				ImGui::PopID();

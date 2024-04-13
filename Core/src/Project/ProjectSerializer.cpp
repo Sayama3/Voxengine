@@ -35,7 +35,12 @@ namespace Voxymore::Core
 		out << YAML::EndMap;
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+
 		m_ProjectHandle->m_ProjectPath = filepath;
+		if(m_ProjectHandle->m_ProjectPath.is_relative()) {
+			m_ProjectHandle->m_ProjectPath = std::filesystem::current_path() / m_ProjectHandle->m_ProjectPath;
+		}
+
 		return true;
 	}
 
@@ -79,6 +84,10 @@ namespace Voxymore::Core
 		if(projectNode["StartSceneId"]) config.startSceneId = projectNode["StartSceneId"].as<UUID>();
 
 		m_ProjectHandle->m_ProjectPath = filepath;
+		if(m_ProjectHandle->m_ProjectPath.is_relative()) {
+			m_ProjectHandle->m_ProjectPath = std::filesystem::current_path() / m_ProjectHandle->m_ProjectPath;
+		}
+
 		//TODO: Find a smart way to load the project
 		auto assetManager = CreateRef<EditorAssetManager>();
 		assetManager->DeserializeAssetRegistry();

@@ -30,12 +30,12 @@ namespace Voxymore::Core
 		[[nodiscard]] Path GetFilePath(AssetHandle) const;
 		[[nodiscard]] AssetMetadata GetMetadata(const Path&) const;
 
-		bool AddAsset(Ref<Asset> asset);
+		void SetPath(AssetHandle handle, Path newPath);
 
+		bool AddAsset(Ref<Asset> asset);
 		bool AddAsset(Ref<Asset> asset, Path path);
 
 		void RemoveAsset(AssetHandle handle);
-
 		void UnloadAsset(AssetHandle handle);
 
 		void SerializeAssetRegistry();

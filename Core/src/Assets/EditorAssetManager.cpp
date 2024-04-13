@@ -144,6 +144,17 @@ namespace Voxymore::Core
 		return it != m_AssetRegistry.end() ? it->second : s_NullMetadata;
 	}
 
+	void EditorAssetManager::SetPath(AssetHandle handle, Path newPath)
+	{
+		VXM_PROFILE_FUNCTION();
+
+		auto it = m_AssetRegistry.find(handle);
+		if(it != m_AssetRegistry.end()) {
+			it->second.FilePath = newPath;
+			SerializeAssetRegistry();
+		}
+	}
+
 	void EditorAssetManager::SerializeAssetRegistry()
 	{
 		VXM_PROFILE_FUNCTION();
@@ -151,6 +162,7 @@ namespace Voxymore::Core
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		{
+			out << KEYVAL("Type", "AssetRegistry");
 			out << KEYVAL("AssetRegistry", YAML::BeginMap);
 			{
 				out << KEYVAL("Assets", YAML::BeginSeq);
@@ -171,7 +183,6 @@ namespace Voxymore::Core
 			}
 			out << YAML::EndMap;
 		}
-		out << KEYVAL("Type", "AssetRegistry");
 
 		FileSystem::WriteYamlFile(Project::GetAssetRegistryPath(), out);
 	}
