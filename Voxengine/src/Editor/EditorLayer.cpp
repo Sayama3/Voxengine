@@ -576,10 +576,16 @@ namespace Voxymore::Editor {
         {
             if(!file.ends_with(".vxm_scn")) file.append(".vxm_scn");
             SceneSerializer serializer(m_ActiveScene);
-            if(serializer.Serialize(file))
+            if(serializer.Serialize(file) && Project::ProjectIsLoaded())
             {
-                m_FilePath = file;
-				Project::GetActive()->GetEditorAssetManager()->SetPath(m_ActiveScene->Handle, Path::GetPath(m_FilePath));
+				m_FilePath = file;
+				auto assetManager = Project::GetActive()->GetEditorAssetManager();
+				auto metadata = assetManager->GetMetadata(m_ActiveScene->Handle);
+				if(!metadata) {
+					assetManager->AddAsset(m_ActiveScene, Path::GetPath(m_FilePath));
+				} else {
+					assetManager->SetPath(m_ActiveScene->Handle, Path::GetPath(m_FilePath));
+				}
             }
         }
     }
@@ -590,7 +596,7 @@ namespace Voxymore::Editor {
 
         VXM_TRACE("Create New Scene");
         m_FilePath = std::string();
-        m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
+        m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->SetViewportSize(1280, 720);
         SceneHierarchyPanel::SetContext(m_ActiveScene);
 
