@@ -16,7 +16,7 @@ namespace Voxymore::Core
 		m_Continuity = node["Continuity"].as<Continuity>(Continuity::Position);
 		m_ControlPoints = node["ControlPoints"].as<int>(2);
 		Definition = node["Definition"].as<int>(1000);
-		ShaderName = node["ShaderName"].as<std::string>("Bezier");
+		m_Material = node["Material"].as<MaterialField>();
 
 		m_Points.clear();
 		auto pointsNode = node["Points"];
@@ -47,7 +47,7 @@ namespace Voxymore::Core
 		out << KEYVAL("Continuity", m_Continuity);
 		out << KEYVAL("Definition", Definition);
 		out << KEYVAL("ControlPoints", m_ControlPoints);
-		out << KEYVAL("ShaderName", ShaderName);
+		out << KEYVAL("Material", m_Material);
 		out << KEYVAL("Points", YAML::BeginSeq);
 		{
 			for (const auto& p : m_Points) {
@@ -184,6 +184,8 @@ namespace Voxymore::Core
 			}
 			ImGui::PopID();
 		}
+
+		changed |= ImGuiLib::DrawAssetField("Material", &m_Material);
 		return changed;
 	}
 

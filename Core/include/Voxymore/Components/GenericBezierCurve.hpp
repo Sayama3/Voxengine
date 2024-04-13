@@ -9,6 +9,7 @@
 #include "Voxymore/Math/BoundingBox.hpp"
 #include "Voxymore/Math/BoundingSphere.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Renderer/Material.hpp"
 
 namespace Voxymore::Core
 {
@@ -34,7 +35,6 @@ namespace Voxymore::Core
 		[[nodiscard]] BoundingBox GetBoundingWorldBox(const Mat4& localToWorld) const;
 		[[nodiscard]] BoundingSphere GetBoundingWorldSphere(const Mat4& localToWorld) const;
 		[[nodiscard]] std::vector<Vec3> GetWorldPoints(const Mat4& transform) const;
-		inline std::string GetShaderName() const { return "Bezier";}
 	private:
 		void ContinuityChanged();
 		void ControlPointsChanged();
@@ -43,7 +43,7 @@ namespace Voxymore::Core
 	public:
 		int m_ControlPoints = 2;
 		int Definition = 1000;
-		std::string ShaderName = "Bezier";
+		MaterialField m_Material;
 		Continuity m_Continuity = Continuity::Position;
 		std::vector<Vec3> m_Points = {};
 		std::vector<glm::mat4> m_Matrices = {};

@@ -25,54 +25,62 @@ Param.Deserialize(VXM_COMBINE(Param, Node))
 namespace Voxymore::Core {
 	// ===== Material =====
 
-	void Material::Serialize(YAML::Emitter &emitter) const
+	void Material::Serialize(YAML::Emitter &out) const
 	{
         VXM_PROFILE_FUNCTION();
-		emitter << KEYVAL("MaterialName", m_MaterialName);
-		emitter << KEYVAL("ShaderName", m_ShaderName);
-		emitter << KEYVAL("Parameters", YAML::BeginMap);
-		MaterialParameters_Serialize(&m_Parameters, emitter);
-		emitter << YAML::EndMap;
+		out << KEYVAL("MaterialName", m_MaterialName);
+		out << KEYVAL("Shader", m_Shader);
+		out << KEYVAL("Textures", YAML::BeginSeq);{
+			for (int i = 0; i < m_Textures.size(); ++i) {
+				out <<  m_Textures[i];
+			}
+			out << YAML::EndSeq;
+		}
+		out << KEYVAL("Parameters", YAML::BeginMap);
+		MaterialParameters_Serialize(&m_Parameters, out);
+		out << YAML::EndMap;
 	}
 
 	void Material::Deserialize(YAML::Node &node)
 	{
         VXM_PROFILE_FUNCTION();
 		m_MaterialName = node["MaterialName"].as<std::string>();
-		m_ShaderName = node["ShaderName"].as<std::string>();
+		m_Shader = node["Shader"].as<ShaderField>();
+		auto texturesNode = node["Textures"];
+		if(texturesNode && texturesNode.IsSequence()) {
+			for (int i = 0; i < m_Textures.size(); ++i) {
+				m_Textures[i] = texturesNode[i].as<Texture2DField>();
+			}
+		}
 		auto ParameterNode = node["Parameters"];
 		MaterialParameters_Deserialize(&m_Parameters, ParameterNode);
-		LoadShader();
 	}
 
 	Material::Material()
 	{
-		VXM_PROFILE_FUNCTION();
 	}
 
-	Material::Material(const std::string &shaderName) : m_ShaderName(shaderName)
+	Material::Material(const std::string& name) : m_MaterialName(name)
 	{
-		VXM_PROFILE_FUNCTION();
-		LoadShader();
 	}
 
-	Material::Material(const std::string& shaderName, const MaterialParameters& parameters) : m_ShaderName(shaderName), m_Parameters()
+	Material::Material(const ShaderField &shader) : m_Shader(shader)
 	{
-		VXM_PROFILE_FUNCTION();
-		LoadShader();
 	}
 
-	Material::Material(const Ref<Shader> &shader) : m_ShaderName(shader->GetName()), m_Shader(shader)
+	Material::Material(const ShaderField& shader, const MaterialParameters& parameters) : m_Shader(shader), m_Parameters(parameters)
 	{
-		VXM_PROFILE_FUNCTION();
 	}
 
-	Material::Material(const Ref<Shader>& shader, const MaterialParameters& parameters) : m_ShaderName(shader->GetName()), m_Shader(shader), m_Parameters(parameters), m_Textures()
+	Material::Material(const std::string& name, const ShaderField& shader, const MaterialParameters& parameters) : m_MaterialName(name), m_Shader(shader), m_Parameters(parameters)
 	{
-		VXM_PROFILE_FUNCTION();
-		for (auto& texture : m_Textures) {
-			texture = nullptr;
-		}
+	}
+
+	Material::Material(const MaterialParameters& parameters) : m_Parameters(parameters)
+	{
+	}
+	Material::Material(const std::string& name, const MaterialParameters& parameters) : m_MaterialName(name), m_Parameters(parameters)
+	{
 	}
 
 	Material::~Material()
@@ -82,11 +90,13 @@ namespace Voxymore::Core {
 	void Material::Bind() const
 	{
         VXM_PROFILE_FUNCTION();
-		m_Shader->Bind();
+		if(!m_Shader) return;
+//		VXM_CORE_ASSERT(m_Shader, "The shader is not loaded.");
+		m_Shader.GetAsset()->Bind();
 		for (int i = 0; i < m_Textures.size(); ++i) {
-			if(m_Textures[i] != nullptr)
+			if(m_Textures[i])
 			{
-				m_Textures[i]->Bind(i);
+				m_Textures[i].GetAsset()->Bind(i);
 			}
 		}
 	}
@@ -94,17 +104,19 @@ namespace Voxymore::Core {
 	void Material::Unbind() const
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Shader->Unbind();
+		if(!m_Shader) return;
+//		VXM_CORE_ASSERT(m_Shader, "The shader is not loaded.");
+		m_Shader.GetAsset()->Unbind();
 		for (int i = 0; i < m_Textures.size(); ++i)
 		{
-			if(m_Textures[i] != nullptr)
+			if(m_Textures[i])
 			{
 				Texture2D::Unbind(i);
 			}
 		}
 	}
 
-	void Material::SetTexture(Ref<Texture2D> texture, int binding)
+	void Material::SetTexture(Texture2DField texture, int binding)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
@@ -117,43 +129,27 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
 		if(binding >= 0 && binding < m_Textures.max_size()) return;
-		m_Textures[binding] = nullptr;
+		m_Textures[binding].Reset();
 	}
 
-	void Material::ChangeShader(const std::string &shaderName)
+	void Material::ChangeShader(AssetHandle shaderHandle)
 	{
         VXM_PROFILE_FUNCTION();
 		ResetShader();
-		m_ShaderName = shaderName;
-		LoadShader();
+		m_Shader.SetHandle(shaderHandle);
 	}
 
-	void Material::ChangeShader(Ref<Shader>& shader)
+	void Material::ChangeShader(const Ref<Shader>& shader)
 	{
         VXM_PROFILE_FUNCTION();
 		ResetShader();
-		m_ShaderName = shader->GetName();
 		m_Shader = shader;
 	}
-
-	//	void Material::LoadTexture(uint32_t index) const
-	//	{
-	//		VXM_CORE_ASSERT(index >= 0 && index < m_Textures.size(), "The index {0} is not between [0, {1}[", index, m_Textures.size());
-	//		VXM_CORE_ASSERT(m_Textures[index] != nullptr, "The texture {0} doesn't exist.", index);
-	//
-	//		m_Textures[index]->Bind(index);
-	//	}
 
 	const std::string &Material::GetMaterialName() const
 	{
         VXM_PROFILE_FUNCTION();
 		return m_MaterialName;
-	}
-
-	const std::string &Material::GetShaderName() const
-	{
-        VXM_PROFILE_FUNCTION();
-		return m_ShaderName;
 	}
 
 	const MaterialParameters& Material::GetMaterialsParameters() const
@@ -175,13 +171,8 @@ namespace Voxymore::Core {
 		// Create a char buffer
 		// Initial string size
 		const int inputSize = 256;
-		std::vector<char> shaderName(inputSize, 0);
-		std::memcpy(shaderName.data(), m_ShaderName.c_str(), m_ShaderName.size());
-		if (ImGui::InputText("Shader Name", shaderName.data(), inputSize))
-		{
-			changed = true;
-			m_ShaderName = std::string(shaderName.data());
-		}
+
+		changed |= ImGuiLib::DrawAssetField("Shader", &m_Shader);
 
 		std::vector<char> materialName(inputSize, 0);
 		std::memcpy(materialName.data(), m_MaterialName.c_str(), m_MaterialName.size());
@@ -195,24 +186,9 @@ namespace Voxymore::Core {
 		{
 			for (int i = 0; i < m_Textures.size(); ++i)
 			{
+				std::string name = "Texture - " + std::to_string(i);
 				auto& texture = m_Textures[i];
-				if (texture)
-				{
-					// Obtaining the ImTextureID depending on chosen graphics API such as OpenGL, DirectX, Vulkan...
-					ImTextureID textureID = reinterpret_cast<void*>(static_cast<uint64_t>(texture->GetRendererID()));
-					if (ImGui::ImageButton(textureID, ImVec2(128, 128))) //This will create a button with image
-					{
-						// Code to run if the texture button is clicked
-					}
-				}
-				else
-				{
-					ImGui::Text("Texture slot: %d is empty", i);
-				}
-
-				// if on last column, remove separator
-//				if (i % 4 != 3)
-//					ImGui::SameLine();
+				changed |= ImGuiLib::DrawAssetField(name.c_str(), &(m_Textures[i]));
 			}
 		}
 
@@ -233,95 +209,7 @@ namespace Voxymore::Core {
 	void Material::ResetShader()
 	{
         VXM_PROFILE_FUNCTION();
-		m_Shader = nullptr;
-	}
-
-	void Material::LoadShader()
-	{
-        VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(ShaderLibrary::GetInstance().Exists(m_ShaderName), "The shader {0} doesn't exist...", m_ShaderName);
-		m_Shader = ShaderLibrary::GetInstance().Get(m_ShaderName);
-	}
-
-	// ===== MaterialLibrary =====
-	MaterialLibrary* MaterialLibrary::s_Instance = nullptr;
-
-	MaterialLibrary& MaterialLibrary::GetInstance()
-	{
-		VXM_PROFILE_FUNCTION();
-		if(s_Instance == nullptr) s_Instance = new Voxymore::Core::MaterialLibrary();
-		return *s_Instance;
-	}
-
-	void MaterialLibrary::Add(const Ref<Material>& material)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Materials[material->GetMaterialName()] = material;
-	}
-
-	void MaterialLibrary::Add(const std::string& name, const Ref<Material>& material)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Materials[name] = material;
-	}
-
-	Ref<Material> MaterialLibrary::Get(const std::string& name)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(Exists(name), "The material '{0}' doesn't exist.", name);
-		return m_Materials[name];
-	}
-
-	bool MaterialLibrary::Exists(const std::string& name) const
-	{
-		VXM_PROFILE_FUNCTION();
-		return m_Materials.contains(name);
-	}
-
-	void MaterialLibrary::Deserialize(YAML::Node &node)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Materials.clear();
-		for(YAML::iterator it = node.begin(); it != node.end(); ++it)
-		{
-			std::string name = it->first.as<std::string>();
-			Ref<Material> material = CreateRef<Material>();
-			material->Deserialize(it->second);
-			m_Materials[name] = material;
-		}
-	}
-
-	void MaterialLibrary::Serialize(YAML::Emitter &emitter) const
-	{
-		VXM_PROFILE_FUNCTION();
-		for (auto&& [name, material]: m_Materials)
-		{
-			emitter << KEYVAL(name, YAML::BeginMap);
-			material->Serialize(emitter);
-			emitter << YAML::EndMap;
-		}
-	}
-
-	bool MaterialLibrary::OnImGui()
-	{
-		VXM_PROFILE_FUNCTION();
-		bool changed = false;
-		for (auto&& [name, material]: m_Materials)
-		{
-			changed |= material->OnImGui();
-		}
-		return changed;
-	}
-
-	Ref<Material> MaterialLibrary::GetOrCreate(const std::string &materialName, const std::string &shaderName)
-	{
-		VXM_PROFILE_FUNCTION();
-		if(!Exists(materialName))
-		{
-			m_Materials[materialName] = CreateRef<Material>(shaderName);
-			m_Materials[materialName]->SetMaterialName(materialName);
-		}
-		return m_Materials[materialName];
+		m_Shader.Reset();
 	}
 
 	// ===== Helper =====

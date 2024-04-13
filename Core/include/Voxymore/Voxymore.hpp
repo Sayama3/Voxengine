@@ -22,6 +22,10 @@
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/UUID.hpp"
 
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
+#include "Voxymore/Assets/AssetManager.hpp"
+
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingObject.hpp"
 #include "Voxymore/Math/BoundingSphere.hpp"
@@ -86,7 +90,6 @@
 #include "Voxymore/Events/MouseEvent.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 
-#include "Voxymore/Assets/Assets.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 
 //#include "Voxymore/Core/EntryPoint.hpp"

@@ -34,6 +34,8 @@ namespace Voxymore::Editor
 		float m_ThumbnailSize;
 		float m_Padding;
 
+		static inline constexpr float c_ThumbnailSizeMin = 16.0f;
+		static inline constexpr float c_ThumbnailSizeMax = 512.0f;
 		static inline float s_ThumbnailSize = 64.0f;
 		static inline float s_Padding = 16.0f;
 		static inline constexpr float c_Increment = 16.0f;

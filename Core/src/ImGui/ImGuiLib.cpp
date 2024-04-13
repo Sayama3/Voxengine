@@ -215,5 +215,16 @@ namespace Voxymore
 			return value_changed;
 		}
 
+		bool ImGuiLib::InputUUID(const char *name, UUID* id, ImGuiInputTextFlags flags)
+		{
+			return ImGui::InputScalar(name, ImGuiDataType_U64, (uint64_t*)id, nullptr, nullptr, "%llu", flags);
+		}
+
+		float ImGuiLib::GetWindowFontScale()
+        {
+            ImGuiWindow* window = ImGui::GetCurrentWindow();
+            return window->FontWindowScale;
+        }
+
 	}// namespace Core
 }// namespace Voxymore

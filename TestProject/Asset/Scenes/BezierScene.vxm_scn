@@ -1,0 +1,60 @@
+Scene:
+  Name: BezierScene
+  Entities:
+    - Entity: 6063967340830853876
+      IsActive: true
+      TagComponent:
+        Tag: Entity_6063967340830853876
+      TransformComponent:
+        Position: [0, -1.39999998, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      GenericBezierCurve:
+        Continuity: Continuity::Acceleration
+        Definition: 1000
+        ControlPoints: 2
+        Material: 2179113199840017384
+        Points:
+          - [-2.5999999, 0, 0]
+          - [0, 1.29999995, 0]
+          - [0, -1.20000005, 0]
+          - [2.5999999, -1.20000005, 0]
+          - [2.5999999, -1.20000005, 0]
+          - [5.19999981, -1.20000005, 0]
+          - [5.19999981, 1.29999995, 0]
+          - [0, -3.70000005, 0]
+        Matrices:
+          []
+    - Entity: 11714078419489869922
+      IsActive: true
+      TagComponent:
+        Tag: Entity_11714078419489869922
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      BezierCurve:
+        Material: 8252897195912804996
+        ControlPoints:
+          - [-1, 0, 0]
+          - [0, 1, 1]
+          - [0, -1, -1]
+          - [1, 0, 0]
+        Definition: 1000
+    - Entity: 5456757229448510952
+      IsActive: true
+      TagComponent:
+        Tag: Directional Light
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
+        EulerRotation: [-45, 45, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 1
+        Range: 10
+        Cutoff: 45
+        LightType: 0

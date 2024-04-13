@@ -18,13 +18,6 @@
 #define NEWLINE "\n"
 #endif
 
-#define VERTEX_TYPE "__TYPE_VERTEX_SHADER__"
-#define FRAGMENT_TYPE "__TYPE_FRAGMENT_SHADER__"
-#define PIXEL_TYPE "__TYPE_PIXEL_SHADER__"
-#define GEOMETRY_TYPE "__TYPE_GEOMETRY_SHADER__"
-#define COMPUTE_TYPE "__TYPE_COMPUTE_SHADER__"
-#define TESS_CONTROL_SHADER_TYPE "__TYPE_TESS_CONTROL_SHADER__"
-#define TESS_EVALUATION_SHADER_TYPE "__TYPE_TESS_EVALUATION_SHADER__"
 
 
 namespace Voxymore::Core
@@ -302,51 +295,6 @@ namespace Voxymore::Core
 			return 0;
 		}
 
-		static std::string ShaderTypeToString(ShaderType shaderType)
-		{
-			VXM_PROFILE_FUNCTION();
-
-			switch (shaderType) {
-				case ShaderType::COMPUTE_SHADER:
-					return COMPUTE_TYPE;
-					break;
-				case ShaderType::VERTEX_SHADER:
-					return VERTEX_TYPE;
-					break;
-				case ShaderType::TESS_CONTROL_SHADER:
-					return "__TYPE_TESS_CONTROL_SHADER__";
-					break;
-				case ShaderType::TESS_EVALUATION_SHADER:
-					return "__TYPE_TESS_EVALUATION_SHADER__";
-					break;
-				case ShaderType::GEOMETRY_SHADER:
-					return GEOMETRY_TYPE;
-					break;
-				case ShaderType::FRAGMENT_SHADER:
-					return FRAGMENT_TYPE;
-					break;
-			}
-			return "UNKNOWN";
-		}
-
-		static ShaderType ShaderTypeFromString(std::string type)
-		{
-			VXM_PROFILE_FUNCTION();
-			if (type == (VERTEX_TYPE)) return ShaderType::VERTEX_SHADER;
-			else if (type == (FRAGMENT_TYPE) || type == PIXEL_TYPE)
-				return ShaderType::FRAGMENT_SHADER;
-			else if (type == (GEOMETRY_TYPE))
-				return ShaderType::GEOMETRY_SHADER;
-			else if (type == (COMPUTE_TYPE))
-				return ShaderType::COMPUTE_SHADER;
-			else if (type == (TESS_CONTROL_SHADER_TYPE))
-				return ShaderType::TESS_CONTROL_SHADER;
-			else if (type == (TESS_EVALUATION_SHADER_TYPE))
-				return ShaderType::TESS_EVALUATION_SHADER;
-			VXM_CORE_ASSERT(false, "Type {0} unknown.", type);
-			return ShaderType::None;
-		}
-
 		static shaderc_shader_kind ShaderTypeToShaderC(ShaderType shaderType)
 		{
 			VXM_PROFILE_FUNCTION();
@@ -407,16 +355,7 @@ namespace Voxymore::Core
 
 	Path OpenGLShader::GetCachePath(ShaderType shaderType, Target target) const
 	{
-		Path p;
-		if(m_FilePaths.contains(shaderType))
-		{
-			p = m_FilePaths.at(shaderType).GetCachePath();
-			p.path = p.path.parent_path() / p.path.stem() / p.path.filename();
-		}
-		else
-		{
-			p = {FileSource::Cache, "./shader/opengl/" + m_Name + "/" + m_Name  + ".glsl"};
-		}
+		Path p = {FileSource::Cache, std::filesystem::path("shader/opengl") / m_Name / m_Name};
 
 		switch (target) {
 			case Vulkan:
@@ -436,154 +375,13 @@ namespace Voxymore::Core
 		return p;
 	}
 
-	OpenGLShader::OpenGLShader(const std::string &name, const Path &path)
-		: m_Name(name)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources) : m_Name(name), m_Sources(sources)
 	{
 		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
 
-		auto shaderSources = PreProcess(path);
-		for (auto& shader : shaderSources) {
-			m_FilePaths[shader.first] = path;
-		}
-		//		bool compiled = Compile(shaderSources);
-
-		CompileOrGetVulkanBinaries(shaderSources);
+		CompileOrGetVulkanBinaries(m_Sources);
 		CompileOrGetOpenGLBinaries();
 		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(const Path &path)
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		std::filesystem::path p = path.GetFullPath();
-		m_Name = p.stem().string();
-
-		auto shaderSources = PreProcess(path);
-		for (auto& shader : shaderSources) {
-			m_FilePaths[shader.first] = path;
-		}
-		//		bool compiled = Compile(shaderSources);
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(const std::string& name, const Path& vertexPath, const Path& fragmentPath)
-	: m_Name(name), m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		std::unordered_map<ShaderType, std::string> shaderSources;
-
-		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
-		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(const Path& vertexPath, const Path& fragmentPath) : m_FilePaths({{ShaderType::VERTEX_SHADER, vertexPath}, {ShaderType::FRAGMENT_SHADER, fragmentPath}})
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		std::unordered_map<ShaderType, std::string> shaderSources;
-
-		std::filesystem::path p = vertexPath.GetFullPath();
-		m_Name = p.stem().string();
-
-		shaderSources[ShaderType::VERTEX_SHADER] = FileSystem::ReadFileAsString(vertexPath);
-		shaderSources[ShaderType::FRAGMENT_SHADER] = FileSystem::ReadFileAsString(fragmentPath);
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(std::unordered_map<ShaderType, Path> paths) : m_FilePaths(paths)
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		std::unordered_map<ShaderType, std::string> shaderSources;
-		if (!m_FilePaths.empty()) {
-			m_Name = m_FilePaths.begin()->second.GetFullPath().stem().string();
-			for (auto &p: m_FilePaths) {
-				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
-			}
-		}
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(const std::string& name, std::unordered_map<ShaderType, Path> paths) : m_Name(name), m_FilePaths(paths)
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		std::unordered_map<ShaderType, std::string> shaderSources;
-		if (!m_FilePaths.empty()) {
-			for (auto &p: m_FilePaths) {
-				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
-			}
-		}
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	OpenGLShader::OpenGLShader(const std::string &name, const std::string &srcVertex, const std::string &srcFragment) : m_Name(name)
-	{
-		VXM_PROFILE_FUNCTION();
-		//Utils::CreateCacheDirectoryIfNeeded();
-
-		CompileOrGetVulkanBinaries({
-				{ShaderType::VERTEX_SHADER, srcVertex},
-				{ShaderType::FRAGMENT_SHADER, srcFragment},
-		});
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
-	}
-
-	std::unordered_map<ShaderType, std::string> OpenGLShader::PreProcess(const Path &path)
-	{
-		VXM_PROFILE_FUNCTION();
-		std::unordered_map<ShaderType, std::string> shaderSources;
-
-		std::string source = FileSystem::ReadFileAsString(path);
-
-		//        m_Uniforms = GetAllUniform(source);
-
-		std::regex regex("#define\\s*(__TYPE_\\w+)\\r?\\n", std::regex_constants::ECMAScript);
-
-		auto words_begin = std::sregex_iterator(source.begin(), source.end(), regex);
-		auto words_end = std::sregex_iterator();
-		auto count = std::distance(words_begin, words_end);
-		VXM_CORE_INFO("Found {0} shaders.", count);
-
-		for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-			auto next = i;
-			++next;
-
-			std::smatch match = *i;
-
-			const std::string &type = match[1].str();
-
-			int begin = static_cast<int>(match.position() + match.length());
-			int end = static_cast<int>(next != words_end ? next->position() : source.size());
-			shaderSources[Utils::ShaderTypeFromString(type)] = source.substr(begin, end - begin);
-		}
-
-		return shaderSources;
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -591,7 +389,7 @@ namespace Voxymore::Core
 		DeleteProgram();
 	}
 
-	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string> &shaders)
+	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, ShaderSourceField> &shaders)
 	{
 		//Profiling
 		VXM_PROFILE_FUNCTION();
@@ -608,16 +406,14 @@ namespace Voxymore::Core
 
 		auto &shaderData = m_VulkanSPIRV;
 		for (auto &&[stage, source]: shaders) {
-
+			if(!source) continue;
 			// Fetch the filename we can give.
-			std::string filename = m_Name;
-			if (!m_FilePaths.contains(stage)) {
-				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
-				filename = shaderFilePath.filename().string();
-			}
+			std::filesystem::path sourcePath = Project::GetActive()->GetEditorAssetManager()->GetFilePath(source.GetHandle());
+			std::string filename = sourcePath.filename().string();
 
 			// Fetch the hash of the source.
-			std::string sourceHash = Utils::HashSrc(source);
+			std::string sourceStr = source.GetAsset()->Source;
+			std::string sourceHash = Utils::HashSrc(sourceStr);
 
 			Path hashPath = GetCachePath(stage, Target::HashVulkan);
 			Path cachedPath = GetCachePath(stage, Target::Vulkan);
@@ -627,10 +423,10 @@ namespace Voxymore::Core
 			shaderData[stage] = sameHash ? FileSystem::ReadFile<uint32_t>(cachedPath) : std::vector<uint32_t>();
 
 			if (shaderData[stage].empty()) {
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(sourceStr, Utils::ShaderTypeToShaderC(stage), filename.c_str(), options);
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_Name, Utils::ShaderTypeToString(stage), module.GetErrorMessage());
 					if(FileSystem::Exist(cachedPath))
 					{
 						VXM_CORE_INFO("Reusing previous version.");
@@ -668,16 +464,10 @@ namespace Voxymore::Core
 		}
 
 		for (auto &&[stage, spirv]: m_VulkanSPIRV) {
-			// Fetch the filename we can give.
-			std::string filename = m_Name;
-			if (!m_FilePaths.contains(stage)) {
-				std::filesystem::path shaderFilePath = m_FilePaths[stage].GetFullPath();
-				filename = shaderFilePath.filename().string();
-			}
 
 			if(spirv.empty())
 			{
-				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this pass in OpenGl.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this pass in OpenGl.", m_Name, Utils::ShaderTypeToString(stage));
 				continue;
 			}
 
@@ -696,11 +486,11 @@ namespace Voxymore::Core
 				spirv_cross::CompilerGLSL compilerGlsl(spirv);
 				m_OpenGLSourceCode[stage] = compilerGlsl.compile();
 				std::string &source = m_OpenGLSourceCode[stage];
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_FilePaths[stage].GetFullPath().string().c_str(), options);
+				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::ShaderTypeToShaderC(stage), m_Name.c_str(), options);
 
 				if(module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
-					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage), module.GetErrorMessage());
+					VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1}\n{2}", m_Name, Utils::ShaderTypeToString(stage), module.GetErrorMessage());
 					if(FileSystem::Exist(cachedPath))
 					{
 						VXM_CORE_INFO("Reusing previous version.");
@@ -729,7 +519,7 @@ namespace Voxymore::Core
 		for (auto &&[stage, spirv]: m_OpenGLSPIRV) {
 			if (spirv.empty())
 			{
-				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this stage during the shader creation.", m_FilePaths[stage].path.string(), Utils::ShaderTypeToString(stage));
+				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this stage during the shader creation.", m_Name, Utils::ShaderTypeToString(stage));
  				continue;
 			}
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(Utils::ShaderTypeToOpenGL(stage)));
@@ -832,7 +622,7 @@ namespace Voxymore::Core
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle());
 
 		VXM_CORE_TRACE("Uniform buffers:");
 		analyzedShaderData.m_Uniform.reserve(resources.uniform_buffers.size());
@@ -856,7 +646,7 @@ namespace Voxymore::Core
 			analyzedShaderData.m_Constants.push_back(member);
 			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
 		}
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_FilePaths[stage].path.string());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle());
 	}
 
 	void OpenGLShader::Bind() const
@@ -871,216 +661,39 @@ namespace Voxymore::Core
 		glUseProgram(0);
 	}
 
-	void OpenGLShader::Reload()
+	void OpenGLShader::SetSources(const std::vector<ShaderSourceField>& sources)
 	{
 		VXM_PROFILE_FUNCTION();
-		if(m_FilePaths.empty())
+		m_Sources.clear();
+		for(auto& src : sources)
 		{
-			VXM_CORE_WARNING("No path to a shader, hot reloading impossible.");
-			return;
-		}
-
-		DeleteProgram();
-		std::unordered_map<ShaderType, std::string> shaderSources;
-		if (!m_FilePaths.empty()) {
-			for (auto &p: m_FilePaths) {
-				shaderSources[p.first] = FileSystem::ReadFileAsString(p.second);
+			if(src.HasHandle()) {
+				m_Sources.insert_or_assign(src.GetAsset()->Type, src);
 			}
 		}
 
-		CompileOrGetVulkanBinaries(shaderSources);
+		Reload();
+	}
+
+	std::vector<ShaderSourceField> OpenGLShader::GetSources() const
+	{
+		VXM_PROFILE_FUNCTION();
+		std::vector<ShaderSourceField> sources;
+		sources.reserve(m_Sources.size());
+		for(auto& source : m_Sources)
+		{
+			sources.push_back(source.second);
+		}
+		return sources;
+	}
+
+	void OpenGLShader::Reload()
+	{
+		DeleteProgram();
+
+		CompileOrGetVulkanBinaries(m_Sources);
 		CompileOrGetOpenGLBinaries();
 		CreateProgram();
 	}
 
-	bool OpenGLShader::ShouldReload() const
-	{
-		VXM_PROFILE_FUNCTION();
-		for (auto&& [stage, path] : m_FilePaths)
-		{
-			std::string source = FileSystem::ReadFileAsString(path);
-			// Fetch the hash of the source.
-			std::string sourceHash = Utils::HashSrc(source);
-
-			Path hashPath = GetCachePath(stage, Target::HashVulkan);
-			Path cachedPath = GetCachePath(stage, Target::Vulkan);
-
-			std::string storedHash = FileSystem::ReadFileAsString(hashPath);
-			if(storedHash != sourceHash) return true;
-		}
-
-		return false;
-	}
-
-
-	void OpenGLShader::SetUniformInt(const std::string &name, int value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1i(location, value);
-	}
-	void OpenGLShader::SetUniformInt2(const std::string& name, const glm::ivec2& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform2iv(location, 1, glm::value_ptr(value));
-	}
-	void OpenGLShader::SetUniformInt3(const std::string& name, const glm::ivec3& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform3iv(location, 1, glm::value_ptr(value));
-	}
-	void OpenGLShader::SetUniformInt4(const std::string& name, const glm::ivec4& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform4iv(location, 1, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformFloat(const std::string &name, float value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1f(location, value);
-	}
-
-	void OpenGLShader::SetUniformFloat2(const std::string &name, const glm::vec2 &value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform2fv(location, 1, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformFloat3(const std::string &name, const glm::vec3 &value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform3fv(location, 1, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformFloat4(const std::string &name, const glm::vec4 &value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform4fv(location, 1, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformMat2(const std::string& name, const glm::mat2& value) {
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniformMatrix2fv(location, 1, false, glm::value_ptr(value));
-	}
-	void OpenGLShader::SetUniformMat3(const std::string &name, const glm::mat3 &value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformMat4(const std::string &name, const glm::mat4 &value)
-	{
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-
-		if(location < 0) return;
-		glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::SetUniformBool(const std::string& name, const bool& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1i(location, value);
-	}
-	void OpenGLShader::SetUniformBool2(const std::string& name, const glm::bvec2& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform2iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
-	}
-	void OpenGLShader::SetUniformBool3(const std::string& name, const glm::bvec3& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform3iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
-	}
-	void OpenGLShader::SetUniformBool4(const std::string& name, const glm::bvec4& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform4iv(location, 1, reinterpret_cast<const int*>(glm::value_ptr(value)));
-	}
-
-	void OpenGLShader::SetUniformSampler1D(const std::string& name, const uint32_t& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1ui(location, value);
-	}
-	void OpenGLShader::SetUniformSampler2D(const std::string& name, const uint32_t& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1ui(location, value);
-	}
-	void OpenGLShader::SetUniformSampler3D(const std::string& name, const uint32_t& value) {
-
-		VXM_PROFILE_FUNCTION();
-		//		VXM_CORE_ASSERT(m_Uniforms.contains(name), "The uniform map doesn't contains the uniform '{0}'.", name);
-		//		int location = m_Uniforms[name].Location;
-		int location = glGetUniformLocation(m_RendererID, name.c_str());
-		if(location < 0) return;
-		glUniform1ui(location, value);
-	}
 }// namespace Voxymore::Core

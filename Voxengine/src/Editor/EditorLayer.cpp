@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Editor/EditorLayer.hpp"
+#include "Voxymore/Assets/Importers/TextureImporter.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 #include <ImGuizmo.h>
@@ -57,7 +58,8 @@ namespace Voxymore::Editor {
 		specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth};
 		m_Viewports.push_back(CreateRef<Viewport>(specification));
 
-        if(Project::GetConfig().startSceneId.has_value())
+		auto handle = Project::GetConfig().startSceneId;
+		if(handle.has_value() && AssetManager::IsAssetHandleValid(handle.value()))
         {
             OpenScene(Project::GetConfig().startSceneId.value());
         }
@@ -67,7 +69,7 @@ namespace Voxymore::Editor {
         }
 
 		m_PanelCreator.insert({PropertyPanel::StaticGetTypeID(), PanelMetadata(PropertyPanel::StaticGetName(), PropertyPanel::StaticGetTypeID(), &PropertyPanel::CreatePanel)});
-		m_PanelCreator.insert({ShaderPanel::StaticGetTypeID(), PanelMetadata(ShaderPanel::StaticGetName(), ShaderPanel::StaticGetTypeID(), &ShaderPanel::CreatePanel)});
+//		m_PanelCreator.insert({ShaderPanel::StaticGetTypeID(), PanelMetadata(ShaderPanel::StaticGetName(), ShaderPanel::StaticGetTypeID(), &ShaderPanel::CreatePanel)});
 		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetTypeID(), PanelMetadata(SceneHierarchyPanel::StaticGetName(), SceneHierarchyPanel::StaticGetTypeID(), &SceneHierarchyPanel::CreatePanel)});
 		m_PanelCreator.insert({SystemPanel::StaticGetTypeID(), PanelMetadata(SystemPanel::StaticGetName(), SystemPanel::StaticGetTypeID(), &SystemPanel::CreatePanel)});
 		m_PanelCreator.insert({ContentBrowserPanel::StaticGetTypeID(), PanelMetadata(ContentBrowserPanel::StaticGetName(), ContentBrowserPanel::StaticGetTypeID(), &ContentBrowserPanel::CreatePanel)});
@@ -491,7 +493,7 @@ namespace Voxymore::Editor {
 				for(auto ptr : m_Viewports) {
 					if (ptr->IsHovered()) {
 						anyHovered = true;
-						if (!ptr->HasHoveredEntity() && m_GizmoOperation == GizmoOperation::NONE) PropertyPanel::SetSelectedEntity({});
+						if (!ptr->HasHoveredEntity() && m_GizmoOperation == GizmoOperation::NONE) PropertyPanel::Reset();
 						else if (ptr->HasHoveredEntity() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) {
 							PropertyPanel::SetSelectedEntity(ptr->GetHoveredEntity());
 						}
@@ -499,7 +501,7 @@ namespace Voxymore::Editor {
 					}
 				}
 				if(!anyHovered) {
-					PropertyPanel::SetSelectedEntity({});
+					PropertyPanel::Reset();
 				}
 				break;
             }
@@ -527,9 +529,10 @@ namespace Voxymore::Editor {
     {
         if(Project::Load(path))
         {
-            if(Project::GetConfig().startSceneId.has_value())
+			auto handle = Project::GetConfig().startSceneId;
+            if(handle.has_value() && AssetManager::IsAssetHandleValid(handle.value()))
             {
-                OpenScene(Project::GetConfig().startSceneId.value());
+                OpenScene(handle.value());
             }
             else
             {
@@ -623,7 +626,7 @@ namespace Voxymore::Editor {
     void EditorLayer::OpenScene()
     {
         VXM_TRACE("Open Scene");
-        std::filesystem::path file = FileDialogs::OpenFile({"Voxymore Scene (*.vxm)", "*.vxm"});
+        std::filesystem::path file = FileDialogs::OpenFile({"Voxymore Scene (*.vxm_scn)", "*.vxm_scn"});
         if(!file.empty())
         {
             OpenScene(file);
@@ -650,25 +653,28 @@ namespace Voxymore::Editor {
 
         VXM_TRACE("Open Scene from path {0}", path.string());
         m_FilePath = path.string();
-        m_ActiveScene = SceneManager::CreateScene(path, 1280, 720);
-        SceneHierarchyPanel::SetContext(m_ActiveScene);
+		Ref<Asset> asset = Project::GetActive()->GetEditorAssetManager()->GetOrCreateAsset(Path::GetPath(path));
+		if(asset && asset->GetType() == AssetType::Scene) {
+			m_ActiveScene = CastPtr<Scene>(asset);
+			SceneHierarchyPanel::SetContext(m_ActiveScene);
+		} else {
+			m_ActiveScene = CreateRef<Scene>();
+			SceneHierarchyPanel::SetContext(m_ActiveScene);
+		}
     }
 
-    void EditorLayer::OpenScene(UUID id)
+    void EditorLayer::OpenScene(AssetHandle id)
     {
         VXM_INFO("Unloading and Delete Previous Scene");
-        if(m_ActiveScene != nullptr && SceneManager::HasScene(m_ActiveScene->id()))
-        {
-            SceneManager::DeleteScene(m_ActiveScene->id());
-            m_ActiveScene = nullptr;
-        }
 
         VXM_ASSERT(SceneManager::HasScene(id), "No scene with the ID '{0}'", id);
-        m_ActiveScene = SceneManager::GetScene(id);
-        //m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-        //TODO: Get the associated file path.
-        m_FilePath = std::string();
-        SceneHierarchyPanel::SetContext(m_ActiveScene);
+        m_ActiveScene = AssetManager::GetAssetAs<Scene>(id);
+		if(m_ActiveScene)
+		{
+			auto metadata = Project::GetActive()->GetEditorAssetManager()->GetMetadata(id);
+			m_FilePath = metadata.FilePath;
+		}
+		SceneHierarchyPanel::SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnImGuiRender() {
@@ -901,29 +907,28 @@ namespace Voxymore::Editor {
 
     void EditorLayer::ReloadAssets()
     {
-        ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.vert"}, {FileSource::EditorAsset, "Shaders/FlatColor.frag"});
-        ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.vert"}, {FileSource::EditorAsset, "Shaders/TextureShader.frag"});
-        ShaderLibrary::GetInstance().Load("Default", {FileSource::EditorAsset, "Shaders/DefaultShader.vert"}, {FileSource::EditorAsset, "Shaders/DefaultShader.frag"});
-        ShaderLibrary::GetInstance().Load("Bezier4", std::unordered_map<ShaderType, Path>{
-															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.vert"}},
-															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.frag"}},
-															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessco"}},
-															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessev"}},
-//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.geom"}},
-													});
-        ShaderLibrary::GetInstance().Load("Bezier", std::unordered_map<ShaderType, Path>{
-															{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.vert"}},
-															{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.frag"}},
-															{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessco"}},
-															{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessev"}},
-//															{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.geom"}},
-													});
+		auto assetManager = Project::GetActive()->GetEditorAssetManager();
+        // ShaderLibrary::GetInstance().Load("FlatColor", {FileSource::EditorAsset, "Shaders/FlatColor.vert"}, {FileSource::EditorAsset, "Shaders/FlatColor.frag"});
+        // ShaderLibrary::GetInstance().Load("Texture", {FileSource::EditorAsset, "Shaders/TextureShader.vert"}, {FileSource::EditorAsset, "Shaders/TextureShader.frag"});
+        // ShaderLibrary::GetInstance().Load("Default", {FileSource::EditorAsset, "Shaders/DefaultShader.vert"}, {FileSource::EditorAsset, "Shaders/DefaultShader.frag"});
+        // ShaderLibrary::GetInstance().Load("Bezier4", std::unordered_map<ShaderType, Path>{
+		// 													{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.vert"}},
+		// 													{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.frag"}},
+		// 													{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessco"}},
+		// 													{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.tessev"}},
+		// 													{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier4/Bezier4.geom"}},
+		// 											});
+        // ShaderLibrary::GetInstance().Load("Bezier", std::unordered_map<ShaderType, Path>{
+		// 													{ShaderType::VERTEX_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.vert"}},
+		// 													{ShaderType::FRAGMENT_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.frag"}},
+		// 													{ShaderType::TESS_CONTROL_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessco"}},
+		// 													{ShaderType::TESS_EVALUATION_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.tessev"}},
+		// 													{ShaderType::GEOMETRY_SHADER,{FileSource::EditorAsset, "Shaders/Bezier/Bezier.geom"}},
+		// 											});
 
-        Assets::ReloadAll();
-
-        m_PlayTexture = Assets::GetTexture({FileSource::EditorAsset, "Images/Play.png"});
-        m_StopTexture = Assets::GetTexture({FileSource::EditorAsset, "Images/Stop.png"});
-        m_PauseTexture = Assets::GetTexture({FileSource::EditorAsset, "Images/Pause.png"});
+        m_PlayTexture = TextureImporter::LoadTexture2D(Path{FileSource::EditorAsset, "Images/Play.png"});
+        m_StopTexture = TextureImporter::LoadTexture2D(Path{FileSource::EditorAsset, "Images/Stop.png"});
+        m_PauseTexture = TextureImporter::LoadTexture2D(Path{FileSource::EditorAsset, "Images/Pause.png"});
     }
 } // Voxymore
 // Editor

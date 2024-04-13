@@ -17,7 +17,15 @@ namespace Voxymore::Core
 		AssetHandle Handle;
 		AssetType Type = AssetType::None;
 
-		inline operator bool() {return Type == AssetType::None;}
+		inline operator bool() const {
+			return Type != AssetType::None && Handle != 0;
+		}
+		inline bool operator ==(const AssetMetadata& other ) const {
+			return Handle == other.Handle && Type == other.Type && FilePath == other.FilePath;
+		}
+		inline bool operator !=(const AssetMetadata& other) const {
+			return !(*this == other);
+		}
 	};
 
 

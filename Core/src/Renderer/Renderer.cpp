@@ -8,7 +8,7 @@
 
 namespace Voxymore::Core {
 	static RendererData s_Data;
-	static std::string s_BindedShader;
+	static AssetHandle s_BindedShader = 0;
 
 	RendererData::ModelData::ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId) : TransformMatrix(transformMatrix), NormalMatrix(normalMatrix), EntityId(entityId) {}
 
@@ -34,7 +34,7 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 
-		s_BindedShader = "";
+		s_BindedShader = 0;
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
 		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
@@ -79,12 +79,12 @@ namespace Voxymore::Core {
 			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
 
 			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial().GetAsset()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			std::get<0>(mesh)->Bind();
-			auto& shaderName = std::get<0>(mesh)->GetMaterial()->GetShaderName();
+			auto shaderName = std::get<0>(mesh)->GetMaterial().GetHandle();
 			if(shaderName != s_BindedShader)
 			{
-				std::get<0>(mesh)->GetMaterial()->Bind();
+				std::get<0>(mesh)->GetMaterial().GetAsset()->Bind();
 				s_BindedShader = shaderName;
 			}
 			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
@@ -99,19 +99,19 @@ namespace Voxymore::Core {
 			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
 
 			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
+			s_Data.MaterialUniformBuffer->SetData(&std::get<0>(mesh)->GetMaterial().GetAsset()->GetMaterialsParameters(), sizeof(MaterialParameters));
 			std::get<0>(mesh)->Bind();
-			auto& shaderName = std::get<0>(mesh)->GetMaterial()->GetShaderName();
+			auto shaderName = std::get<0>(mesh)->GetMaterial().GetHandle();
 			if(shaderName != s_BindedShader)
 			{
-				std::get<0>(mesh)->GetMaterial()->Bind();
+				std::get<0>(mesh)->GetMaterial().GetAsset()->Bind();
 				s_BindedShader = shaderName;
 			}
 			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
 		}
 
 		RenderCommand::ClearBinding();
-		s_BindedShader = "";
+		s_BindedShader = 0;
 	}
 
 	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform, int entityId) {
@@ -124,7 +124,7 @@ namespace Voxymore::Core {
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		auto& shaderName = shader->GetName();
+		auto& shaderName = shader->Handle;
 		if(shaderName != s_BindedShader)
 		{
 			shader->Bind();
@@ -136,6 +136,7 @@ namespace Voxymore::Core {
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
+
 	void Renderer::Submit(Ref<Material> &material, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -148,7 +149,7 @@ namespace Voxymore::Core {
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-		auto& shaderName = material->GetShaderName();
+		auto& shaderName = material->Handle;
 		if(shaderName != s_BindedShader)
 		{
 			material->Bind();
@@ -166,9 +167,11 @@ namespace Voxymore::Core {
 		// s_Data.ModelBuffer.EntityId = entityId;
 		// s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		for (const auto& mesh : meshGroup.GetSubMeshes())
+		for (const auto& mesh : meshGroup)
 		{
-			Submit(mesh, transform, entityId);
+			if(mesh) {
+				Submit(mesh.GetAsset(), transform, entityId);
+			}
 //			s_Data.MaterialUniformBuffer->SetData(&mesh->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
 //			mesh->Bind();
 //			auto& shaderName = mesh->GetMaterial()->GetShaderName();
@@ -188,7 +191,7 @@ namespace Voxymore::Core {
 		center /= center.w;
 		Real distance = Math::SqrMagnitude(Vec3(center) - Vec3(s_Data.CameraBuffer.CameraPosition));
 
-		if(mesh->GetMaterial()->GetMaterialsParameters().AlphaMode == AlphaMode::Blend)
+		if(mesh->GetMaterial().GetAsset()->GetMaterialsParameters().AlphaMode == AlphaMode::Blend)
 		{
 			s_Data.AlphaMeshes.insert(std::make_pair(distance, std::tuple(mesh, transform, entityId)));
 		}
@@ -245,11 +248,10 @@ namespace Voxymore::Core {
 		}
 	}
 
-	void Renderer::Submit(const std::vector<Vertex>& bezierControlPoints, int lineDefinition, const std::string& shaderName, int entityId)
+	void Renderer::Submit(Ref<Material> material, const std::vector<Vertex>& bezierControlPoints, int lineDefinition, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(bezierControlPoints.size() <= 32, "The shader might not support more than a 1000 control point...")
-		Ref<Material> material = MaterialLibrary::GetInstance().GetOrCreate(shaderName, shaderName);
 		std::vector<uint32_t> indices;
 		indices.reserve((bezierControlPoints.size()-1)*2);
 		for (uint32_t i = 0; i < bezierControlPoints.size() - 1; ++i) {
@@ -272,18 +274,18 @@ namespace Voxymore::Core {
 		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
 
 		mesh->Bind();
-		if(material->GetShaderName() != s_BindedShader)
+		if(material->GetShaderHandle() != s_BindedShader)
 		{
 			material->Bind();
-			s_BindedShader = material->GetShaderName();
+			s_BindedShader = material->GetShaderHandle();
 		}
 		RenderCommand::DrawPatches(bezierControlPoints.size());
 	}
 
-	void Renderer::Submit(const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, const std::string& shaderName, int entityId)
+	void Renderer::Submit(Ref<Material> material, const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		Submit({controlPoint0, controlPoint1, controlPoint2, controlPoint3}, lineDefinition, shaderName, entityId);
+		Submit(material, {controlPoint0, controlPoint1, controlPoint2, controlPoint3}, lineDefinition, entityId);
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

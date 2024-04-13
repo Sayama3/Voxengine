@@ -73,7 +73,13 @@ namespace Voxymore::Core
 	void FileSystem::WriteYamlFile(const Path& path, YAML::Emitter& emitter)
 	{
 		VXM_PROFILE_FUNCTION();
-		std::ofstream fileOut(GetPath(path));
+		WriteYamlFile(GetPath(path), emitter);
+	}
+
+	void FileSystem::WriteYamlFile(const std::filesystem::path& path, YAML::Emitter& emitter)
+	{
+		VXM_PROFILE_FUNCTION();
+		std::ofstream fileOut(path);
 		fileOut << emitter.c_str();
 	}
 

@@ -10,6 +10,7 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/Buffer.hpp"
 #include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
 
 namespace Voxymore::Core {
 
@@ -106,4 +107,5 @@ namespace Voxymore::Core {
 		VXM_IMPLEMENT_ASSET(AssetType::Texture2D);
     };
 
+	using Texture2DField = AssetField<Texture2D>;
 } // Core

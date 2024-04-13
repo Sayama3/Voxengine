@@ -41,8 +41,6 @@ namespace Voxymore::Core
 	public:
 		Scene();
 		Scene(std::string name);
-		Scene(UUID id);
-		Scene(UUID id, std::string name);
 		Scene(Ref<Scene> scene);
 		Scene(const Scene& scene);
 		Scene& operator= (const Scene&);
@@ -73,7 +71,7 @@ namespace Voxymore::Core
 		inline void SetName(const std::string& name) {m_Name = name;}
 		[[deprecated("Use id()")]]
 		inline UUID GetID() const {return id();}
-		inline UUID id() const {return m_ID;}
+		inline UUID id() const {return Handle;}
 	public:
 
 		/**
@@ -179,7 +177,6 @@ namespace Voxymore::Core
 		// Helper:
 		Entity GetPrimaryCameraEntity();
 	private:
-		UUID m_ID;
 		std::string m_Name;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;

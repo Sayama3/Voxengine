@@ -40,7 +40,7 @@ namespace Voxymore::Editor {
     {
 		VXM_PROFILE_FUNCTION();
         {
-            std::string idstr = std::to_string(s_Context->m_ID);
+            std::string idstr = std::to_string(s_Context->Handle);
             ImGui::Text("%s", idstr.c_str());
         }
 

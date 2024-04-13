@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
 #include <imgui.h>
+#include <imgui_internal.h>
 
 namespace Voxymore::Core
 {
@@ -32,6 +35,64 @@ namespace Voxymore::Core
 		 * NB: You likely want to specify the ImGuiSliderFlags_AlwaysClamp when using this.
 		 */
 		static bool DragRealRange2(const std::string& label, Real *v_current_min, Real *v_current_max, float v_speed = 1.0f, Real v_min = 0.0f, Real v_max = 0.0f, const char *format = "%.3f", const char *format_max = 0, ImGuiSliderFlags flags = 0);
+
+		static bool InputUUID(const char* name, UUID* id, ImGuiInputTextFlags flags = 0);
+
+		template<typename T>
+		static bool DrawAssetField(const char* name, AssetField<T>* v)
+		{
+			VXM_PROFILE_FUNCTION();
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			if (window->SkipItems) {
+				return false;
+			}
+			bool changed = false;
+			const AssetType assetType = AssetField<T>::GetStaticType();
+
+			ImGuiContext& g = *GImGui;
+			ImGui::BeginGroup();
+			ImGui::PushID(name);
+
+			// TODO: Draw a little preview
+
+			AssetHandle handle = v->GetHandle();
+			if(ImGuiLib::InputUUID("##UUID", &handle))
+			{
+				v->SetHandle(handle);
+				changed = true;
+			}
+
+
+			if(ImGui::BeginDragDropTarget())
+			{
+				auto payloadStr = AssetTypeToPayloadID(assetType);
+				VXM_CORE_ASSERT(payloadStr.size() < 32, "The payloadID is too large.");
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadStr.c_str());
+				if (payload != nullptr) {
+					VXM_CORE_ASSERT(payload->DataSize == sizeof(AssetHandle), "The data is not an AssetHandle");
+					auto payloadHandle = *((AssetHandle*)(payload->Data));
+					v->SetHandle(payloadHandle);
+					changed = true;
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+			if(ImGui::Button("Reset")) {
+				v->SetHandle(0);
+				changed = true;
+			}
+
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+			ImGui::TextEx(name, ImGui::FindRenderedTextEnd(name));
+
+			ImGui::PopID();
+			ImGui::EndGroup();
+
+			return changed;
+		}
+
+		static float GetWindowFontScale();
 	};
 
 } // namespace Voxymore::Core

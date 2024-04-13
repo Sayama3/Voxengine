@@ -25,7 +25,9 @@ namespace Voxymore::Core
 		std::filesystem::path cacheDirectory = "Cache";
 		std::filesystem::path systemDirectory = "Systems";
 
-		std::optional<UUID> startSceneId;
+		std::filesystem::path assetRegistryPath = "AssetRegistry.vxm";
+
+		std::optional<AssetHandle> startSceneId;
 
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};
@@ -41,6 +43,7 @@ namespace Voxymore::Core
 		static std::filesystem::path GetAssetDirectory();
 		static std::filesystem::path GetCacheDirectory();
 		static std::filesystem::path GetSystemsDirectory();
+		static std::filesystem::path GetAssetRegistryPath();
 		static const std::filesystem::path& GetProjectFilePath();
 
 		static void ResetMainScene();
@@ -79,10 +82,11 @@ namespace Voxymore::Core
 		void CallOnLoad();
 		static std::unordered_map<UUID, void_func_ptr>& GetOnLoad();
 	private:
-		[[nodiscard]]std::filesystem::path GetAsset() const;
-		[[nodiscard]]std::filesystem::path GetCache() const;
-		[[nodiscard]]std::filesystem::path GetSystems() const;
-		[[nodiscard]]const std::filesystem::path& GetFilePath() const;
+		[[nodiscard]] std::filesystem::path GetAsset() const;
+		[[nodiscard]] std::filesystem::path GetCache() const;
+		[[nodiscard]] std::filesystem::path GetSystems() const;
+		[[nodiscard]] std::filesystem::path GetAssetRegistry() const;
+		[[nodiscard]] const std::filesystem::path& GetFilePath() const;
 	private:
 		std::filesystem::path m_ProjectPath = "./Project.vxm";
 		ProjectConfig m_Config;

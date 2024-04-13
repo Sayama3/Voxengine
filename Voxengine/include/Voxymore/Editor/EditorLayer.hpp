@@ -12,13 +12,13 @@
 
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
 #include "Voxymore/Editor/Panels/SceneHierarchyPanel.hpp"
-#include "Voxymore/Editor/Panels/ShaderPanel.hpp"
 #include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
 #include "Voxymore/Editor/Panels/SystemPanel.hpp"
 #include "Voxymore/Editor/Panels/Viewport.hpp"
 #include "Voxymore/Editor/Panels/Panel.hpp"
 
 #include "Voxymore/Editor/EditorHelper.hpp"
+
 #include <map>
 
 using namespace Voxymore::Core;
@@ -47,8 +47,8 @@ namespace Voxymore::Editor {
 
 		Ref<Scene> m_ActiveScene = nullptr;
 		Ref<Scene> m_CacheScene = nullptr;
-		std::string m_FilePath;
-		std::string m_CacheFilePath;
+		std::filesystem::path m_FilePath;
+		std::filesystem::path m_CacheFilePath;
 
 		// Editor.
 //        EditorCamera m_EditorCamera;
@@ -102,7 +102,7 @@ namespace Voxymore::Editor {
 		void SaveSceneAs();
 		void SaveScene();
 		void OpenScene();
-		void OpenScene(UUID id);
+		void OpenScene(AssetHandle id);
 		void OpenScene(const Path& path);
 	public:
 		void OpenScene(const std::filesystem::path& path);

@@ -107,7 +107,8 @@ namespace Voxymore::Core
 		static std::vector<T> ReadFile(const Path& path);
 
 		static std::string ReadFileHash(const Path& path);
-		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);\
+		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);
+		static void WriteYamlFile(const std::filesystem::path& path, YAML::Emitter& emitter);
 
 		template <class _Elem, class _Traits = std::char_traits<_Elem>, class _Alloc = std::allocator<_Elem>>
 		static bool Write(const Path& path, const std::basic_string<_Elem, _Traits, _Alloc>& content);

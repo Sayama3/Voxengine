@@ -15,6 +15,7 @@ namespace Voxymore
 		{
 			VXM_PROFILE_FUNCTION();
 			static const std::array<Vec3, 4> defaultPoints = {Vec3{-1,0,0}, Vec3{0,1,1}, Vec3{0,-1,-1}, Vec3{1,0,0}};
+			m_Material = node["Material"].as<MaterialField>();
 			auto controlPointsNode = node["ControlPoints"];
 			if(controlPointsNode && controlPointsNode.IsSequence())
 			{
@@ -32,6 +33,7 @@ namespace Voxymore
 		void BezierCurve::SerializeComponent(YAML::Emitter &out, Entity e)
 		{
 			VXM_PROFILE_FUNCTION();
+			out << KEYVAL("Material", m_Material);
 			out << KEYVAL("ControlPoints", YAML::BeginSeq);
 			for(auto& cp : LocalControlPoints)
 			{
@@ -51,6 +53,7 @@ namespace Voxymore
 			changed |= ImGuiLib::DrawVec3Control("Control Point 3", LocalControlPoints[2]);
 			changed |= ImGuiLib::DrawVec3Control("Control Point 4", LocalControlPoints[3]);
 			changed |= ImGui::DragInt("Definition", &Definition, 1, 0, INT_MAX);
+			changed |= ImGuiLib::DrawAssetField("Material", &m_Material);
 			return changed;
 		}
 

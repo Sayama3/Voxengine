@@ -68,12 +68,16 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Project> project = CreateRef<Project>();
+		auto old = s_ActiveProject;
+		s_ActiveProject = project;
+
 		ProjectSerializer ps(project);
 		if(ps.Deserialize(path))
 		{
-			s_ActiveProject = project;
 			s_ActiveProject->CallOnLoad();
 			return s_ActiveProject;
+		} else {
+			s_ActiveProject = old;
 		}
 		return nullptr;
 	}
@@ -131,6 +135,15 @@ namespace Voxymore::Core
 			return m_Config.systemDirectory;
 	}
 
+	std::filesystem::path Project::GetAssetRegistry() const
+	{
+		VXM_PROFILE_FUNCTION();
+		if(m_Config.assetRegistryPath.is_relative())
+			return m_ProjectPath.parent_path() / m_Config.assetRegistryPath;
+		else
+			return m_Config.assetRegistryPath;
+	}
+
 	const std::filesystem::path& Project::GetFilePath() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -155,6 +168,14 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		return s_ActiveProject->GetSystems();
 	}
+
+	std::filesystem::path Project::GetAssetRegistryPath()
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetAssetRegistry();
+	}
+
 	const std::filesystem::path& Project::GetProjectFilePath()
 	{
         VXM_PROFILE_FUNCTION();

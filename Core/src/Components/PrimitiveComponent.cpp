@@ -3,6 +3,7 @@
 //
 
 #include "Voxymore/Components/PrimitiveComponent.hpp"
+#include "Voxymore/ImGui/ImGuiLib.hpp"
 
 
 namespace Voxymore::Core
@@ -23,10 +24,7 @@ namespace Voxymore::Core
 			VXM_CORE_WARNING("We didn't found the field '{0}'. Initializing it at {1}", "PrimitiveType", PrimitiveMesh::GetTypeString(pc.PrimitiveType));
 		}
 
-		auto MaterialNode = node["Material"];
-		if (m_Mesh && MaterialNode.IsDefined()) {
-			m_Mesh->GetMaterial()->Deserialize(MaterialNode);
-		}
+		m_Material = node["Material"].as<MaterialField>();
 	}
 
 	void PrimitiveComponent::SerializeComponent(YAML::Emitter &out)
@@ -35,11 +33,7 @@ namespace Voxymore::Core
 		auto& pc = *this;
 
 		out << KEYVAL("PrimitiveType", pc.PrimitiveType);
-		if(m_Mesh) {
-			out << KEYVAL("Material", YAML::BeginMap);
-			m_Mesh->GetMaterial()->Serialize(out);
-			out << YAML::EndMap;
-		}
+		out << KEYVAL("Material", m_Material);
 	}
 
 	bool PrimitiveComponent::OnImGuiRender()
@@ -72,10 +66,7 @@ namespace Voxymore::Core
 			ImGui::EndCombo();
 		}
 
-		if(m_Mesh)
-		{
-			m_Mesh->GetMaterial()->OnImGui();
-		}
+		changed |= ImGuiLib::DrawAssetField("Material", &m_Material);
 
 		return changed;
 	}
@@ -83,7 +74,7 @@ namespace Voxymore::Core
 	void PrimitiveComponent::Load()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Mesh = PrimitiveMesh::CreateOrphan(PrimitiveType);
+		m_Mesh = PrimitiveMesh::CreateOrphan(PrimitiveType, m_Material);
 
 		m_IsDirty = false;
 	}
@@ -92,6 +83,12 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_Mesh != nullptr;
+	}
+
+	bool PrimitiveComponent::IsValid() const
+	{
+		VXM_PROFILE_FUNCTION();
+		return IsLoaded() && m_Material;
 	}
 
 	Ref<Mesh> PrimitiveComponent::GetMesh()

@@ -76,7 +76,7 @@ namespace Voxymore::Core
 	private:
 		//TODO: Replace the systems name by UUID.
 		std::unordered_map<std::string, Ref<System>> s_Systems;
-		std::unordered_map<std::string, std::vector<UUID>> s_SystemToScene;
+		std::unordered_map<std::string, std::vector<AssetField<Scene>>> s_SystemToScene;
 		std::unordered_map<std::string, bool> s_SystemEnabled;
 		UUID m_OnProjectLoadId;
 		static SystemManager* s_SystemManager;
@@ -98,13 +98,13 @@ namespace Voxymore::Core
 		static void SetActive(const std::string& systemName, bool enable);
 		static void DeleteSystem(const std::string& systemName);
 
-		static void AddSceneToSystem(const std::string& systemName, UUID sceneId);
-		static void AddSceneToSystemIfNotExist(const std::string& systemName, UUID sceneId);
-		static void RemoveSceneFromSystem(const std::string& systemName, UUID sceneId);
+		static void AddSceneToSystem(const std::string& systemName, AssetField<Scene> sceneId);
+		static void AddSceneToSystemIfNotExist(const std::string& systemName, AssetField<Scene> sceneId);
+		static void RemoveSceneFromSystem(const std::string& systemName, AssetField<Scene> sceneId);
 
-		static std::vector<UUID>& GetSystemScenes(const std::string& name);
+		static std::vector<AssetField<Scene>>& GetSystemScenes(const std::string& name);
 		static Ref<System> GetSystem(const std::string& name);
-		static std::vector<Ref<System>> GetSystems(UUID sceneId);
+		static std::vector<Ref<System>> GetSystems(AssetField<Scene> sceneId);
 		static std::vector<std::string> GetSystemsName();
 	private:
 		static void ReloadSystems();

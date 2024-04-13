@@ -17,8 +17,9 @@ namespace Voxymore::Core
 	public:
 		inline virtual ~AssetManagerBase() {}
 
-		virtual bool IsAssetHandleValid(AssetHandle handle) const = 0;
-		virtual bool IsAssetLoaded(AssetHandle handle) const = 0;
+		[[nodiscard]] virtual bool IsAssetHandleValid(AssetHandle handle) const = 0;
+		[[nodiscard]] virtual bool IsAssetLoaded(AssetHandle handle) const = 0;
+		[[nodiscard]] virtual AssetType GetAssetType(AssetHandle handle) const = 0;
 		virtual Ref<Asset> GetAsset(AssetHandle handle) = 0;
 	};
 

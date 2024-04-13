@@ -20,12 +20,19 @@ namespace Voxymore::Core
 		None = 0,
 		Scene,
 		Texture2D,
+		CubeMap,
+		ShaderSource,
 		Shader,
 		Material,
+		Model,
+		Mesh,
 	};
 
-	std::string_view AssetTypeToString(AssetType type);
-	AssetType AssetTypeFromString(std::string_view assetType);
+	std::string AssetTypeToString(AssetType type);
+	AssetType AssetTypeFromString(const std::string& assetType);
+	bool TryAssetTypeFromString(const std::string& assetType, AssetType& type);
+
+	std::string AssetTypeToPayloadID(AssetType assetType);
 
 	class Asset
 	{
@@ -35,3 +42,4 @@ namespace Voxymore::Core
 	};
 
 } // namespace Voxymore::Core
+

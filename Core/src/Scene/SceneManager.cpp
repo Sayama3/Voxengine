@@ -18,14 +18,6 @@ namespace Voxymore::Core
 		s_Scenes[id] = scene;
 		return scene;
 	}
-	Ref<Scene> SceneManager::CreateScene(UUID id)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id);
-		Ref<Scene> scene = CreateRef<Scene>(id);
-		s_Scenes[id] = scene;
-		return scene;
-	}
 	Ref<Scene> SceneManager::CreateScene(const std::string& name)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -35,34 +27,26 @@ namespace Voxymore::Core
 		s_Scenes[id] = scene;
 		return scene;
 	}
-	Ref<Scene> SceneManager::CreateScene(UUID id, const std::string& name)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id);
-		Ref<Scene> scene = CreateRef<Scene>(id, name);
-		s_Scenes[id] = scene;
-		return scene;
-	}
 
-	Ref<Scene> SceneManager::CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height)
-	{
-		VXM_PROFILE_FUNCTION();
-		Ref<Scene> scene = CreateRef<Scene>();
-		scene->SetViewportSize(width, height);
-		SceneSerializer serializer(scene);
-		serializer.Deserialize(filepath.string());
-		UUID id = scene->GetID();
-		if(s_Scenes.contains(id))
-		{
-			VXM_CORE_WARNING("The scene id {0} is already loaded. Not creating a new scene.");
-			return s_Scenes[id];
-		}
-		else
-		{
-			s_Scenes[id] = scene;
-			return scene;
-		}
-	}
+//	Ref<Scene> SceneManager::CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height)
+//	{
+//		VXM_PROFILE_FUNCTION();
+//		Ref<Scene> scene = CreateRef<Scene>();
+//		scene->SetViewportSize(width, height);
+//		SceneSerializer serializer(scene);
+//		serializer.Deserialize(filepath.string());
+//		UUID id = scene->GetID();
+//		if(s_Scenes.contains(id))
+//		{
+//			VXM_CORE_WARNING("The scene id {0} is already loaded. Not creating a new scene.");
+//			return s_Scenes[id];
+//		}
+//		else
+//		{
+//			s_Scenes[id] = scene;
+//			return scene;
+//		}
+//	}
 
 	Ref<Scene> SceneManager::GetScene(UUID id)
 	{
@@ -81,7 +65,7 @@ namespace Voxymore::Core
 	void SceneManager::AddScene(Ref<Scene> scene)
 	{
 		VXM_PROFILE_FUNCTION();
-		UUID id = scene->GetID();
+		UUID id = scene->id();
 		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene {0} exist.", id);
 		s_Scenes[id] = scene;
 	}

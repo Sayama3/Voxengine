@@ -7,20 +7,21 @@
 #include "Asset.hpp"
 #include "AssetMetadata.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
-#include "Importers/TextureImporter.hpp"
-#include <map>
+#include <unordered_map>
+#include <any>
 
 namespace Voxymore::Core
 {
 	using AssetImportFunction = std::function<Ref<Asset>(const AssetMetadata&)>;
+	using AssetDetectorFunction = std::function<bool(const Path&)>;
 	class AssetImporter
 	{
 	public:
+		static AssetType GetAssetType(const Path& path);
 		static Ref<Asset> ImportAsset(const AssetMetadata& metadata);
-	public:
-		static inline std::map<AssetType, AssetImportFunction> AssetLoaders = {
-				{AssetType::Texture2D, TextureImporter::ImportTexture2D},
-		};
+	private:
+		static std::unordered_map<AssetType, AssetImportFunction> AssetLoaders;
+		static std::unordered_map<AssetType, AssetDetectorFunction> AssetDetectors;
 	};
 
 } // namespace Voxymore::Core

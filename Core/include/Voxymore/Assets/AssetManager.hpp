@@ -15,12 +15,24 @@ namespace Voxymore::Core
 	class AssetManager
 	{
 	public:
-		template<typename T>
-		static Ref<T> GetAssetAs(AssetHandle handle)
+		inline static Ref<Asset> GetAsset(AssetHandle handle)
 		{
 			VXM_PROFILE_FUNCTION();
-			Ref<Asset> asset = Project::GetActive()->GetAssetManager()->GetAsset(handle);
+			return Project::GetActive()->GetAssetManager()->GetAsset(handle);
+		}
+
+		template<typename T>
+		inline static Ref<T> GetAssetAs(AssetHandle handle)
+		{
+			VXM_PROFILE_FUNCTION();
+			Ref<Asset> asset = GetAsset(handle);
 			return CastPtr<T>(asset);
+		}
+
+		inline static bool IsAssetHandleValid(AssetHandle handle)
+		{
+			VXM_PROFILE_FUNCTION();
+			return Project::GetActive()->GetAssetManager()->IsAssetHandleValid(handle);
 		}
 	};
 
