@@ -6,6 +6,7 @@
 
 #define MAX_LIGHT_COUNT 20
 #define EPSILON 0.1
+#define NUM_CONTROL_POINTS_MAX 31*3
 
 struct TextureInfo
 {
@@ -91,7 +92,9 @@ layout(std140, binding = 3) uniform MaterialParameters
 
 layout(std140, binding = 4) uniform CurveParameters
 {
+    vec4 u_ControlPoints[NUM_CONTROL_POINTS_MAX];
     int u_NumberOfSegment;
+    int u_NumberControlPoint; // 4 by default.
 };
 
 layout(vertices = 4) out;
@@ -100,8 +103,15 @@ void main() {
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
     // We only want one line to be created, so one.
-    gl_TessLevelOuter[0] = 1.0;
+    int numberOfLine =  u_NumberOfSegment%64;
+    if(numberOfLine == 0) {
+        numberOfLine = u_NumberOfSegment / 64;
+    } else {
+        numberOfLine = u_NumberOfSegment / 64 + 1;
+    }
+
+    gl_TessLevelOuter[0] = float(numberOfLine);
 
     // The number of segment we want to subdivise out line into.
-    gl_TessLevelOuter[1] = float(u_NumberOfSegment);
+    gl_TessLevelOuter[1] = float(u_NumberOfSegment/numberOfLine);
 }

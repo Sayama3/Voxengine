@@ -7,6 +7,8 @@
 #define MAX_LIGHT_COUNT 20
 #define EPSILON 0.1
 
+#define NUM_CONTROL_POINTS_MAX 31*3
+
 struct TextureInfo
 {
     int Index;
@@ -91,23 +93,41 @@ layout(std140, binding = 3) uniform MaterialParameters
 
 layout(std140, binding = 4) uniform CurveParameters
 {
+    vec4 u_ControlPoints[NUM_CONTROL_POINTS_MAX];
     int u_NumberOfSegment;
     int u_NumberControlPoint; // 4 by default.
 };
+
+vec3 GetControlPoint(int i)
+{
+    i = min(i, NUM_CONTROL_POINTS_MAX);
+    int index = int(gl_in[i/3].gl_Position[i%3]);
+    return u_ControlPoints[index].xyz;
+}
 
 layout(isolines) in;
 
 
 void main() {
-    float t = gl_TessCoord.x; // Valeur de t variant de 0 à 1 pour le calcul de la position sur la courbe
+    int numberOfLine =  u_NumberOfSegment%64;
+    if(numberOfLine == 0) {
+        numberOfLine = u_NumberOfSegment / 64;
+    } else {
+        numberOfLine = u_NumberOfSegment / 64 + 1;
+    }
+    int numberOfSegment = u_NumberOfSegment/numberOfLine;
+    float pas = 1.0/float(numberOfLine);
+    float u = gl_TessCoord.x;
+    float v = gl_TessCoord.y;
+    float t = (1.0-v)*u + v*(u+pas); // Valeur de t variant de 0 à 1 pour le calcul de la position sur la courbe
 
 
-    vec3 tmp[32];
-    int count = min(32, u_NumberControlPoint);
+    vec3 tmp[NUM_CONTROL_POINTS_MAX];
+    int count = min(NUM_CONTROL_POINTS_MAX, u_NumberControlPoint);
 
     for(int i = 0; i < count; i++)
     {
-        tmp[i] = gl_in[i].gl_Position.xyz;
+        tmp[i] = GetControlPoint(i);
     }
 
     // Application de l'algorithme de De Casteljau

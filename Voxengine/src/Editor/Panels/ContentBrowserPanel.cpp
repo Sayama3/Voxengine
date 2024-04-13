@@ -114,9 +114,17 @@ layout(std140, binding = 3) uniform MaterialParameters
 
 layout(std140, binding = 4) uniform CurveParameters
 {
+    vec4 u_ControlPoints[NUM_CONTROL_POINTS_MAX];
     int u_NumberOfSegment;
     int u_NumberControlPoint; // 4 by default.
 };
+
+vec3 GetControlPoint(int i)
+{
+    i = min(i, NUM_CONTROL_POINTS_MAX);
+    int index = int(gl_in[i/4].gl_Position[i%4]);
+    return u_ControlPoints[index].xyz;
+}
 
 
 void main() {

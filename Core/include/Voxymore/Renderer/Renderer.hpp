@@ -20,86 +20,87 @@
 
 #define MAX_LIGHT_COUNT 20
 
-namespace Voxymore {
-	namespace Core {
 
-		struct RendererData
+namespace Voxymore::Core {
+
+	struct RendererData
+	{
+		// TODO: Add Normal Matrix
+		// TODO: Add MVP Matrix
+		// Both Previous todo are to reduce the load on the GPU side.
+		//  But it might need a bit of checking and more data to know if it's worth.
+
+		struct CameraData
 		{
-			// TODO: Add Normal Matrix
-			// TODO: Add MVP Matrix
-			// Both Previous todo are to reduce the load on the GPU side.
-			//  But it might need a bit of checking and more data to know if it's worth.
-
-			struct CameraData
-			{
-				glm::mat4 ViewProjectionMatrix;
-				glm::vec4 CameraPosition;
-				glm::vec4 CameraDirection;
-			};
-			struct ModelData
-			{
-				inline ModelData() = default;
-				inline ~ModelData() = default;
-				ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId);
-				glm::mat4 TransformMatrix;
-				glm::mat4 NormalMatrix;
-				int EntityId;
-			};
-
-			struct LightData
-			{
-				Light lights[MAX_LIGHT_COUNT];
-				int lightCount;
-			};
-
-			struct CurveParameters
-			{
-				int NumberOfSegment;
-				int NumberOfControlPoint;
-			};
-
-			CameraData CameraBuffer;
-			ModelData ModelBuffer;
-			LightData LightBuffer;
-			CurveParameters CurveBuffer;
-			Ref<UniformBuffer> CameraUniformBuffer;
-			Ref<UniformBuffer> ModelUniformBuffer;
-			Ref<UniformBuffer> LightUniformBuffer;
-			Ref<UniformBuffer> MaterialUniformBuffer;
-			Ref<UniformBuffer> CurveParametersBuffer;
-			std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
-			std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
+			glm::mat4 ViewProjectionMatrix;
+			glm::vec4 CameraPosition;
+			glm::vec4 CameraDirection;
+		};
+		struct ModelData
+		{
+			inline ModelData() = default;
+			inline ~ModelData() = default;
+			ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId);
+			glm::mat4 TransformMatrix;
+			glm::mat4 NormalMatrix;
+			int EntityId;
 		};
 
-		class Renderer {
-		private:
-			static void Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-		public:
-			static void Init();
-			static void Shutdown();
-			static void OnWindowResize(uint32_t width, uint32_t height);
+		struct LightData
+		{
+			Light lights[MAX_LIGHT_COUNT];
+			int lightCount;
+		};
 
-			static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
-			static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {});
-			static void EndScene();
+		struct CurveParameters
+		{
+			std::array<glm::vec4, 31*3> ControlPoints;
+			int NumberOfSegment;
+			int NumberOfControlPoint;
+		};
 
-			[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
-			static void Submit(Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-			[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
-			static void Submit(Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		CameraData CameraBuffer;
+		ModelData ModelBuffer;
+		LightData LightBuffer;
+		CurveParameters CurveBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
+		Ref<UniformBuffer> ModelUniformBuffer;
+		Ref<UniformBuffer> LightUniformBuffer;
+		Ref<UniformBuffer> MaterialUniformBuffer;
+		Ref<UniformBuffer> CurveParametersBuffer;
+		std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
+		std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
+	};
 
-			static void Submit(const MeshGroup& mesh, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-			static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-			static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+	class Renderer {
+	private:
+		static void Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+	public:
+		static void Init();
+		static void Shutdown();
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
+		static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
+		static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {});
+		static void EndScene();
+
+		[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
+		static void Submit(Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
+		static void Submit(Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+
+		static void Submit(const MeshGroup& mesh, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 
-			static void Submit(Ref<Material> material, const std::vector<Vertex>& bezierControlPoints, int lineDefintion = 1000, int entityId = -1);
-			static void Submit(Ref<Material> material, const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefintion = 1000, int entityId = -1);
+		static void Submit(Ref<Material> material, const std::vector<glm::vec3>& bezierControlPoints, int lineDefintion = 1000, int entityId = -1);
+		static void Submit(Ref<Material> material, const glm::vec3& controlPoint0, const glm::vec3& controlPoint1, const glm::vec3& controlPoint2, const glm::vec3& controlPoint3, int lineDefintion = 1000, int entityId = -1);
 
-			inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
-		private:
-			//            static Scope<RendererData> s_Data;
-		};
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+	private:
+		//            static Scope<RendererData> s_Data;
+	};
 
-	} // Voxymore
-} // Core
+} // Voxymore
+// Core

@@ -77,7 +77,7 @@ namespace Voxymore::Core
 
 		changed |= ImGui::DragInt("Definition", &Definition, 1, 0, INT_MAX);
 
-		if(ImGui::DragInt("Control Points", &m_ControlPoints, 1, 0, 30))
+		if(ImGui::DragInt("Control Points", &m_ControlPoints, 1, 0, (3*31)-2))
 		{
 			changed = true;
 			ControlPointsChanged();
@@ -126,6 +126,14 @@ namespace Voxymore::Core
 			}
 		}
 
+		if(ImGui::Button("Set Points Auto")) {
+			auto count = m_Points.size() * GetTotalControlPoints();
+			for (int i = 0; i < m_Points.size(); ++i) {
+				m_Points[i].x = i;
+				m_Points[i].y = float(m_Points.size()) * ((((float)UUID()) / (float)UINT64_MAX) * 2 - 1);
+				m_Points[i].z = 0;//float(m_Points.size()) * ((((float)UUID()) / (float)UINT64_MAX) * 2 - 1);
+			}
+		}
 		if(ImGui::CollapsingHeader("Points"))
 		{
 			ImGui::PushID("Points");

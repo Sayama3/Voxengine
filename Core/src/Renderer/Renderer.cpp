@@ -248,26 +248,36 @@ namespace Voxymore::Core {
 		}
 	}
 
-	void Renderer::Submit(Ref<Material> material, const std::vector<Vertex>& bezierControlPoints, int lineDefinition, int entityId)
+	void Renderer::Submit(Ref<Material> material, const std::vector<glm::vec3>& bezierControlPoints, int lineDefinition, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(bezierControlPoints.size() <= 32, "The shader might not support more than a 1000 control point...")
+		VXM_CORE_ASSERT(bezierControlPoints.size() <= s_Data.CurveBuffer.ControlPoints.size(), "The shader might won't support more than a {0} control point...", s_Data.CurveBuffer.ControlPoints.size());
+
+
+		uint32_t count = std::min(s_Data.CurveBuffer.ControlPoints.size(), bezierControlPoints.size());
+
+		std::vector<Vertex> vertices((count/3) + (count%3 ? 1 : 0));
+
+		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
+		s_Data.CurveBuffer.NumberOfControlPoint = static_cast<int>(bezierControlPoints.size());
+		for (int i = 0; i < count; ++i) {
+			s_Data.CurveBuffer.ControlPoints[i] = glm::vec4(bezierControlPoints[i],1);
+			vertices[i/3].Position[i%3] = float(i);
+		}
 		std::vector<uint32_t> indices;
 		indices.reserve((bezierControlPoints.size()-1)*2);
 		for (uint32_t i = 0; i < bezierControlPoints.size() - 1; ++i) {
 			indices.push_back(i);
 			indices.push_back(i+1);
 		}
-		Ref<Mesh> mesh = CreateRef<Mesh>(bezierControlPoints, indices);
+		Ref<Mesh> mesh = CreateRef<Mesh>(vertices, indices);
+
 		mesh->SetMaterial(material);
 		mesh->SetDrawMode(DrawMode::Lines);
 
 		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
 		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
 		s_Data.ModelBuffer.EntityId = entityId;
-
-		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
-		s_Data.CurveBuffer.NumberOfControlPoint = static_cast<int>(bezierControlPoints.size());
 
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 		s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
@@ -279,10 +289,10 @@ namespace Voxymore::Core {
 			material->Bind();
 			s_BindedShader = material->GetShaderHandle();
 		}
-		RenderCommand::DrawPatches(bezierControlPoints.size());
+		RenderCommand::DrawPatches(vertices.size());
 	}
 
-	void Renderer::Submit(Ref<Material> material, const Vertex& controlPoint0, const Vertex& controlPoint1, const Vertex& controlPoint2, const Vertex& controlPoint3, int lineDefinition, int entityId)
+	void Renderer::Submit(Ref<Material> material, const glm::vec3& controlPoint0, const glm::vec3& controlPoint1, const glm::vec3& controlPoint2, const glm::vec3& controlPoint3, int lineDefinition, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
 		Submit(material, {controlPoint0, controlPoint1, controlPoint2, controlPoint3}, lineDefinition, entityId);

@@ -267,9 +267,9 @@ namespace Voxymore::Core
 				if(!bezier.m_Material) continue;
 
 				Mat4 trs = transform.GetTransform();
-				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				std::vector<glm::vec3> controlPoints = {glm::vec3(), glm::vec3(), glm::vec3(), glm::vec3()};
 				for (int i = 0; i < 4; ++i) {
-					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
+					controlPoints[i] = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
 				Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
 			}
@@ -282,11 +282,11 @@ namespace Voxymore::Core
 
 				auto points = bezier.GetWorldPoints(transform.GetTransform());
 
-				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
+				std::vector<glm::vec3> controlPoints(bezier.GetTotalControlPoints());
 				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
 				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
 					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j].Position = points[i+j];
+						controlPoints[j] = points[i+j];
 					}
 					Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
 				}
@@ -354,9 +354,9 @@ namespace Voxymore::Core
 				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
 				if(!bezier.m_Material) continue;
 				Mat4 trs = transform.GetTransform();
-				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
+				std::vector<glm::vec3> controlPoints = {glm::vec3(), glm::vec3(), glm::vec3(), glm::vec3()};
 				for (int i = 0; i < 4; ++i) {
-					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
+					controlPoints[i] = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
 				}
 				Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
 			}
@@ -369,11 +369,11 @@ namespace Voxymore::Core
 
 				auto points = bezier.GetWorldPoints(transform.GetTransform());
 
-				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
+				std::vector<glm::vec3> controlPoints(bezier.GetTotalControlPoints());
 				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
 				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
 					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j].Position = points[i+j];
+						controlPoints[j] = points[i+j];
 					}
 					Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
 				}
