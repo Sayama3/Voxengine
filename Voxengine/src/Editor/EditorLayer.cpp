@@ -669,7 +669,6 @@ namespace Voxymore::Editor {
     {
         VXM_INFO("Unloading and Delete Previous Scene");
 
-        VXM_ASSERT(SceneManager::HasScene(id), "No scene with the ID '{0}'", id);
         m_ActiveScene = AssetManager::GetAssetAs<Scene>(id);
 		if(m_ActiveScene)
 		{
