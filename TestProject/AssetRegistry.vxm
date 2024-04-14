@@ -62,6 +62,12 @@ AssetRegistry:
     - Handle: 10574093062912526717
       FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
       Type: AssetType::ShaderSource
+    - Handle: 11335829010457474843
+      FilePath: {Source: 2, Path: Models\Cube_W.glb}
+      Type: AssetType::Model
+    - Handle: 11600000519888133035
+      FilePath: {Source: 2, Path: Models\cube_Color.gltf}
+      Type: AssetType::Model
     - Handle: 12478498007980619411
       FilePath: {Source: 2, Path: ShaderSources\BezierPascal.tessev}
       Type: AssetType::ShaderSource

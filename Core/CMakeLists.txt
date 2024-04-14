@@ -203,7 +203,7 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/ImGui/SceneImGui.cpp
         src/Assets/ImGui/ShaderImGui.cpp
         src/Assets/ImGui/TextureImGui.cpp
-        include/Voxymore/Components/BSplinesComponents.cpp
+        src/Components/BSplinesComponents.cpp
         include/Voxymore/Components/BSplinesComponents.hpp
 )
 

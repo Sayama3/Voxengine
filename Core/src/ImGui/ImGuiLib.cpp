@@ -296,6 +296,8 @@ namespace Voxymore
 			return ImGui::InputTextWithHint(label, hint, (char*)str->c_str(), str->capacity() + 1, flags, InputTextCallback, &cb_user_data);
 		}
 
+
+
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
