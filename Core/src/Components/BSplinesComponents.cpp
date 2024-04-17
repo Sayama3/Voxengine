@@ -26,8 +26,8 @@ namespace Voxymore::Core
 		changed |= ImGuiLib::DrawAssetField("Material", &m_Material);
 		changed |= ImGui::DragInt("Degree", &m_Degree, 1, 1, INT_MAX);
 		changed |= ImGuiLib::DrawVector<glm::vec3>("Points", &m_Points, [](const char* c, glm::vec3* p)->bool{return ImGui::DragFloat3(c,glm::value_ptr(*p));}, glm::vec3(0), m_Degree+1, UINT64_MAX);
-		changed |= ImGuiLib::DrawVector<float>("Weights", &m_Weight, VXM_BIND_FN(ImGui::DragFloat), 0.0f, m_Points.size(), m_Points.size());
-		changed |= ImGuiLib::DrawVector<int>("Nodes", &m_Nodes, VXM_BIND_FN(ImGui::DragInt), 0, m_Points.size() - m_Degree, m_Points.size() - m_Degree);
+		changed |= ImGuiLib::DrawVector<float>("Weights", &m_Weight, VXM_BIND_FN(ImGui::DragFloat), 1.0f, m_Points.size(), m_Points.size());
+		changed |= ImGuiLib::DrawVector<int>("Nodes", &m_Nodes, VXM_BIND_FN(ImGui::DragInt), m_Nodes.size(), m_Points.size() - m_Degree, m_Points.size() - m_Degree);
 
 //		int k = m_Points.size();
 //		int m = m_Degree;
