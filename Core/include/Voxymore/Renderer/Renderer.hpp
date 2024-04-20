@@ -36,6 +36,7 @@ namespace Voxymore::Core {
 			glm::vec4 CameraPosition;
 			glm::vec4 CameraDirection;
 		};
+
 		struct ModelData
 		{
 			inline ModelData() = default;
@@ -54,9 +55,13 @@ namespace Voxymore::Core {
 
 		struct CurveParameters
 		{
-			std::array<glm::vec4, 31*3> ControlPoints;
-			int NumberOfSegment;
-			int NumberOfControlPoint;
+			// Using 96 as it's divisible by 4 so (31*3) round up to be a multiple of 4.
+			std::array<glm::vec4, 96> ControlPoints;
+			std::array<float, 96> Weigths;
+			int NumberOfSegment = 0;
+			int NumberOfControlPoint = 0;
+			int Degree = 0;
+			int NumberOfKnot = 0;
 		};
 
 		CameraData CameraBuffer;
@@ -96,6 +101,7 @@ namespace Voxymore::Core {
 
 		static void Submit(Ref<Material> material, const std::vector<glm::vec3>& bezierControlPoints, int lineDefintion = 1000, int entityId = -1);
 		static void Submit(Ref<Material> material, const glm::vec3& controlPoint0, const glm::vec3& controlPoint1, const glm::vec3& controlPoint2, const glm::vec3& controlPoint3, int lineDefintion = 1000, int entityId = -1);
+		static void Submit(Ref<Material> material, int degree, const std::vector<glm::vec3>& points, const std::vector<float>& nodes, const std::vector<float>& weights, int lineDefinition = 1000, int entityId = -1);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

@@ -27,6 +27,7 @@ namespace Voxymore::Core
 
 		[[nodiscard]] inline Ref<T> GetAsset() const {
 			VXM_CORE_ASSERT(AssetManager::IsAssetHandleValid(Handle), "The handle is not valid.");
+			VXM_PROFILE_FUNCTION();
 			return AssetManager::GetAssetAs<T>(Handle);
 		}
 
@@ -43,6 +44,7 @@ namespace Voxymore::Core
 		}
 
 		[[nodiscard]] inline bool IsValid() const {
+			VXM_PROFILE_FUNCTION();
 			return HasHandle() && AssetManager::IsAssetHandleValid(Handle);
 		}
 

@@ -28,13 +28,16 @@ namespace Voxymore::Core
 		bool OnImGuiRender(Entity e);
 		bool OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix);
 
-		bool IsValid() const;
-	private:
+		[[nodiscard]] bool IsValid() const;
+		[[nodiscard]] std::vector<glm::vec3> GetWorldPoints(const Mat4& transform) const;
+	public:
 		MaterialField m_Material;
 		int m_Degree = 1; // Must be superior or equal to one.
+		int m_Definition = 1000;
 		std::vector<glm::vec3> m_Points;
-		std::vector<int> m_Nodes; // count must be m_Points.size() - m_Degree
+		std::vector<float> m_Nodes; // count must be m_Points.size() - m_Degree
 		std::vector<float> m_Weight; // The number of points is equal to
+		std::vector<glm::mat4> m_Matrices = {};
 	};
 
 	VXM_CREATE_COMPONENT(BSplinesComponents);

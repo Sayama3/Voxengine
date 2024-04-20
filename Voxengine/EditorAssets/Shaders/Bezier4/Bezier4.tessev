@@ -7,7 +7,8 @@
 #define MAX_LIGHT_COUNT 20
 #define EPSILON 0.1
 
-#define NUM_CONTROL_POINTS_MAX 31*3
+// Using 96 as it's "31*3" rounded up to be a multiple of 4.
+#define NUM_CONTROL_POINTS_MAX 96
 
 struct TextureInfo
 {
@@ -94,9 +95,18 @@ layout(std140, binding = 3) uniform MaterialParameters
 layout(std140, binding = 4) uniform CurveParameters
 {
     vec4 u_ControlPoints[NUM_CONTROL_POINTS_MAX];
+    vec4 u_Weights[NUM_CONTROL_POINTS_MAX/4];
     int u_NumberOfSegment;
     int u_NumberControlPoint; // 4 by default.
+    int u_Degree; // min should be 1
 };
+
+float GetWeight(int i)
+{
+    int a = i/4;
+    int b = i%4;
+    return u_Weights[a][b];
+}
 
 vec3 GetControlPoint(int i)
 {

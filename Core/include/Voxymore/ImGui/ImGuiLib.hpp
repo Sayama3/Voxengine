@@ -16,6 +16,8 @@ namespace Voxymore::Core
 	class ImGuiLib
 	{
 	public:
+		static inline constexpr ImVec4 c_RedColor = ImVec4 {0.8f, 0.1f, 0.15f, 1.0f};
+	public:
 		static bool DrawVec3ControlAdvanced(const std::string& label, Vec3& values, float step = 0.1f, Real min = 0, Real max = 0, const std::string& format = "%.3f", float resetValue = 0.0f, float columnWidth = 100.0f);
 		static bool DrawVec2ControlAdvanced(const std::string& label, Vec2& values, float step = 0.1f, Real min = 0, Real max = 0, const std::string& format = "%.3f", float resetValue = 0.0f, float columnWidth = 100.0f);
 		inline static bool DrawVec3Control(const std::string& label, Vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
@@ -150,7 +152,7 @@ namespace Voxymore::Core
 				ImGui::SameLine();
 				changed |= drawFunc(name, (T *) &(list->at(i)));
 				ImGui::SameLine();
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_Button, c_RedColor);
 				ImGui::BeginDisabled(hasMinMax && list->size() <= minElement);
 				if (ImGui::Button(" X ")) {
 					list->erase(list->begin() + i);

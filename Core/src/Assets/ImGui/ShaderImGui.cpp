@@ -59,6 +59,15 @@ namespace Voxymore::Core
 			//TODO: Auto Reload ?
 		}
 
+		ImGui::SameLine();
+
+		if (ImGui::Button("Reload")) {
+			auto assetManager = Project::GetActive()->GetEditorAssetManager();
+			auto path = assetManager->GetFilePath(shaderSource->Handle);
+			shaderSource->Source = FileSystem::ReadFileAsString(path);
+			//TODO: Auto Reload ?
+		}
+
 		return changed;
 	}
 
