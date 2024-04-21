@@ -99,30 +99,15 @@ layout(std140, binding = 4) uniform CurveParameters
     int u_NumberOfSegment;
     int u_NumberControlPoint; // 4 by default.
     int u_Degree; // min should be 1
+    int u_NumberOfKnot; // min should be 1
 };
-
-float GetWeight(int i)
-{
-    int a = i/4;
-    int b = i%4;
-    return u_Weights[a][b];
-}
-
 layout(vertices = 4) out;
 
 void main() {
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
-    // We only want one line to be created, so one.
-    int numberOfLine =  u_NumberOfSegment%64;
-    if(numberOfLine == 0) {
-        numberOfLine = u_NumberOfSegment / 64;
-    } else {
-        numberOfLine = u_NumberOfSegment / 64 + 1;
-    }
-
-    gl_TessLevelOuter[0] = float(numberOfLine);
+    gl_TessLevelOuter[0] = float(1);
 
     // The number of segment we want to subdivise out line into.
-    gl_TessLevelOuter[1] = float(u_NumberOfSegment/numberOfLine);
+    gl_TessLevelOuter[1] = float(u_NumberOfSegment);
 }

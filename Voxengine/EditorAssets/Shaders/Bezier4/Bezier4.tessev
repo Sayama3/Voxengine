@@ -99,14 +99,8 @@ layout(std140, binding = 4) uniform CurveParameters
     int u_NumberOfSegment;
     int u_NumberControlPoint; // 4 by default.
     int u_Degree; // min should be 1
+    int u_NumberOfKnot; // min should be 1
 };
-
-float GetWeight(int i)
-{
-    int a = i/4;
-    int b = i%4;
-    return u_Weights[a][b];
-}
 
 vec3 GetControlPoint(int i)
 {
@@ -118,17 +112,8 @@ vec3 GetControlPoint(int i)
 layout(isolines) in;
 
 void main() {
-    int numberOfLine =  u_NumberOfSegment%64;
-    if(numberOfLine == 0) {
-     numberOfLine = u_NumberOfSegment / 64;
-    } else {
-     numberOfLine = u_NumberOfSegment / 64 + 1;
-    }
-    int numberOfSegment = u_NumberOfSegment/numberOfLine;
-    float pas = 1/numberOfLine;
     float u = gl_TessCoord.x;
-    float v = gl_TessCoord.y;
-    float t = (1.0-v)*u + v*(u+pas); // Valeur de t variant de 0 à 1 pour le calcul de la position sur la courbe
+    float t = u;
 
     vec3 p0 = GetControlPoint(0);
     vec3 p1 = GetControlPoint(1);
