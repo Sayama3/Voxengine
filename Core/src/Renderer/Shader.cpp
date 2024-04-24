@@ -13,7 +13,9 @@ namespace Voxymore::Core{
 		VXM_PROFILE_FUNCTION();
 		std::unordered_map<ShaderType, ShaderSourceField> map;
 		for (auto& src : sources) {
-			map.insert_or_assign(src.GetAsset()->Type, src);
+			if(src) {
+				map.insert_or_assign(src.GetAsset()->Type, src);
+			}
 		}
 		return Create(name, map);
 	}

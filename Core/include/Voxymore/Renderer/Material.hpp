@@ -97,7 +97,7 @@ namespace Voxymore::Core {
 		Material(const std::string& name, const ShaderField& shader, const MaterialParameters& parameters);
 		~Material();
 
-		void Bind() const;
+		void Bind(bool bindShader = true) const;
 		void Unbind() const;
 
 		void ChangeShader(AssetHandle shaderHandle);

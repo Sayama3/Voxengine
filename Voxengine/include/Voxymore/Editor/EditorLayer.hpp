@@ -102,10 +102,10 @@ namespace Voxymore::Editor {
 		void SaveSceneAs();
 		void SaveScene();
 		void OpenScene();
-		void OpenScene(AssetHandle id);
 		void OpenScene(const Path& path);
-	public:
 		void OpenScene(const std::filesystem::path& path);
+	public:
+		void OpenScene(AssetHandle id);
 	private:
 
 		void OnScenePlay();

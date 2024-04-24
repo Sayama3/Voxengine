@@ -87,12 +87,19 @@ namespace Voxymore::Core {
 	{
 	}
 
-	void Material::Bind() const
+	void Material::Bind(bool bindShader) const
 	{
         VXM_PROFILE_FUNCTION();
-		if(!m_Shader) return;
-//		VXM_CORE_ASSERT(m_Shader, "The shader is not loaded.");
-		m_Shader.GetAsset()->Bind();
+
+		if (!m_Shader) {
+			VXM_CORE_ERROR("The shader is not valid. Aborting.");
+			return;
+		}
+
+		if(bindShader) {
+			m_Shader.GetAsset()->Bind();
+		}
+
 		for (int i = 0; i < m_Textures.size(); ++i) {
 			if(m_Textures[i])
 			{

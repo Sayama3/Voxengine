@@ -41,12 +41,10 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		bool changed = false;
 
-		auto& pc = *this;
-
 		std::unordered_map<PrimitiveMesh::Type, std::string> strings = PrimitiveMesh::GetTypesString();
 		std::vector<PrimitiveMesh::Type> types = PrimitiveMesh::GetAllTypes();
 
-		PrimitiveMesh::Type current = pc.PrimitiveType;
+		PrimitiveMesh::Type current = PrimitiveType;
 
 		if(ImGui::BeginCombo("Primitive", strings[current].c_str()))
 		{
@@ -56,8 +54,8 @@ namespace Voxymore::Core
 
 				if(ImGui::Selectable(strings[t].c_str(), is_selected))
 				{
-					pc.SetType(t);
-					changed |= pc.IsDirty();
+					SetType(t);
+					changed |= m_IsDirty;
 				}
 
 				if(is_selected) ImGui::SetItemDefaultFocus();
@@ -66,7 +64,12 @@ namespace Voxymore::Core
 			ImGui::EndCombo();
 		}
 
-		changed |= ImGuiLib::DrawAssetField("Material", &m_Material);
+		auto oldHandle = m_Material.GetHandle();
+		if(ImGuiLib::DrawAssetField("Material", &m_Material))
+		{
+			m_IsDirty = m_Material.GetHandle() != oldHandle;
+			changed |= m_IsDirty;
+		}
 
 		return changed;
 	}
