@@ -14,6 +14,7 @@ inline virtual AssetType GetType() const override {return GetStaticType();}
 namespace Voxymore::Core
 {
 	using AssetHandle = UUID;
+	[[maybe_unused]] static inline const AssetHandle NullAssetHandle = AssetHandle(0);
 
 	enum class AssetType : uint16_t
 	{
