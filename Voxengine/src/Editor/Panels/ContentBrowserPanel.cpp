@@ -19,6 +19,10 @@
 using namespace Voxymore::Core;
 namespace fs = std::filesystem;
 
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 static constexpr const char* c_DefaultShader = R"(
 #version 450 core
 
@@ -246,28 +250,28 @@ namespace Voxymore::Editor
 
 			if(ImGui::MenuItem("New Folder")) {
 				ClearFileNameBuffer();
-				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Folder");
+				std::strcpy(m_FileNameBuffer.data(), "New Folder");
 				popupToOpen = PopupToOpen::NewFolder;
 				ImGui::CloseCurrentPopup();
 			}
 
 			if(ImGui::MenuItem("New Source")) {
 				ClearFileNameBuffer();
-				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New ShaderSource");
+				std::strcpy(m_FileNameBuffer.data(), "New ShaderSource");
 				popupToOpen = PopupToOpen::NewShaderSource;
 				ImGui::CloseCurrentPopup();
 			}
 
 			if(ImGui::MenuItem("New Shader")) {
 				ClearFileNameBuffer();
-				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Shader");
+				std::strcpy(m_FileNameBuffer.data(), "New Shader");
 				popupToOpen = PopupToOpen::NewShader;
 				ImGui::CloseCurrentPopup();
 			}
 
 			if(ImGui::MenuItem("New Material")) {
 				ClearFileNameBuffer();
-				strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size(), "New Material");
+				std::strcpy(m_FileNameBuffer.data(), "New Material");
 				popupToOpen = PopupToOpen::NewMaterial;
 				ImGui::CloseCurrentPopup();
 			}
@@ -620,7 +624,7 @@ namespace Voxymore::Editor
 				auto id = "Rename " + filename;
 				if(shouldRename) {
 					ClearFileNameBuffer();
-					strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size() - 1, isDirectory ? filename.c_str() : stem.c_str());
+					std::strcpy(m_FileNameBuffer.data(), isDirectory ? filename.c_str() : stem.c_str());
 					ImGui::OpenPopup(id.c_str());
 				}
 
@@ -628,7 +632,7 @@ namespace Voxymore::Editor
 
 					if(ImGui::Button("Reset")) {
 						ClearFileNameBuffer();
-						strcpy_s(m_FileNameBuffer.data(), m_FileNameBuffer.size() - 1, isDirectory ? filename.c_str() : stem.c_str());
+						std::strcpy(m_FileNameBuffer.data(), isDirectory ? filename.c_str() : stem.c_str());
 					}
 					ImGui::SameLine();
 					ImGui::InputText("File Name", m_FileNameBuffer.data(), m_FileNameBuffer.size());
