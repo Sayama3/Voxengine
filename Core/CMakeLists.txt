@@ -163,10 +163,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
         include/Voxymore/Core/TypeHelpers.hpp
-        src/Components/BezierCurve.cpp
-        include/Voxymore/Components/BezierCurve.hpp
-        src/Components/GenericBezierCurve.cpp
-        include/Voxymore/Components/GenericBezierCurve.hpp
         src/Assets/Asset.cpp
         include/Voxymore/Assets/Asset.hpp
         src/Assets/AssetManager.cpp
@@ -203,8 +199,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/ImGui/SceneImGui.cpp
         src/Assets/ImGui/ShaderImGui.cpp
         src/Assets/ImGui/TextureImGui.cpp
-        src/Components/BSplinesComponents.cpp
-        include/Voxymore/Components/BSplinesComponents.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

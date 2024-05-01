@@ -19,7 +19,6 @@ namespace Voxymore::Core {
 		s_Data.ModelUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ModelData), 1);
 		s_Data.LightUniformBuffer = UniformBuffer::Create(sizeof(RendererData::LightData), 2);
 		s_Data.MaterialUniformBuffer = UniformBuffer::Create(sizeof(MaterialParameters), 3);
-		s_Data.CurveParametersBuffer = UniformBuffer::Create(sizeof(RendererData::CurveParameters), 4);
 
 		RenderCommand::Init();
 	}
@@ -276,124 +275,6 @@ namespace Voxymore::Core {
 				Submit(model, model->GetNode(i), currentTransform, entityId);
 			}
 		}
-	}
-
-	void Renderer::Submit(Ref<Material> material, const std::vector<glm::vec3>& bezierControlPoints, int lineDefinition, int entityId)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(bezierControlPoints.size() <= s_Data.CurveBuffer.ControlPoints.size(), "The shader might won't support more than a {0} control point...", s_Data.CurveBuffer.ControlPoints.size());
-
-
-		uint32_t count = std::min(s_Data.CurveBuffer.ControlPoints.size(), bezierControlPoints.size());
-
-		std::vector<Vertex> vertices((count/3) + (count%3 ? 1 : 0));
-
-		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
-		s_Data.CurveBuffer.NumberOfControlPoint = static_cast<int>(bezierControlPoints.size());
-		for (int i = 0; i < count; ++i) {
-			s_Data.CurveBuffer.ControlPoints[i] = glm::vec4(bezierControlPoints[i],1);
-			vertices[i/3].Position[i%3] = float(i);
-		}
-		std::vector<uint32_t> indices;
-		indices.reserve((bezierControlPoints.size()-1)*2);
-		for (uint32_t i = 0; i < bezierControlPoints.size() - 1; ++i) {
-			indices.push_back(i);
-			indices.push_back(i+1);
-		}
-		Ref<Mesh> mesh = CreateRef<Mesh>(vertices, indices);
-
-		mesh->SetMaterial(material);
-		mesh->SetDrawMode(DrawMode::Lines);
-
-		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.EntityId = entityId;
-
-		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
-
-		MaterialField mat = material;
-		VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle());
-		if(mat != s_BindedMaterial && mat) {
-			s_BindedMaterial = mat;
-			s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-			ShaderField shader = material->GetShaderHandle();
-			VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", material->GetMaterialName(), shader.GetHandle());
-			material->Bind(false);
-			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
-				s_BindedShader = shader;
-			}
-		}
-		mesh->Bind();
-		RenderCommand::DrawPatches(vertices.size());
-	}
-
-	void Renderer::Submit(Ref<Material> material, const glm::vec3& controlPoint0, const glm::vec3& controlPoint1, const glm::vec3& controlPoint2, const glm::vec3& controlPoint3, int lineDefinition, int entityId)
-	{
-		VXM_PROFILE_FUNCTION();
-		Submit(material, {controlPoint0, controlPoint1, controlPoint2, controlPoint3}, lineDefinition, entityId);
-	}
-
-	void Renderer::Submit(Ref<Material> material, int degree, const std::vector<glm::vec3>& points, const std::vector<float>& nodes, const std::vector<float>& weights, int lineDefinition, int entityId)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(points.size() <= s_Data.CurveBuffer.ControlPoints.size(), "The shader might won't support more than a {0} control point...", s_Data.CurveBuffer.ControlPoints.size());
-		VXM_CORE_ASSERT(nodes.size() <= s_Data.CurveBuffer.ControlPoints.size(), "The shader might won't support more than a {0} nodes...", s_Data.CurveBuffer.ControlPoints.size());
-		VXM_CORE_ASSERT(points.size() == weights.size(), "The number of weight and the number of points should be equal.");
-
-		uint32_t controlPointCount = std::min(s_Data.CurveBuffer.ControlPoints.size(), points.size());
-		uint32_t nodeCount = std::min(s_Data.CurveBuffer.ControlPoints.size(), nodes.size());
-
-		std::vector<Vertex> vertices((nodeCount /3) + (nodeCount %3 ? 1 : 0));
-
-		s_Data.CurveBuffer.Degree = degree;
-		s_Data.CurveBuffer.NumberOfSegment = lineDefinition;
-		s_Data.CurveBuffer.NumberOfControlPoint = static_cast<int>(points.size());
-		s_Data.CurveBuffer.NumberOfKnot = static_cast<int>(nodeCount);
-		for (int i = 0; i < controlPointCount; ++i) {
-			s_Data.CurveBuffer.ControlPoints[i] = glm::vec4(points[i],1);
-			s_Data.CurveBuffer.Weigths[i] = weights[i];
-		}
-
-		for (int i = 0; i < nodeCount; ++i) {
-			vertices[i/3].Position[i%3] = float(nodes[i]);
-		}
-
-		std::vector<uint32_t> indices;
-		indices.reserve((nodeCount-1)*2);
-		for (uint32_t i = 0; i < nodeCount - 1; ++i) {
-			indices.push_back(i);
-			indices.push_back(i+1);
-		}
-		Ref<Mesh> mesh = CreateRef<Mesh>(vertices, indices);
-
-		mesh->SetMaterial(material);
-		mesh->SetDrawMode(DrawMode::Lines);
-
-		s_Data.ModelBuffer.TransformMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.NormalMatrix = Math::Identity<Mat4>();
-		s_Data.ModelBuffer.EntityId = entityId;
-
-		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-		s_Data.CurveParametersBuffer->SetData(&s_Data.CurveBuffer, sizeof(RendererData::CurveParameters));
-
-		MaterialField mat = material;
-		VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle());
-		if(mat != s_BindedMaterial && mat) {
-			s_BindedMaterial = mat;
-			s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-			ShaderField shader = material->GetShaderHandle();
-			VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", material->GetMaterialName(), shader.GetHandle());
-			material->Bind(false);
-			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
-				s_BindedShader = shader;
-			}
-		}
-		RenderCommand::DrawPatches(vertices.size());
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

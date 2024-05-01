@@ -53,26 +53,13 @@ namespace Voxymore::Core {
 			int lightCount;
 		};
 
-		struct CurveParameters
-		{
-			// Using 96 as it's divisible by 4 so (31*3) round up to be a multiple of 4.
-			std::array<glm::vec4, 96> ControlPoints;
-			std::array<float, 96> Weigths;
-			int NumberOfSegment = 0;
-			int NumberOfControlPoint = 0;
-			int Degree = 0;
-			int NumberOfKnot = 0;
-		};
-
 		CameraData CameraBuffer;
 		ModelData ModelBuffer;
 		LightData LightBuffer;
-		CurveParameters CurveBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
 		Ref<UniformBuffer> ModelUniformBuffer;
 		Ref<UniformBuffer> LightUniformBuffer;
 		Ref<UniformBuffer> MaterialUniformBuffer;
-		Ref<UniformBuffer> CurveParametersBuffer;
 		std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
 		std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
 	};
@@ -98,10 +85,6 @@ namespace Voxymore::Core {
 		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-
-		static void Submit(Ref<Material> material, const std::vector<glm::vec3>& bezierControlPoints, int lineDefintion = 1000, int entityId = -1);
-		static void Submit(Ref<Material> material, const glm::vec3& controlPoint0, const glm::vec3& controlPoint1, const glm::vec3& controlPoint2, const glm::vec3& controlPoint3, int lineDefintion = 1000, int entityId = -1);
-		static void Submit(Ref<Material> material, int degree, const std::vector<glm::vec3>& points, const std::vector<float>& nodes, const std::vector<float>& weights, int lineDefinition = 1000, int entityId = -1);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

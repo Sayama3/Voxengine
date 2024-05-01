@@ -21,7 +21,7 @@ namespace Voxymore::Core
 	{
 		//TODO: Import using assimp ?
 		static const inline std::vector<std::string> ModelExtensions = {VXM_EXTENSION_GLB, VXM_EXTENSION_GLTF};
-		static constexpr inline std::string MeshExtension = ".vxm_mesh";
+		static inline const char* const MeshExtension = ".vxm_mesh";
 	public:
 		static bool IsMesh(const std::filesystem::path& path);
 		static void ExportEditorMesh(const AssetMetadata& metadata, Ref<Mesh> mesh);

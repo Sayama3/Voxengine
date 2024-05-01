@@ -7,9 +7,6 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
-#include "Voxymore/Components/BezierCurve.hpp"
-#include "Voxymore/Components/GenericBezierCurve.hpp"
-#include "Voxymore/Components/BSplinesComponents.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
@@ -262,45 +259,6 @@ namespace Voxymore::Core
 
 		Renderer::BeginScene(camera, lights);
 		{
-			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bezierView) {
-				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
-				if(!bezier.m_Material) continue;
-
-				Mat4 trs = transform.GetTransform();
-				std::vector<glm::vec3> controlPoints = {glm::vec3(), glm::vec3(), glm::vec3(), glm::vec3()};
-				for (int i = 0; i < 4; ++i) {
-					controlPoints[i] = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
-				}
-				Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
-			}
-
-			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for(auto entity : genericBezierView)
-			{
-				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
-				if(!bezier.m_Material) continue;
-
-				auto points = bezier.GetWorldPoints(transform.GetTransform());
-
-				std::vector<glm::vec3> controlPoints(bezier.GetTotalControlPoints());
-				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
-				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
-					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j] = points[i+j];
-					}
-					Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
-				}
-			}
-
-			auto bSplineView = m_Registry.view<BSplinesComponents, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bSplineView) {
-				auto&& [bspline, transform] = bSplineView.get<BSplinesComponents, TransformComponent>(entity);
-				if(!bspline.m_Material) continue;
-				std::vector<glm::vec3> controlPoints = bspline.GetWorldPoints(transform.GetTransform());
-				Renderer::Submit(bspline.m_Material.GetAsset(), bspline.m_Degree, controlPoints, bspline.m_Nodes, bspline.m_Weight, bspline.m_Definition, static_cast<int>(entity));
-			}
-
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
@@ -356,45 +314,6 @@ namespace Voxymore::Core
 			}
 
 			Renderer::BeginScene(*mainCamera, cameraTransform, lights);
-
-
-			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bezierView) {
-				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
-				if(!bezier.m_Material) continue;
-				Mat4 trs = transform.GetTransform();
-				std::vector<glm::vec3> controlPoints = {glm::vec3(), glm::vec3(), glm::vec3(), glm::vec3()};
-				for (int i = 0; i < 4; ++i) {
-					controlPoints[i] = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
-				}
-				Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
-			}
-
-			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for(auto entity : genericBezierView)
-			{
-				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
-				if(!bezier.m_Material) continue;
-
-				std::vector<glm::vec3> points = bezier.GetWorldPoints(transform.GetTransform());
-
-				std::vector<glm::vec3> controlPoints(bezier.GetTotalControlPoints());
-				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
-				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
-					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j] = points[i+j];
-					}
-					Renderer::Submit(bezier.m_Material.GetAsset(), controlPoints, bezier.Definition, static_cast<int>(entity));
-				}
-			}
-
-			auto bSplineView = m_Registry.view<BSplinesComponents, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bSplineView) {
-				auto&& [bspline, transform] = bSplineView.get<BSplinesComponents, TransformComponent>(entity);
-				if(!bspline.m_Material) continue;
-				std::vector<glm::vec3> controlPoints = bspline.GetWorldPoints(transform.GetTransform());
-				Renderer::Submit(bspline.m_Material.GetAsset(), bspline.m_Degree, controlPoints, bspline.m_Nodes, bspline.m_Weight, bspline.m_Definition, static_cast<int>(entity));
-			}
 
 			{
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
