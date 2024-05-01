@@ -28,7 +28,7 @@ namespace Voxymore::Editor {
 			//			{AssetType::Mesh, MeshImGui::OnMeshImGui},
 			{AssetType::Scene, SceneImGui::OnSceneImGui},
 			{AssetType::Material, MaterialImGui::OnMaterialImGui},
-			{AssetType::Model, MeshImGui::OnMeshImGui},
+			{AssetType::Model, MeshImGui::OnModelImGui},
 	};
 	Entity PropertyPanel::s_SelectedEntity = Entity();
 	Ref<Asset> PropertyPanel::s_SelectedAsset = nullptr;

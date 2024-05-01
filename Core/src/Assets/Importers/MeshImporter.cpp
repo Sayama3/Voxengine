@@ -162,6 +162,29 @@ namespace Voxymore::Core
 		return path.has_extension() && std::find(ModelExtensions.begin(), ModelExtensions.end(), extension) != ModelExtensions.end();
 	}
 
+	ShaderField GetShader(const AssetMetadata& metadata)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto path = metadata.FilePath.GetFullPath();
+
+		auto metaFilePath = metadata.FilePath;
+		metaFilePath.path += ".meta";
+
+		ShaderField shader = NullAssetHandle;
+
+		if(FileSystem::Exist(metaFilePath))
+		{
+			YAML::Node root = FileSystem::ReadFileAsYAML(metaFilePath);
+			YAML::Node shaderNode = root["Shader"];
+			if (shaderNode)
+			{
+				shader = shaderNode.as<AssetHandle>();
+			}
+		}
+
+		return shader;
+	}
+
 	Ref<Asset> MeshSerializer::ImportModel(const AssetMetadata& metadata)
 	{
 		VXM_CORE_ASSERT(IsModel(metadata.FilePath), "The asset '{0}' is not a 3d model", metadata.FilePath.string());
@@ -171,6 +194,8 @@ namespace Voxymore::Core
 
 		//TODO: replace this with a Real UUID of the model (that should be store somewhere I don't know).
 		uint64_t modelId = std::hash<Path>()(metadata.FilePath);
+
+		ShaderField shader = GetShader(metadata);
 
 		UnflipStbi();
 		tinygltf::Model model;
@@ -421,7 +446,7 @@ namespace Voxymore::Core
 								if(materialParams.OcclusionTexture.Index >= 0) materialTextures.push_back(materialParams.OcclusionTexture.Index);
 								if(materialParams.EmissiveTexture.Index >= 0) materialTextures.push_back(materialParams.EmissiveTexture.Index);
 
-								material = assetManager->CreateAsset<Material>(matName, materialParams);
+								material = assetManager->CreateAsset<Material>(matName, shader, materialParams);
 
 								for (uint32_t binding : materialTextures)
 								{
@@ -449,7 +474,26 @@ namespace Voxymore::Core
 
 	void MeshSerializer::ExportEditorModel(const AssetMetadata& metadata, Ref<Model> model)
 	{
-//		VXM_CORE_ASSERT(IsModel(metadata.FilePath), "The asset '{0}' is not a 3d model", metadata.FilePath.string());
-		VXM_CORE_INFO("Nothing to export for a classing.");
+		VXM_PROFILE_FUNCTION();
+		auto metaFilePath = metadata.FilePath;
+		metaFilePath.path += ".meta";
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		{
+			out << KEYVAL("Type", AssetTypeToString(AssetType::Model));
+			MaterialField mat = NullAssetHandle;
+			for (auto& matfield : model->m_Materials) {
+				if (matfield) {
+					mat = matfield;
+					break;
+				}
+			}
+			out << KEYVAL("Shader", (mat ? mat.GetAsset()->GetShaderHandle() : NullAssetHandle));
+			out << YAML::EndSeq;
+		}
+		out << YAML::EndMap;
+
+		FileSystem::WriteYamlFile(metaFilePath, out);
 	}
 } // namespace Voxymore::Core

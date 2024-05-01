@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Assets/ImGui/MeshImGui.hpp"
+#include "Voxymore/Assets/Importers/MeshImporter.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core
@@ -35,6 +36,7 @@ namespace Voxymore::Core
 				}
 			}
 			changed = true;
+			MeshSerializer::ExportEditorModel(Project::GetActive()->GetEditorAssetManager()->GetMetadata(asset->Handle), model);
 		}
 
 		return changed;
