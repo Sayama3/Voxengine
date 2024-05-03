@@ -6,6 +6,8 @@
 #include <ImGuizmo.h>
 #include "Voxymore/Editor/Panels/Viewport.hpp"
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Editor/EditorLayer.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 
 using namespace Voxymore::Core;
 
@@ -51,10 +53,12 @@ namespace Voxymore::Editor
 
 			if(ImGui::BeginDragDropTarget())
 			{
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+				std::string payloadId = AssetTypeToPayloadID(AssetType::Scene);
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadId.c_str());
 				if (payload != nullptr) {
-					std::filesystem::path filePath = static_cast<const char *>(payload->Data);
-					VXM_INFO("We should load the scene {0}. Not available yet.", payload->Data);
+					VXM_CORE_ASSERT(payload->DataSize == sizeof(AssetHandle), "The ImGui payload size ({0}) is not that of AssetHandle ({1})", payload->DataSize, sizeof(AssetHandle));
+					const AssetHandle* assetHandlePtr = static_cast<const AssetHandle *>(payload->Data);
+					Application::Get().FindLayer<EditorLayer>()->OpenScene(*assetHandlePtr);
 				}
 				ImGui::EndDragDropTarget();
 			}

@@ -10,20 +10,20 @@ namespace Voxymore::Core {
     class OpenGLTexture2D : public Texture2D
 	{
     public:
-        OpenGLTexture2D(const Path& path);
-        OpenGLTexture2D(const std::filesystem::path& path);
+		OpenGLTexture2D(Texture2DSpecification textureSpecs);
+		OpenGLTexture2D(Texture2DSpecification textureSpecs, Buffer buffer);
 		OpenGLTexture2D(const uint8_t* data, int width, int height, int channels);
 		OpenGLTexture2D(const uint16_t* data, int width, int height, int channels);
-		OpenGLTexture2D(Texture2DSpecification textureSpecs);
         virtual ~OpenGLTexture2D() override;
 
-        inline virtual uint32_t GetWidth() const override {return m_Width; }
-        inline virtual uint32_t GetHeight() const override {return m_Height; }
-        inline virtual uint32_t GetDepth() const override { return 0; }
-		inline virtual uint32_t GetRendererID() const override { return m_RendererID; };
-		inline virtual uint32_t GetChannelCount() const override {return m_Channels; }
+        [[nodiscard]] inline virtual uint32_t GetWidth() const override {return m_Width; }
+        [[nodiscard]] inline virtual uint32_t GetHeight() const override {return m_Height; }
+        [[nodiscard]] inline virtual uint32_t GetDepth() const override { return 0; }
+		[[nodiscard]] inline virtual uint32_t GetChannelCount() const override {return m_Channels; }
+		[[nodiscard]] inline virtual uint32_t GetRendererID() const override { return m_RendererID; };
 
 		virtual void Bind(uint32_t slot = 0) const override;
+		virtual void SetData(Buffer data) override;
     private:
 		void CreateTexture();
 	private:

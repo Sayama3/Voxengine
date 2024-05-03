@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/PlatformDetection.hpp"
+#include "Voxymore/Core/Logger.hpp"
 #include <csignal>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
@@ -33,6 +34,7 @@
 	#define VXM_FUNC __FUNCSIG__
 #endif
 
+#define VXM_BIND_FN(fn) [](auto&&... args) -> decltype(auto) { return fn(std::forward<decltype(args)>(args)...); }
 #define VXM_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 //deprecated. Use VXM_BIND_EVENT_FN
 #define BIND_EVENT_FN(fn) VXM_BIND_EVENT_FN(fn)

@@ -22,6 +22,10 @@
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/UUID.hpp"
 
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
+#include "Voxymore/Assets/AssetManager.hpp"
+
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingObject.hpp"
 #include "Voxymore/Math/BoundingSphere.hpp"
@@ -39,8 +43,6 @@
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
-#include "Voxymore/Components/BezierCurve.hpp"
-#include "Voxymore/Components/GenericBezierCurve.hpp"
 
 #include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
 #include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"
@@ -62,7 +64,6 @@
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
-#include "Voxymore/Scene/SceneManager.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
@@ -86,7 +87,6 @@
 #include "Voxymore/Events/MouseEvent.hpp"
 #include "Voxymore/Events/ApplicationEvent.hpp"
 
-#include "Voxymore/Assets/Assets.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 
 //#include "Voxymore/Core/EntryPoint.hpp"

@@ -9,6 +9,7 @@
 #include "Voxymore/Scene/Scene.hpp"
 #include "yaml-cpp/emitter.h"
 #include <optional>
+#include <variant>
 
 namespace Voxymore::Core
 {
@@ -25,8 +26,8 @@ namespace Voxymore::Core
 		// TODO: Add 'SerializeRuntime' using Voxymore::Core::Path.
 		bool SerializeRuntime(const std::filesystem::path& filePath) const;
 
-		bool Deserialize(const Path& filePath, bool deserializeId = true);
-		bool Deserialize(const std::filesystem::path& filePath, bool deserializeId = true);
+		bool Deserialize(const Path& filePath);
+		bool Deserialize(const std::filesystem::path& filePath);
 		// TODO: Add 'DeserializeRuntime' using Voxymore::Core::Path.
 		bool DeserializeRuntime(const std::filesystem::path& filePath, bool deserializeId = true);
 		static std::optional<UUID> GetSceneID(const std::filesystem::path& filePath);
@@ -38,8 +39,7 @@ namespace Voxymore::Core
 	private:
 		Scene& GetScene();
 		const Scene& GetScene() const;
-		Ref<Scene> m_RefScene = nullptr;
-		Scene* m_ScenePtr = nullptr;
+		std::variant<Ref<Scene>, Scene*> m_Scene;
 	};
 
 } // namespace Voxymore::Core

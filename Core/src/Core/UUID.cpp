@@ -27,4 +27,9 @@ namespace Voxymore::Core
 		auto hash = hash_fn(str);
 		return {*(uint64_t*)&hash};
 	}
+
+	std::string UUID::string() const
+	{
+		return std::to_string(m_UUID);
+	}
 }// namespace Voxymore::Core

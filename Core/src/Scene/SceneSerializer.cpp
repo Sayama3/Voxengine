@@ -9,30 +9,28 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Scene/Entity.hpp"
+#include "Voxymore/Core/TypeHelpers.hpp"
 #include<ranges>
 
 namespace Voxymore::Core
 {
-	SceneSerializer::SceneSerializer(const Ref<Scene> &scene)
-		: m_RefScene(scene), m_ScenePtr(nullptr)
+	SceneSerializer::SceneSerializer(const Ref<Scene> &scene) : m_Scene(scene)
 	{
 	}
 
-	SceneSerializer::SceneSerializer(Scene* scene) : m_RefScene(nullptr), m_ScenePtr(scene)
+	SceneSerializer::SceneSerializer(Scene* scene) : m_Scene(scene)
 	{
 	}
 
 	void SceneSerializer::ChangeSceneTarget(const Ref<Scene>& scene)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_RefScene = scene;
-		m_ScenePtr = nullptr;
+		m_Scene = scene;
 	}
 	void SceneSerializer::ChangeSceneTarget(Scene* scene)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_RefScene = nullptr;
-		m_ScenePtr = scene;
+		m_Scene = scene;
 	}
 
 	SceneSerializer::~SceneSerializer()
@@ -53,12 +51,12 @@ namespace Voxymore::Core
 			out << KEYVAL("Scene", YAML::BeginMap);// TODO: add a name to the scenes.
 			{
 				out << KEYVAL("Name", GetScene().m_Name);
-				out << KEYVAL("UUID", GetScene().m_ID);
 				out << KEYVAL("Entities", YAML::BeginSeq);
 				{
 					for (entt::entity id : *GetScene().m_Registry.storage<entt::entity>()) {
-						Entity entity(id, m_RefScene.get());
-						if (!entity) continue;
+						Scene* ptr = std::visit<Scene*>(overloads{[](Scene* s){return s;}, [](Ref<Scene> s){return s.get();}}, m_Scene);
+						Entity entity(id, ptr);
+						if (!entity || !GetScene().m_Registry.valid(entity)) continue;
 						out << YAML::BeginMap;// Entity
 						{
 							SerializeEntity(out, entity);
@@ -80,12 +78,12 @@ namespace Voxymore::Core
 		return true;
 	}
 
-	bool SceneSerializer::Deserialize(const Path &filePath, bool deserializeId)
+	bool SceneSerializer::Deserialize(const Path &filePath)
 	{
-		return Deserialize(filePath.GetFullPath(), deserializeId);
+		return Deserialize(filePath.GetFullPath());
 	}
 
-	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath, bool deserializeId)
+	bool SceneSerializer::Deserialize(const std::filesystem::path &filePath)
 	{
 		VXM_PROFILE_FUNCTION();
 		std::ifstream ifstream(filePath);
@@ -99,7 +97,6 @@ namespace Voxymore::Core
 		}
 
 		GetScene().m_Name = sceneNode["Name"].as<std::string>();
-		if(deserializeId) GetScene().m_ID = sceneNode["UUID"].as<uint64_t>();
 
 		auto entities = sceneNode["Entities"];
 		if (entities) {
@@ -112,12 +109,12 @@ namespace Voxymore::Core
 					name = tagComponent["Tag"].as<std::string>();
 				}
 				else {
-					name = "Entity_" + std::to_string(uuid);
+					name = "Entity_" + uuid.string();
 				}
 
 				bool enable = (!yamlEntity["IsActive"]) || yamlEntity["IsActive"].as<bool>();
 
-				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid);
+				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid.string());
 
 				Entity entity = GetScene().CreateEntity(uuid, name);
 				entity.SetActive(enable);
@@ -189,7 +186,7 @@ namespace Voxymore::Core
 	void SceneSerializer::SerializeEntity(YAML::Emitter &out, Entity entity)
 	{
 		VXM_PROFILE_FUNCTION();
-		out << KEYVAL("Entity", entity.GetUUID());//TODO: set entity ID;
+		out << KEYVAL("Entity", entity.id());//TODO: set entity ID;
 
 		out << KEYVAL("IsActive", entity.IsActive());
 
@@ -272,16 +269,18 @@ namespace Voxymore::Core
 		UUID id = sceneNode["UUID"].as<uint64_t>();
 		return id;
 	}
+
 	Scene& SceneSerializer::GetScene()
 	{
 		VXM_PROFILE_FUNCTION();
-		if(m_RefScene != nullptr) return *m_RefScene;
-		else return *m_ScenePtr;
+		Scene* scene = std::visit<Scene*>(overloads{[](Scene* s){return s;}, [](Ref<Scene> s){return s.get();}}, m_Scene);
+		return *scene;
 	}
+
 	const Scene& SceneSerializer::GetScene() const
 	{
 		VXM_PROFILE_FUNCTION();
-		if(m_RefScene != nullptr) return *m_RefScene;
-		else return *m_ScenePtr;
+		Scene* scene = std::visit<Scene*>(overloads{[](Scene* s){return s;}, [](Ref<Scene> s){return s.get();}}, m_Scene);
+		return *scene;
 	}
 }// namespace Voxymore::Core

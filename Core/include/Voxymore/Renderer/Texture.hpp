@@ -8,24 +8,26 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/UUID.hpp"
-#include <variant>
+#include "Voxymore/Core/Buffer.hpp"
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
 
 namespace Voxymore::Core {
 
-	enum TextureFilter
+	enum TextureFilter : uint8_t
 	{
 		Nearest,
 		Linear,
 	};
 
-	enum TextureWrapper
+	enum TextureWrapper : uint8_t
 	{
 		Repeat,
 		ClampToEdge,
 		MirroredRepeat,
 	};
 
-	enum PixelFormat
+	enum PixelFormat : uint8_t
 	{
 		RED = 1,
 		RG = 2,
@@ -33,7 +35,7 @@ namespace Voxymore::Core {
 		RGBA = 4,
 	};
 
-	enum PixelType
+	enum PixelType : uint8_t
 	{
 		PX_8,
 		PX_16,
@@ -52,11 +54,9 @@ namespace Voxymore::Core {
 
 	struct Texture2DSpecification
 	{
-		Texture2DSpecification() = default;
-		UUID id;
-		std::string name;
+		inline Texture2DSpecification() = default;
+		inline ~Texture2DSpecification() = default;
 
-		std::variant<Path, const void*> image;
 		uint32_t width = 0, height = 0, channels = 0;
 
 		TextureFilter filterMag = TextureFilter::Linear;
@@ -67,18 +67,23 @@ namespace Voxymore::Core {
 
 		PixelFormat pixelFormat = PixelFormat::RGBA;
 		PixelType pixelType = PixelType::PX_8;
+
+		bool generateMipMaps = true;
 	};
 
-    class Texture {
+    class Texture : public Asset
+	{
     public:
         virtual ~Texture() = default;
-        virtual uint32_t GetWidth() const = 0;
-        virtual uint32_t GetHeight() const = 0;
-        virtual uint32_t GetDepth() const = 0;
+        [[nodiscard]] virtual uint32_t GetWidth() const = 0;
+        [[nodiscard]] virtual uint32_t GetHeight() const = 0;
+        [[nodiscard]] virtual uint32_t GetDepth() const = 0;
+
+		virtual void SetData(Buffer data) = 0;
 
         virtual void Bind(uint32_t slot = 0) const = 0;
         static void Unbind(uint32_t slot = 0);
-		virtual uint32_t GetRendererID() const = 0;
+		[[nodiscard]] virtual uint32_t GetRendererID() const = 0;
 
 		//TODO: Add a 'T GetPixel<T>(uint32_t index) const;' function.
 		//TODO: Add a 'std::vector<T> GetPixels<T>() const;' function.
@@ -90,15 +95,17 @@ namespace Voxymore::Core {
 
     class Texture2D : public Texture {
     public:
-        static Ref<Texture2D> Create(const Path& path);
-        static Ref<Texture2D> Create(const std::filesystem::path& path);
-        static Ref<Texture2D> Create(const uint8_t* data, int width, int height, int channels);
-        static Ref<Texture2D> Create(const uint16_t* data, int width, int height, int channels);
-        static Ref<Texture2D> Create(const Texture2DSpecification& textureSpecs);
+		static Ref<Texture2D> Create(const Texture2DSpecification& textureSpecs);
+		static Ref<Texture2D> Create(const Texture2DSpecification& textureSpecs, Buffer buffer);
+		static Ref<Texture2D> Create(const uint8_t* data, int width, int height, int channels);
+		static Ref<Texture2D> Create(const uint16_t* data, int width, int height, int channels);
 
-		virtual uint32_t GetChannelCount() const = 0;
+		[[nodiscard]] virtual uint32_t GetChannelCount() const = 0;
 		//TODO: Add a 'T GetPixel<T>(uint32_t x, uint32_t y) const;' function.
 		//TODO: Add a 'void SetPixel<T>(uint32_t x, uint32_t y, T pixel);' function.
+
+		VXM_IMPLEMENT_ASSET(AssetType::Texture2D);
     };
 
+	using Texture2DField = AssetField<Texture2D>;
 } // Core

@@ -6,6 +6,9 @@
 
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
+#include <string_view>
+#include "Voxymore/Core/UUID.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Math/Math.hpp"
 
 #define KEY(x) YAML::Key << x
@@ -51,6 +54,9 @@ namespace Voxymore::Core
 	}
 
 	YAML::Emitter &operator<<(YAML::Emitter &out, const std::filesystem::path &v);
+
+	inline YAML::Emitter &operator<<(YAML::Emitter &out, const UUID &v) {out << v.operator uint64_t(); return out;}
+	inline YAML::Emitter &operator<<(YAML::Emitter &out, const ::Voxymore::Core::AssetType &rhs) {out << AssetTypeToString(rhs); return out;}
 }
 
 namespace YAML
@@ -125,6 +131,40 @@ namespace YAML
 				}
 			}
 			return true;
+		}
+	};
+
+	template<>
+	struct convert<::Voxymore::Core::UUID>
+	{
+		inline static Node encode(const ::Voxymore::Core::UUID& rhs)
+		{
+			Node node;
+			node.push_back(rhs.operator uint64_t());
+			return node;
+		}
+
+		inline static bool decode(const Node& node, ::Voxymore::Core::UUID& rhs)
+		{
+			rhs = node.as<uint64_t>(0);
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<::Voxymore::Core::AssetType>
+	{
+		inline static Node encode(const ::Voxymore::Core::AssetType& rhs)
+		{
+			Node node;
+			node.push_back(AssetTypeToString(rhs));
+			return node;
+		}
+
+		inline static bool decode(const Node& node, ::Voxymore::Core::AssetType& rhs)
+		{
+			auto str = node.as<std::string>(std::string());
+			return ::Voxymore::Core::TryAssetTypeFromString(str, rhs);
 		}
 	};
 }

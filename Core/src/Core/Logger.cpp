@@ -4,7 +4,6 @@
 
 #include "Voxymore/Core/Logger.hpp"
 #include "spdlog/sinks/basic_file_sink.h"
-//#include "spdlog/sinks/daily_file_sink.h"
 
 
 namespace Voxymore::Core {
@@ -31,5 +30,7 @@ namespace Voxymore::Core {
 
         s_ClientLogger = std::make_shared<spdlog::logger>("APP", client_sinks.begin(), client_sinks.end());
         s_ClientLogger->set_level(spdlog::level::trace);
+
+		//TODO: Add imgui sink logger.
     }
 }

@@ -1,0 +1,94 @@
+Type:
+  AssetRegistry
+AssetRegistry:
+  Assets:
+    - Handle: 767692958919381968
+      FilePath: {Source: 2, Path: Shaders\BezierDeCasteljau.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 913188341192155034
+      FilePath: {Source: 4, Path: MemoryAssets/913188341192155034.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 1069266738333071017
+      FilePath: {Source: 2, Path: Materials\BezierDeCasteljau.vxm_material}
+      Type: AssetType::Material
+    - Handle: 1907233133168175017
+      FilePath: {Source: 4, Path: MemoryAssets/1907233133168175017.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 2175996211825722344
+      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 2176829156368268480
+      FilePath: {Source: 4, Path: MemoryAssets/2176829156368268480.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 5003646183903738526
+      FilePath: {Source: 4, Path: MemoryAssets/5003646183903738526.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 6166524610277000624
+      FilePath: {Source: 4, Path: MemoryAssets/6166524610277000624.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 6501812136981279580
+      FilePath: {Source: 2, Path: Materials\Bezier4.vxm_material}
+      Type: AssetType::Material
+    - Handle: 7136703435398607860
+      FilePath: {Source: 4, Path: MemoryAssets/7136703435398607860.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 7408055824618193802
+      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 7563315893819623377
+      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessco}
+      Type: AssetType::ShaderSource
+    - Handle: 8098330176453956795
+      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessco}
+      Type: AssetType::ShaderSource
+    - Handle: 8278828207168357721
+      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.geom}
+      Type: AssetType::ShaderSource
+    - Handle: 8552950103494062726
+      FilePath: {Source: 2, Path: ShaderSources\BezierDeCasteljau.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 8676590476146596977
+      FilePath: {Source: 2, Path: Scenes\BezierScene.vxm_scn}
+      Type: AssetType::Scene
+    - Handle: 9851964826079991738
+      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.geom}
+      Type: AssetType::ShaderSource
+    - Handle: 10408084392226933793
+      FilePath: {Source: 2, Path: Shaders\Bezier4.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 10455158954702787468
+      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 10574093062912526717
+      FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 11335829010457474843
+      FilePath: {Source: 2, Path: Models\Cube_W.glb}
+      Type: AssetType::Model
+    - Handle: 11600000519888133035
+      FilePath: {Source: 2, Path: Models\cube_Color.gltf}
+      Type: AssetType::Model
+    - Handle: 12478498007980619411
+      FilePath: {Source: 2, Path: ShaderSources\BezierPascal.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 12486198698501010925
+      FilePath: {Source: 4, Path: MemoryAssets/12486198698501010925.vxm_memory}
+      Type: AssetType::Scene
+    - Handle: 12644949253861293824
+      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessev}
+      Type: AssetType::ShaderSource
+    - Handle: 13565445117755381563
+      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 14132953702282159457
+      FilePath: {Source: 2, Path: Materials\BezierPascal.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14501197852061985280
+      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 16039519178751608459
+      FilePath: {Source: 2, Path: Shaders\BezierPascal.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 18076994461876039139
+      FilePath: {Source: 1, Path: Shaders\DefaultShader.frag}
+      Type: AssetType::ShaderSource

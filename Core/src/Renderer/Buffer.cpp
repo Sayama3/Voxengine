@@ -5,6 +5,8 @@
 #include "Voxymore/OpenGL/OpenGLBuffer.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Buffer.hpp"
+
 namespace Voxymore::Core {
 
     Ref<VertexBuffer> Voxymore::Core::VertexBuffer::Create(uint32_t size, const void* vertices)

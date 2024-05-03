@@ -17,6 +17,8 @@ namespace Voxymore::Core
 		UUID(uint64_t);
 		UUID(const UUID&) = default;
 
+		std::string string() const;
+		inline operator std::string() const { return string(); }
 		inline operator uint64_t() const { return m_UUID; }
 		static UUID FromString(const std::string&);
 	private:

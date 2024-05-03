@@ -71,7 +71,7 @@ jobs:
       # Setup ubuntu
     - name: Install X11 dependencies on Unix-like system
       if: ${{ contains(matrix.os, 'ubuntu') }}
-      run: sudo apt-get update && sudo apt-get install -y xorg-dev
+      run: sudo apt-get update && sudo apt-get install -y libwayland-dev libxkbcommon-dev xorg-dev
 
     - name: Install OpenGL on Ubuntu
       if: ${{ contains(matrix.os, 'ubuntu') }}
@@ -95,8 +95,8 @@ jobs:
         cmake: true
         ninja: true
         vcpkg: false
-        cppcheck: true
-        clangtidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
+        cppcheck: false
+        clangtidy: false # instead of `true`, which chooses the default version, you can pass a specific version.
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

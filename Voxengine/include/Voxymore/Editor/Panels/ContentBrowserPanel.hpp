@@ -34,6 +34,14 @@ namespace Voxymore::Editor
 		float m_ThumbnailSize;
 		float m_Padding;
 
+
+		using StringBuffer = std::array<char, 255>;
+		StringBuffer m_FileNameBuffer;
+		inline void ClearFileNameBuffer() {std::fill(m_FileNameBuffer.begin(), m_FileNameBuffer.end(), (char)0);}
+
+	private:
+		static inline constexpr float c_ThumbnailSizeMin = 16.0f;
+		static inline constexpr float c_ThumbnailSizeMax = 512.0f;
 		static inline float s_ThumbnailSize = 64.0f;
 		static inline float s_Padding = 16.0f;
 		static inline constexpr float c_Increment = 16.0f;

@@ -101,8 +101,6 @@ set(SRC_FILES src/Core/Application.cpp
         src/Scene/Entity.cpp
         src/ImGui/ImGuiLib.cpp
         include/Voxymore/ImGui/ImGuiLib.hpp
-        src/Assets/Assets.cpp
-        include/Voxymore/Assets/Assets.hpp
         src/ParticlesPhysics/ParticlePhysicsLayer.cpp
         include/Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp
         include/Voxymore/ParticlesPhysics/Particle.hpp
@@ -165,10 +163,42 @@ set(SRC_FILES src/Core/Application.cpp
         src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
         include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
         include/Voxymore/Core/TypeHelpers.hpp
-        src/Components/BezierCurve.cpp
-        include/Voxymore/Components/BezierCurve.hpp
-        src/Components/GenericBezierCurve.cpp
-        include/Voxymore/Components/GenericBezierCurve.hpp
+        src/Assets/Asset.cpp
+        include/Voxymore/Assets/Asset.hpp
+        src/Assets/AssetManager.cpp
+        include/Voxymore/Assets/AssetManager.hpp
+        src/Assets/AssetManagerBase.cpp
+        include/Voxymore/Assets/AssetManagerBase.hpp
+        src/Assets/RuntimeAssetManager.cpp
+        include/Voxymore/Assets/RuntimeAssetManager.hpp
+        src/Assets/EditorAssetManager.cpp
+        include/Voxymore/Assets/EditorAssetManager.hpp
+        include/Voxymore/Assets/AssetMetadata.hpp
+        src/Assets/AssetImporter.cpp
+        include/Voxymore/Assets/AssetImporter.hpp
+        src/Assets/Importers/TextureImporter.cpp
+        include/Voxymore/Assets/Importers/TextureImporter.hpp
+        src/Core/Buffer.cpp
+        include/Voxymore/Core/Buffer.hpp
+        include/Voxymore/Assets/AssetField.hpp
+        src/Assets/Importers/ShaderSerializer.cpp
+        include/Voxymore/Assets/Importers/ShaderSerializer.hpp
+        src/Assets/Importers/MeshImporter.cpp
+        include/Voxymore/Assets/Importers/MeshImporter.hpp
+        src/Assets/Importers/SceneImporter.cpp
+        include/Voxymore/Assets/Importers/SceneImporter.hpp
+        src/Assets/Importers/MaterialSerializer.cpp
+        include/Voxymore/Assets/Importers/MaterialSerializer.hpp
+        include/Voxymore/Assets/ImGui/MaterialImGui.hpp
+        include/Voxymore/Assets/ImGui/MeshImGui.hpp
+        include/Voxymore/Assets/ImGui/SceneImGui.hpp
+        include/Voxymore/Assets/ImGui/ShaderImGui.hpp
+        include/Voxymore/Assets/ImGui/TextureImGui.hpp
+        src/Assets/ImGui/MaterialImGui.cpp
+        src/Assets/ImGui/MeshImGui.cpp
+        src/Assets/ImGui/SceneImGui.cpp
+        src/Assets/ImGui/ShaderImGui.cpp
+        src/Assets/ImGui/TextureImGui.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

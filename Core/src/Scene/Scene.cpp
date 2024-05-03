@@ -7,8 +7,6 @@
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/ModelComponent.hpp"
 #include "Voxymore/Components/PrimitiveComponent.hpp"
-#include "Voxymore/Components/BezierCurve.hpp"
-#include "Voxymore/Components/GenericBezierCurve.hpp"
 #include "Voxymore/Debug/Profiling.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Scene/Entity.hpp"
@@ -20,36 +18,25 @@
 
 namespace Voxymore::Core
 {
-	Scene::Scene() : m_ID(), m_Name("Scene_"+std::to_string(m_ID))
+	Scene::Scene() : m_Name("Scene_"+std::to_string(Handle))
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(std::string name) : m_ID(), m_Name(std::move(name))
+	Scene::Scene(std::string name) : m_Name(std::move(name))
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(UUID id) : m_ID(id), m_Name("Scene_"+std::to_string(m_ID))
+	Scene::Scene(Ref<Scene> scene) : m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
 		VXM_PROFILE_FUNCTION();
-		InitScene();
-	}
-
-	Scene::Scene(UUID id, std::string name) : m_ID(id), m_Name(std::move(name))
-	{
-		VXM_PROFILE_FUNCTION();
-		InitScene();
-	}
-
-	Scene::Scene(Ref<Scene> scene) : m_ID(scene->m_ID), m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
-	{
-		VXM_PROFILE_FUNCTION();
+		Handle = scene->Handle;
 		InitScene();
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
-		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->m_ID)+".vxm"};
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene->Handle)+".vxm"};
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
 		SceneSerializer cacheSerializer(scene);
 		cacheSerializer.Serialize(cacheScene);
@@ -58,13 +45,14 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheScene);
 	}
 
-	Scene::Scene(const Scene &scene) : m_ID(scene.m_ID), m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
+	Scene::Scene(const Scene &scene) : m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
 	{
 		VXM_PROFILE_FUNCTION();
+		Handle = scene.Handle;
 		InitScene();
 
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
-		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.Handle)+".vxm"};
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
 		SceneSerializer cacheSerializer((Scene*)&scene);
 		cacheSerializer.Serialize(cacheScene);
@@ -73,17 +61,16 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheScene);
 	}
 
-
 	Scene &Scene::operator=(const Scene & scene)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_ID = scene.m_ID;
+		Handle = scene.Handle;
 		m_Name = scene.m_Name;
 		m_ViewportHeight = scene.m_ViewportHeight;
 		m_ViewportWidth = scene.m_ViewportWidth;
 
 		// Copy the scene here, we want to retrieve each entity upon creation on this scene.
-		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.m_ID)+".vxm"};
+		Path cacheScene = {FileSource::Cache, "./Scenes/"+std::to_string(scene.Handle)+".vxm"};
 		// Casting to Scene* for because I know I won't edit the scene on the serialize function but still need it as a raw non-const pointer.
 		SceneSerializer cacheSerializer((Scene*)&scene);
 		cacheSerializer.Serialize(cacheScene);
@@ -126,14 +113,14 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			VXM_CORE_WARNING("The entity ({0}) was not found in the entity map.", entity.GetUUID());
+			VXM_CORE_WARNING("The entity ({0}) was not found in the entity map.", entity.id().string());
 		}
 	}
 
 	void Scene::StartScene()
 	{
 		VXM_PROFILE_FUNCTION();
-		auto systems = SystemManager::GetSystems(m_ID);
+		auto systems = SystemManager::GetSystems(Handle);
 		std::unordered_set<std::string> toStopSystems = m_StartedSystem;
 		for (Ref<System>& system : systems)
 		{
@@ -175,15 +162,6 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 
 		{
-			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : models)
-			{
-				auto& model = models.get<ModelComponent>(entity);
-				if(model.ShouldLoad()) model.LoadModel();
-			}
-		}
-
-		{
 			auto primitives = m_Registry.view<PrimitiveComponent>(entt::exclude<DisableComponent>);
 			for (entt::entity entity : primitives)
 			{
@@ -202,19 +180,6 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 
-
-		// TODO: See if I really should reload on Runtime the models...
-		{
-			auto models = m_Registry.view<ModelComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : models)
-			{
-				auto& model = models.get<ModelComponent>(entity);
-				if(model.ShouldLoad()) {
-					model.LoadModel();
-				}
-			}
-		}
-
 		// TODO: See if I really should reload on Runtime the primitives...
 		{
 			auto primitives = m_Registry.view<PrimitiveComponent>(entt::exclude<DisableComponent>);
@@ -231,7 +196,7 @@ namespace Voxymore::Core
 
 		{
 			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update systems");
-			auto systems = SystemManager::GetSystems(m_ID);
+			auto systems = SystemManager::GetSystems(Handle);
 			std::unordered_set<std::string> toStopSystems = m_StartedSystem;
 			for (Ref<System>& system : systems)
 			{
@@ -294,38 +259,10 @@ namespace Voxymore::Core
 
 		Renderer::BeginScene(camera, lights);
 		{
-			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bezierView) {
-				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
-				Mat4 trs = transform.GetTransform();
-				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
-				for (int i = 0; i < 4; ++i) {
-					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
-				}
-				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-			}
-
-			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for(auto entity : genericBezierView)
-			{
-				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
-
-				auto points = bezier.GetWorldPoints(transform.GetTransform());
-
-				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
-				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
-				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
-					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j].Position = points[i+j];
-					}
-					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-				}
-			}
-
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
 				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-				if(model.IsLoaded())
+				if(model.IsValid())
 				{
 					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
 				}
@@ -335,7 +272,7 @@ namespace Voxymore::Core
 			for (entt::entity entity : primitives)
 			{
 				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
-				if(pc.IsLoaded())
+				if(pc.IsValid())
 				{
 					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
 				}
@@ -378,40 +315,11 @@ namespace Voxymore::Core
 
 			Renderer::BeginScene(*mainCamera, cameraTransform, lights);
 
-
-			auto bezierView = m_Registry.view<BezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: bezierView) {
-				auto&& [bezier, transform] = bezierView.get<BezierCurve, TransformComponent>(entity);
-				Mat4 trs = transform.GetTransform();
-				std::vector<Vertex> controlPoints = {Vertex(), Vertex(), Vertex(), Vertex()};
-				for (int i = 0; i < 4; ++i) {
-					controlPoints[i].Position = Math::TransformPoint(trs, bezier.LocalControlPoints[i]);
-				}
-				Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-			}
-
-			auto genericBezierView = m_Registry.view<GenericBezierCurve, TransformComponent>(entt::exclude<DisableComponent>);
-			for(auto entity : genericBezierView)
-			{
-				auto&& [bezier, transform] = genericBezierView.get<GenericBezierCurve, TransformComponent>(entity);
-
-				auto points = bezier.GetWorldPoints(transform.GetTransform());
-
-				std::vector<Vertex> controlPoints(bezier.GetTotalControlPoints());
-				const auto count = (points.size()/bezier.GetTotalControlPoints()) * bezier.GetTotalControlPoints();
-				for (int i = 0; i < count; i+= bezier.GetTotalControlPoints()) {
-					for (int j = 0; j < bezier.GetTotalControlPoints(); ++j) {
-						controlPoints[j].Position = points[i+j];
-					}
-					Renderer::Submit(controlPoints, bezier.Definition, bezier.GetShaderName(), static_cast<int>(entity));
-				}
-			}
-
 			{
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 				for (auto entity: modelsView) {
 					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-					if(model.IsLoaded())
+					if(model.IsValid())
 					{
 						Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
 					}
@@ -474,7 +382,7 @@ namespace Voxymore::Core
 			return it->second;
 		}
 		else {
-			VXM_CORE_ERROR("Entity ID({0}) not found.", id);
+			VXM_CORE_ERROR("Entity ID({0}) not found.", id.string());
 			return {};
 		}
 	}

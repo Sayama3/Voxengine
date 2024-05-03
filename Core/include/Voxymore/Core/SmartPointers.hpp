@@ -25,4 +25,14 @@ namespace Voxymore::Core {
 
 	template<typename T>
 	using Weak = std::weak_ptr<T>;
+
+	template<typename TTarget, typename TBasePtr>
+	[[nodiscard]] inline Ref<TTarget> CastPtr(TBasePtr ptr)
+	{
+#ifdef VXM_DEBUG
+		return std::dynamic_pointer_cast<TTarget>(ptr);
+#else
+		return std::static_pointer_cast<TTarget>(ptr);
+#endif
+	}
 }

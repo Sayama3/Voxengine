@@ -4,8 +4,6 @@
 
 #include "OpenGLTexture2D.hpp"
 
-#include <stb_image.h>
-
 #include <utility>
 #include "glad/glad.h"
 
@@ -15,48 +13,12 @@ namespace Voxymore::Core {
 	{
 	private:
 		Texture2DSpecification& spec;
-		stbi_uc* data;
 
 	public:
-		TexSpecHelper(Texture2DSpecification& specification) : spec(specification), data(nullptr) {}
-		~TexSpecHelper()
-		{
-			VXM_PROFILE_FUNCTION();
-			if(data != nullptr)
-			{
-				stbi_image_free(data);
-			}
-		}
+		TexSpecHelper(Texture2DSpecification& specification) : spec(specification) {}
+		~TexSpecHelper() = default;
 
-		void ReadDataFromImage()
-		{
-			VXM_PROFILE_FUNCTION();
-			if(std::holds_alternative<Path>(spec.image) && !data)
-			{
-				const Path& path = std::get<Path>(spec.image);
-				stbi_set_flip_vertically_on_load(true);
-
-				int width, height, channels;
-				std::string strPath = path.string();
-				VXM_CORE_ASSERT(FileSystem::Exist(path), "The file {0} do not exist...", strPath);
-
-				data = stbi_load(strPath.c_str(), &width, &height, &channels, static_cast<int>(spec.channels));
-				VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
-
-				if(spec.width && spec.width != width) VXM_CORE_WARNING("The width set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.width, width);
-				if(spec.height && spec.height != height) VXM_CORE_WARNING("The height set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.height, height);
-				if(spec.channels && spec.channels != channels) VXM_CORE_WARNING("The channels set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.channels, channels);
-
-				spec.width = width;
-				spec.height = height;
-				spec.channels = channels;
-
-				spec.pixelType = PixelType::PX_8;
-				spec.pixelFormat = static_cast<PixelFormat>(channels);
-			}
-		}
-
-		GLenum GetInternalFormat() const
+		[[nodiscard]] GLenum GetInternalFormat() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.pixelFormat) {
@@ -138,7 +100,7 @@ namespace Voxymore::Core {
 			return GL_R8;
 		}
 
-		GLenum GetFormat() const
+		[[nodiscard]] GLenum GetFormat() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.pixelFormat) {
@@ -152,7 +114,7 @@ namespace Voxymore::Core {
 			return GL_RGBA;
 		}
 
-		GLenum GetType() const
+		[[nodiscard]] GLenum GetType() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.pixelType) {
@@ -172,7 +134,49 @@ namespace Voxymore::Core {
 			return GL_UNSIGNED_BYTE;
 		}
 
-		GLint GetMagFilter() const
+		[[nodiscard]] std::string_view GetTypeToString() const
+		{
+			VXM_PROFILE_FUNCTION();
+			switch (spec.pixelType) {
+				case PX_8: return "PX_8";
+				case PX_16: return "PX_16";
+				case PX_8UI: return "PX_8UI";
+				case PX_16UI: return "PX_16UI";
+				case PX_32UI: return "PX_32UI";
+				case PX_8I: return "PX_8I";
+				case PX_16I: return "PX_16I";
+				case PX_32I: return "PX_32I";
+				case PX_16F: return "PX_16F";
+				case PX_32F: return "PX_32F";
+			}
+
+			VXM_CORE_ASSERT(false, "The pixel type {0} do not exist...", (int)spec.pixelType);
+			return "Unknown";
+		}
+
+		[[nodiscard]] uint32_t GetPixelSize() const {
+			VXM_PROFILE_FUNCTION();
+			switch (spec.pixelType) {
+				case PX_8:
+				case PX_8UI:
+				case PX_8I:
+					return 1U;
+				case PX_16:
+				case PX_16UI:
+				case PX_16I:
+				case PX_16F:
+					return 2U;
+				case PX_32UI:
+				case PX_32I:
+				case PX_32F:
+					return 4U;
+			}
+
+			VXM_CORE_ASSERT(false, "The pixel type {0} do not exist...", (int)spec.pixelType);
+			return 1U;
+		}
+
+		[[nodiscard]] GLint GetMagFilter() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.filterMag) {
@@ -184,7 +188,7 @@ namespace Voxymore::Core {
 			return GL_LINEAR;
 		}
 
-		GLint GetMinFilter() const
+		[[nodiscard]] GLint GetMinFilter() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.filterMin) {
@@ -196,7 +200,7 @@ namespace Voxymore::Core {
 			return GL_LINEAR;
 		}
 
-		GLint GetWrapS() const
+		[[nodiscard]] GLint GetWrapS() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.wrapperS) {
@@ -208,7 +212,7 @@ namespace Voxymore::Core {
 			return GL_REPEAT;
 		}
 
-		GLint GetWrapT() const
+		[[nodiscard]] GLint GetWrapT() const
 		{
 			VXM_PROFILE_FUNCTION();
 			switch (spec.wrapperT) {
@@ -219,97 +223,53 @@ namespace Voxymore::Core {
 			VXM_CORE_WARNING("No value found for WrapT, defaulting to 'Repeat'.");
 			return GL_REPEAT;
 		}
-
-		const void* GetData()
-		{
-			VXM_PROFILE_FUNCTION();
-			VXM_ASSERT(spec.image.index() != std::variant_npos, "The spec don't contain any image.");
-			if(std::holds_alternative<const void*>(spec.image))
-			{
-				return std::get<const void*>(spec.image);
-			}
-			else if(data == nullptr)
-			{
-				const Path& path = std::get<Path>(spec.image);
-				stbi_set_flip_vertically_on_load(true);
-
-				int width, height, channels;
-				std::string strPath = path.string();
-				VXM_CORE_ASSERT(FileSystem::Exist(path), "The file {0} do not exist...", strPath);
-
-				data = stbi_load(strPath.c_str(), &width, &height, &channels, 0);
-				VXM_CORE_ASSERT(data, "Load of image '{0}' failed.\n{1}.", strPath, stbi_failure_reason());
-				VXM_CORE_ASSERT(spec.width == width,"The width set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.width, width);
-				VXM_CORE_ASSERT(spec.height == height,"The height set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.height, height);
-				VXM_CORE_ASSERT(spec.channels == channels,"The channels set in the spec ({0}) doesn't not correspond to the image ({1}).", spec.channels, channels);
-				VXM_CORE_ASSERT(spec.pixelType == PixelType::PX_8, "The Pixel Type in the spec ({0}) doesn't not correspond to the image ({1})", spec.pixelType, PixelType::PX_8);
-				VXM_CORE_ASSERT(spec.pixelFormat == static_cast<PixelFormat>(channels), "The Pixel Format in the spec ({0}) doesn't not correspond to the image ({1})", spec.pixelFormat, static_cast<PixelFormat>(channels));
-			}
-
-			if(data == nullptr) { VXM_CORE_WARNING("We return a null data pointer for the texture '{0}'", spec.name); }
-			return data;
-		}
 	};
 
-	OpenGLTexture2D::OpenGLTexture2D(const Path& path) : m_Path(path)
+	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs) : m_TextureSpecification(textureSpecs)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_TextureSpecification.name = m_Path.id();
-		m_TextureSpecification.image = m_Path;
-
 		CreateTexture();
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& path) : m_Path(Path::GetPath(path))
+	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs, Buffer buffer) : m_TextureSpecification(textureSpecs)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_TextureSpecification.name = m_Path.id();
-		m_TextureSpecification.image = m_Path;
-
 		CreateTexture();
+		SetData(buffer);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const uint8_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_TextureSpecification.name = std::to_string(m_TextureSpecification.id);
 		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
 		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
 		m_TextureSpecification.pixelType = PX_8;
 		m_TextureSpecification.width = width;
 		m_TextureSpecification.height = height;
 		m_TextureSpecification.channels = channels;
-		m_TextureSpecification.image = data;
 
 		CreateTexture();
+		SetData({(void*)data, width * height * channels * sizeof(uint8_t)});
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const uint16_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_TextureSpecification.name = std::to_string(m_TextureSpecification.id);
 		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
 		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
 		m_TextureSpecification.pixelType = PX_16;
 		m_TextureSpecification.width = width;
 		m_TextureSpecification.height = height;
 		m_TextureSpecification.channels = channels;
-		m_TextureSpecification.image = data;
 
 		CreateTexture();
-	}
-
-	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs) : m_TextureSpecification(std::move(textureSpecs))
-	{
-		VXM_PROFILE_FUNCTION();
-		CreateTexture();
+		SetData({(void*)data, width * height * channels * sizeof(uint16_t)});
 	}
 
 	void OpenGLTexture2D::CreateTexture()
 	{
 		VXM_PROFILE_FUNCTION();
 		TexSpecHelper helper(m_TextureSpecification);
-		helper.ReadDataFromImage();
 
 		m_Width = m_TextureSpecification.width;
 		m_Height = m_TextureSpecification.height;
@@ -318,10 +278,6 @@ namespace Voxymore::Core {
 		VXM_CORE_ASSERT(m_TextureSpecification.channels > 0 && m_TextureSpecification.channels < 5, "The number of channel {0} is not handle at the moment.", m_TextureSpecification.channels);
 
 		GLenum internalFormat = helper.GetInternalFormat();
-		GLenum dataFormat = helper.GetFormat();
-		GLenum pixelType = helper.GetType();
-		const void* data = helper.GetData();
-		VXM_CORE_ASSERT(data != nullptr, "No data where found on the image {0}.", m_TextureSpecification.name);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
@@ -331,8 +287,20 @@ namespace Voxymore::Core {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, helper.GetMagFilter());
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, helper.GetWrapS());
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, helper.GetWrapT());
+	}
 
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, helper.GetData());
+	void OpenGLTexture2D::SetData(Buffer data)
+	{
+		VXM_PROFILE_FUNCTION();
+		TexSpecHelper helper(m_TextureSpecification);
+		GLenum dataFormat = helper.GetFormat();
+		GLenum pixelType = helper.GetType();
+		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
+		VXM_CORE_ASSERT(m_Width * m_Height * m_Channels * helper.GetPixelSize() == data.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Width, m_Height, m_Channels, helper.GetTypeToString());
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, data.Data);
+		if(m_TextureSpecification.generateMipMaps) {
+			glGenerateTextureMipmap(m_RendererID);
+		}
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D() {

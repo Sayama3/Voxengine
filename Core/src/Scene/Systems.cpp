@@ -121,7 +121,7 @@ namespace Voxymore::Core
 		out << KEYVAL(name, YAML::BeginMap);
 		out << KEYVAL("Enable", GetInstance().s_SystemEnabled[name]);
 		out << KEYVAL("Scenes", YAML::BeginSeq);
-		for (UUID& sceneId : GetInstance().s_SystemToScene[name])
+		for (AssetField<Scene>& sceneId : GetInstance().s_SystemToScene[name])
 		{
 			out << sceneId;
 		}
@@ -161,7 +161,7 @@ namespace Voxymore::Core
 		GetInstance().s_SystemEnabled[systemName] = enable;
 	}
 
-	std::vector<UUID>& SystemManager::GetSystemScenes(const std::string& name)
+	std::vector<AssetField<Scene>>& SystemManager::GetSystemScenes(const std::string& name)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(name), "The system named {0} doesn't exist...");
@@ -169,7 +169,7 @@ namespace Voxymore::Core
 	}
 
 
-	void SystemManager::AddSceneToSystem(const std::string& systemName, UUID sceneName)
+	void SystemManager::AddSceneToSystem(const std::string& systemName, AssetField<Scene> sceneName)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
@@ -178,16 +178,16 @@ namespace Voxymore::Core
 	}
 
 
-	void SystemManager::AddSceneToSystemIfNotExist(const std::string& systemName, UUID sceneName)
+	void SystemManager::AddSceneToSystemIfNotExist(const std::string& systemName, AssetField<Scene> sceneName)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
 		auto& scenes = GetInstance().s_SystemToScene[systemName];
-		auto containIndex = std::find(scenes.begin(), scenes.end(), sceneName);
-		if(containIndex == scenes.end()) scenes.push_back(sceneName);
+		auto it = std::find(scenes.begin(), scenes.end(), sceneName);
+		if(it == scenes.end()) scenes.push_back(sceneName);
 	}
 
-	void SystemManager::RemoveSceneFromSystem(const std::string& systemName, UUID sceneName)
+	void SystemManager::RemoveSceneFromSystem(const std::string& systemName, AssetField<Scene> sceneName)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(GetInstance().s_SystemToScene.contains(systemName), "The system named {0} doesn't exist...");
@@ -196,7 +196,7 @@ namespace Voxymore::Core
 		if(containIndex != scenes.end()) scenes.erase(containIndex);
 	}
 
-	std::vector<Ref<System>> SystemManager::GetSystems(UUID sceneName)
+	std::vector<Ref<System>> SystemManager::GetSystems(AssetField<Scene> sceneName)
 	{
 		VXM_PROFILE_FUNCTION();
 		std::vector<Ref<System>> systems;
