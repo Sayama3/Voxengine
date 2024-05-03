@@ -3,14 +3,26 @@
 //
 
 #pragma once
+
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/SystemHelper.hpp"
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Assets/AssetField.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include <unordered_map>
 
+#define VXM_VERTEX_TYPE "__TYPE_VERTEX_SHADER__"
+#define VXM_FRAGMENT_TYPE "__TYPE_FRAGMENT_SHADER__"
+#define VXM_PIXEL_TYPE "__TYPE_PIXEL_SHADER__"
+#define VXM_GEOMETRY_TYPE "__TYPE_GEOMETRY_SHADER__"
+#define VXM_COMPUTE_TYPE "__TYPE_COMPUTE_SHADER__"
+#define VXM_TESS_CONTROL_SHADER_TYPE "__TYPE_TESS_CONTROL_SHADER__"
+#define VXM_TESS_EVALUATION_SHADER_TYPE "__TYPE_TESS_EVALUATION_SHADER__"
+
 namespace Voxymore::Core {
+
     enum class ShaderDataType {
         None = 0,
         Float,
@@ -142,7 +154,7 @@ namespace Voxymore::Core {
 		return 0;
 	}
 
-    enum class ShaderType : int {
+    enum class ShaderType : uint8_t {
         None = 0,
         COMPUTE_SHADER,
         VERTEX_SHADER,
@@ -153,94 +165,97 @@ namespace Voxymore::Core {
     };
     static const int ShaderTypeCount = 6;
 
-//    struct UniformDescription
-//    {
-//    public:
-//        std::string Name;
-//        ShaderDataType Type;
-//        int Size;
-//    public:
-//        inline UniformDescription() = default;
-//        inline UniformDescription(const std::string& name, ShaderDataType type, int size) : Name(name), Type(type), Size(size) {}
-//    };
 
-    class Shader {
+	namespace Utils {
+		inline static std::string ShaderTypeToString(ShaderType shaderType)
+		{
+			VXM_PROFILE_FUNCTION();
+
+			switch (shaderType) {
+				case ShaderType::COMPUTE_SHADER:
+					return VXM_COMPUTE_TYPE;
+					break;
+				case ShaderType::VERTEX_SHADER:
+					return VXM_VERTEX_TYPE;
+					break;
+				case ShaderType::TESS_CONTROL_SHADER:
+					return VXM_TESS_CONTROL_SHADER_TYPE;
+					break;
+				case ShaderType::TESS_EVALUATION_SHADER:
+					return VXM_TESS_EVALUATION_SHADER_TYPE;
+					break;
+				case ShaderType::GEOMETRY_SHADER:
+					return VXM_GEOMETRY_TYPE;
+					break;
+				case ShaderType::FRAGMENT_SHADER:
+					return VXM_FRAGMENT_TYPE;
+					break;
+				case ShaderType::None: break;
+					return "__TYPE_NONE__";
+					break;
+			}
+			return "__TYPE_UNKNOWN__";
+		}
+		inline static ShaderType ShaderTypeFromString(std::string type)
+		{
+			VXM_PROFILE_FUNCTION();
+			if (type == (VXM_VERTEX_TYPE)) return ShaderType::VERTEX_SHADER;
+			else if (type == (VXM_FRAGMENT_TYPE) || type == VXM_PIXEL_TYPE)
+				return ShaderType::FRAGMENT_SHADER;
+			else if (type == (VXM_GEOMETRY_TYPE))
+				return ShaderType::GEOMETRY_SHADER;
+			else if (type == (VXM_COMPUTE_TYPE))
+				return ShaderType::COMPUTE_SHADER;
+			else if (type == (VXM_TESS_CONTROL_SHADER_TYPE))
+				return ShaderType::TESS_CONTROL_SHADER;
+			else if (type == (VXM_TESS_EVALUATION_SHADER_TYPE))
+				return ShaderType::TESS_EVALUATION_SHADER;
+			else if (type == ("__TYPE_NONE__"))
+				return ShaderType::None;
+			VXM_CORE_ASSERT(false, "Type {0} unknown.", type);
+			return ShaderType::None;
+		}
+	}
+
+	struct ShaderSource : public Asset
+	{
+		VXM_IMPLEMENT_ASSET(AssetType::ShaderSource);
+
+		inline ShaderSource() = default;
+		inline ~ShaderSource() = default;
+		ShaderSource(ShaderType type);
+		ShaderSource(std::string source);
+		ShaderSource(ShaderType type, std::string source);
+
+		std::string Source;
+		ShaderType Type;
+
+		inline const char* GetRawString() const {return Source.c_str();}
+		inline std::string GetString() const {return GetRawString();}
+	};
+
+	using ShaderSourceField = AssetField<ShaderSource>;
+
+    class Shader : public Asset
+	{
     public:
+		VXM_IMPLEMENT_ASSET(AssetType::Shader);
         virtual ~Shader() = default;
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
-
-        virtual const std::string& GetName() const = 0;
-
-        static Ref<Shader> Create(const Path& path);
-        static Ref<Shader> Create(const std::string& name, const Path& path);
-        static Ref<Shader> Create(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
-		static Ref<Shader> Create(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
-		static Ref<Shader> Create(const Path& vertexPath, const Path& fragmentPath);
-		static Ref<Shader> Create(std::unordered_map<ShaderType, Path> paths);
-		static Ref<Shader> Create(const std::string name, std::unordered_map<ShaderType, Path> paths);
-
-
-//        virtual void SetUniform(const std::string& name, const void* valuePtr, uint32_t size) = 0;
-
-        virtual void SetUniformInt(const std::string& name, int value) = 0;
-		virtual void SetUniformInt2(const std::string& name, const glm::ivec2& value) = 0;
-		virtual void SetUniformInt3(const std::string& name, const glm::ivec3& value) = 0;
-		virtual void SetUniformInt4(const std::string& name, const glm::ivec4& value) = 0;
-
-        virtual void SetUniformFloat(const std::string& name, float value) = 0;
-        virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) = 0;
-        virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) = 0;
-        virtual void SetUniformFloat4(const std::string& name, const glm::vec4& value) = 0;
-
-        virtual void SetUniformMat2(const std::string& name, const glm::mat2& value) = 0;
-        virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) = 0;
-        virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) = 0;
-
-		virtual void SetUniformBool(const std::string& name, const bool& value) = 0;
-		virtual void SetUniformBool2(const std::string& name, const glm::bvec2& value) = 0;
-		virtual void SetUniformBool3(const std::string& name, const glm::bvec3& value) = 0;
-		virtual void SetUniformBool4(const std::string& name, const glm::bvec4& value) = 0;
-
-		virtual void SetUniformSampler1D(const std::string& name, const uint32_t& value) = 0;
-		virtual void SetUniformSampler2D(const std::string& name, const uint32_t& value) = 0;
-		virtual void SetUniformSampler3D(const std::string& name, const uint32_t& value) = 0;
-
 		virtual void Reload() = 0;
-		virtual bool ShouldReload() const = 0;
+
+        virtual std::string GetName() const = 0;
+        virtual void SetName(const std::string& name) = 0;
+
+		virtual std::vector<ShaderSourceField> GetSources() const = 0;
+		virtual void SetSources(const std::vector<ShaderSourceField>& sources) = 0;
+
+		static Ref<Shader> Create(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources);
+		static Ref<Shader> Create(const std::string& name, const std::vector<ShaderSourceField>& sources);
     };
 
-    class ShaderLibrary
-    {
-	private:
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
-	public:
-		typedef std::unordered_map<std::string, Ref<Shader>>::iterator iter;
-		typedef std::unordered_map<std::string, Ref<Shader>>::const_iterator  const_iter;
-	private:
-		static ShaderLibrary* s_Instance;
-    public:
-		static ShaderLibrary& GetInstance();
-        void Add(const Ref<Shader>& shader);
-        void Add(const std::string& name, const Ref<Shader>& shader);
-        Ref<Shader> Load(const Path& path);
-        Ref<Shader> Load(const std::string& name, const Path& path);
-		Ref<Shader> Load(const std::string& name, const Path& vertexPath, const Path& fragmentPath);
-		Ref<Shader> Load(const Path& vertexPath, const Path& fragmentPath);
-		Ref<Shader> Load(std::unordered_map<ShaderType, Path> paths);
-		Ref<Shader> Load(const std::string& name, std::unordered_map<ShaderType, Path> paths);
-        Ref<Shader> Get(const std::string& name);
-        bool Exists(const std::string& name) const;
-
-		iter begin() { return m_Shaders.begin();}
-		const_iter begin() const { return m_Shaders.begin(); }
-
-		iter end() { return m_Shaders.end();}
-		const_iter end() const { return m_Shaders.end(); }
-    };
-
-
-
+	using ShaderField = AssetField<Shader>;
 
 } // Core

@@ -6,8 +6,7 @@
 
 #include <Voxymore/Voxymore.hpp>
 
-#define VXM_IMPLEMENT_PANEL(name) public:\
-inline static std::string StaticGetName() { return name; } \
+#define VXM_IMPLEMENT_PANEL(name) inline static std::string StaticGetName() { return name; } \
 inline virtual std::string GetName() override { return StaticGetName(); }
 
 namespace Voxymore::Editor
@@ -37,6 +36,8 @@ namespace Voxymore::Editor
 		inline void SetOpen(bool isOpen) {m_Open = isOpen;}
 		inline PanelHandle GetHandle() const { return m_ID;}
 		inline void SetHandle(PanelHandle handle) {m_ID = handle;}
+
+		inline std::string GetImGuiName() {return GetName() + "##" + Core::Math::ToString(GetHandle());}
 	private:
 		PanelHandle m_ID;
 		bool m_Open = true;

@@ -50,10 +50,12 @@ namespace Voxymore {
             VXM_PROFILE_FUNCTION();
 			switch (drawMode) {
 
-				case DrawMode::Points: break;
+				case DrawMode::Points:
 					glDrawElements(GL_POINTS, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-				case DrawMode::Lines: break;
+					 break;
+				case DrawMode::Lines:
 					glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+					 break;
 				case DrawMode::Triangles:
 				default:
 					glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);

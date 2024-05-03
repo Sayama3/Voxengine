@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Core/FileSystem.hpp"
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
@@ -14,9 +15,6 @@
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/UniformBuffer.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
-
-#define EXTENSION_GLTF ".gltf"
-#define EXTENSION_GLB ".glb"
 
 #include "Voxymore/Renderer/Mesh.hpp"
 #include "Voxymore/Renderer/Texture.hpp"
@@ -44,35 +42,39 @@ namespace Voxymore::Core
 		inline bool HasChildren() const { return !children.empty();}
 	};
 
-	class Model
+	using ModelRootScene = std::vector<int>;
+
+	class MeshSerializer;
+	class MeshImGui;
+
+	class Model : public Asset
 	{
+	private:
+		friend class MeshSerializer;
+		friend class MeshImGui;
+	public:
+		VXM_IMPLEMENT_ASSET(AssetType::Model);
 	private:
 		std::vector<MeshGroup> m_Meshes;
 		std::vector<Node> m_Nodes;
-		std::vector<std::vector<int>> m_Scenes;
-		std::vector<Ref<Texture2D>> m_Textures;
-		Ref<Shader> m_Shader;
+		std::vector<ModelRootScene> m_Scenes;
+		std::vector<MaterialField> m_Materials;
 
 		int m_DefaultScene = 0;
-		Path m_Path;
 	public:
-		Model(const Path& path, const Ref<Shader>& shader);
+		Model(const std::vector<MeshGroup>& meshes, const std::vector<Node>& nodes, std::vector<ModelRootScene> scenes, int defaultScene = 0);
+		Model();
 		~Model();
-		static Ref<Model> CreateModel(const Path& path, const Ref<Shader>& shader);
+
 		const Node& GetNode(int index) const;
 		const MeshGroup& GetMeshGroup(int index) const;
 		const std::vector<int>& GetDefaultScene() const;
 
 		void Bind();
 		void Unbind();
-
-		const Path& GetPath() const;
-		const Ref<Shader>& GetShader() const;
-		void SetShader(Ref<Shader>&);
-		void SetShader(const std::string&);
-	private:
-		//		Node& GetNode(int index);
 	};
+
+	using ModelField = AssetField<Model>;
 
 } // namespace Voxymore::Core
 

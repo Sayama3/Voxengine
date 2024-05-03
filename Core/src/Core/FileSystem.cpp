@@ -73,7 +73,13 @@ namespace Voxymore::Core
 	void FileSystem::WriteYamlFile(const Path& path, YAML::Emitter& emitter)
 	{
 		VXM_PROFILE_FUNCTION();
-		std::ofstream fileOut(GetPath(path));
+		WriteYamlFile(GetPath(path), emitter);
+	}
+
+	void FileSystem::WriteYamlFile(const std::filesystem::path& path, YAML::Emitter& emitter)
+	{
+		VXM_PROFILE_FUNCTION();
+		std::ofstream fileOut(path);
 		fileOut << emitter.c_str();
 	}
 
@@ -99,7 +105,19 @@ namespace Voxymore::Core
 	bool FileSystem::Exist(const Path& path)
 	{
 		VXM_PROFILE_FUNCTION();
-		return std::filesystem::exists(GetPath(path));
+		return Exist(GetPath(path));
+	}
+
+	bool FileSystem::Exist(const std::filesystem::path& path)
+	{
+		VXM_PROFILE_FUNCTION();
+		return std::filesystem::exists(path);
+	}
+
+	bool FileSystem::Exist(FileSource source)
+	{
+		VXM_PROFILE_FUNCTION();
+		return Exist(GetRootPath(source));
 	}
 
 	std::string FileSystem::ReadFileAsString(const Path &path)
@@ -202,14 +220,11 @@ namespace Voxymore::Core
 
 		for (int i = 1; i < (int)FileSource::COUNT; ++i) {
 			auto source = static_cast<FileSource>(i);
-			std::string rootSourceStr = FileSystem::GetRootPath(source).make_preferred().string();
+			auto sourcePath = FileSystem::GetRootPath(source);
+			std::string rootSourceStr = sourcePath.make_preferred().string();
 			if(pathStr.starts_with(rootSourceStr))
 			{
-				std::string localPath = pathStr.substr(rootSourceStr.size(), pathStr.size()-rootSourceStr.size());
-				if(localPath.starts_with("/") || localPath.starts_with("\\"))
-				{
-					localPath = localPath.substr(1, localPath.size() - 1);
-				}
+				std::filesystem::path localPath = std::filesystem::relative(path, sourcePath);
 				return {source, localPath};
 			}
 		}

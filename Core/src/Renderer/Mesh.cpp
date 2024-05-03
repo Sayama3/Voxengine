@@ -26,27 +26,36 @@ namespace Voxymore::Core
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes));
+		//TODO: Call the **REAL** AssetManager to create a memory asset.
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes));
 	}
 
-	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material)
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const MaterialField& material)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes));
-		m_Meshes[m_Meshes.size() - 1]->SetMaterial(material);
+		//TODO: Call the **REAL** AssetManager to create a memory asset.
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes));
+		m_Meshes[m_Meshes.size() - 1].GetAsset()->SetMaterial(material);
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes, aabb));
+		//TODO: Call the **REAL** AssetManager to create a memory asset.
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes, aabb));
 	}
 
-	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material)
+	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const MaterialField& material)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Meshes.push_back(CreateRef<Mesh>(vertices, indexes, aabb));
-		m_Meshes[m_Meshes.size() - 1]->SetMaterial(material);
+		//TODO: Call the **REAL** AssetManager to create a memory asset.
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes, aabb));
+		m_Meshes[m_Meshes.size() - 1].GetAsset()->SetMaterial(material);
+	}
+	void MeshGroup::AddSubMesh(MeshField mesh)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_Meshes.push_back(mesh);
 	}
 
 	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
@@ -72,7 +81,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb) : m_BoundingBox(std::move(aabb))
+	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb) : m_BoundingBox(aabb)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_VertexArray = VertexArray::Create();
@@ -99,8 +108,6 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
-//		VXM_CORE_ASSERT(m_Material != nullptr, "The Material must be set.");
-//		m_Material->Bind();
 		m_VertexArray->Bind();
 	}
 
@@ -108,33 +115,19 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(m_VertexArray != nullptr, "The VertexArray doesn't exist.");
-		VXM_CORE_ASSERT(m_Material != nullptr, "The Material must be set.");
 		m_VertexArray->Unbind();
-		m_Material->Unbind();
 	}
 
-	void Mesh::SetMaterial(Ref<Material> material)
+	void Mesh::SetMaterial(MaterialField material)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Material = std::move(material);
+		m_Material = material;
 	}
 
-	const Ref<Material>&Mesh::GetMaterial() const
+	MaterialField Mesh::GetMaterial() const
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_Material;
-	}
-
-	void Mesh::SetShader(const std::string& shaderName)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Material->ChangeShader(shaderName);
-	}
-
-	void Mesh::SetShader(Ref<Shader>& shader)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Material->ChangeShader(shader);
 	}
 
 	Vertex::Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color) : Position(position), Normal(normal), TexCoord(texCoord), Color(color)
@@ -197,18 +190,24 @@ namespace Voxymore::Core
 		return nullptr;
 	}
 
-	Ref<Mesh> PrimitiveMesh::CreateOrphan(PrimitiveMesh::Type type)
+	Ref<Mesh> PrimitiveMesh::CreateOrphan(PrimitiveMesh::Type type, const MaterialField& material)
 	{
 		VXM_PROFILE_FUNCTION();
 
+		Ref<Mesh> mesh = nullptr;
+
 		switch (type)
 		{
-			case PrimitiveMesh::Square: return CreateSquare();
-			case PrimitiveMesh::Cube: return CreateCube();
+			case PrimitiveMesh::Square: mesh = CreateSquare(); break;
+			case PrimitiveMesh::Cube: mesh = CreateCube(); break;
 		}
 
-		VXM_CORE_ASSERT(false, "The Primitive ({0}) is not implemented", (uint32_t)type);
-		return nullptr;
+		if(mesh) {
+			mesh->SetMaterial(material);
+		}
+
+		VXM_CORE_ASSERT(mesh, "The Primitive ({0}) is not implemented", (uint32_t)type);
+		return mesh;
 	}
 
 	Ref<Mesh> PrimitiveMesh::GetOrCreateSquare()
@@ -264,7 +263,7 @@ namespace Voxymore::Core
 		};
 
 		Ref<Mesh >mesh = CreateRef<Mesh>(square, vertices);
-		mesh->SetMaterial(MaterialLibrary::GetInstance().GetOrCreate(std::to_string(mesh->id()), "Default"));
+//		mesh->SetMaterial(material);
 		return mesh;
 	}
 
@@ -326,7 +325,7 @@ namespace Voxymore::Core
 		};
 
 		Ref<Mesh> mesh = CreateRef<Mesh>(cube, vertices);
-		mesh->SetMaterial(MaterialLibrary::GetInstance().GetOrCreate(std::to_string(mesh->id()), "Default"));
+//		mesh->SetMaterial(material);
 		return mesh;
 	}
 } // namespace Voxymore::Core

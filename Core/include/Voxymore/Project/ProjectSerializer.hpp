@@ -12,7 +12,7 @@ namespace Voxymore::Core
 	class ProjectSerializer
 	{
 	private:
-		Ref<Project> m_Handle;
+		Ref<Project> m_ProjectHandle;
 	public:
 		ProjectSerializer(Ref<Project>);
 

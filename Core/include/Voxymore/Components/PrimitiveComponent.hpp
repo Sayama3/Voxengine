@@ -25,6 +25,7 @@ namespace Voxymore::Core
 
 		void Load();
 		bool IsLoaded() const;
+		bool IsValid() const;
 		Ref<Mesh> GetMesh();
 		bool IsDirty() const;
 		PrimitiveMesh::Type GetType() const;
@@ -32,6 +33,7 @@ namespace Voxymore::Core
 
 	private:
 		PrimitiveMesh::Type PrimitiveType;
+		MaterialField m_Material;
 		Ref<Mesh> m_Mesh = nullptr;
 		bool m_IsDirty = true;
 	};

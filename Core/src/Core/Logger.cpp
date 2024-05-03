@@ -4,7 +4,6 @@
 
 #include "Voxymore/Core/Logger.hpp"
 #include "spdlog/sinks/basic_file_sink.h"
-//#include "spdlog/sinks/daily_file_sink.h"
 
 
 namespace Voxymore::Core {
@@ -26,10 +25,12 @@ namespace Voxymore::Core {
 
         // Creating Client logger
 		std::array<spdlog::sink_ptr, 2> client_sinks;
-		core_sinks[0] = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-		core_sinks[1] = core_sinks[1];
+		client_sinks[0] = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		client_sinks[1] = core_sinks[1];
 
         s_ClientLogger = std::make_shared<spdlog::logger>("APP", client_sinks.begin(), client_sinks.end());
         s_ClientLogger->set_level(spdlog::level::trace);
+
+		//TODO: Add imgui sink logger.
     }
 }

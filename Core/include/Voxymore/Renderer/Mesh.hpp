@@ -9,6 +9,7 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingBox.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
@@ -24,6 +25,7 @@ namespace Voxymore::Core
 {
 	class Model;
 	class Mesh;
+	class MeshGroup;
 
 	struct Vertex
 	{
@@ -56,57 +58,68 @@ namespace Voxymore::Core
 		}
 	};
 
-
-	//TODO: create an API to be able to create Mesh from the client side.
-	class  MeshGroup
+	class Mesh : public Asset
 	{
-	private:
-		friend class Model;
 	public:
-	private:
-		std::vector<Ref<Mesh>> m_Meshes;
-	public:
-		MeshGroup() = default;
-		~MeshGroup() = default;
-		inline const std::vector<Ref<Mesh>>& GetSubMeshes() const { return m_Meshes; }
-		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes);
-		//void AddSubMesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4> &colors, const std::vector<uint32_t >& indexes, const Ref<Material>& material);
-		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
-		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const Ref<Material> &material);
-		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb);
-		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const Ref<Material> &material);
-	};
-
-	class Mesh
-	{
+		VXM_IMPLEMENT_ASSET(AssetType::Mesh);
 		friend class MeshGroup;
 	public:
-		//Mesh(const std::vector<glm::vec3>& positions, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texcoords, const std::vector<glm::vec4>& colors, const std::vector<uint32_t >& indexes);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb);
 		~Mesh() = default;
-		inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
+		[[nodiscard]] inline const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
 		void Bind() const;
 		void Unbind() const;
-		void SetShader(Ref<Shader>& shader);
-		void SetShader(const std::string& shader);
-		const Ref<Material>& GetMaterial() const;
-		void SetMaterial(Ref<Material> material);
-		[[nodiscard]] inline UUID id() const { return m_Id; }
+		[[nodiscard]] MaterialField GetMaterial() const;
+		void SetMaterial(MaterialField material);
+		[[nodiscard]] inline UUID id() const { return Handle; }
 
 		inline const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 
 		inline void SetDrawMode(DrawMode drawMode) { m_DrawMode = drawMode; }
 		inline DrawMode GetDrawMode() const { return m_DrawMode; }
 	private:
-		UUID m_Id;
 		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
-		Ref<Material> m_Material;
+		MaterialField m_Material;
 		BufferLayout m_BufferLayout;
 		BoundingBox m_BoundingBox;
 		DrawMode m_DrawMode = DrawMode::Triangles;
+	};
+
+	using MeshField = AssetField<Mesh>;
+
+	//TODO: create an API to be able to create Mesh from the client side.
+	class MeshGroup
+	{
+	public:
+		using MeshIterator = std::vector<MeshField>::iterator;
+		using ConstMeshIterator = std::vector<MeshField>::const_iterator;
+	private:
+		std::vector<MeshField> m_Meshes;
+	public:
+		MeshGroup() = default;
+		~MeshGroup() = default;
+		inline const std::vector<MeshField>& GetSubMeshes() const { return m_Meshes; }
+
+		inline MeshIterator begin() {return m_Meshes.begin(); }
+		inline MeshIterator end() {return m_Meshes.end(); }
+
+		inline ConstMeshIterator begin() const {return m_Meshes.cbegin(); }
+		inline ConstMeshIterator end() const {return m_Meshes.cend(); }
+
+		inline ConstMeshIterator cbegin() const {return m_Meshes.cbegin(); }
+		inline ConstMeshIterator cend() const {return m_Meshes.cend(); }
+
+		inline void reserve(uint64_t size) {m_Meshes.reserve(size);}
+		inline uint64_t size() const {return m_Meshes.size();}
+
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const MaterialField& material);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb);
+		void AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const MaterialField& material);
+		void AddSubMesh(MeshField mesh);
 	};
 
 	class PrimitiveMesh
@@ -128,7 +141,7 @@ namespace Voxymore::Core
 		static bool IsInit();
 
 		static Ref<Mesh> GetMesh(Type type);
-		static Ref<Mesh> CreateOrphan(Type type);
+		static Ref<Mesh> CreateOrphan(Type type, const MaterialField& material);
 
 	public:
 		PrimitiveMesh() = default;

@@ -8,10 +8,11 @@
 #include "Voxymore/Core/Serializable.hpp"
 #include "Voxymore/Core/YamlHelper.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Renderer/Texture.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/UniformBuffer.hpp"
-#include "Voxymore/Renderer/Texture.hpp"
 
 
 namespace Voxymore::Core {
@@ -76,67 +77,51 @@ namespace Voxymore::Core {
 		int DoubleSided = false;
 	};
 
-
-
-	class Material : public Serializable
+	class Material : public Serializable, public Asset
 	{
+	public:
+		VXM_IMPLEMENT_ASSET(AssetType::Material);
 	private://To Serialize
 		//TODO: Replace with a UUID.
 		std::string m_MaterialName = "";
-		std::string m_ShaderName = "Default";
 		MaterialParameters m_Parameters;
-		std::array<Ref<Texture2D>, 32> m_Textures;
-	private:
-		Ref<Shader> m_Shader;
+		std::array<Texture2DField, 32> m_Textures;
+		ShaderField m_Shader;
 	public:
 		Material();
-		Material(const std::string& shaderName);
-		Material(const std::string& shaderName, const MaterialParameters& parameters);
-		Material(const Ref<Shader>& shader);
-		Material(const Ref<Shader>& shader, const MaterialParameters& parameters);
+		Material(const std::string& name);
+		Material(const MaterialParameters& parameters);
+		Material(const ShaderField& shader);
+		Material(const std::string& name, const MaterialParameters& parameters);
+		Material(const ShaderField& shader, const MaterialParameters& parameters);
+		Material(const std::string& name, const ShaderField& shader, const MaterialParameters& parameters);
 		~Material();
 
-		void Bind() const;
+		void Bind(bool bindShader = true) const;
 		void Unbind() const;
 
-		void ChangeShader(const std::string& shaderName);
-		void ChangeShader(Ref<Shader>& shader);
+		void ChangeShader(AssetHandle shaderHandle);
+		void ChangeShader(const Ref<Shader>& shader);
 		const std::string& GetMaterialName() const;
-		const std::string& GetShaderName() const;
+		inline AssetHandle GetShaderHandle() const {return m_Shader.GetHandle();}
+		inline Ref<Shader> GetShader() const {return m_Shader.GetAsset();}
 		void SetMaterialName(const std::string& name);
 
 	public:
 		const MaterialParameters& GetMaterialsParameters() const;
 		MaterialParameters& GetMaterialsParameters();
 
-		void SetTexture(Ref<Texture2D> texture, int binding);
+		void SetTexture(Texture2DField texture, int binding);
 		void UnsetTexture(int binding);
 	public:
 		virtual void Deserialize(YAML::Node& node) override;
-		virtual void Serialize(YAML::Emitter& emitter) const override;
+		virtual void Serialize(YAML::Emitter&out) const override;
 		virtual bool OnImGui() override;
 	private:
 		void ResetShader();
-		void LoadShader();
 	};
 
-	class MaterialLibrary : public Serializable
-	{
-	private:
-		static MaterialLibrary* s_Instance;
-		std::map<std::string, Ref<Material>> m_Materials;
-	public:
-		static MaterialLibrary& GetInstance();
-		void Add(const Ref<Material>& material);
-		void Add(const std::string& name, const Ref<Material>& material);
-		Ref<Material> Get(const std::string& name);
-		Ref<Material> GetOrCreate(const std::string &materialName, const std::string &shaderName = "");
-		bool Exists(const std::string& name) const;
-	public:
-		virtual void Deserialize(YAML::Node& node) override;
-		virtual void Serialize(YAML::Emitter& emitter) const override;
-		virtual bool OnImGui() override;
-	};
+	using MaterialField = AssetField<Material>;
 
 	static void MaterialParameters_Deserialize(MaterialParameters* material, YAML::Node& node);
 	static void MaterialParameters_Serialize(const MaterialParameters* material, YAML::Emitter& emitter);

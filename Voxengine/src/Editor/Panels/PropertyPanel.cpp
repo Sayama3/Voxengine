@@ -7,43 +7,87 @@
 #endif
 
 #include "Voxymore/Editor/Panels/PropertyPanel.hpp"
+#include "Voxymore/Assets/ImGui/MaterialImGui.hpp"
+#include "Voxymore/Assets/ImGui/MeshImGui.hpp"
+#include "Voxymore/Assets/ImGui/SceneImGui.hpp"
+#include "Voxymore/Assets/ImGui/ShaderImGui.hpp"
+#include "Voxymore/Assets/ImGui/TextureImGui.hpp"
+
 #include "imgui_internal.h"
 #include "ImGuizmo.h"
 #include <cstring>
 
 
 namespace Voxymore::Editor {
+
+	std::unordered_map<AssetType, ImGuiFunction> PropertyPanel::s_ImGuiAssetRenderer = {
+			{AssetType::Texture2D, TextureImGui::OnTexture2DImGui},
+//			{AssetType::CubeMap, TextureImGui::OnCubeMapImGui},
+			{AssetType::Shader, ShaderImGui::OnShaderImGui},
+			{AssetType::ShaderSource, ShaderImGui::OnShaderSourceImGui},
+			//			{AssetType::Mesh, MeshImGui::OnMeshImGui},
+			{AssetType::Scene, SceneImGui::OnSceneImGui},
+			{AssetType::Material, MaterialImGui::OnMaterialImGui},
+			{AssetType::Model, MeshImGui::OnModelImGui},
+	};
 	Entity PropertyPanel::s_SelectedEntity = Entity();
+	Ref<Asset> PropertyPanel::s_SelectedAsset = nullptr;
 
 	void PropertyPanel::OnImGuiRender() {
 		VXM_PROFILE_FUNCTION();
-		if (s_SelectedEntity.IsValid()) {
-			bool enable = s_SelectedEntity.IsActive();
-			if (ImGui::Checkbox("##Enable", &enable)) {
-				s_SelectedEntity.SetActive(enable);
-			}
-
-			ImGui::SameLine();
-
-			if (s_SelectedEntity.HasComponent<TagComponent>()) {
-				auto &tag = s_SelectedEntity.GetComponent<TagComponent>().Tag;
-				const size_t bufferSize = 256;
-				char buffer[bufferSize];
-				buffer[bufferSize - 1] = 0;
-				std::strncpy(buffer, tag.c_str(), sizeof(buffer) - 1);
-				if (ImGui::InputText("##Tag", buffer, bufferSize)) {
-					tag = std::string(buffer);
-				}
-			}
-
-			ImGui::SameLine();
-
-			DrawAddComponent();
-
-			DrawComponents();
+		ImGui::PushID(this);
+		if (HasSelectedEntity()) {
+			ImGui::PushID((const void*)s_SelectedEntity.id().operator uint64_t());
+			RenderEntity();
+			ImGui::PopID();
+		} else if(HasSelectedAsset()) {
+			ImGui::PushID((const void*)s_SelectedAsset->Handle.operator uint64_t());
+			RenderAsset();
+			ImGui::PopID();
 		} else {
-			ImGui::Text("No entity selected.");
+			ImGui::Text("Nothing selected.");
 		}
+		ImGui::PopID();
+	}
+
+
+	bool PropertyPanel::RenderEntity()
+	{
+		bool enable = s_SelectedEntity.IsActive();
+		if (ImGui::Checkbox("##Enable", &enable)) {
+			s_SelectedEntity.SetActive(enable);
+		}
+
+		ImGui::SameLine();
+
+		if (s_SelectedEntity.HasComponent<TagComponent>()) {
+			auto &tag = s_SelectedEntity.GetComponent<TagComponent>().Tag;
+			const size_t bufferSize = 256;
+			char buffer[bufferSize];
+			buffer[bufferSize - 1] = 0;
+			std::strncpy(buffer, tag.c_str(), sizeof(buffer) - 1);
+			if (ImGui::InputText("##Tag", buffer, bufferSize)) {
+				tag = std::string(buffer);
+			}
+		}
+
+		ImGui::SameLine();
+
+		DrawAddComponent();
+
+		DrawComponents();
+
+		return false;
+	}
+
+	bool PropertyPanel::RenderAsset()
+	{
+		if(s_ImGuiAssetRenderer.contains(s_SelectedAsset->GetType()))
+		{
+			auto func = s_ImGuiAssetRenderer.at(s_SelectedAsset->GetType());
+			return func(s_SelectedAsset);
+		}
+		return false;
 	}
 
 	void PropertyPanel::DrawComponents() {

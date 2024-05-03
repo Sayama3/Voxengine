@@ -18,10 +18,8 @@ namespace Voxymore::Core
 	{
 	public:
 		static Ref<Scene> CreateScene();
-		static Ref<Scene> CreateScene(UUID id);
 		static Ref<Scene> CreateScene(const std::string& name);
-		static Ref<Scene> CreateScene(UUID id, const std::string& name);
-		static Ref<Scene> CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height);
+//		static Ref<Scene> CreateScene(const std::filesystem::path& filepath, uint32_t width, uint32_t height);
 
 		static Ref<Scene> GetScene(UUID id);
 		static void DeleteScene(UUID id);

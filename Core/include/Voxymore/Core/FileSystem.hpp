@@ -10,7 +10,7 @@
 namespace Voxymore::Core
 {
 	class Application;
-	enum class FileSource
+	enum class FileSource : uint8_t
 	{
 		None = 0,
 		EditorAsset,
@@ -67,8 +67,8 @@ namespace Voxymore::Core
 		Path(const Path&) = default;
 		Path& operator=(const Path& t) = default;
 
-		FileSource source = FileSource::None;
 		std::filesystem::path path;
+		FileSource source = FileSource::None;
 		std::filesystem::path GetFullPath() const;
 
 		[[deprecated("Replaced by 'id()' which has a better consistency.")]]
@@ -95,8 +95,9 @@ namespace Voxymore::Core
 		friend class Application;
 		friend struct Path;
 		static std::filesystem::path s_EditorPath;
-		static std::filesystem::path GetRootPath(FileSource source);
 	public:
+		static std::filesystem::path GetRootPath(FileSource source);
+
 		static std::ifstream ReadFileAsByte(const Path& path);
 		static std::stringstream ReadFileAsStringStream(const Path& path);
 		static std::string ReadFileAsString(const Path& path);
@@ -106,7 +107,8 @@ namespace Voxymore::Core
 		static std::vector<T> ReadFile(const Path& path);
 
 		static std::string ReadFileHash(const Path& path);
-		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);\
+		static void WriteYamlFile(const Path& path, YAML::Emitter& emitter);
+		static void WriteYamlFile(const std::filesystem::path& path, YAML::Emitter& emitter);
 
 		template <class _Elem, class _Traits = std::char_traits<_Elem>, class _Alloc = std::allocator<_Elem>>
 		static bool Write(const Path& path, const std::basic_string<_Elem, _Traits, _Alloc>& content);
@@ -119,6 +121,8 @@ namespace Voxymore::Core
 
 		static std::filesystem::path GetPath(const Path& path);
 		static bool Exist(const Path& path);
+		static bool Exist(FileSource source);
+		static bool Exist(const std::filesystem::path& path);
 	};
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p);

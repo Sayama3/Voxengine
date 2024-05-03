@@ -11,8 +11,9 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
-#include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Core/MultiThreading.hpp"
+#include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Renderer/EditorCamera.hpp"
 #include <entt/entt.hpp>
 #include <algorithm>
 #include <execution>
@@ -28,7 +29,7 @@ namespace Voxymore::Core
 	class SceneSerializer;
 	class System;
 
-	class Scene
+	class Scene : public Asset
 	{
 	private:
 		friend class ::Voxymore::Editor::SceneHierarchyPanel;
@@ -36,10 +37,10 @@ namespace Voxymore::Core
 		friend class SceneSerializer;
 		friend class System;
 	public:
+		VXM_IMPLEMENT_ASSET(AssetType::Scene);
+	public:
 		Scene();
 		Scene(std::string name);
-		Scene(UUID id);
-		Scene(UUID id, std::string name);
 		Scene(Ref<Scene> scene);
 		Scene(const Scene& scene);
 		Scene& operator= (const Scene&);
@@ -58,15 +59,19 @@ namespace Voxymore::Core
 		void StopScene();
 		inline bool IsStarted() const {return m_Started;}
 
-		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
-		void OnUpdateRuntime(TimeStep ts);
+		void OnUpdateEditor(TimeStep ts, EditorCamera* camera, bool doRendering = true);
+		void OnUpdateRuntime(TimeStep ts, bool doRendering = true);
+
+		void RenderEditor(TimeStep ts, EditorCamera& camera);
+		void RenderRuntime(TimeStep ts);
+
 		void SetViewportSize(uint32_t width, uint32_t height);
 
 		inline const std::string& GetName() const {return m_Name;}
 		inline void SetName(const std::string& name) {m_Name = name;}
 		[[deprecated("Use id()")]]
 		inline UUID GetID() const {return id();}
-		inline UUID id() const {return m_ID;}
+		inline UUID id() const {return Handle;}
 	public:
 
 		/**
@@ -172,7 +177,6 @@ namespace Voxymore::Core
 		// Helper:
 		Entity GetPrimaryCameraEntity();
 	private:
-		UUID m_ID;
 		std::string m_Name;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		entt::registry m_Registry;

@@ -11,19 +11,19 @@
 
 namespace Voxymore::Core
 {
-	std::unordered_map<UUID, VOID_FUNC_PTR>* Project::s_OnLoad = nullptr;
+	std::unordered_map<UUID, void_func_ptr>* Project::s_OnLoad = nullptr;
 	Ref<Project> Project::s_ActiveProject = nullptr;
 
-	std::unordered_map<UUID, VOID_FUNC_PTR>& Project::GetOnLoad()
+	std::unordered_map<UUID, void_func_ptr>& Project::GetOnLoad()
 	{
 		VXM_PROFILE_FUNCTION();
 		if(Project::s_OnLoad == nullptr) {
-			s_OnLoad = new std::unordered_map<UUID, VOID_FUNC_PTR>();
+			s_OnLoad = new std::unordered_map<UUID, void_func_ptr>();
 		}
 		return *Project::s_OnLoad;
 	}
 
-	UUID Project::AddOnLoad(CONST_REF_NAMED_VOID_FUNC_PTR(func))
+	UUID Project::AddOnLoad(const void_func_ptr& func)
 	{
 		VXM_PROFILE_FUNCTION();
 		UUID id;
@@ -43,12 +43,16 @@ namespace Voxymore::Core
 
 	Project::Project()
 	{
-
+		if(m_ProjectPath.is_relative()) {
+			m_ProjectPath = std::filesystem::current_path() / m_ProjectPath;
+		}
 	}
 
 	Project::Project(ProjectConfig parameters) : m_Config(std::move(parameters))
 	{
-
+		if(m_ProjectPath.is_relative()) {
+			m_ProjectPath = std::filesystem::current_path() / m_ProjectPath;
+		}
 	}
 
 	Project::~Project()
@@ -68,12 +72,16 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		Ref<Project> project = CreateRef<Project>();
+		auto old = s_ActiveProject;
+		s_ActiveProject = project;
+
 		ProjectSerializer ps(project);
 		if(ps.Deserialize(path))
 		{
-			s_ActiveProject = project;
 			s_ActiveProject->CallOnLoad();
 			return s_ActiveProject;
+		} else {
+			s_ActiveProject = old;
 		}
 		return nullptr;
 	}
@@ -131,6 +139,15 @@ namespace Voxymore::Core
 			return m_Config.systemDirectory;
 	}
 
+	std::filesystem::path Project::GetAssetRegistry() const
+	{
+		VXM_PROFILE_FUNCTION();
+		if(m_Config.assetRegistryPath.is_relative())
+			return m_ProjectPath.parent_path() / m_Config.assetRegistryPath;
+		else
+			return m_Config.assetRegistryPath;
+	}
+
 	const std::filesystem::path& Project::GetFilePath() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -155,6 +172,14 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		return s_ActiveProject->GetSystems();
 	}
+
+	std::filesystem::path Project::GetAssetRegistryPath()
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->GetAssetRegistry();
+	}
+
 	const std::filesystem::path& Project::GetProjectFilePath()
 	{
         VXM_PROFILE_FUNCTION();
@@ -194,7 +219,7 @@ namespace Voxymore::Core
 	{
         VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		s_ActiveProject->m_Config.startSceneId = scene->GetID();
+		s_ActiveProject->m_Config.startSceneId = scene->id();
 	}
 
 	UUID Project::GetMainScene()

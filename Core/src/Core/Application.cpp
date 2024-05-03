@@ -176,6 +176,7 @@ namespace Voxymore::Core {
 	const std::string& Application::GetArgument(const std::string& key) const
 	{
 		VXM_PROFILE_FUNCTION();
+		static std::string s_EmptyStr = "";
 		const std::vector<std::string>& arguments = m_Parameters.arguments;
 		size_t argc = arguments.size();
 		for (int i = 1; i < arguments.size(); ++i)
@@ -186,7 +187,7 @@ namespace Voxymore::Core {
 				return arguments[++i];
 			}
 		}
-		return "";
+		return s_EmptyStr;
 	}
 
 	const std::string& Application::GetArgument(int key) const

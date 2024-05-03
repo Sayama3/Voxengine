@@ -2,8 +2,7 @@
 // Created by ianpo on 17/06/2023.
 //
 
-#ifndef LEARNOPENGL_LOGGER_HPP
-#define LEARNOPENGL_LOGGER_HPP
+#pragma once
 
 #ifndef SPDLOG_ACTIVE_LEVEL
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
@@ -11,9 +10,8 @@
 
 #include <memory>
 #include <filesystem>
-#include "Voxymore/Core/Macros.hpp"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Voxymore::Core {
 
@@ -29,10 +27,8 @@ namespace Voxymore::Core {
     };
 }
 
-
-
 #ifdef VXM_LOG
-//  spdlog::source_loc(__FILE__, __LINE__, __FUNCTION__ )
+
 #define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::trace, __VA_ARGS__)
 #define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::info, __VA_ARGS__)
 #define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
@@ -47,21 +43,6 @@ namespace Voxymore::Core {
 #define VXM_WARN(...)     ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::warn, __VA_ARGS__)
 #define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::err, __VA_ARGS__)
 #define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, VXM_FUNC}, spdlog::level::critical, __VA_ARGS__)
-
-//#define VXM_CORE_TRACE(...)       ::Voxymore::Core::Log::GetCoreLogger()->trace(__VA_ARGS__)
-//#define VXM_CORE_INFO(...)        ::Voxymore::Core::Log::GetCoreLogger()->info(__VA_ARGS__)
-//#define VXM_CORE_WARNING(...)     ::Voxymore::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
-//#define VXM_CORE_WARN(...)     ::Voxymore::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
-//#define VXM_CORE_ERROR(...)       ::Voxymore::Core::Log::GetCoreLogger()->error(__VA_ARGS__)
-//#define VXM_CORE_CRITICAL(...)    ::Voxymore::Core::Log::GetCoreLogger()->critical(__VA_ARGS__)
-//
-//
-//#define VXM_TRACE(...)       ::Voxymore::Core::Log::GetClientLogger()->trace(__VA_ARGS__)
-//#define VXM_INFO(...)        ::Voxymore::Core::Log::GetClientLogger()->info(__VA_ARGS__)
-//#define VXM_WARNING(...)     ::Voxymore::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
-//#define VXM_WARN(...)     ::Voxymore::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
-//#define VXM_ERROR(...)       ::Voxymore::Core::Log::GetClientLogger()->error(__VA_ARGS__)
-//#define VXM_CRITICAL(...)    ::Voxymore::Core::Log::GetClientLogger()->critical(__VA_ARGS__)
 
 #else
 
@@ -81,5 +62,3 @@ namespace Voxymore::Core {
 #define VXM_CRITICAL(...)
 
 #endif
-
-#endif //LEARNOPENGL_LOGGER_HPP
