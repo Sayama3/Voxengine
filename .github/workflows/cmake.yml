@@ -71,7 +71,7 @@ jobs:
       # Setup ubuntu
     - name: Install X11 dependencies on Unix-like system
       if: ${{ contains(matrix.os, 'ubuntu') }}
-      run: sudo apt-get update && sudo apt-get install -y xorg-dev
+      run: sudo apt-get update && sudo apt-get install -y libwayland-dev libxkbcommon-dev xorg-dev
 
     - name: Install OpenGL on Ubuntu
       if: ${{ contains(matrix.os, 'ubuntu') }}
