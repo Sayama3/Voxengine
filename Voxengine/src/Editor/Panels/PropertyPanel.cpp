@@ -87,6 +87,7 @@ namespace Voxymore::Editor {
 			auto func = s_ImGuiAssetRenderer.at(s_SelectedAsset->GetType());
 			return func(s_SelectedAsset);
 		}
+		return false;
 	}
 
 	void PropertyPanel::DrawComponents() {

@@ -622,7 +622,7 @@ namespace Voxymore::Core
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle().string());
 
 		VXM_CORE_TRACE("Uniform buffers:");
 		analyzedShaderData.m_Uniform.reserve(resources.uniform_buffers.size());
@@ -646,7 +646,7 @@ namespace Voxymore::Core
 			analyzedShaderData.m_Constants.push_back(member);
 			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
 		}
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle());
+		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle().string());
 	}
 
 	void OpenGLShader::Bind() const

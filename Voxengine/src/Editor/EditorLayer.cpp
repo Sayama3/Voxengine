@@ -337,7 +337,7 @@ namespace Voxymore::Editor {
 
 				if(m_ActiveScene != nullptr && ImGui::MenuItem("Make Scene main scene"))
 				{
-					Project::SetMainScene(m_ActiveScene->GetID());
+					Project::SetMainScene(m_ActiveScene->id());
 				}
 
 				ImGui::EndMenu();

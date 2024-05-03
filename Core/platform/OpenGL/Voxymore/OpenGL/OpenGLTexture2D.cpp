@@ -295,7 +295,7 @@ namespace Voxymore::Core {
 		TexSpecHelper helper(m_TextureSpecification);
 		GLenum dataFormat = helper.GetFormat();
 		GLenum pixelType = helper.GetType();
-		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle);
+		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
 		VXM_CORE_ASSERT(m_Width * m_Height * m_Channels * helper.GetPixelSize() == data.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Width, m_Height, m_Channels, helper.GetTypeToString());
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, data.Data);
 		if(m_TextureSpecification.generateMipMaps) {

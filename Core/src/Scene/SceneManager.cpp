@@ -14,7 +14,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		Ref<Scene> scene = CreateRef<Scene>();
 		UUID id = scene->GetID();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id);
+		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id.string());
 		s_Scenes[id] = scene;
 		return scene;
 	}
@@ -23,7 +23,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		Ref<Scene> scene = CreateRef<Scene>(name);
 		UUID id = scene->GetID();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id);
+		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene id '{0}' already exist.", id.string());
 		s_Scenes[id] = scene;
 		return scene;
 	}
@@ -51,14 +51,14 @@ namespace Voxymore::Core
 	Ref<Scene> SceneManager::GetScene(UUID id)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(s_Scenes.contains(id), "The scene {0} don't exist.", id);
+		VXM_CORE_ASSERT(s_Scenes.contains(id), "The scene {0} don't exist.", id.string());
 		return s_Scenes[id];
 	}
 
 	void SceneManager::DeleteScene(UUID id)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(s_Scenes.contains(id), "The scene {0} don't exist.", id);
+		VXM_CORE_ASSERT(s_Scenes.contains(id), "The scene {0} don't exist.", id.string());
 		s_Scenes.erase(id);
 	}
 
@@ -66,7 +66,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		UUID id = scene->id();
-		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene {0} exist.", id);
+		VXM_CORE_ASSERT(!s_Scenes.contains(id), "The scene {0} exist.", id.string());
 		s_Scenes[id] = scene;
 	}
 	

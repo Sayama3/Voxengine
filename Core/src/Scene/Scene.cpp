@@ -113,7 +113,7 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			VXM_CORE_WARNING("The entity ({0}) was not found in the entity map.", entity.GetUUID());
+			VXM_CORE_WARNING("The entity ({0}) was not found in the entity map.", entity.id().string());
 		}
 	}
 
@@ -382,7 +382,7 @@ namespace Voxymore::Core
 			return it->second;
 		}
 		else {
-			VXM_CORE_ERROR("Entity ID({0}) not found.", id);
+			VXM_CORE_ERROR("Entity ID({0}) not found.", id.string());
 			return {};
 		}
 	}

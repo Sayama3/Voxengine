@@ -109,12 +109,12 @@ namespace Voxymore::Core
 					name = tagComponent["Tag"].as<std::string>();
 				}
 				else {
-					name = "Entity_" + std::to_string(uuid);
+					name = "Entity_" + uuid.string();
 				}
 
 				bool enable = (!yamlEntity["IsActive"]) || yamlEntity["IsActive"].as<bool>();
 
-				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid);
+				VXM_CORE_TRACE("Deserialize Entity with name: {0} and ID: {1}", name, uuid.string());
 
 				Entity entity = GetScene().CreateEntity(uuid, name);
 				entity.SetActive(enable);
@@ -186,7 +186,7 @@ namespace Voxymore::Core
 	void SceneSerializer::SerializeEntity(YAML::Emitter &out, Entity entity)
 	{
 		VXM_PROFILE_FUNCTION();
-		out << KEYVAL("Entity", entity.GetUUID());//TODO: set entity ID;
+		out << KEYVAL("Entity", entity.id());//TODO: set entity ID;
 
 		out << KEYVAL("IsActive", entity.IsActive());
 

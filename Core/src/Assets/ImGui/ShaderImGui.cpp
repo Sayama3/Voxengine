@@ -2,8 +2,6 @@
 // Created by ianpo on 12/04/2024.
 //
 
-#pragma once
-
 #include "Voxymore/Assets/ImGui/ShaderImGui.hpp"
 #include "Voxymore/Assets/Importers/ShaderSerializer.hpp"
 

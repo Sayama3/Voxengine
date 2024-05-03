@@ -43,7 +43,7 @@ namespace Voxymore::Core
 			if(asset) {
 				m_LoadedAssets.insert({handle, asset});
 			} else {
-				VXM_CORE_ERROR("Could not load the asset {0}", handle);
+				VXM_CORE_ERROR("Could not load the asset {0}", handle.string());
 				//TODO: use this version :
 				// VXM_CORE_ERROR("Could not load the asset {0} ({1})", handle, metadata);
 			}
