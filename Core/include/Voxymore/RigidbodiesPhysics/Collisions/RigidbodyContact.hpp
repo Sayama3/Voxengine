@@ -41,12 +41,12 @@ namespace Voxymore::Core
 		/**
 		 * Holds the position of the contact in world coordinates.
 		 */
-		Vec3 contactPoint = {};
+		Vec3 contactPoint = glm::vec3{0,0,0};
 
 		/**
 		 * The direction of the contact in world space.
 		 */
-		Vec3 contactNormal = {};
+		Vec3 contactNormal = glm::vec3{0,0,0};
 
 		/**
 		 * The depth of penetration at the contact.
@@ -58,18 +58,19 @@ namespace Voxymore::Core
 		Real restitution = 0;
 	private:
 		Mat3 m_ContactToWorld = Math::Identity<Mat3>();
-		Vec3 m_ContactVelocity;
-		Real m_DesiredDeltaVelocity;
-		std::array<Vec3, 2> m_RelativeContactPosition;
+		Vec3 m_ContactVelocity = glm::vec3{0,0,0};
+		Real m_DesiredDeltaVelocity = 0 ;
+		std::array<Vec3, 2> m_RelativeContactPosition = {glm::vec3{0,0,0}, glm::vec3{0,0,0}};
 		constexpr static const Real c_VelocityLimit = Real(0.25);
 	};
 
+	//TODO: Create Default Collision Data and customizable one
 	struct CollisionData
 	{
 		CollisionData();
 		~CollisionData();
-		Real friction;
-		Real restitution;
+		Real friction = 0.6;
+		Real restitution = .8;
 
 		void AddContact(int i = 1);
 		[[deprecated("use CollisionData::AddContact")]]

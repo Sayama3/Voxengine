@@ -24,9 +24,9 @@ namespace Voxymore::Core
 
 		PrepareContacts(ts, contacts);
 
-		AdjustPositions(ts, contacts);
-
 		AdjustVelocities(ts, contacts);
+
+		AdjustPositions(ts, contacts);
 
 
 //		while (m_PositionIterationsUsed < m_Iterations)
@@ -77,7 +77,7 @@ namespace Voxymore::Core
 		m_PositionIterationsUsed = 0;
 		while (m_PositionIterationsUsed < m_Iterations)
 		{
-			max = m_PositionEpsilon;
+			max = m_ContactEpsilon;
 			index = numContact;
 
 			for (i = 0; i < numContact; ++i) {
@@ -120,10 +120,10 @@ namespace Voxymore::Core
 		std::array<Vec3, 2> linearChanges = {}, angularChanges = {};
 		Real max;
 		Vec3 deltaVelocity;
-		m_PositionIterationsUsed = 0;
-		while (m_PositionIterationsUsed < m_Iterations)
+		m_VelocityIterationsUsed = 0;
+		while (m_VelocityIterationsUsed < m_Iterations)
 		{
-			max = m_PositionEpsilon;
+			max = m_ContactEpsilon;
 			index = numContact;
 
 			for (i = 0; i < numContact; ++i) {
@@ -158,7 +158,7 @@ namespace Voxymore::Core
 					}
 				}
 			}
-			m_PositionIterationsUsed++;
+			m_VelocityIterationsUsed++;
 		}
 	}
 

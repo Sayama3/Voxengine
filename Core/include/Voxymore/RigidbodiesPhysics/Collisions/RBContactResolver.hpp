@@ -16,10 +16,11 @@ namespace Voxymore::Core
 		uint32_t m_Iterations;
 		uint32_t m_PositionIterationsUsed;
 		uint32_t m_VelocityIterationsUsed;
+
 		/**
 		 * The minimum penetration to be considered an interpenetration.
 		 */
-		Real m_PositionEpsilon = 0.01;
+		const Real m_ContactEpsilon = 0.01;
 	public:
 		RBContactResolver();
 		RBContactResolver(uint32_t iterations);

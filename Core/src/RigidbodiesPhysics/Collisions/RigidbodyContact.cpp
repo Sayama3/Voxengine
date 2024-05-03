@@ -326,6 +326,20 @@ namespace Voxymore::Core
 		bodies[0]->AddLinearVelocity(linearChange[0]);
 		bodies[0]->AddAngularVelocity(angularChange[0]);
 
+		Vec3 linear, angular;
+
+		linear = bodies[0]->GetLinearVelocity();
+		if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
+		if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
+		if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+		bodies[0]->SetLinearVelocity(linear);
+
+		angular = bodies[0]->GetAngularVelocity();
+		if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
+		if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
+		if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+		bodies[0]->SetAngularVelocity(angular);
+
 		if (bodies[1])
 		{
 			// Work out body one's linear and angular changes
@@ -337,6 +351,19 @@ namespace Voxymore::Core
 			// And apply them.
 			bodies[1]->AddLinearVelocity(linearChange[1]);
 			bodies[1]->AddAngularVelocity(angularChange[1]);
+
+
+			linear = bodies[1]->GetLinearVelocity();
+			if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
+			if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
+			if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+			bodies[1]->SetLinearVelocity(linear);
+
+			angular = bodies[1]->GetAngularVelocity();
+			if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
+			if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
+			if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+			bodies[1]->SetAngularVelocity(angular);
 		}
 	}
 
