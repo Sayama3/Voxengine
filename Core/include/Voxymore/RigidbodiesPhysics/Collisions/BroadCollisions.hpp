@@ -125,7 +125,17 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(other != nullptr, "The other node is null.");
 		if(other == nullptr) return 0;
-		if(!Overlaps(other)) return 0;
+
+		if(!Overlaps(other)) {
+			uint32_t count = 0;
+			if (!IsLeaf() && children[0] && children[1]) {
+				count += children[0]->GetPotentialContactsWith(children[1], contacts);
+			}
+			if (!other->IsLeaf() && other->children[0] && other->children[1]) {
+				count += other->children[0]->GetPotentialContactsWith(other->children[1], contacts);
+			}
+			return count;
+		}
 
 		// If both leaves and we have a contact, there is a contact.
 		if(IsLeaf() && other->IsLeaf())
@@ -137,7 +147,7 @@ namespace Voxymore::Core
 			return 1;
 		}
 
-		if(other->IsLeaf() || (IsLeaf() && volume.GetSize() >= other->volume.GetSize()))
+		if(other->IsLeaf() || (!IsLeaf() && volume.GetSize() >= other->volume.GetSize()))
 		{
 			uint32_t count = children[0]->GetPotentialContactsWith(other, contacts);
 			return count + children[1]->GetPotentialContactsWith(other, contacts);
