@@ -33,7 +33,7 @@ namespace Voxymore::Core
 		Rigidbody* body = nullptr;
 		Entity entity = Entity();
 
-		inline bool IsLeaf() const { return body != nullptr; }
+		bool IsLeaf() const;
 
 		bool Overlaps(const BVHNode<BoundingClass>& other) const;
 		bool Overlaps(const BVHNode<BoundingClass>* other) const;
@@ -43,6 +43,12 @@ namespace Voxymore::Core
 		void Insert(Rigidbody* newBody, Entity newEntity, const BoundingClass& newVolume);
 		void RecalculateBoundingVolume();
 	};
+
+	template<class BoundingClass>
+	bool BVHNode<BoundingClass>::IsLeaf() const
+	{
+		return body != nullptr;
+	}
 
 	template<class BoundingClass>
 	BVHNode<BoundingClass>::BVHNode(BVHNode<BoundingClass> *parent, Rigidbody *body, BoundingClass volume) : parent(parent), body(body), volume(volume)
@@ -116,7 +122,19 @@ namespace Voxymore::Core
 		VXM_CORE_CHECK(children[0] != nullptr && children[1] != nullptr, "The children are null.");
 		if(children[0] == nullptr || children[1] == nullptr) return 0;
 
-		return children[0]->GetPotentialContactsWith(children[1], contacts);
+		uint32_t count = 0;
+
+		count += children[0]->GetPotentialContactsWith(children[1], contacts);
+
+		if(children[0]) {
+			count += children[0]->GetPotentialContacts(contacts);
+		}
+
+		if(children[1]) {
+			count += children[1]->GetPotentialContacts(contacts);
+		}
+
+		return count;
 	}
 
 	template<class BoundingClass>
@@ -126,16 +144,7 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(other != nullptr, "The other node is null.");
 		if(other == nullptr) return 0;
 
-		if(!Overlaps(other)) {
-			uint32_t count = 0;
-			if (!IsLeaf() && children[0] && children[1]) {
-				count += children[0]->GetPotentialContactsWith(children[1], contacts);
-			}
-			if (!other->IsLeaf() && other->children[0] && other->children[1]) {
-				count += other->children[0]->GetPotentialContactsWith(other->children[1], contacts);
-			}
-			return count;
-		}
+		 if(!Overlaps(other)) return 0;
 
 		// If both leaves and we have a contact, there is a contact.
 		if(IsLeaf() && other->IsLeaf())
