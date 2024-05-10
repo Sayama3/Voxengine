@@ -6,10 +6,32 @@
 
 namespace Voxymore::Core
 {
+	namespace Helper
+	{
+		static inline Mat3 _transformInertiaTensor(const Quat &q, const Mat3 &invI_local)
+		{
+			VXM_PROFILE_FUNCTION();
+			Mat3 rotate = Math::ToMat3(q);
+
+			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
+			return rotate * invI_local * glm::transpose(rotate);
+		}
+
+		static inline void _transformInertiaTensor(Mat3& invI_world, const Quat &q, const Mat3 &invI_local)
+		{
+			VXM_PROFILE_FUNCTION();
+			invI_world = Math::ToMat3(q);
+
+			// Inverse inertia tensor transformation equation: R * invI_local * Transpose(R)
+			invI_world = invI_world * invI_local * glm::transpose(invI_world);
+		}
+	}
+
 	Rigidbody::Rigidbody(Real inverseMass, Real linearDamping, TransformComponent* transform, Mat3 inverseInertiaTensor)
 		: m_InverseMass(inverseMass), m_LinearDamping(linearDamping), m_Transform(transform), m_InverseInertiaTensor(inverseInertiaTensor)
 	{
 	}
+
 	void Rigidbody::Integrate(Real ts)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -61,6 +83,25 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_InverseInertiaTensor = inverseInertiaTensor;
+	}
+
+	const Mat3& Rigidbody::GetInverseInertiaTensor() const
+	{
+		return m_InverseInertiaTensor;
+	}
+
+	Mat3 Rigidbody::GetInverseInertiaTensorWorld() const
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
+		return Helper::_transformInertiaTensor(m_Transform->GetRotation(), m_InverseInertiaTensor);
+	}
+
+	void Rigidbody::GetInverseInertiaTensorWorld(Mat3& iitWorld) const
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(m_Transform, "The transform component is not set.");
+		Helper::_transformInertiaTensor(iitWorld, m_Transform->GetRotation(), m_InverseInertiaTensor);
 	}
 
 	Mat3 Rigidbody::CalculateWorldInverseInertiaTensor() const
@@ -271,6 +312,12 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_AngularVelocity += angularVelocity;
+	}
+
+	Vec3 Rigidbody::GetLastFrameAcceleration() const
+	{
+		//TODO: see if I shouldn't cache the force applied...
+		return m_Acceleration;
 	}
 
 } // namespace Voxymore::Core

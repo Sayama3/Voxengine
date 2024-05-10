@@ -40,6 +40,9 @@ namespace Voxymore::Core
 
 		void SetInertiaTensor(const Mat3& inertiaTensor);
 		void SetInverseInertiaTensor(const Mat3& inverseInertiaTensor);
+		const Mat3& GetInverseInertiaTensor() const;
+		Mat3 GetInverseInertiaTensorWorld() const;
+		void GetInverseInertiaTensorWorld(Mat3& iitWorld) const;
 
 		void AddForce(const Vec3& force);
 		void AddAcceleration(const Vec3& acceleration);
@@ -84,6 +87,8 @@ namespace Voxymore::Core
 		Vec3& GetAngularVelocity();
 		void SetAngularVelocity(const Vec3& angularVelocity);
 		void AddAngularVelocity(const Vec3& angularVelocity);
+
+		Vec3 GetLastFrameAcceleration() const;
 
 	protected:
 

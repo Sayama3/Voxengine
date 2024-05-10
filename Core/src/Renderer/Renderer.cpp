@@ -70,65 +70,44 @@ namespace Voxymore::Core {
 		s_Data.OpaqueMeshes.clear();
 	}
 
+	void Renderer::DrawMesh(Ref<Mesh> m, const glm::mat4& modelMatrix, int entityId)
+	{
+		s_Data.ModelBuffer.TransformMatrix = modelMatrix;
+		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(modelMatrix));
+		s_Data.ModelBuffer.EntityId = entityId;
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+
+		MaterialField mat = m->GetMaterial();
+		VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
+		Ref<Material> matPtr = mat.GetAsset();
+		//if(mat != s_BindedMaterial && mat) {
+			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
+			matPtr->Bind(false);
+			s_BindedMaterial = mat;
+		//}
+
+		ShaderField shader = matPtr->GetShaderHandle();
+		VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
+		//if (shader != s_BindedShader && shader) {
+			shader.GetAsset()->Bind();
+			s_BindedShader = shader;
+		//}
+		m->Bind();
+		RenderCommand::DrawIndexed(m->GetVertexArray());
+	}
+
 	void Renderer::EndScene() {
 		VXM_PROFILE_FUNCTION();
 
 		for(const auto& mesh : s_Data.OpaqueMeshes)
 		{
-			Ref<Mesh> m = std::get<0>(mesh);
-			s_Data.ModelBuffer.TransformMatrix = std::get<1>(mesh);
-			s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(std::get<1>(mesh)));
-			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
-
-			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-
-			MaterialField mat = m->GetMaterial();
-			VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
-			if(mat != s_BindedMaterial && mat) {
-				s_BindedMaterial = mat;
-				Ref<Material> matPtr = mat.GetAsset();
-				s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-				ShaderField shader = matPtr->GetShaderHandle();
-				VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
-				matPtr->Bind(false);
-				if (shader != s_BindedShader && shader) {
-					shader.GetAsset()->Bind();
-					s_BindedShader = shader;
-				}
-			}
-			m->Bind();
-			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
+			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
 		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
 			auto& mesh = it->second;
-			Ref<Mesh> m = std::get<0>(mesh);
-
-			s_Data.ModelBuffer.TransformMatrix = std::get<1>(mesh);
-			s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(std::get<1>(mesh)));
-			s_Data.ModelBuffer.EntityId = std::get<2>(mesh);
-
-			s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
-
-			MaterialField mat = m->GetMaterial();
-			VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
-			if(mat != s_BindedMaterial && mat) {
-				s_BindedMaterial = mat;
-				Ref<Material> matPtr = mat.GetAsset();
-				s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-				ShaderField shader = matPtr->GetShaderHandle();
-				VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
-				matPtr->Bind(false);
-				if (shader != s_BindedShader && shader) {
-					shader.GetAsset()->Bind();
-					s_BindedShader = shader;
-				}
-			}
-
-			RenderCommand::DrawIndexed(std::get<0>(mesh)->GetVertexArray());
+			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
 		RenderCommand::ClearBinding();
@@ -164,26 +143,27 @@ namespace Voxymore::Core {
 		VXM_PROFILE_FUNCTION();
 		//		VXM_CORE_ASSERT(s_Data.ViewProjectionMatrix != glm::zero<glm::mat4>(), "A valid View Projection Matrix is required to submit data to the renderer.");
 
-
 		s_Data.ModelBuffer.TransformMatrix = transform;
 		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(transform));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
-		MaterialField mat = material;
+		MaterialField mat = material->Handle;
 		VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
+		Ref<Material> matPtr = mat.GetAsset();
 		if(mat != s_BindedMaterial && mat) {
+			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
+			matPtr->Bind(false);
 			s_BindedMaterial = mat;
-			s_Data.MaterialUniformBuffer->SetData(&material->GetMaterialsParameters(), sizeof(MaterialParameters));
-
-			ShaderField shader = material->GetShaderHandle();
-			VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", material->GetMaterialName(), shader.GetHandle().string());
-			material->Bind(false);
-			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
-				s_BindedShader = shader;
-			}
 		}
+
+		ShaderField shader = matPtr->GetShaderHandle();
+		VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
+		if (shader != s_BindedShader && shader) {
+			shader.GetAsset()->Bind();
+			s_BindedShader = shader;
+		}
+
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
@@ -201,15 +181,6 @@ namespace Voxymore::Core {
 			if(mesh) {
 				Submit(mesh.GetAsset(), transform, entityId);
 			}
-//			s_Data.MaterialUniformBuffer->SetData(&mesh->GetMaterial()->GetMaterialsParameters(), sizeof(MaterialParameters));
-//			mesh->Bind();
-//			auto& shaderName = mesh->GetMaterial()->GetShaderName();
-//			if(shaderName != s_BindedShader)
-//			{
-//				mesh->GetMaterial()->Bind();
-//				s_BindedShader = shaderName;
-//			}
-//			RenderCommand::DrawIndexed(mesh->GetVertexArray());
 		}
 	}
 

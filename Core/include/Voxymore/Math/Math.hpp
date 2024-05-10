@@ -277,6 +277,35 @@ namespace Voxymore::Core
 			return glm::dot(vec1, vec2);
 		}
 
+		/**
+         * Adds the given vector to this, scaled by the given amount.
+         * This is used to update the orientation quaternion by a rotation
+         * and time.
+         *
+         * @param vector The vector to add.
+         *
+         * @param scale The amount of the vector to add.
+         */
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static void AddScaledVector(glm::qua<T,Q>& rotation, const glm::vec<3,T,Q>& vector, T scale)
+		{
+			glm::qua<T,Q> q = glm::qua<T,Q>::wxyz(0, vector.x * scale, vector.y * scale, vector.z * scale);
+			q *= rotation;
+			rotation.w += q.w * ((T)0.5);
+			rotation.x += q.x * ((T)0.5);
+			rotation.y += q.y * ((T)0.5);
+			rotation.z += q.z * ((T)0.5);
+		}
+
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::mat<3,3,T,Q> SetSkewSymmetric(const glm::vec<3,T,Q>& vector)
+		{
+			return glm::mat<3,3,T,Q>(
+					0, -vector.z, +vector.y,
+					+vector.z, 0, -vector.x,
+					-vector.y, +vector.x, 0);
+		}
+
 		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
@@ -333,19 +362,19 @@ namespace Voxymore::Core
 } // Voxymore::Core
 
 template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
-inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q> value){
+inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q>& value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 
 template<typename T, glm::qualifier Q>
-inline std::ostream& operator << (std::ostream & os, const glm::qua<T,Q> value){
+inline std::ostream& operator << (std::ostream & os, const glm::qua<T,Q>& value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }
 
 template<glm::length_t L, typename T, glm::qualifier Q>
-inline std::ostream& operator << (std::ostream & os, const glm::vec<L, T, Q> value){
+inline std::ostream& operator << (std::ostream & os, const glm::vec<L, T, Q>& value){
 	VXM_PROFILE_FUNCTION();
 	return os << glm::to_string(value);
 }

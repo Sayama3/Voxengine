@@ -53,6 +53,7 @@ namespace Voxymore::Core
 	public:
 		Vec3 m_Normal = {0,1,0};
 		Real m_Offset = 0;
+		Real m_Size = 1;
 	};
 
 	class Box : public PrimitiveCollider

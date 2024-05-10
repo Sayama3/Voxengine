@@ -6,7 +6,9 @@
 
 namespace Voxymore::Core
 {
-	BoundingBox::BoundingBox(const Vec3 &min, const Vec3 &max) : m_Max(max), m_Min(min) { }
+	BoundingBox::BoundingBox(const Vec3 &min, const Vec3 &max) : m_Max(max), m_Min(min) {
+	  VXM_CORE_ASSERT(Math::Max(m_Min, m_Max) == m_Max, "The max ({}) should be ({})", Math::ToString(m_Max), Math::ToString(Math::Max(m_Min, m_Max)));
+	}
 
 	BoundingBox::BoundingBox(const BoundingBox &one, const BoundingBox &two) : m_Min(one.m_Min), m_Max(one.m_Max)
 	{
