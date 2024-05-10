@@ -199,6 +199,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/ImGui/SceneImGui.cpp
         src/Assets/ImGui/ShaderImGui.cpp
         src/Assets/ImGui/TextureImGui.cpp
+        include/Voxymore/Renderer/Cubemap.cpp
+        include/Voxymore/Renderer/Cubemap.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
