@@ -17,6 +17,8 @@ target_sources(${LIBRARY_TARGET_NAME} PRIVATE
         Voxymore/OpenGL/OpenGLFramebuffer.hpp
         Voxymore/OpenGL/OpenGLUniformBuffer.cpp
         Voxymore/OpenGL/OpenGLUniformBuffer.hpp
+        Voxymore/OpenGL/OpenGLCubemap.cpp
+        Voxymore/OpenGL/OpenGLCubemap.hpp
         )
 
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE

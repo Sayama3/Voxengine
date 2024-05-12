@@ -1,22 +1,20 @@
 //
-// Created by ianpo on 29/07/2023.
+// Created by ianpo on 12/05/2024.
 //
 
-#include "OpenGLTexture2D.hpp"
-
+#include "OpenGLCubemap.hpp"
 #include <utility>
 #include <glad/glad.h>
 
-
-namespace Voxymore::Core {
-	class TexSpecHelper
+namespace Voxymore::Core
+{
+	class CubemapSpecHelper
 	{
 	private:
-		Texture2DSpecification& spec;
-
+		CubemapSpecification& spec;
 	public:
-		TexSpecHelper(Texture2DSpecification& specification) : spec(specification) {}
-		~TexSpecHelper() = default;
+		CubemapSpecHelper(CubemapSpecification& specification) : spec(specification) {}
+		~CubemapSpecHelper() = default;
 
 		[[nodiscard]] GLenum GetInternalFormat() const
 		{
@@ -223,94 +221,107 @@ namespace Voxymore::Core {
 			VXM_CORE_WARNING("No value found for WrapT, defaulting to 'Repeat'.");
 			return GL_REPEAT;
 		}
+
+		[[nodiscard]] GLint GetWrapR() const
+		{
+			VXM_PROFILE_FUNCTION();
+			switch (spec.wrapperR) {
+				case Repeat: return GL_REPEAT;
+				case ClampToEdge: return GL_CLAMP_TO_EDGE;
+				case MirroredRepeat: return GL_MIRRORED_REPEAT;
+			}
+			VXM_CORE_WARNING("No value found for WrapT, defaulting to 'Repeat'.");
+			return GL_REPEAT;
+		}
 	};
 
-	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs) : m_TextureSpecification(textureSpecs)
+	[[nodiscard]] GLint GetOpenGLSide(Cubemap::Side side)
 	{
-		VXM_PROFILE_FUNCTION();
-		CreateTexture();
-	}
-
-	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs, Buffer buffer) : m_TextureSpecification(textureSpecs)
-	{
-		VXM_PROFILE_FUNCTION();
-		CreateTexture();
-		SetData(buffer);
-	}
-
-	OpenGLTexture2D::OpenGLTexture2D(const uint8_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
-		m_TextureSpecification.pixelType = PX_8;
-		m_TextureSpecification.width = width;
-		m_TextureSpecification.height = height;
-		m_TextureSpecification.channels = channels;
-
-		CreateTexture();
-		SetData({(void*)data, width * height * channels * sizeof(uint8_t)});
-	}
-
-	OpenGLTexture2D::OpenGLTexture2D(const uint16_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
-	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
-		m_TextureSpecification.pixelType = PX_16;
-		m_TextureSpecification.width = width;
-		m_TextureSpecification.height = height;
-		m_TextureSpecification.channels = channels;
-
-		CreateTexture();
-		SetData({(void*)data, width * height * channels * sizeof(uint16_t)});
-	}
-
-	void OpenGLTexture2D::CreateTexture()
-	{
-		VXM_PROFILE_FUNCTION();
-		TexSpecHelper helper(m_TextureSpecification);
-
-		m_Width = m_TextureSpecification.width;
-		m_Height = m_TextureSpecification.height;
-		m_Channels = m_TextureSpecification.channels;
-
-		VXM_CORE_ASSERT(m_TextureSpecification.channels > 0 && m_TextureSpecification.channels < 5, "The number of channel {0} is not handle at the moment.", m_TextureSpecification.channels);
-
-		GLenum internalFormat = helper.GetInternalFormat();
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, helper.GetMinFilter());
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, helper.GetMagFilter());
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, helper.GetWrapS());
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, helper.GetWrapT());
-	}
-
-	void OpenGLTexture2D::SetData(Buffer data)
-	{
-		VXM_PROFILE_FUNCTION();
-		TexSpecHelper helper(m_TextureSpecification);
-		GLenum dataFormat = helper.GetFormat();
-		GLenum pixelType = helper.GetType();
-		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
-		VXM_CORE_ASSERT(m_Width * m_Height * m_Channels * helper.GetPixelSize() == data.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Width, m_Height, m_Channels, helper.GetTypeToString());
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, data.Data);
-		if(m_TextureSpecification.generateMipMaps) {
-			glGenerateTextureMipmap(m_RendererID);
+		switch (side) {
+			case Cubemap::Side::Right: return 0;	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+			case Cubemap::Side::Left: return 1;		// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+			case Cubemap::Side::Top: return 2;		// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+			case Cubemap::Side::Bottom: return 3;	// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+			case Cubemap::Side::Front: return 4;	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+			case Cubemap::Side::Back: return 5;		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 		}
 	}
 
-	OpenGLTexture2D::~OpenGLTexture2D() {
-		VXM_PROFILE_FUNCTION();
-		glDeleteTextures(1, &m_RendererID);
+	OpenGLCubemap::OpenGLCubemap(const CubemapSpecification& spec) : m_Specification(spec)
+	{
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+		CubemapSpecHelper helper(m_Specification);
+
+		VXM_CORE_ASSERT(m_Specification.channels > 0 && m_Specification.channels < 5, "The number of channel {0} is not handle at the moment.", m_Specification.channels);
+
+		glTextureStorage2D(
+				m_RendererID,
+				1,           // one level, no mipmaps
+				helper.GetInternalFormat(),    // internal format
+				static_cast<GLint>(m_Specification.width),
+				static_cast<GLint>(m_Specification.height));
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, helper.GetMagFilter());
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, helper.GetMinFilter());
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, helper.GetWrapS());
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, helper.GetWrapT());
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, helper.GetWrapR());
 	}
 
-	void OpenGLTexture2D::Bind(uint32_t slot) const {
-		VXM_PROFILE_FUNCTION();
-		glBindTextureUnit(slot, m_RendererID);
+	OpenGLCubemap::~OpenGLCubemap()
+	{
+		VXM_CORE_CHECK(m_RendererID, "The cubemap wasn't created.")
+		if(m_RendererID) {
+			glDeleteTextures(1, &m_RendererID);
+			m_RendererID = 0;
+		}
 	}
-} // Voxymore
-// Core
+
+	void OpenGLCubemap::Bind()
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+	}
+
+	void OpenGLCubemap::Unbind()
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	}
+
+	uint32_t OpenGLCubemap::GetRendererID() const
+	{
+		return m_RendererID;
+	}
+
+
+	void OpenGLCubemap::SetData(const std::array<Image, 6>& images)
+	{
+		for (uint8_t i = 0; i < 6; ++i) {
+			SetData(Side(i), images[i]);
+		}
+	}
+
+	void OpenGLCubemap::SetData(Side side, const Image& data)
+	{
+		CubemapSpecHelper helper(m_Specification);
+
+		VXM_CORE_ASSERT(data.source.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
+		VXM_CORE_ASSERT(m_Specification.width * m_Specification.height * m_Specification.channels * helper.GetPixelSize() == data.source.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Specification.width, m_Specification.height, m_Specification.channels, helper.GetTypeToString());
+
+		GLenum dataFormat = helper.GetFormat();
+		GLenum pixelType = helper.GetType();
+
+		glTextureSubImage3D(
+				m_RendererID,
+				0,      // only 1 level in example
+				0,
+				0,
+				GetOpenGLSide(side),   // the offset to desired cubemap face, which offset goes to which face above
+				static_cast<GLint>(m_Specification.width),
+				static_cast<GLint>(m_Specification.height),
+				1,      // depth how many faces to set, if this was 3 we'd set 3 cubemap faces at once
+				dataFormat,
+				pixelType,
+				data.source.Data);
+	}
+}// namespace Voxymore::Core
