@@ -306,7 +306,13 @@ namespace Voxymore::Core
 		CubemapSpecHelper helper(m_Specification);
 
 		VXM_CORE_ASSERT(data.source.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
-		VXM_CORE_ASSERT(m_Specification.width * m_Specification.height * m_Specification.channels * helper.GetPixelSize() == data.source.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Specification.width, m_Specification.height, m_Specification.channels, helper.GetTypeToString());
+		// Separate assertions for width, height and channels
+		VXM_CORE_ASSERT(data.width == m_Specification.width, "Image width ({0}) is different from the texture width ({1})", data.width, m_Specification.width);
+		VXM_CORE_ASSERT(data.height == m_Specification.height, "Image height ({0}) is different from the texture height ({1})", data.height, m_Specification.height);
+		VXM_CORE_ASSERT(data.channels == m_Specification.channels, "Image channels ({0}) is different from the texture channels ({1})", data.channels, m_Specification.channels);
+
+		// Assertion for data size
+		VXM_CORE_ASSERT(data.source.Size == m_Specification.width * m_Specification.height * m_Specification.channels * helper.GetPixelSize(), "The size of the image ({0}) is different from the calculated texture size using width, height, channels and pixel type ('{1}')", data.source.Size, helper.GetTypeToString());
 
 		GLenum dataFormat = helper.GetFormat();
 		GLenum pixelType = helper.GetType();

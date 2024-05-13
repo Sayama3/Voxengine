@@ -491,19 +491,14 @@ namespace Voxymore::Editor {
         {
             case Mouse::Left:
             {
-				bool anyHovered = false;
-				for(auto ptr : m_Viewports) {
-					if (ptr->IsHovered()) {
-						anyHovered = true;
-						if (!ptr->HasHoveredEntity() && m_GizmoOperation == GizmoOperation::NONE) PropertyPanel::Reset();
-						else if (ptr->HasHoveredEntity() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) {
-							PropertyPanel::SetSelectedEntity(ptr->GetHoveredEntity());
+				for(const auto& viewportPtr: m_Viewports) {
+					if (viewportPtr->IsHovered()) {
+						if (!viewportPtr->HasHoveredEntity() && m_GizmoOperation == GizmoOperation::NONE) PropertyPanel::Reset();
+						else if (viewportPtr->HasHoveredEntity() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsingAny() && !control && !shift && !alt) {
+							PropertyPanel::SetSelectedEntity(viewportPtr->GetHoveredEntity());
 						}
 						break;
 					}
-				}
-				if(!anyHovered) {
-					PropertyPanel::Reset();
 				}
 				break;
             }
