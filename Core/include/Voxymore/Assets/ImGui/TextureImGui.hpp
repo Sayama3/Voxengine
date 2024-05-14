@@ -16,5 +16,6 @@ namespace Voxymore::Core
 	{
 	public:
 		static bool OnTexture2DImGui(Ref<Asset> asset);
+		static bool OnCubemapImGui(Ref<Asset> asset);
 	};
 }

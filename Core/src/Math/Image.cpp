@@ -63,16 +63,22 @@ namespace Voxymore::Core
 	{
 		Release();
 	}
+
 	Image::Image(uint32_t w, uint32_t h, uint32_t c)
 			: source(w*h*c), width(w), height(h), channels(c)
 	{
 	}
+
 	Image::Image(void* s, uint32_t w, uint32_t h, uint32_t c)
 			: source(s, w * h * c), width(w), height(h), channels(c)
 	{
 	}
 
-	Image::Image(Image&& other) : source(other.source), width(other.width), height(other.height), channels(other.channels)
+	Image::Image(const Image& other) : source(Buffer::Copy(other.source)), width(other.width), height(other.height), channels(other.channels)
+	{
+	}
+
+	Image::Image(Image&& other) noexcept : source(other.source), width(other.width), height(other.height), channels(other.channels)
 	{
 		other.source.Clear();
 		other.width = 0;

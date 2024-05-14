@@ -25,34 +25,40 @@ namespace Voxymore::Core
 		template<typename T>
 		T* As()
 		{
-			VXM_CORE_ASSERT(Data, "No data inside the buffer");
-			VXM_CORE_ASSERT(Size >= sizeof(T), "The buffer is not big enough to be cast as '{0}'", typeid(T).name());
+			VXM_CORE_ASSERT(Data, "Buffer is empty - has no initialized data.");
+			VXM_CORE_ASSERT(Size >= sizeof(T), "Buffer cannot be cast to {0} - insufficient size. Required size: {1}. Current size: {2}.", typeid(T).name(), sizeof(T), Size);
 			return (T*)Data;
 		}
 
 		template<typename T>
 		const T* As() const
 		{
-			VXM_CORE_ASSERT(Data, "No data inside the buffer");
-			VXM_CORE_ASSERT(Size >= sizeof(T), "The buffer is not big enough to be cast as '{0}'", typeid(T).name());
+			VXM_CORE_ASSERT(Data, "Buffer is empty - has no initialized data.");
+			VXM_CORE_ASSERT(Size >= sizeof(T), "Buffer cannot be cast to {0} - insufficient size. Required size: {1}. Current size: {2}.", typeid(T).name(), sizeof(T), Size);
 			return (T*)Data;
 		}
 
 		template<typename T>
 		T& At(uint64_t index)
 		{
-			VXM_CORE_ASSERT(Data, "No data inside the buffer");
-			VXM_CORE_ASSERT(Size >= sizeof(T), "The buffer is not big enough to be cast as '{0}'", typeid(T).name());
-			VXM_CORE_ASSERT((index+1) * sizeof(T) >= Size, "The array is not big enough for the index {}.", index);
+			VXM_CORE_ASSERT(Data, "Buffer is empty - has no initialized data.");
+			VXM_CORE_ASSERT(Size >= (index+1) * sizeof(T), "Cannot access index {0} for type {1}. Buffer size: {2}. Required size: {3}.",
+							index,
+							typeid(T).name(),
+							Size,
+							(index+1) * sizeof(T));
 			return ((T*)Data)[index];
 		}
 
 		template<typename T>
 		const T& At(uint64_t index) const
 		{
-			VXM_CORE_ASSERT(Data, "No data inside the buffer");
-			VXM_CORE_ASSERT(Size >= sizeof(T), "The buffer is not big enough to be cast as '{0}'", typeid(T).name());
-			VXM_CORE_ASSERT((index+1) * sizeof(T) >= Size, "The array is not big enough for the index {}.", index);
+			VXM_CORE_ASSERT(Data, "Buffer is empty - has no initialized data.");
+			VXM_CORE_ASSERT(Size >= (index+1) * sizeof(T), "Cannot access index {0} for type {1}. Buffer size: {2}. Required size: {3}.",
+							index,
+							typeid(T).name(),
+							Size,
+							(index+1) * sizeof(T));
 			return ((T*)Data)[index];
 		}
 

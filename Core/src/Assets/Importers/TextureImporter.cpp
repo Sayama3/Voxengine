@@ -74,7 +74,19 @@ namespace Voxymore::Core
 
 	bool TextureImporter::IsCubemap(const std::filesystem::path& path)
 	{
-		return IsTexture(path);
+		bool isTex = IsTexture(path);
+		if(isTex) {
+			int width, height, channel;
+			bool stbi_result = stbi_info(path.string().c_str(), &width, &height, &channel);
+			if (stbi_result) {
+				if (width / 4 == height / 3) {
+					return true;
+				} else if (width / 3 == height / 4) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	void TextureImporter::ExportEditorCubemap(const AssetMetadata& metadata, Ref<Cubemap> cubemap)

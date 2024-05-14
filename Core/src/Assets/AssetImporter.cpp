@@ -14,7 +14,7 @@ namespace Voxymore::Core
 {
 	std::unordered_map<AssetType, AssetImportFunction> AssetImporter::AssetLoaders = {
 			{AssetType::Texture2D, TextureImporter::ImportTexture2D},
-			//			{AssetType::CubeMap, TextureImGui::ImportCubeMap},
+			{AssetType::CubeMap, TextureImporter::ImportCubemap},
 			{AssetType::Shader, ShaderSerializer::ImportShader},
 			{AssetType::ShaderSource, ShaderSerializer::ImportShaderSource},
 //			{AssetType::Mesh, MeshSerializer::ImportMesh},
@@ -25,10 +25,10 @@ namespace Voxymore::Core
 
 	std::unordered_map<AssetType, AssetDetectorFunction> AssetImporter::AssetDetectors = {
 			{AssetType::Texture2D, TextureImporter::IsTexture},
-//			{AssetType::CubeMap, TextureImporter::IsCubeMap},
+			{AssetType::CubeMap, TextureImporter::IsCubemap},
 			{AssetType::Shader, ShaderSerializer::IsShader},
 			{AssetType::ShaderSource, ShaderSerializer::IsShaderSource},
-			//			{AssetType::Mesh, MeshSerializer::IsMesh},
+//			{AssetType::Mesh, MeshSerializer::IsMesh},
 			{AssetType::Scene, SceneImporter::IsScene},
 			{AssetType::Material, MaterialSerializer::IsMaterial},
 			{AssetType::Model, MeshSerializer::IsModel},
@@ -52,11 +52,30 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto it = std::find_if(AssetDetectors.begin(), AssetDetectors.end(), [&path](const std::pair<AssetType, AssetDetectorFunction>& pair){return pair.second(path);});
 		if(it == AssetDetectors.end()) {
-//			VXM_CORE_ERROR("Unknown type for asset '{}'.", path.string());
 			return AssetType::None;
 		}
 		else {
 			return it->first;
 		}
+	}
+
+	std::vector<AssetType> AssetImporter::GetPossibleAssetTypes(const Path &path)
+	{
+		std::vector<AssetType> result;
+		result.reserve(AssetDetectors.size());
+		std::for_each(AssetDetectors.begin(), AssetDetectors.end(), [&path, &result](const std::pair<AssetType, AssetDetectorFunction>& pair){
+			if(pair.second(path)) {
+				result.push_back(pair.first);
+			}
+		});
+		return result;
+	}
+
+	bool AssetImporter::HasAssetType(const Path& path, AssetType type)
+	{
+		VXM_PROFILE_FUNCTION();
+		if (type == AssetType::None || !AssetDetectors.contains(type)) return false;
+
+		return AssetDetectors.at(type)(path);
 	}
 }// namespace Voxymore::Core

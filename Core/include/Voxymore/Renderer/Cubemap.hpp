@@ -54,5 +54,7 @@ namespace Voxymore::Core
 		virtual void SetData(Side side, const Image& image) = 0;
 		virtual void SetData(const std::array<Image, 6>& images) = 0;
 	};
+
+	using CubemapField = AssetField<Cubemap>;
 } // namespace Voxymore::Core
 

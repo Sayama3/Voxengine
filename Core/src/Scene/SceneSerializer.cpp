@@ -138,8 +138,9 @@ namespace Voxymore::Core
 				if (cameraComponent) {
 					auto &cc = entity.AddComponent<CameraComponent>();
 
-					cc.Primary = cameraComponent["Primary"].as<bool>();
-					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+					cc.Primary = cameraComponent["Primary"].as<bool>(true);
+					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>(false);
+					cc.Cubemap = cameraComponent["Cubemap"].as<CubemapField>(NullAssetHandle);
 
 					auto camera = cameraComponent["Camera"];
 					auto aspectRatio = camera["AspectRatio"].as<float>();
@@ -220,6 +221,7 @@ namespace Voxymore::Core
 				auto &component = entity.GetComponent<CameraComponent>();
 				out << KEYVAL("Primary", component.Primary);
 				out << KEYVAL("FixedAspectRatio", component.FixedAspectRatio);
+				out << KEYVAL("Cubemap", component.Cubemap);
 
 				out << KEY("Camera");
 				out << YAML::BeginMap;// Camera

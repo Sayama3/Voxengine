@@ -123,6 +123,8 @@ namespace Voxymore::Core
 		static bool Exist(const Path& path);
 		static bool Exist(FileSource source);
 		static bool Exist(const std::filesystem::path& path);
+
+		static bool Equivalent(const Path& lt, const Path& rt);
 	};
 
 	YAML::Emitter& operator <<(YAML::Emitter& out, const ::Voxymore::Core::Path& p);

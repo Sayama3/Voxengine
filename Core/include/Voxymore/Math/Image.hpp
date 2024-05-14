@@ -14,7 +14,8 @@ namespace Voxymore::Core
 		Image() = default;
 		Image(void* source, uint32_t w, uint32_t h, uint32_t c);
 		Image(uint32_t w, uint32_t h, uint32_t c);
-		Image(Image&& image);
+		Image(const Image& image);
+		Image(Image&& image) noexcept;
 		~Image();
 
 		Image& operator=(Image&& other) noexcept;

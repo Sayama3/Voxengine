@@ -10,6 +10,7 @@ namespace Voxymore::Core {
 	static RendererData s_Data;
 	static ShaderField s_BindedShader = NullAssetHandle;
 	static MaterialField s_BindedMaterial = NullAssetHandle;
+	static CubemapField s_Cubemap = NullAssetHandle;
 
 	RendererData::ModelData::ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId) : TransformMatrix(transformMatrix), NormalMatrix(normalMatrix), EntityId(entityId) {}
 
@@ -30,12 +31,16 @@ namespace Voxymore::Core {
 		RenderCommand::Shutdown();
 	}
 
-	void Renderer::BeginScene(const EditorCamera &camera, std::vector<Light> lights)
+	void Renderer::BeginScene(const EditorCamera &camera, std::vector<Light> lights, CubemapField cubemap)
 	{
 		VXM_PROFILE_FUNCTION();
 
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
+		s_Cubemap = cubemap;
+		if(s_Cubemap) {
+			s_Cubemap.GetAsset()->Bind();
+		}
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
 		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
@@ -51,9 +56,13 @@ namespace Voxymore::Core {
 		s_Data.OpaqueMeshes.clear();
 	}
 
-	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights)
+	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights, CubemapField cubemap)
 	{
 		VXM_PROFILE_FUNCTION();
+		s_Cubemap = cubemap;
+		if(s_Cubemap) {
+			s_Cubemap.GetAsset()->Bind();
+		}
 		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
 		glm::vec4 p = transform * glm::vec4{0,0,0,1};
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);

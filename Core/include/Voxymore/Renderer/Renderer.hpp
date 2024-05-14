@@ -7,6 +7,7 @@
 #include "Mesh.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Renderer/Camera.hpp"
+#include "Voxymore/Renderer/Cubemap.hpp"
 #include "Voxymore/Renderer/EditorCamera.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/PerspectiveCamera.hpp"
@@ -73,8 +74,8 @@ namespace Voxymore::Core {
 		static void Shutdown();
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
-		static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {});
+		static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle);
+		static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle);
 		static void EndScene();
 
 		[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]

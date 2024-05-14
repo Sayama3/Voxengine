@@ -22,7 +22,7 @@ namespace Voxymore::Editor {
 
 	std::unordered_map<AssetType, ImGuiFunction> PropertyPanel::s_ImGuiAssetRenderer = {
 			{AssetType::Texture2D, TextureImGui::OnTexture2DImGui},
-//			{AssetType::CubeMap, TextureImGui::OnCubeMapImGui},
+			{AssetType::CubeMap, TextureImGui::OnCubemapImGui},
 			{AssetType::Shader, ShaderImGui::OnShaderImGui},
 			{AssetType::ShaderSource, ShaderImGui::OnShaderSourceImGui},
 			//			{AssetType::Mesh, MeshImGui::OnMeshImGui},
@@ -82,6 +82,9 @@ namespace Voxymore::Editor {
 
 	bool PropertyPanel::RenderAsset()
 	{
+		const auto& assetMetadata = Project::GetActive()->GetEditorAssetManager()->GetMetadata(s_SelectedAsset->Handle);
+		ImGui::Text("%s (%s)", assetMetadata.FilePath.path.stem().string().c_str(), AssetTypeToString(assetMetadata.Type).c_str());
+		ImGui::Separator();
 		if(s_ImGuiAssetRenderer.contains(s_SelectedAsset->GetType()))
 		{
 			auto func = s_ImGuiAssetRenderer.at(s_SelectedAsset->GetType());
@@ -117,6 +120,7 @@ namespace Voxymore::Editor {
 		DrawComponent<CameraComponent>("Camera Component", s_SelectedEntity, [](CameraComponent &cameraComponent) {
 			ImGui::Checkbox("Primary", &cameraComponent.Primary);
 			ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
+			ImGuiLib::DrawAssetField("Cubemap", &cameraComponent.Cubemap);
 			if (cameraComponent.FixedAspectRatio) {
 				ImGui::SameLine();
 				float ar = cameraComponent.Camera.GetAspectRatio();
