@@ -19,7 +19,7 @@
 #elif defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLYBSD)
 #include <sys/types.h>
 #include <sys/endian.h>
-#elif !defined(_MSC_VER)
+#elif !defined(_MSC_VER) && !defined(__MINGW32__)
 #include <endian.h>
 #endif
 
