@@ -257,7 +257,8 @@ namespace Voxymore::Core
 			}
 		}
 		Entity mainCam = GetPrimaryCameraEntity();
-		Renderer::BeginScene(camera, lights, mainCam.GetComponent<CameraComponent>().Cubemap);
+		CubemapField cubemap = mainCam && mainCam.HasComponent<CameraComponent>() ? mainCam.GetComponent<CameraComponent>().Cubemap : NullAssetHandle;
+		Renderer::BeginScene(camera, lights, cubemap);
 		{
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
