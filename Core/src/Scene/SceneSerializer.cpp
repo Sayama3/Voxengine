@@ -141,6 +141,7 @@ namespace Voxymore::Core
 					cc.Primary = cameraComponent["Primary"].as<bool>(true);
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>(false);
 					cc.Cubemap = cameraComponent["Cubemap"].as<CubemapField>(NullAssetHandle);
+					cc.CubemapShader = cameraComponent["CubemapShader"].as<ShaderField>(NullAssetHandle);
 
 					auto camera = cameraComponent["Camera"];
 					auto aspectRatio = camera["AspectRatio"].as<float>();
@@ -222,6 +223,7 @@ namespace Voxymore::Core
 				out << KEYVAL("Primary", component.Primary);
 				out << KEYVAL("FixedAspectRatio", component.FixedAspectRatio);
 				out << KEYVAL("Cubemap", component.Cubemap);
+				out << KEYVAL("CubemapShader", component.CubemapShader);
 
 				out << KEY("Camera");
 				out << YAML::BeginMap;// Camera

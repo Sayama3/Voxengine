@@ -121,6 +121,7 @@ namespace Voxymore::Editor {
 			ImGui::Checkbox("Primary", &cameraComponent.Primary);
 			ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
 			ImGuiLib::DrawAssetField("Cubemap", &cameraComponent.Cubemap);
+			ImGuiLib::DrawAssetField("Cubemap Shader", &cameraComponent.CubemapShader);
 			if (cameraComponent.FixedAspectRatio) {
 				ImGui::SameLine();
 				float ar = cameraComponent.Camera.GetAspectRatio();

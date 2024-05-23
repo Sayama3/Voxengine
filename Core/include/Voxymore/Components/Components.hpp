@@ -179,6 +179,7 @@ namespace Voxymore::Core
 		bool Primary = true;
 		bool FixedAspectRatio = false;
 		CubemapField Cubemap = NullAssetHandle;
+		ShaderField  CubemapShader = NullAssetHandle;
 
 		inline CameraComponent() = default;
 		inline CameraComponent(const CameraComponent&) = default;

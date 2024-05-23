@@ -93,5 +93,17 @@ namespace Voxymore {
 			glPatchParameteri(GL_PATCH_VERTICES, verticesPerPatch);
 		}
 
+
+		void OpenGLRenderAPI::DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh)
+		{
+			VXM_PROFILE_FUNCTION();
+			glDepthMask(GL_FALSE);
+			shader->Bind();
+			cubemap->Bind();
+			mesh->Bind();
+			DrawIndexed(mesh);
+			glDepthMask(GL_TRUE);
+		}
+
 	} // Voxymore
 } // Core

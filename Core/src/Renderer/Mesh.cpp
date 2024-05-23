@@ -58,6 +58,36 @@ namespace Voxymore::Core
 		m_Meshes.push_back(mesh);
 	}
 
+	Mesh::Mesh(const std::vector<Vertex> &vertices)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(vertices.size() % 3 == 0, "Invalid vertices count. The number of vertices should be divisible by 3 to form triangles.")
+
+		std::vector<uint32_t> indexes(vertices.size());
+		for (int i = 0; i < indexes.size(); ++i) {
+			indexes[i] = i;
+		}
+
+		m_VertexArray = VertexArray::Create();
+
+		m_BufferLayout = Vertex::Layout();
+
+		m_VertexBuffer = VertexBuffer::Create(vertices.size() * sizeof(Vertex), vertices.data());
+		m_VertexBuffer->SetLayout(m_BufferLayout);
+
+		m_IndexBuffer = IndexBuffer::Create(indexes.size(), indexes.data());
+
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+		if (!vertices.empty())
+		{
+			for (const auto& v : vertices) {
+				m_BoundingBox.Grow(v.Position);
+			}
+		}
+	}
+
 	Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes)
 	{
 		VXM_PROFILE_FUNCTION();

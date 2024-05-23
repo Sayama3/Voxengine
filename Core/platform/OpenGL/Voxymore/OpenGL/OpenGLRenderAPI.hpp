@@ -24,7 +24,7 @@ namespace Voxymore::Core {
 
 			// TODO? add a starting index
 			virtual void DrawPatches(uint32_t verticesPerPatch) override;
-		private:
+			virtual void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) override;
 			void SetPatchSize(int32_t verticesPerPatch);
         };
 
