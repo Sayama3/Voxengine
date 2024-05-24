@@ -85,7 +85,7 @@ jobs:
 
     - name: Install OpenGL on MacOS
       if: ${{ contains(matrix.os, 'macos') }}
-      run: brew install glfw3 glew
+      run: brew install glew
 
     - name: Setup Cpp
       uses: aminya/setup-cpp@v1
