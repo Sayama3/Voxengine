@@ -15,13 +15,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
         compiler: [llvm, gcc]
-# Excluding the combination of gcc and macOS as there is some problem from gcc to compile Objective-C
-# https://github.com/glfw/glfw/issues/1743
-        exclude:
-          - os: macos-latest
-            compiler: gcc
 # Removed assimp
 ## Due to compile error of assimp, I exclude the ubuntu gcc compiler. See if the bug is fixed later on or if I change the library or something else.
 #          - os: ubuntu-latest
@@ -29,6 +24,8 @@ jobs:
         include:
           - os: windows-latest
             compiler: msvc
+          - os: macos-latest
+            compiler: llvm-14.0.6
       fail-fast: false
 
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
