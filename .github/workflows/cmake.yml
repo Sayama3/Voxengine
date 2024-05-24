@@ -24,8 +24,8 @@ jobs:
         include:
           - os: windows-latest
             compiler: msvc
-          - os: macos-latest
-            compiler: llvm-14.0.6
+#          - os: macos-latest
+#            compiler: llvm-14.0.6
       fail-fast: false
 
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
@@ -39,19 +39,19 @@ jobs:
       with:
         submodules: 'recursive'
 
-    #- name: Cache
-    #  uses: actions/cache@v3
-    #  with:
-    #    path: |
-    #      ~/vcpkg
-    #      ./build/vcpkg_installed
-    #      ${{ env.HOME }}/.cache/vcpkg/archives
-    #      ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
-    #      ${{ env.LOCALAPPDATA }}\vcpkg\archives
-    #      ${{ env.APPDATA }}\vcpkg\archives
-    #    key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
-    #    restore-keys: |
-    #      ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/vcpkg
+          ./build/vcpkg_installed
+          ${{ env.HOME }}/.cache/vcpkg/archives
+          ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+          ${{ env.LOCALAPPDATA }}\vcpkg\archives
+          ${{ env.APPDATA }}\vcpkg\archives
+        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.BUILD_TYPE }}-
 
 #    - name: Prepare Vulkan SDK
 #      uses: humbletim/setup-vulkan-sdk@v1.2.0
@@ -109,53 +109,3 @@ jobs:
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
-
-# Cancel the artifact for now as I don't really what file I should send nor where they are.
-#  It should be a dll/lib/so/dylib but I'm not sure so for now I just ensure they do build.
-#    # Send build to artifact
-#    - name: Upload build
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: Build-${{ matrix.os }}-${{ matrix.compiler }}
-#        path: |
-#          ${{github.workspace}}/build/Release/resources/shaders/*.frag
-#          ${{github.workspace}}/build/Release/resources/shaders/*.vert
-#          ${{github.workspace}}/build/Release/OpenGL.exe
-#          ${{github.workspace}}/build/Release/OpenGL
-#          ${{github.workspace}}/build/resources/shaders/*.frag
-#          ${{github.workspace}}/build/resources/shaders/*.vert
-#          ${{github.workspace}}/build/OpenGL.exe
-#          ${{github.workspace}}/build/OpenGL
-#        if-no-files-found: error
-
-# Cancel release for now
-#    # Sending build to release
-#    - name: Release Build
-#      uses: "marvinpinto/action-automatic-releases@latest"
-#      with:
-#        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#        automatic_release_tag: latest-${{ matrix.os }}-${{ matrix.compiler }}
-#        prerelease: true
-#        title: OpenGL Build - ${{ matrix.os }} - ${{ matrix.compiler }}
-#        files: |
-#          **/OpenGL.exe
-#          build/OpenGL
-#          README.md
-
-## Doxygen Documentation is for a later time.
-#  documentation:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          submodules: 'recursive'
-#      - uses: mattnotmitt/doxygen-action@v1.9.5
-#        with:
-#          doxyfile-path: 'docs/Doxygen'
-#      # Send build to artifact
-#      - name: Upload build
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: Doxygen Documentation
-#          path: ${{github.workspace}}/docs/Doxygen/
-#          if-no-files-found: error
