@@ -81,7 +81,7 @@ jobs:
     - uses: maxim-lobanov/setup-xcode@v1
       if: ${{ contains(matrix.os, 'macos') }}
       with:
-        xcode-version: latest-stable
+        xcode-version: "^14"
 
     - name: Install OpenGL on MacOS
       if: ${{ contains(matrix.os, 'macos') }}
