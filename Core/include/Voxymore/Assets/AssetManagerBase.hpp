@@ -20,7 +20,9 @@ namespace Voxymore::Core
 		[[nodiscard]] virtual bool IsAssetHandleValid(AssetHandle handle) const = 0;
 		[[nodiscard]] virtual bool IsAssetLoaded(AssetHandle handle) const = 0;
 		[[nodiscard]] virtual AssetType GetAssetType(AssetHandle handle) const = 0;
+
 		virtual Ref<Asset> GetAsset(AssetHandle handle) = 0;
+		//TODO: Create Memory Asset ?
 	};
 
 } // namespace Voxymore::Core

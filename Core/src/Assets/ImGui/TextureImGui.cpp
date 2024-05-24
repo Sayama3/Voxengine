@@ -12,4 +12,9 @@ namespace Voxymore::Core
 	{
 		return false;
 	}
+
+	bool TextureImGui::OnCubemapImGui(Ref<Asset> asset)
+	{
+		return false;
+	}
 }

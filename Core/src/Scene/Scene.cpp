@@ -256,8 +256,13 @@ namespace Voxymore::Core
 				lights.push_back(lc.AsLight(tc));
 			}
 		}
+		Entity mainCam = GetPrimaryCameraEntity();
+		CameraComponent* cc = mainCam && mainCam.HasComponent<CameraComponent>() ? &mainCam.GetComponent<CameraComponent>() : nullptr;
 
-		Renderer::BeginScene(camera, lights);
+		CubemapField cubemap = cc ? cc->Cubemap : NullAssetHandle;
+		ShaderField cubemapShader = cc ? cc->CubemapShader : NullAssetHandle;
+
+		Renderer::BeginScene(camera, lights, cubemap, cubemapShader);
 		{
 			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 			for (auto entity: modelsView) {
@@ -288,6 +293,8 @@ namespace Voxymore::Core
 
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
+		CubemapField cubemap = NullAssetHandle;
+		ShaderField cubemapShader = NullAssetHandle;
 
 		auto camerasView = m_Registry.view<CameraComponent, TransformComponent>(entt::exclude<DisableComponent>);
 		for (auto entity : camerasView) {
@@ -297,6 +304,8 @@ namespace Voxymore::Core
 			{
 				mainCamera = &camera.Camera;
 				cameraTransform = transform.GetTransform();
+				cubemap = camera.Cubemap;
+				cubemapShader = camera.CubemapShader;
 				break;
 			}
 		}
@@ -313,7 +322,7 @@ namespace Voxymore::Core
 				}
 			}
 
-			Renderer::BeginScene(*mainCamera, cameraTransform, lights);
+			Renderer::BeginScene(*mainCamera, cameraTransform, lights, cubemap, cubemapShader);
 
 			{
 				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);

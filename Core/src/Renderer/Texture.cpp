@@ -12,7 +12,7 @@ namespace Voxymore::Core {
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
-				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
 				return nullptr;
 				break;
 			case RendererAPI::API::OpenGL:
@@ -28,7 +28,7 @@ namespace Voxymore::Core {
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
-				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
 				return nullptr;
 				break;
 			case RendererAPI::API::OpenGL:
@@ -44,7 +44,7 @@ namespace Voxymore::Core {
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
-				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
 				return nullptr;
 				break;
 			case RendererAPI::API::OpenGL:
@@ -60,7 +60,7 @@ namespace Voxymore::Core {
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
-				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
 				return nullptr;
 				break;
 			case RendererAPI::API::OpenGL:
@@ -77,7 +77,7 @@ namespace Voxymore::Core {
 		switch (Renderer::GetAPI()) {
 
 			case RendererAPI::API::None:
-				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to Unbind a texture.")
 				break;
 			case RendererAPI::API::OpenGL:
 				RenderCommand::UnbindTexture(slot);

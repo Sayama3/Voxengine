@@ -270,7 +270,7 @@ namespace Voxymore::Core
 					auto parentFolder = metadata.FilePath.GetFullPath().parent_path();
 					// TODO: Use the AssetManager
 					Ref<Texture2D> asset = TextureImporter::LoadTexture2D(Path::GetPath(parentFolder / image.uri));
-					assetManager->AddAsset(asset);
+					assetManager->AddMemoryAsset(asset);
 					textures.push_back(asset);
 				}
 			}

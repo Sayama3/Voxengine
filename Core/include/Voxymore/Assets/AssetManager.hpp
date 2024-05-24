@@ -11,7 +11,6 @@
 
 namespace Voxymore::Core
 {
-
 	class AssetManager
 	{
 	public:

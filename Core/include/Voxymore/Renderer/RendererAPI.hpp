@@ -5,6 +5,7 @@
 #pragma once
 
 #include "VertexArray.hpp"
+#include "Cubemap.hpp"
 #include "Voxymore/Math/Math.hpp"
 
 namespace Voxymore::Core {
@@ -39,6 +40,8 @@ namespace Voxymore::Core {
 
 		virtual void DrawPatches(uint32_t verticesPerPatch) = 0;
 
+		virtual void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) = 0;
+
 		inline static API GetAPI() { return s_API; }
 	private:
 		static API s_API;
@@ -61,5 +64,4 @@ namespace Voxymore::Core {
 	}
 
 
-} // Voxymore
-// Core
+}

@@ -36,7 +36,7 @@ namespace Voxymore::Core
 		//TODO: Add Material ID.
 		inline Vertex() = default;
 		inline ~Vertex() = default;
-		Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 texCoord, glm::vec4 color = glm::vec4(1.0f));
+		Vertex(glm::vec3 position, glm::vec3 normal = glm::vec3(0), glm::vec2 texCoord = glm::vec2(0), glm::vec4 color = glm::vec4(1.0f));
 
 		inline static BufferLayout Layout()
 		{
@@ -64,6 +64,7 @@ namespace Voxymore::Core
 		VXM_IMPLEMENT_ASSET(AssetType::Mesh);
 		friend class MeshGroup;
 	public:
+		Mesh(const std::vector<Vertex> &vertices);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes);
 		Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, BoundingBox aabb);
 		~Mesh() = default;

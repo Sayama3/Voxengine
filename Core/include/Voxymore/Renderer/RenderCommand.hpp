@@ -54,6 +54,15 @@ namespace Voxymore::Core {
 			VXM_PROFILE_FUNCTION();
 			s_RendererAPI->UnbindTexture(slot);
 		}
+
+		inline static void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) {
+			VXM_PROFILE_FUNCTION();
+			VXM_CORE_ASSERT(cubemap != nullptr, "Failed to draw the cubemap. The provided cubemap is not initialized.")
+			VXM_CORE_ASSERT(shader != nullptr, "Failed to draw the cubemap. The provided shader is not initialized.")
+			VXM_CORE_ASSERT(mesh != nullptr, "Failed to draw the cubemap. The provided mesh is not initialized.")
+			if(!cubemap || !shader || !mesh) return;
+			s_RendererAPI->DrawCubemap(cubemap, shader, mesh);
+		}
     private:
         static RendererAPI* s_RendererAPI;
     };

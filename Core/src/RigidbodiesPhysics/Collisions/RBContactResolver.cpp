@@ -27,28 +27,6 @@ namespace Voxymore::Core
 		AdjustVelocities(ts, contacts);
 
 		AdjustPositions(ts, contacts);
-
-
-//		while (m_PositionIterationsUsed < m_Iterations)
-//		{
-//			Real max = REAL_MAX;
-//			uint32_t maxIndex = contacts.size();
-//			for (i = 0; i < contacts.size(); ++i)
-//			{
-//				if(!contacts[i].bodies[0] && !contacts[i].bodies[1]) continue;
-//				contacts[i].CalculateContactBasis();
-//			}
-//
-//			if(maxIndex == contacts.size())
-//			{
-//				break;
-//			}
-//
-////			contacts[maxIndex].Resolve(ts);
-//			++m_PositionIterationsUsed;
-//		}
-
-		VXM_CORE_WARN("We should use resolve all the contacts encountered here.");
 	}
 
 	void RBContactResolver::SetIterations(uint32_t iterations)

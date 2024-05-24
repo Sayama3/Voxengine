@@ -9,6 +9,7 @@
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Renderer/Material.hpp"
+#include "Voxymore/Renderer/Cubemap.hpp"
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Scene/SceneCamera.hpp"
 #include "Voxymore/Scene/ScriptableEntity.hpp"
@@ -177,6 +178,8 @@ namespace Voxymore::Core
 		// TODO: Moving primary camera logic on Scene.
 		bool Primary = true;
 		bool FixedAspectRatio = false;
+		CubemapField Cubemap = NullAssetHandle;
+		ShaderField  CubemapShader = NullAssetHandle;
 
 		inline CameraComponent() = default;
 		inline CameraComponent(const CameraComponent&) = default;

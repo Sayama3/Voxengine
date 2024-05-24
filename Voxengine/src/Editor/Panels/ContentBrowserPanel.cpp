@@ -540,16 +540,13 @@ namespace Voxymore::Editor
 					}
 					else if (AssetImporter::GetAssetType(assetPath) != AssetType::None) {
 						Ref<EditorAssetManager> assetManager = Project::GetActive()->GetEditorAssetManager();
-						Ref<Asset> asset = assetManager->GetOrCreateAsset(assetPath);
-						if (asset && ImGui::BeginDragDropSource()) {
-							AssetMetadata metadata = assetManager->GetMetadata(asset->Handle);
+						AssetHandle handle = NullAssetHandle;
+						if(assetManager->IsAssetImported(assetPath, &handle) && ImGui::BeginDragDropSource()) {
+							AssetMetadata metadata = assetManager->GetMetadata(handle);
 							std::string payloadID = AssetTypeToPayloadID(metadata.Type);
 							VXM_CORE_ASSERT(payloadID.size() < 32, "The payloadID is not high.");
 							ImGui::SetDragDropPayload(payloadID.c_str(), &metadata.Handle, sizeof(metadata.Handle), ImGuiCond_Once);
 							ImGui::EndDragDropSource();
-						}
-						else if (!asset) {
-							VXM_CORE_ERROR("The asset '{0}' failed to load.", assetPath.string());
 						}
 					}
 				}
@@ -591,16 +588,22 @@ namespace Voxymore::Editor
 						ImGui::CloseCurrentPopup();
 					}
 					if(isFile) {
-						if (!metadata && AssetImporter::GetAssetType(assetPath) != AssetType::None && ImGui::MenuItem("Import"))
+						if (!metadata)// && AssetImporter::GetAssetType(assetPath) != AssetType::None && ImGui::MenuItem("Import"))
 						{
-							assetManager->ImportAsset(assetPath);
-							if (assetManager) {
-								VXM_CORE_INFO("Asset '{0}' was successfully imported.", filename);
+							auto possibleTypes = AssetImporter::GetPossibleAssetTypes(assetPath);
+							for (auto type : possibleTypes) {
+								std::string name = "Import as " + AssetTypeToString(type);
+								if (ImGui::MenuItem(name.c_str())) {
+									auto asset = assetManager->ImportAsset(assetPath, type);
+									if (asset) {
+										VXM_CORE_INFO("Asset '{0}' was successfully imported.", filename);
+									}
+									else {
+										VXM_CORE_ERROR("Asset '{0}' failed to be imported.", filename);
+									}
+									ImGui::CloseCurrentPopup();
+								}
 							}
-							else {
-								VXM_CORE_ERROR("Asset '{0}' failed to be imported.", filename);
-							}
-							ImGui::CloseCurrentPopup();
 						}
 						else if (metadata)
 						{

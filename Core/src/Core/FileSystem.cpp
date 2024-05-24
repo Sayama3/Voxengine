@@ -171,6 +171,12 @@ namespace Voxymore::Core
 		}
 	}
 
+	bool FileSystem::Equivalent(const Path& lt, const Path& rt)
+	{
+		VXM_PROFILE_FUNCTION();
+		return std::filesystem::equivalent(lt.GetFullPath(), rt.GetFullPath());
+	}
+
 	std::filesystem::path Path::GetFullPath() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -185,8 +191,7 @@ namespace Voxymore::Core
 
 	bool Path::equivalent(const Path &rhs) const
 	{
-		VXM_PROFILE_FUNCTION();
-		return std::filesystem::equivalent(this->GetFullPath(), rhs.GetFullPath());
+		return FileSystem::Equivalent(*this, rhs);
 	}
 
 	bool Path::operator!=(const Path &rhs) const

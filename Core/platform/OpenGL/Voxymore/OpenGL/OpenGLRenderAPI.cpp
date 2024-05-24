@@ -13,6 +13,7 @@ namespace Voxymore {
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 			glEnable(GL_CULL_FACE);
             glEnable(GL_DEPTH_TEST);
+			glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         }
 
         void OpenGLRenderAPI::Shutdown() {
@@ -90,6 +91,18 @@ namespace Voxymore {
 			VXM_CORE_ASSERT(verticesPerPatch < maxPatch, "Too many patch ({0}), the maximum on this hardware is {1}.", verticesPerPatch, maxPatch);
 #endif
 			glPatchParameteri(GL_PATCH_VERTICES, verticesPerPatch);
+		}
+
+
+		void OpenGLRenderAPI::DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh)
+		{
+			VXM_PROFILE_FUNCTION();
+			glDepthMask(GL_FALSE);
+			shader->Bind();
+			cubemap->Bind();
+			mesh->Bind();
+			DrawIndexed(mesh);
+			glDepthMask(GL_TRUE);
 		}
 
 	} // Voxymore

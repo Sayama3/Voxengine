@@ -379,6 +379,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 
+		VXM_CORE_ASSERT(!m_Sources.empty(), "No source where given to create the shader.");
 		CompileOrGetVulkanBinaries(m_Sources);
 		CompileOrGetOpenGLBinaries();
 		CreateProgram();
@@ -537,8 +538,11 @@ namespace Voxymore::Core
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			if (maxLength > 0) VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_Name, infoLog.data());
-			else VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_Name);
+			if (maxLength > 0) {
+				VXM_CORE_ERROR("Shader linking failed ({0}): {1}", m_Name, infoLog.data());
+			} else {
+				VXM_CORE_ERROR("Shader linking failed ({0}): Unknown reasons.", m_Name);
+			}
 
 			glDeleteProgram(program);
 			for (auto shaderID: shaderIDs) {

@@ -18,6 +18,8 @@ namespace Voxymore::Core
 	{
 	public:
 		static AssetType GetAssetType(const Path& path);
+		static std::vector<AssetType> GetPossibleAssetTypes(const Path& path);
+		static bool HasAssetType(const Path& path, AssetType type);
 		static Ref<Asset> ImportAsset(const AssetMetadata& metadata);
 	private:
 		static std::unordered_map<AssetType, AssetImportFunction> AssetLoaders;

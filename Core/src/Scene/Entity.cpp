@@ -21,9 +21,10 @@ namespace Voxymore::Core
 		if(!m_Scene) return 0;
 		return m_Scene->id();
 	}
+
 	bool Entity::IsValid() const {
 		VXM_PROFILE_FUNCTION();
-		return m_EntityID != entt::null;
+		return m_EntityID != entt::null && m_Scene->m_Registry.valid(m_EntityID);
 	}
 
 	bool Entity::IsActive() const

@@ -14,13 +14,26 @@ namespace Voxymore::Core
 	bool EditorAssetManager::IsAssetHandleValid(AssetHandle handle) const
 	{
 		VXM_PROFILE_FUNCTION();
-		return handle != 0 && m_AssetRegistry.contains(handle);
+		return handle != 0 && (m_AssetRegistry.contains(handle) || m_MemoryAssets.contains(handle));
 	}
 
 	bool EditorAssetManager::IsAssetLoaded(AssetHandle handle) const
 	{
 		VXM_PROFILE_FUNCTION();
-		return m_LoadedAssets.contains(handle);
+		return m_LoadedAssets.contains(handle) || m_MemoryAssets.contains(handle);
+	}
+
+	bool EditorAssetManager::IsAssetImported(const Path& path, AssetHandle* handle/* = nullptr*/) const
+	{
+		auto it = std::find_if(m_AssetRegistry.begin(), m_AssetRegistry.end(), [&path](std::pair<UUID, AssetMetadata> assets) {
+			return assets.second.FilePath.equivalent(path);
+		});
+
+		if(handle && it != m_AssetRegistry.end()) {
+			*handle = it->first;
+		}
+
+		return it != m_AssetRegistry.end();
 	}
 
 	Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle)
@@ -34,7 +47,7 @@ namespace Voxymore::Core
 
 		if(IsAssetLoaded(handle))
 		{
-			asset = m_LoadedAssets.at(handle);
+			asset = GetLoadedAsset(handle);
 		}
 		else
 		{
@@ -44,8 +57,6 @@ namespace Voxymore::Core
 				m_LoadedAssets.insert({handle, asset});
 			} else {
 				VXM_CORE_ERROR("Could not load the asset {0}", handle.string());
-				//TODO: use this version :
-				// VXM_CORE_ERROR("Could not load the asset {0} ({1})", handle, metadata);
 			}
 		}
 
@@ -61,7 +72,7 @@ namespace Voxymore::Core
 
 		if(IsAssetLoaded(handle))
 		{
-			return m_LoadedAssets.at(handle)->GetType();
+			return GetLoadedAsset(handle)->GetType();
 		}
 		else
 		{
@@ -70,7 +81,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	Ref<Asset> EditorAssetManager::ImportAsset(Path assetPath)
+	Ref<Asset> EditorAssetManager::ImportAsset(const Path& assetPath, AssetType hint/* = AssetType::None*/)
 	{
 		if(!FileSystem::Exist(assetPath) || AssetImporter::GetAssetType(assetPath) == AssetType::None) {
 			//				VXM_CORE_WARN("The path '{0}' either doesn't exist or cannot be converted.", assetPath.string());
@@ -80,7 +91,7 @@ namespace Voxymore::Core
 		AssetMetadata metadata;
 
 		metadata.FilePath = assetPath;
-		metadata.Type = AssetImporter::GetAssetType(assetPath);
+		metadata.Type = AssetImporter::HasAssetType(assetPath, hint) ? hint : AssetImporter::GetAssetType(assetPath);
 		auto asset = AssetImporter::ImportAsset(metadata);
 
 		if(asset)
@@ -93,34 +104,34 @@ namespace Voxymore::Core
 		return asset;
 	}
 
-	Ref<Asset> EditorAssetManager::GetOrCreateAsset(Path assetPath)
+	Ref<Asset> EditorAssetManager::GetOrCreateAsset(const Path& assetPath, AssetType hint/* = AssetType::None*/)
 	{
 		VXM_PROFILE_FUNCTION();
 
 		Ref<Asset> asset = nullptr;
 
 		auto it = std::find_if(m_AssetRegistry.begin(), m_AssetRegistry.end(), [&assetPath](std::pair<UUID, AssetMetadata> assets) {
-			return assets.second.FilePath == assetPath;
+		  return assets.second.FilePath.equivalent(assetPath);
 		});
 
 		AssetMetadata metadata;
 
 		if(it == m_AssetRegistry.end()) {
 			asset = ImportAsset(assetPath);
-
 		} else {
 			asset = GetAsset(it->first);
+			if(hint != AssetType::None && hint != asset->GetType()) {
+				VXM_CORE_WARN("Asset '{}'({}) has type '{}', but the expected type is '{}'.", assetPath.string(), it->first.string(), AssetTypeToString(asset->GetType()), AssetTypeToString(hint));
+			}
 		}
 
 		return asset;
 	}
 
-
 	Path EditorAssetManager::GetFilePath(AssetHandle handle) const
 	{
 		return GetMetadata(handle).FilePath;
 	}
-
 
 	const AssetMetadata& EditorAssetManager::GetMetadata(AssetHandle handle) const
 	{
@@ -225,21 +236,15 @@ namespace Voxymore::Core
 		}
 	}
 
-	bool EditorAssetManager::AddAsset(Ref<Asset> asset)
+	bool EditorAssetManager::AddMemoryAsset(Ref<Asset> asset)
 	{
 		VXM_PROFILE_FUNCTION();
 		if(!asset) return false;
-		AssetMetadata metadata;
-		metadata.Handle = asset->Handle;
-		metadata.FilePath = {FileSource::Cache, "MemoryAssets/"};
-		metadata.FilePath.path += metadata.Handle.string() + ".vxm_memory";
-		metadata.Type = asset->GetType();
-		m_AssetRegistry.emplace(metadata.Handle, metadata);
-		m_LoadedAssets.emplace(metadata.Handle, asset);
-		SerializeAssetRegistry();
+		m_MemoryAssets.emplace(asset->Handle, asset);
 		return true;
 	}
-	bool EditorAssetManager::AddAsset(Ref<Asset> asset, Path path)
+
+	bool EditorAssetManager::AddAsset(Ref<Asset> asset, const Path& path)
 	{
 		VXM_PROFILE_FUNCTION();
 		if(!asset) return false;
@@ -252,6 +257,28 @@ namespace Voxymore::Core
 		SerializeAssetRegistry();
 		return true;
 	}
+
+	bool EditorAssetManager::SaveMemoryAsset(AssetHandle handle, const Path& path)
+	{
+		VXM_PROFILE_FUNCTION();
+		auto it = m_MemoryAssets.find(handle);
+		if(it == m_MemoryAssets.end()) return false;
+
+		Ref<Asset> asset = it->second;
+		if(!asset) return false;
+
+		AssetMetadata metadata;
+		metadata.Handle = handle;
+		metadata.FilePath = path;
+		metadata.Type = asset->GetType();
+
+		m_MemoryAssets.erase(it);
+		m_AssetRegistry.emplace(metadata.Handle, metadata);
+		m_LoadedAssets.emplace(metadata.Handle, asset);
+		SerializeAssetRegistry();
+		return true;
+	}
+
 	void EditorAssetManager::RemoveAsset(AssetHandle handle)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -260,6 +287,11 @@ namespace Voxymore::Core
 		auto loaded_it = m_LoadedAssets.find(handle);
 		if(loaded_it != m_LoadedAssets.end()) {
 			m_LoadedAssets.erase(loaded_it);
+		}
+
+		auto memory_it = m_MemoryAssets.find(handle);
+		if(memory_it != m_MemoryAssets.end()) {
+			m_MemoryAssets.erase(memory_it);
 		}
 
 		auto registry_it = m_AssetRegistry.find(handle);
@@ -279,5 +311,21 @@ namespace Voxymore::Core
 		if(loaded_it != m_LoadedAssets.end()) {
 			m_LoadedAssets.erase(loaded_it);
 		}
+
+		auto memory_it = m_MemoryAssets.find(handle);
+		if(memory_it != m_MemoryAssets.end()) {
+			m_MemoryAssets.erase(memory_it);
+		}
+	}
+
+	Ref<Asset> EditorAssetManager::GetLoadedAsset(AssetHandle handle) const
+	{
+		VXM_PROFILE_FUNCTION();
+		if (m_LoadedAssets.contains(handle)) {
+			return m_LoadedAssets.at(handle);
+		} else if(m_MemoryAssets.contains(handle)) {
+			return m_MemoryAssets.at(handle);
+		}
+		return nullptr;
 	}
 } // namespace Voxymore::Core

@@ -8,6 +8,7 @@
 #include "Voxymore/Assets/AssetMetadata.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Renderer/Texture.hpp"
+#include "Voxymore/Renderer/Cubemap.hpp"
 #include <any>
 
 namespace Voxymore::Core
@@ -20,5 +21,11 @@ namespace Voxymore::Core
 		static void ExportEditorTexture2D(const AssetMetadata& metadata, Ref<Texture2D> texture);
 		static Ref<Asset> ImportTexture2D(const AssetMetadata& metadata);
 
+		static bool IsCubemap(const std::filesystem::path& path);
+		static void ExportEditorCubemap(const AssetMetadata& metadata, Ref<Cubemap> cubemap);
+		static Ref<Asset> ImportCubemap(const AssetMetadata& metadata);
+
+	private:
+		static Ref<Cubemap> LoadCubemap(const std::filesystem::path& path);
 	};
 }

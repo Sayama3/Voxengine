@@ -34,6 +34,14 @@ namespace Voxymore::Core
 		Size = 0;
 	}
 
+
+	void Buffer::Clear()
+	{
+		VXM_PROFILE_FUNCTION();
+		Data = nullptr;
+		Size = 0;
+	}
+
 	Buffer Buffer::Copy(const Buffer & other)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -41,4 +49,55 @@ namespace Voxymore::Core
 		memcpy(buff.Data, other.Data, other.Size);
 		return buff;
 	}
+
+	ScopeBuffer::ScopeBuffer()
+	{
+	}
+
+	ScopeBuffer::ScopeBuffer(void* ptr, uint64_t size) : buffer(ptr, size)
+	{
+
+	}
+	ScopeBuffer::ScopeBuffer(uint64_t size) : buffer(size)
+	{
+
+	}
+
+	ScopeBuffer::ScopeBuffer(Buffer&& buffer) : buffer(buffer)
+	{
+		buffer.Clear();
+	}
+
+	ScopeBuffer::ScopeBuffer(Buffer& buffer) : buffer(buffer)
+	{
+		buffer.Clear();
+	}
+
+	void ScopeBuffer::Replace(Buffer&& buff)
+	{
+		buffer.Release();
+		buffer = buff;
+		buff.Clear();
+	}
+
+	void ScopeBuffer::Replace(Buffer& buff)
+	{
+		buffer.Release();
+		buffer = buff;
+		buff.Clear();
+	}
+
+
+	void ScopeBuffer::Replace(void* ptr, uint64_t size)
+	{
+		buffer.Release();
+		buffer.Data = static_cast<uint8_t *>(ptr);
+		buffer.Size = size;
+	}
+
+	ScopeBuffer::~ScopeBuffer()
+	{
+		buffer.Release();
+	}
+
 }// namespace Voxymore::Core
