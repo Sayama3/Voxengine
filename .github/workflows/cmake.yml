@@ -39,19 +39,19 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/vcpkg
-          ./build/vcpkg_installed
-          ${{ env.HOME }}/.cache/vcpkg/archives
-          ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
-          ${{ env.LOCALAPPDATA }}\vcpkg\archives
-          ${{ env.APPDATA }}\vcpkg\archives
-        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+    #- name: Cache
+    #  uses: actions/cache@v3
+    #  with:
+    #    path: |
+    #      ~/vcpkg
+    #      ./build/vcpkg_installed
+    #      ${{ env.HOME }}/.cache/vcpkg/archives
+    #      ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+    #      ${{ env.LOCALAPPDATA }}\vcpkg\archives
+    #      ${{ env.APPDATA }}\vcpkg\archives
+    #    key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
+    #    restore-keys: |
+    #      ${{ runner.os }}-${{ env.BUILD_TYPE }}-
 
 #    - name: Prepare Vulkan SDK
 #      uses: humbletim/setup-vulkan-sdk@v1.2.0
