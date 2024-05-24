@@ -15,7 +15,7 @@ namespace Voxymore::Core
 		OpenGLCubemap(const CubemapSpecification& spec);
 		virtual ~OpenGLCubemap() override;
 
-		virtual void Bind() override;
+		virtual void Bind(uint32_t slot = 0) override;
 		static void Unbind();
 		[[nodiscard]] virtual uint32_t GetRendererID() const override;
 

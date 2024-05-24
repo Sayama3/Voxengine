@@ -48,7 +48,7 @@ namespace Voxymore::Core
 		static Ref<Cubemap> Create(const CubemapSpecification& textureSpecs);
 		virtual ~Cubemap() {}
 
-		virtual void Bind() = 0;
+		virtual void Bind(uint32_t slot = 0) = 0;
 		[[nodiscard]] virtual uint32_t GetRendererID() const = 0;
 
 		virtual void SetData(Side side, const Image& image) = 0;

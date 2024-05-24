@@ -278,9 +278,9 @@ namespace Voxymore::Core
 		}
 	}
 
-	void OpenGLCubemap::Bind()
+	void OpenGLCubemap::Bind(uint32_t slot)
 	{
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+		glBindTextureUnit(slot, m_RendererID);
 	}
 
 	void OpenGLCubemap::Unbind()

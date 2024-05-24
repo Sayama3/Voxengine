@@ -67,6 +67,7 @@ namespace Voxymore::Core {
 
 	class Renderer {
 	private:
+		static void DrawCubemap(const glm::mat4& view, const glm::mat4& projection, const Ref<Cubemap>& cubemap, const Ref<Shader>& cubemapShader);
 		static void Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void DrawMesh(Ref<Mesh> mesh, const glm::mat4& modelMatrix, int entityId = -1);
 	public:

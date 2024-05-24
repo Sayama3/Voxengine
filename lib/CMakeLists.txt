@@ -4,6 +4,7 @@ add_subdirectory(glad)
 
 add_subdirectory(glfw)
 
+set(GLM_ENABLE_CXX_20 ON)
 add_subdirectory(glm)
 
 add_subdirectory(spdlog)

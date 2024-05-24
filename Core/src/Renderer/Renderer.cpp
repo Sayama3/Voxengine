@@ -17,6 +17,15 @@ namespace Voxymore::Core {
 
 	RendererData::ModelData::ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId) : TransformMatrix(transformMatrix), NormalMatrix(normalMatrix), EntityId(entityId) {}
 
+
+	void Renderer::DrawCubemap(const glm::mat4& view, const glm::mat4& projection, const Ref<Cubemap>& cubemap, const Ref<Shader>& cubemapShader)
+	{
+		VXM_PROFILE_FUNCTION();
+		s_Data.CameraBuffer.ViewProjectionMatrix = projection * glm::mat4(glm::mat3(view));
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		RenderCommand::DrawCubemap(cubemap, cubemapShader, s_CubemapMesh->GetVertexArray());
+	}
+
 	void Renderer::Init() {
 		VXM_PROFILE_FUNCTION();
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
@@ -87,11 +96,6 @@ namespace Voxymore::Core {
 		s_Cubemap = cubemap;
 		s_CubemapShader = cubemapShader;
 
-		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
-		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
-		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
-
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
 		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
 		{
@@ -102,9 +106,13 @@ namespace Voxymore::Core {
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
 
+		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
+		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
 		if(s_Cubemap && s_CubemapShader) {
-			RenderCommand::DrawCubemap(s_Cubemap.GetAsset(), s_CubemapShader.GetAsset(), s_CubemapMesh->GetVertexArray());
+			DrawCubemap(camera.GetViewMatrix(), camera.GetProjectionMatrix(), s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
 		}
+		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
 	void Renderer::BeginScene(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights, CubemapField cubemap, ShaderField cubemapShader)
@@ -115,11 +123,6 @@ namespace Voxymore::Core {
 		s_Cubemap = cubemap;
 		s_CubemapShader = cubemapShader;
 
-		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetProjectionMatrix() * glm::inverse(transform);
-		glm::vec4 p = transform * glm::vec4{0,0,0,1};
-		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);
-		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
 		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
 		{
@@ -130,9 +133,16 @@ namespace Voxymore::Core {
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
 
+		const glm::vec4 p = transform * glm::vec4{0,0,0,1};
+		const auto view = glm::inverse(transform);
+		const auto proj = camera.GetProjectionMatrix();
+		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);
+		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
 		if(s_Cubemap && s_CubemapShader) {
-			RenderCommand::DrawCubemap(s_Cubemap.GetAsset(), s_CubemapShader.GetAsset(), s_CubemapMesh->GetVertexArray());
+			DrawCubemap(view, proj, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
 		}
+		s_Data.CameraBuffer.ViewProjectionMatrix = proj * view;
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
 	void Renderer::DrawMesh(Ref<Mesh> m, const glm::mat4& modelMatrix, int entityId)

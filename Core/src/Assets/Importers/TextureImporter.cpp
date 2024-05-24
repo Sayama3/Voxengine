@@ -106,7 +106,7 @@ namespace Voxymore::Core
 		Image source;
 		std::array<Image, 6> images;
 		CubemapSpecification spec;
-		stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(false);
 
 		int width, height, channels;
 		std::string strPath = path.string();
