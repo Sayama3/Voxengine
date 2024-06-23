@@ -82,13 +82,35 @@ namespace Voxymore::Core
 
 		if(ImGui::CollapsingHeader("Sources")) {
 			bool shaderSourcesChanged = false;
+			std::array<ShaderSourceField, 7> src;
+
 			std::vector<ShaderSourceField> sources = shader->GetSources();
-			sources.resize(std::max(sources.size(), (size_t)ShaderTypeCount));
-			uint32_t num = 0;
-			for (auto &source: sources) {
-				shaderSourcesChanged |= ImGuiLib::DrawAssetField(std::string("##"+std::to_string(num++)).c_str(), &source);
+
+			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i) {
+				auto it = std::find_if(sources.begin(), sources.end(), [i](const ShaderSourceField& src) {return src.IsValid() && src.GetAsset()->Type == (ShaderType)i;});
+				if(it != sources.end()) src[i] = *it;
+				else src[i] = NullAssetHandle;
 			}
+
+
+			uint32_t num = 0;
+			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i)
+			{
+				auto s = src[i];
+				if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify((ShaderType)i).c_str(), &s))
+				{
+					if(!s || s.GetAsset()->Type == (ShaderType)i) {
+						src[i] = s;
+						shaderSourcesChanged = true;
+					}
+				}
+			}
+
 			if(shaderSourcesChanged) {
+				sources.clear();
+				sources.reserve(ShaderTypeCount);
+				sources.insert(sources.end(), src.begin() + 1, src.end());
+
 				changed = true;
 				shader->SetSources(sources);
 			}

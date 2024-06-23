@@ -13,13 +13,13 @@
 #include "Voxymore/Math/Math.hpp"
 #include <unordered_map>
 
-#define VXM_VERTEX_TYPE "__TYPE_VERTEX_SHADER__"
-#define VXM_FRAGMENT_TYPE "__TYPE_FRAGMENT_SHADER__"
-#define VXM_PIXEL_TYPE "__TYPE_PIXEL_SHADER__"
-#define VXM_GEOMETRY_TYPE "__TYPE_GEOMETRY_SHADER__"
-#define VXM_COMPUTE_TYPE "__TYPE_COMPUTE_SHADER__"
-#define VXM_TESS_CONTROL_SHADER_TYPE "__TYPE_TESS_CONTROL_SHADER__"
-#define VXM_TESS_EVALUATION_SHADER_TYPE "__TYPE_TESS_EVALUATION_SHADER__"
+#define VXM_VERTEX_TYPE 					"__TYPE_VERTEX_SHADER__"
+#define VXM_FRAGMENT_TYPE 					"__TYPE_FRAGMENT_SHADER__"
+#define VXM_PIXEL_TYPE 						"__TYPE_PIXEL_SHADER__"
+#define VXM_GEOMETRY_TYPE 					"__TYPE_GEOMETRY_SHADER__"
+#define VXM_COMPUTE_TYPE 					"__TYPE_COMPUTE_SHADER__"
+#define VXM_TESS_CONTROL_SHADER_TYPE 		"__TYPE_TESS_CONTROL_SHADER__"
+#define VXM_TESS_EVALUATION_SHADER_TYPE		"__TYPE_TESS_EVALUATION_SHADER__"
 
 namespace Voxymore::Core {
 
@@ -196,6 +196,37 @@ namespace Voxymore::Core {
 			}
 			return "__TYPE_UNKNOWN__";
 		}
+
+		inline static std::string ShaderTypeToStringBeautify(ShaderType shaderType)
+		{
+			VXM_PROFILE_FUNCTION();
+
+			switch (shaderType) {
+				case ShaderType::COMPUTE_SHADER:
+					return "Compute Shader";
+					break;
+				case ShaderType::VERTEX_SHADER:
+					return "Vertex Shader";
+					break;
+				case ShaderType::TESS_CONTROL_SHADER:
+					return "Tessellation Control Shader";
+					break;
+				case ShaderType::TESS_EVALUATION_SHADER:
+					return "Tessellation Evaluation Shader";
+					break;
+				case ShaderType::GEOMETRY_SHADER:
+					return "Geometry Shader";
+					break;
+				case ShaderType::FRAGMENT_SHADER:
+					return "Fragment Shader";
+					break;
+				case ShaderType::None: break;
+					return "None";
+					break;
+			}
+			return "Unknown";
+		}
+
 		inline static ShaderType ShaderTypeFromString(std::string type)
 		{
 			VXM_PROFILE_FUNCTION();
