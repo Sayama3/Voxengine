@@ -3,12 +3,12 @@
 //
 
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/Application.hpp"
 #include "Voxymore/Utils/Platform.hpp"
 #include "portable-file-dialogs.h"
+#include <GLFW/glfw3.h>
 
 namespace Voxymore::Core {
-
-	std::string Clipboard::s_StrBuffer = "";
 
 	std::string FileDialogs::OpenFile(const std::vector<std::string>& filter)
 	{
@@ -25,16 +25,19 @@ namespace Voxymore::Core {
 
 	void Clipboard::Set(const std::string& str)
 	{
-		s_StrBuffer = str;
+		auto* nativeWindow = reinterpret_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		glfwSetClipboardString(nativeWindow, str.c_str());
 	}
 
 	std::string Clipboard::Get()
 	{
-		return s_StrBuffer;
+		auto* nativeWindow = reinterpret_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		return glfwGetClipboardString(nativeWindow);
 	}
 
 	void Clipboard::Clear()
 	{
-		s_StrBuffer.clear();
+		auto* nativeWindow = reinterpret_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		glfwSetClipboardString(nativeWindow, "");
 	}
 }
