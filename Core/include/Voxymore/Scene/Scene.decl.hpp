@@ -49,7 +49,9 @@ namespace Voxymore::Core
 		Entity CreateEntity();
 		Entity CreateEntity(const std::string& name);
 		Entity CreateEntity(UUID id, const std::string& name);
+		Entity CreateEntity(const std::string& name, UUID id) {return CreateEntity(id,name);}
 		Entity CreateEntity(UUID id);
+		Entity DuplicateEntity(Entity entity, bool duplicateID = false);
 
 		Entity GetEntity(UUID id);
 

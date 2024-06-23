@@ -27,6 +27,7 @@ public:
 		bool (*OnImGuizmo)(Entity/*sourceEntity*/, const float* viewMatrix, const float* projectionMatrix) = nullptr;
 		void (*AddComponent)(Entity);
 		void (*RemoveComponent)(Entity);
+		void (*DuplicateComponent)(Entity from, Entity to);
 	};
 
 	class ComponentManager
@@ -64,6 +65,7 @@ public:
 		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out);}
 		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender();}
 		inline static bool StaticOnImGuizmo(::Voxymore::Core::Entity sourceEntity, const float* viewMatrix, const float* projectionMatrix) {return sourceEntity.GetComponent<T>().OnImGuizmo(viewMatrix, projectionMatrix);}
+		inline static void StaticDuplicateComponent(::Voxymore::Core::Entity from, ::Voxymore::Core::Entity to) {if(from.HasComponent<T>()) {auto& toComp = to.GetOrAddComponent<T>(); toComp = from.GetComponent<T>();}}
 		inline static std::string StaticGetName() { return T::GetName(); }
 
 		inline static void RegisterComponent()
@@ -80,6 +82,7 @@ public:
 			cc.DeserializeComponent = T::StaticDeserializeComponent;
 			cc.OnImGuiRender = T::StaticOnImGuiRender;
 			cc.OnImGuizmo = T::StaticOnImGuizmo;
+			cc.DuplicateComponent = T::StaticDuplicateComponent;
 			ComponentManager::AddComponent(cc);
 		}
 
@@ -102,6 +105,7 @@ public:
 		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {sourceEntity.GetComponent<T>().SerializeComponent(out, sourceEntity);}
 		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return sourceEntity.GetComponent<T>().OnImGuiRender(sourceEntity);}
 		inline static bool StaticOnImGuizmo(::Voxymore::Core::Entity sourceEntity, const float* viewMatrix, const float* projectionMatrix) {return sourceEntity.GetComponent<T>().OnImGuizmo(sourceEntity, viewMatrix, projectionMatrix);}
+		inline static void StaticDuplicateComponent(::Voxymore::Core::Entity from, ::Voxymore::Core::Entity to) {if(from.HasComponent<T>()) {auto& toComp = to.GetOrAddComponent<T>(); toComp = from.GetComponent<T>();}}
 		inline static std::string StaticGetName() { return T::GetName(); }
 
 		inline static void RegisterComponent()
@@ -118,6 +122,7 @@ public:
 			cc.DeserializeComponent = T::StaticDeserializeComponent;
 			cc.OnImGuiRender = T::StaticOnImGuiRender;
 			cc.OnImGuizmo = T::StaticOnImGuizmo;
+			cc.DuplicateComponent = T::StaticDuplicateComponent;
 			ComponentManager::AddComponent(cc);
 		}
 

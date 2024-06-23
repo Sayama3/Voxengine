@@ -383,6 +383,46 @@ namespace Voxymore::Core
 		return entity;
 	}
 
+	Entity Scene::DuplicateEntity(Entity entity, bool duplicateID)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(entity, "The Entity is invalid.");
+
+		if(!entity)
+		{
+			return {};
+		}
+
+		Entity duplicateEntity;
+
+		if(duplicateID) {
+			duplicateEntity = CreateEntity(entity.GetComponent<TagComponent>().Tag, entity.id());
+		} else {
+			duplicateEntity = CreateEntity(entity.GetComponent<TagComponent>().Tag);
+		}
+
+		duplicateEntity.SetActive(entity.IsActive());
+
+		if (entity.HasComponent<TransformComponent>()) {
+			auto& dtc = duplicateEntity.GetOrAddComponent<TransformComponent>();
+			dtc = entity.GetComponent<TransformComponent>();
+		}
+
+		if (entity.HasComponent<CameraComponent>()) {
+			auto& dc = duplicateEntity.GetOrAddComponent<CameraComponent>();
+			dc = entity.GetComponent<CameraComponent>();
+		}
+
+		for (const ComponentChecker &cc: ComponentManager::GetComponents()) {
+			if (cc.HasComponent(entity)) {
+				cc.DuplicateComponent(entity, duplicateEntity);
+			}
+		}
+
+		return duplicateEntity;
+	}
+
+
 	Entity Scene::GetEntity(UUID id)
 	{
 		VXM_PROFILE_FUNCTION();

@@ -149,6 +149,11 @@ namespace Voxymore::Editor {
 				auto id = entity.id();
 				Clipboard::Set(std::to_string(entity.scene_id())+","+std::to_string(id)+","+tag);
             }
+			if(ImGui::MenuItem("Duplicate Entity"))
+			{
+				auto newEntity = s_Context->DuplicateEntity(entity);
+				PropertyPanel::s_SelectedEntity = newEntity;
+			}
             ImGui::EndPopup();
         }
 
