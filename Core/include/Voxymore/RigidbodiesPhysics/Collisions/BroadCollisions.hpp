@@ -8,12 +8,71 @@
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingObject.hpp"
 #include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
+#include <stdexcept>
 
 namespace Voxymore::Core
 {
 	struct PotentialContact
 	{
-		std::array<std::pair<Rigidbody*, Entity>, 2> bodies;
+		using ContactHolder = std::pair<Rigidbody*, Entity>;
+		friend bool operator==(const PotentialContact& lft, const PotentialContact& rht) {
+			bool equal = true;
+			for (int i = 0; i < 2; ++i) {
+				const auto& [rb, e] = lft.bodies[i];
+				equal &= std::find_if(rht.bodies.begin(), rht.bodies.end(), [&rb, &e](const ContactHolder& pair) {return pair.first == rb && pair.second == e;}) != rht.bodies.end();
+				if(!equal) break;
+			}
+			return equal;
+		}
+		friend bool operator!=(const PotentialContact& lft, const PotentialContact& rht) {
+			return !(lft == rht);
+		}
+
+		std::array<ContactHolder, 2> bodies;
+	};
+
+	struct PotentialContactsHolder
+	{
+		using container = std::vector<PotentialContact>;
+		using iterator = container::iterator;
+		using const_iterator = container::const_iterator;
+
+		bool push_back(const PotentialContact& pc) {
+			if(std::find(m_Contacts.begin(), m_Contacts.end(), pc) != m_Contacts.end()) {
+				// Already in.
+				return false;
+			}
+
+			m_Contacts.push_back(pc);
+			return true;
+		}
+
+		PotentialContact& back() noexcept {return m_Contacts.back();}
+		PotentialContact& front() noexcept {return m_Contacts.front();}
+		void pop_back() noexcept { m_Contacts.pop_back(); }
+
+		void clear() {m_Contacts.clear();}
+
+		PotentialContact& operator[](uint64_t i) {return m_Contacts[i];}
+		[[nodiscard]] const PotentialContact& operator[](uint64_t i) const {return m_Contacts[i];}
+
+		PotentialContact& at(uint64_t i) {VXM_CORE_ASSERT(i < size(), "The index {} is superior or equal to the size {}", i, size()); if(i < size()) {throw std::out_of_range(std::format("The index {} is superior or equal to the size {}", i, size()));} ;return m_Contacts[i];}
+		[[nodiscard]] const PotentialContact& at(uint64_t i) const {VXM_CORE_ASSERT(i < size(), "The index {} is superior or equal to the size {}", i, size()); if(i < size()) {throw std::out_of_range(std::format("The index {} is superior or equal to the size {}", i, size()));} ;return m_Contacts[i];}
+
+		[[nodiscard]] iterator begin() {return m_Contacts.begin();}
+		[[nodiscard]] iterator end() {return m_Contacts.end();}
+		[[nodiscard]] const_iterator begin() const {return m_Contacts.cbegin();}
+		[[nodiscard]] const_iterator end() const {return m_Contacts.cend();}
+		[[nodiscard]] const_iterator cbegin() const {return m_Contacts.cbegin();}
+		[[nodiscard]] const_iterator cend() const {return m_Contacts.cend();}
+
+		[[nodiscard]] uint64_t size() const {return m_Contacts.size();}
+
+		constexpr void resize(uint64_t new_size) { m_Contacts.resize(new_size); }
+		constexpr void reserve(uint64_t hint) { m_Contacts.reserve(hint); }
+		[[nodiscard]] bool empty() const noexcept { return m_Contacts.empty(); }
+	private:
+		container m_Contacts;
 	};
 
 	template<class BoundingClass>
@@ -37,8 +96,8 @@ namespace Voxymore::Core
 
 		bool Overlaps(const BVHNode<BoundingClass>& other) const;
 		bool Overlaps(const BVHNode<BoundingClass>* other) const;
-		uint32_t GetPotentialContacts(std::vector<PotentialContact>& contacts) const;
-		uint32_t GetPotentialContactsWith(const BVHNode<BoundingClass>* other, std::vector<PotentialContact>& contacts) const;
+		uint32_t GetPotentialContacts(PotentialContactsHolder& contacts) const;
+		uint32_t GetPotentialContactsWith(const BVHNode<BoundingClass>* other, PotentialContactsHolder& contacts) const;
 
 		void Insert(Rigidbody* newBody, Entity newEntity, const BoundingClass& newVolume);
 		void RecalculateBoundingVolume();
@@ -112,7 +171,7 @@ namespace Voxymore::Core
 	}
 
 	template<class BoundingClass>
-	uint32_t BVHNode<BoundingClass>::GetPotentialContacts(std::vector<PotentialContact>& contacts) const
+	uint32_t BVHNode<BoundingClass>::GetPotentialContacts(PotentialContactsHolder& contacts) const
 	{
 		VXM_PROFILE_FUNCTION();
 		// Checking if there is a reason to do the checks
@@ -138,7 +197,7 @@ namespace Voxymore::Core
 	}
 
 	template<class BoundingClass>
-	uint32_t BVHNode<BoundingClass>::GetPotentialContactsWith(const BVHNode<BoundingClass> *other, std::vector<PotentialContact>& contacts) const
+	uint32_t BVHNode<BoundingClass>::GetPotentialContactsWith(const BVHNode<BoundingClass> *other, PotentialContactsHolder& contacts) const
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(other != nullptr, "The other node is null.");

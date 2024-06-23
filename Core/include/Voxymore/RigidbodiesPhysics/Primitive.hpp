@@ -53,6 +53,7 @@ namespace Voxymore::Core
 	public:
 		Vec3 m_Normal = {0,1,0};
 		Real m_Offset = 0;
+		//TODO: Replace the size of the plane by a Vec2
 		Real m_Size = 1;
 	};
 

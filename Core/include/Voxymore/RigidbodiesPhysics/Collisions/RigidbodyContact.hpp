@@ -67,25 +67,40 @@ namespace Voxymore::Core
 	//TODO: Create Default Collision Data and customizable one
 	struct CollisionData
 	{
+	public:
+		using iterator = std::vector<RigidbodyContact>::iterator;
+		using const_iterator = std::vector<RigidbodyContact>::const_iterator;
+	public:
 		CollisionData();
 		~CollisionData();
 		Real friction = 0.6;
 		Real restitution = .8;
 
 		void AddContact(int i = 1);
+
 		[[deprecated("use CollisionData::AddContact")]]
 		RigidbodyContact* GetContact();
+
 		RigidbodyContact* GetContact(int i);
+
+		RigidbodyContact& operator[](uint64_t index);
+		const RigidbodyContact& operator[](uint64_t index) const;
+
 		void AddContact(const RigidbodyContact& contact);
 
-		inline std::vector<RigidbodyContact>::iterator begin()  { return contacts.begin();}
-		inline std::vector<RigidbodyContact>::iterator end()  { return contacts.end();}
+		inline iterator begin()  { return contacts.begin();}
+		inline iterator end()  { return contacts.end();}
+
+		inline const_iterator begin() const  { return contacts.cbegin();}
+		inline const_iterator end() const  { return contacts.cend();}
+
+		inline const_iterator cbegin() const  { return contacts.cbegin();}
+		inline const_iterator cend() const  { return contacts.cend();}
 
 		void reserve(size_t count);
 		[[nodiscard]] size_t size() const;
 		[[nodiscard]] bool empty() const;
 		void clear();
-
 
 		std::vector<RigidbodyContact> contacts;
 		//int contactsCount;

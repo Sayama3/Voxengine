@@ -46,7 +46,6 @@ namespace Voxymore::Core
 		void SetTransform(TransformComponent* tc);
 		void SetRigidbody(RigidbodyComponent* rc);
 
-
 		std::variant<Sphere, Plane, Box> m_Collider;
 	};
 

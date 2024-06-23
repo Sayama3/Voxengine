@@ -79,8 +79,10 @@ namespace Voxymore::Core
 	typedef glm::mat<3, 3, Real> Mat3;
 	typedef glm::mat<2, 2, Real> Mat2;
 
-	class Math {
-	public:
+	namespace Math {
+
+		static constexpr Real Epsilon = Real(1e-6);
+
 		/**
 		 * Create a Transform matrix from a position, a rotation, and a scale.
 		 * @param position The position as a 3D vector.

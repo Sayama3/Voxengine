@@ -203,6 +203,18 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Cubemap.hpp
         src/Math/Image.cpp
         include/Voxymore/Math/Image.hpp
+        src/Math/Plane.cpp
+        include/Voxymore/Math/Plane.hpp
+        src/Math/Geometry.cpp
+        include/Voxymore/Math/Geometry.hpp
+        src/Math/AABB.cpp
+        include/Voxymore/Math/AABB.hpp
+        src/Math/Sphere.cpp
+        include/Voxymore/Math/Sphere.hpp
+        src/Math/OBB.cpp
+        include/Voxymore/Math/OBB.hpp
+        src/Math/Capsule.cpp
+        include/Voxymore/Math/Capsule.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

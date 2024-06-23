@@ -79,9 +79,9 @@ namespace Voxymore::Core
 	void RigidbodyPhysicsLayer::Integrate(TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
+
 		// Integrate all Rigidbodies
 		auto func = [&ts](entt::entity e, RigidbodyComponent& rc, TransformComponent& tc){
-
 			rc.SetTransform(&tc);
 			rc.Integrate(ts);
 		};
@@ -141,7 +141,7 @@ namespace Voxymore::Core
 			auto sp = [&contacts](Sphere& one, Plane& two){ return CollisionDetector::Collide(one,two,contacts);};
 			auto pb = [&contacts](Plane& one, Box& two){ return CollisionDetector::Collide(one,two,contacts);};
 			auto ps = [&contacts](Plane& one, Sphere& two){ return CollisionDetector::Collide(one,two,contacts);};
-			auto pp = [](Plane& one, Plane& two){ return 0u;};
+			auto pp = [](Plane& one, Plane& two){ return uint32_t(0u);};
 
 			auto collisionPoints = std::visit(overloads{bb, bs, bp, sb, ss, sp, pb, ps, pp}, col0.m_Collider, col1.m_Collider);
 		}

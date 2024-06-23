@@ -38,6 +38,10 @@ namespace Voxymore::Core
 
 		if(!m_Transform) return;
 
+		if(!m_Awake) {
+			return;
+		}
+
 		if(m_InverseMass <= 0) {
 			return;
 		}
@@ -62,7 +66,7 @@ namespace Voxymore::Core
 		qua.w = 0;
 		qua *= orientation;
 		orientation += qua * (Real)0.5;
-		orientation = glm::normalize(orientation);
+		orientation = Math::Normalize(orientation);
 		m_Transform->SetRotation(orientation);
 		ClearAccumulator();
 	}
