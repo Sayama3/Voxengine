@@ -14,5 +14,19 @@ namespace Voxymore::Core::Math
 			   (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
 			   (a.min.z <= b.max.z && a.max.z >= b.min.z);
 	}
+	Vec3 AABB::Center() const
+	{
+		return (min + max) * 0.5f;
+	}
+
+	Vec3 AABB::Size() const
+	{
+		return max - min;
+	}
+
+	Vec3 AABB::HalfExtents() const
+	{
+		return Size() * 0.5f;
+	}
 } // namespace Voxymore::Core::Math
 

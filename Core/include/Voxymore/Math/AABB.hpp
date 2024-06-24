@@ -14,6 +14,10 @@ namespace Voxymore::Core::Math
 		Vec3 min;
 		Vec3 max;
 
+		Vec3 Center() const;
+		Vec3 Size() const;
+		Vec3 HalfExtents() const;
+
 		static bool Overlap(AABB a, AABB b);
 	};
 

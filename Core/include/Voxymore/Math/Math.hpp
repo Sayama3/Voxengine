@@ -78,6 +78,7 @@ namespace Voxymore::Core
 	typedef glm::mat<4, 4, Real> Mat4;
 	typedef glm::mat<3, 3, Real> Mat3;
 	typedef glm::mat<2, 2, Real> Mat2;
+	typedef glm::mat<3, 2, Real> Mat3x2;
 
 	namespace Math {
 
@@ -148,10 +149,45 @@ namespace Voxymore::Core
 
 		template<typename T> inline static T Max(const T& v1, const T& v2) { return glm::max(v1, v2); }
 
+		/**
+		 * @brief Clamps a value between a minimum and maximum bound.
+		 *
+		 * This function takes a value and clamps it between a minimum and maximum bound. The clamped value
+		 * is the maximum value if it exceeds the maximum bound, the minimum value if it falls below the
+		 * minimum bound, or the original value if it is within the bounds.
+		 *
+		 * @tparam T The type of the value to be clamped.
+		 * @param value The value to be clamped.
+		 * @param min The minimum bound.
+		 * @param max The maximum bound.
+		 * @return The clamped value.
+		 *
+		 * @note This function assumes that the `Max` and `Min` functions are available and correctly implement
+		 * the comparison between the given values. It is recommended to check the implementation of `Max` and
+		 * `Min` functions before using this clamp function.
+		 *
+		 * @see Max
+		 * @see Min
+		 */
 		template<typename T>
-		inline static T Clamp(const T& value, const T& min, const T& max) {
+		inline static T Clamp(T value, T min, T max) {
 			return Math::Max(Math::Min(value, max), min);
 		}
+
+
+		/**
+		 * @brief Returns the clamped value between 0 and 1.
+		 *
+		 * This template function clamps the given value between the minimum value of 0 and the maximum value of 1.
+		 *
+		 * @tparam T The type of the value.
+		 * @param value The value to be clamped.
+		 * @return The clamped value between 0 and 1.
+		 *
+		 * @note This function calls the Clamp function.
+		 */
+		template<typename T>
+		inline static T Clamp01(T value) {return Clamp(value, T(0), T(1));}
 
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
 		inline static Mat3 ToMat3(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat3(q); }
@@ -244,7 +280,8 @@ namespace Voxymore::Core
 			return glm::sqrt(value);
 		}
 
-		inline static Vec3 Cross(const Vec3& a, const Vec3& b)
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static glm::vec<3, T, Q> Cross(const glm::vec<3, T, Q>& a, const glm::vec<3, T, Q>& b)
 		{
 			return glm::cross(a,b);
 		}

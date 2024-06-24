@@ -215,6 +215,11 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Math/OBB.hpp
         src/Math/Capsule.cpp
         include/Voxymore/Math/Capsule.hpp
+        include/Voxymore/Math/Segment.hpp
+        src/Math/Rect.cpp
+        include/Voxymore/Math/Rect.hpp
+        src/Math/Triangle.cpp
+        include/Voxymore/Math/Triangle.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

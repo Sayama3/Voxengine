@@ -13,7 +13,10 @@ namespace Voxymore::Core::Math
 
 	struct OBB
 	{
-
+		OBB() = default;
+		~OBB() = default;
+		OBB(Vec3 center, Mat3 localAxes, Vec3 halfExtents) : c(center), mat(localAxes), e(halfExtents) {}
+		OBB(Vec3 center, std::array<Vec3, 3> localAxes, Vec3 halfExtents) : c(center), axes(localAxes), e(halfExtents) {}
 		// Center
 		Vec3 c;
 
@@ -25,6 +28,7 @@ namespace Voxymore::Core::Math
 			Mat3 mat;
 			std::array<Vec3, 3> axes;
 		};
+
 		// Positive halfwidth extents of OBB along each axis.
 		Vec3 e;
 
