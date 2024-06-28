@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Math.hpp"
+#include "AABB.hpp"
 
 
 
@@ -15,6 +16,7 @@ namespace Voxymore::Core::Math
 	{
 		OBB() = default;
 		~OBB() = default;
+		OBB(AABB a) : c(a.Center()), mat(Identity<Mat3>()), e(a.HalfExtents()) {}
 		OBB(Vec3 center, Mat3 localAxes, Vec3 halfExtents) : c(center), mat(localAxes), e(halfExtents) {}
 		OBB(Vec3 center, std::array<Vec3, 3> localAxes, Vec3 halfExtents) : c(center), axes(localAxes), e(halfExtents) {}
 		// Center
@@ -30,7 +32,10 @@ namespace Voxymore::Core::Math
 		};
 
 		// Positive halfwidth extents of OBB along each axis.
-		Vec3 e;
+		union {
+			Vec3 e;
+			struct {Real halfWidth; Real halfHeight; Real halfDepth;};
+		};
 
 		static bool Overlap(const OBB& a, const OBB& b);
 	};

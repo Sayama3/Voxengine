@@ -16,6 +16,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include <cmath>
 #include <cstdint>
+#include <algorithm>
 #include <iostream>
 
 #include "Voxymore/Core/Macros.hpp"
@@ -59,6 +60,8 @@
 
 #endif
 
+#define VXM_SQR(a) (a * a)
+
 namespace Voxymore::Core
 {
 	// Using Float for now. Adding 'typedef' to ease to transition if I ever want to go higher byte.
@@ -82,7 +85,8 @@ namespace Voxymore::Core
 
 	namespace Math {
 
-		static constexpr Real Epsilon = Real(1e-6);
+		inline static constexpr Vec3 Gravity = Vec3(0,-9.81,0);
+		inline static constexpr Real Epsilon = Real(1e-6);
 
 		/**
 		 * Create a Transform matrix from a position, a rotation, and a scale.
@@ -121,7 +125,6 @@ namespace Voxymore::Core
 		template<typename T>
 		inline static Real SqrMagnitude(const T& value)
 		{
-			VXM_PROFILE_FUNCTION();
 			return glm::length2(value);
 		}
 
@@ -142,12 +145,22 @@ namespace Voxymore::Core
 		template<int C, int R, typename T, glm::qualifier Q = glm::defaultp>
 		inline static glm::mat<C,R,T,Q> Inverse(const glm::mat<C,R,T,Q>& mat)
 		{
+			VXM_PROFILE_FUNCTION();
 			return glm::inverse(mat);
 		}
 
-		template<typename T> inline static T Min(const T& v1, const T& v2) { return glm::min(v1, v2); }
-
-		template<typename T> inline static T Max(const T& v1, const T& v2) { return glm::max(v1, v2); }
+		template<typename T> inline static T Min(T v1, T v2) { return glm::min(v1, v2); }
+		template<typename T> inline static T Max(T v1, T v2) { return glm::max(v1, v2); }
+		template<typename T> inline static T Min(T v1, T v2, T v3) { return Min(Min(v1, v2), v3); }
+		template<typename T> inline static T Max(T v1, T v2, T v3) { return Max(Max(v1, v2), v3); }
+		template<typename T> inline static T Min(T v1, T v2, T v3, T v4) { return Min(Min(Min(v1, v2), v3), v4); }
+		template<typename T> inline static T Max(T v1, T v2, T v3, T v4) { return Max(Max(Max(v1, v2), v3), v4); }
+		template<typename T> inline static T Min(T v1, T v2, T v3, T v4, T v5) { return Min(Min(Min(Min(v1, v2), v3), v4), v5); }
+		template<typename T> inline static T Max(T v1, T v2, T v3, T v4, T v5) { return Max(Max(Max(Max(v1, v2), v3), v4), v5); }
+		template<typename T, typename TIter> inline static T Min(TIter begin, TIter end) { return std::max_element(begin, end, Min); }
+		template<typename T, typename TIter> inline static T Max(TIter begin, TIter end) { return std::min_element(begin, end, Max); }
+		template<typename T, typename TContainer> inline static T Min(const TContainer& container) { return Max(container.begin(), container.end()); }
+		template<typename T, typename TContainer> inline static T Max(const TContainer& container) { return Min(container.begin(), container.end()); }
 
 		/**
 		 * @brief Clamps a value between a minimum and maximum bound.
@@ -269,8 +282,7 @@ namespace Voxymore::Core
 		}
 
 		template<typename T>
-		inline static T Pow2(const T& value) {
-			VXM_PROFILE_FUNCTION();
+		inline static constexpr T Pow2(const T& value) noexcept {
 			return value * value;
 		}
 
@@ -289,9 +301,10 @@ namespace Voxymore::Core
 		template<typename T>
 		inline static T Abs(const T& val)
 		{
-			VXM_PROFILE_FUNCTION();
 			return glm::abs(val);
 		}
+
+		inline static bool Approx(Real a, Real b) { return Abs(b-a) < Epsilon; }
 
 
 		/**
@@ -340,12 +353,10 @@ namespace Voxymore::Core
 		inline static glm::mat<3,3,T,Q> SetSkewSymmetric(const glm::vec<3,T,Q>& vector)
 		{
 			return glm::mat<3,3,T,Q>(
-					0, -vector.z, +vector.y,
-					+vector.z, 0, -vector.x,
-					-vector.y, +vector.x, 0);
+					     0   , -vector.z, +vector.y,
+					+vector.z,     0    , -vector.x,
+					-vector.y, +vector.x,     0    );
 		}
-
-		inline constexpr static const Vec3 Gravity = Vec3(0,-9.81,0);
 	}; // Math
 
 	template<> inline std::string Math::to_string(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
@@ -374,28 +385,28 @@ namespace Voxymore::Core
 	template<> inline std::string Math::ToString(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::ToString(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 
-	template<> inline float Math::Min(const float& value, const float& other) { return std::min(value, other); }
-	template<> inline float Math::Max(const float& value, const float& other) { return std::max(value, other); }
-	template<> inline double Math::Min(const double& value, const double& other) { return std::min(value, other); }
-	template<> inline double Math::Max(const double& value, const double& other) { return std::max(value, other); }
-	template<> inline long double Math::Min(const long double& value, const long double& other) { return std::min(value, other); }
-	template<> inline long double Math::Max(const long double& value, const long double& other) { return std::max(value, other); }
-	template<> inline uint8_t Math::Min(const uint8_t& value, const uint8_t& other) { return std::min(value, other); }
-	template<> inline uint8_t Math::Max(const uint8_t& value, const uint8_t& other) { return std::max(value, other); }
-	template<> inline uint16_t Math::Min(const uint16_t& value, const uint16_t& other) { return std::min(value, other); }
-	template<> inline uint16_t Math::Max(const uint16_t& value, const uint16_t& other) { return std::max(value, other); }
-	template<> inline uint32_t Math::Min(const uint32_t& value, const uint32_t& other) { return std::min(value, other); }
-	template<> inline uint32_t Math::Max(const uint32_t& value, const uint32_t& other) { return std::max(value, other); }
-	template<> inline uint64_t Math::Min(const uint64_t& value, const uint64_t& other) { return std::min(value, other); }
-	template<> inline uint64_t Math::Max(const uint64_t& value, const uint64_t& other) { return std::max(value, other); }
-	template<> inline int8_t Math::Min(const int8_t& value, const int8_t& other) { return std::min(value, other); }
-	template<> inline int8_t Math::Max(const int8_t& value, const int8_t& other) { return std::max(value, other); }
-	template<> inline int16_t Math::Min(const int16_t& value, const int16_t& other) { return std::min(value, other); }
-	template<> inline int16_t Math::Max(const int16_t& value, const int16_t& other) { return std::max(value, other); }
-	template<> inline int32_t Math::Min(const int32_t& value, const int32_t& other) { return std::min(value, other); }
-	template<> inline int32_t Math::Max(const int32_t& value, const int32_t& other) { return std::max(value, other); }
-	template<> inline int64_t Math::Min(const int64_t& value, const int64_t& other) { return std::min(value, other); }
-	template<> inline int64_t Math::Max(const int64_t& value, const int64_t& other) { return std::max(value, other); }
+	template<> inline float Math::Min(float value, float other) { return std::min(value, other); }
+	template<> inline float Math::Max(float value, float other) { return std::max(value, other); }
+	template<> inline double Math::Min(double value, double other) { return std::min(value, other); }
+	template<> inline double Math::Max(double value, double other) { return std::max(value, other); }
+	template<> inline long double Math::Min(long double value, long double other) { return std::min(value, other); }
+	template<> inline long double Math::Max(long double value, long double other) { return std::max(value, other); }
+	template<> inline uint8_t Math::Min(uint8_t value, uint8_t other) { return std::min(value, other); }
+	template<> inline uint8_t Math::Max(uint8_t value, uint8_t other) { return std::max(value, other); }
+	template<> inline uint16_t Math::Min(uint16_t value, uint16_t other) { return std::min(value, other); }
+	template<> inline uint16_t Math::Max(uint16_t value, uint16_t other) { return std::max(value, other); }
+	template<> inline uint32_t Math::Min(uint32_t value, uint32_t other) { return std::min(value, other); }
+	template<> inline uint32_t Math::Max(uint32_t value, uint32_t other) { return std::max(value, other); }
+	template<> inline uint64_t Math::Min(uint64_t value, uint64_t other) { return std::min(value, other); }
+	template<> inline uint64_t Math::Max(uint64_t value, uint64_t other) { return std::max(value, other); }
+	template<> inline int8_t Math::Min(int8_t value, int8_t other) { return std::min(value, other); }
+	template<> inline int8_t Math::Max(int8_t value, int8_t other) { return std::max(value, other); }
+	template<> inline int16_t Math::Min(int16_t value, int16_t other) { return std::min(value, other); }
+	template<> inline int16_t Math::Max(int16_t value, int16_t other) { return std::max(value, other); }
+	template<> inline int32_t Math::Min(int32_t value, int32_t other) { return std::min(value, other); }
+	template<> inline int32_t Math::Max(int32_t value, int32_t other) { return std::max(value, other); }
+	template<> inline int64_t Math::Min(int64_t value, int64_t other) { return std::min(value, other); }
+	template<> inline int64_t Math::Max(int64_t value, int64_t other) { return std::max(value, other); }
 
 
 } // Voxymore::Core

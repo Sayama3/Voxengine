@@ -254,5 +254,208 @@ namespace Voxymore::Core::Math
 		const Vec3& c = t.c;
 		return (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
 	}
+
+	bool TestSpherePlane(Sphere s, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(Approx(SqrMagnitude(p.n), 1), "The plane Normal is not normalize.");
+		Real dist = Dot(s.c, p.n) - p.d;
+		return Abs(dist) <= s.r;
+	}
+
+	bool InsideSpherePlane(Sphere s, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(Approx(SqrMagnitude(p.n), 1), "The plane Normal is not normalize.");
+		Real dist = Dot(s.c, p.n) - p.d;
+		return dist < -s.r;
+	}
+
+	bool TestSphereHalfSpace(Sphere s, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(Approx(SqrMagnitude(p.n), 1), "The plane Normal is not normalize.");
+		Real dist = Dot(s.c, p.n) - p.d;
+		return dist <= s.r;
+	}
+
+	bool TestOBBPlane(OBB b, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Compute the projection interval radius of b onto L(t) = b.c + t*p.n.
+		Real r = b.e[0] * Abs(Dot(p.n, b.u[0])) +
+				 b.e[1] * Abs(Dot(p.n, b.u[1])) +
+				 b.e[2] * Abs(Dot(p.n, b.u[2]));
+
+		// Distance Box center from plane
+		Real s = Dot(p.n, b.c) - p.d;
+
+		// Intersection when s is within [-r, +r]
+		return Abs(s) <= r;
+	}
+
+	bool TestOBBHalfSpace(OBB b, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Compute the projection interval radius of b onto L(t) = b.c + t*p.n.
+		Real r = b.e[0] * Abs(Dot(p.n, b.u[0])) +
+				 b.e[1] * Abs(Dot(p.n, b.u[1])) +
+				 b.e[2] * Abs(Dot(p.n, b.u[2]));
+
+		// Distance Box center from plane
+		Real s = Dot(p.n, b.c) - p.d;
+
+		// Intersection when s is within [-r, +r]
+		return s <= -r;
+	}
+
+	bool TestAABBPlane(AABB b, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Compute the projection interval radius of b onto L(t) = b.c + t*p.n.
+		Vec3 c = b.Center();
+		Vec3 e = b.max - c;
+
+		// Distance Box center from plane
+		Real r = e[0] * Abs(p.n[0]) +  e[1] * Abs(p.n[1]) +  e[2] * Abs(p.n[2]);
+		Real s = Dot(p.n, c) - p.d;
+
+		// Intersection when s is within [-r, +r]
+		return Abs(s) <= r;
+	}
+
+	bool TestAABBHalfSpace(AABB b, Plane p)
+	{
+		VXM_PROFILE_FUNCTION();
+		// Compute the projection interval radius of b onto L(t) = b.c + t*p.n.
+		Vec3 c = b.Center();
+		Vec3 e = b.max - c;
+
+		// Distance Box center from plane
+		Real r = e[0] * Abs(p.n[0]) +  e[1] * Abs(p.n[1]) +  e[2] * Abs(p.n[2]);
+		Real s = Dot(p.n, c) - p.d;
+
+		// Intersection when s is within [-r, +r]
+		return s <= -r;
+	}
+
+	bool TestSphereAABB(Sphere s, AABB b)
+	{
+		VXM_PROFILE_FUNCTION();
+		Real sqDist = SqDistPointAABB(s.c, b);
+		return sqDist <= Pow2(s.r);
+	}
+
+	bool Math::TestSphereAABB(Sphere s, AABB b, Vec3 &p)
+	{
+		VXM_PROFILE_FUNCTION();
+		ClosestPointToAABB(s.c, b, p);
+		Vec3 v = p - s.c;
+		return Dot(v,v) <= Pow2(s.r);
+	}
+
+	bool TestSphereOBB(Sphere s, OBB b)
+	{
+		VXM_PROFILE_FUNCTION();
+		Real sqDist = SqDistPointOBB(s.c, b);
+		return sqDist <= Pow2(s.r);
+	}
+	bool Math::TestSphereOBB(Sphere s, OBB b, Vec3 &p)
+	{
+		VXM_PROFILE_FUNCTION();
+		ClosestPointToOBB(s.c, b, p);
+		Vec3 v = p - s.c;
+		return Dot(v,v) <= Pow2(s.r);
+	}
+
+	bool TestSphereTriangle(Sphere s, Triangle t, Vec3 &p)
+	{
+		VXM_PROFILE_FUNCTION();
+		p = ClosestPointToTriangle(s.c, t);
+		Vec3 v = p - s.c;
+		return Dot(v, v) <= Pow2(s.r);
+	}
+
+	bool TestTriangleAABB(Triangle v, AABB b)
+	{
+		Real p0, p1, p2, r;
+
+		Vec3 c = b.Center();
+		Real e0 = (b.max[0] - b.min[0]) * Real(0.5);
+		Real e1 = (b.max[1] - b.min[1]) * Real(0.5);
+		Real e2 = (b.max[2] - b.min[2]) * Real(0.5);
+
+		// Recompute triangle to AABB Origin.
+		v = { v[0] - c, v[1] - c, v[2] - c};
+
+		Vec3 f0 = v[1]- v[0];
+		Vec3 f1 = v[2]- v[1];
+		Vec3 f2 = v[0]- v[2];
+
+		// TODO: Check the SAT a00 to a22
+		// Test Axis a00
+		p0 = v[0].z*v[1].y - v[0].y*v[1].z;
+		p2 = v[2].z*(v[1].y - v[0].y) - v[2].y*(v[1].z - v[0].z);
+		r = e1 * Abs(f0.z) + e2 * Abs(f0.y);
+		if(Max(-Max(p0,p2), Min(p0,p2)) < r) return false;
+
+		// Axis a01
+		p0 = v[0].z * v[1].x - v[0].x * v[1].z;
+		p2 = v[2].z * (v[1].x - v[0].x) - v[2].x * (v[1].z - v[0].z);
+		r = e0 * Abs(f1.z) + e2 * Abs(f1.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+
+		// Axis a02
+		p0 = v[0].y * v[1].x - v[0].x * v[1].y;
+		p2 = v[2].y * (v[1].x - v[0].x) - v[2].x * (v[1].y - v[0].y);
+		r = e0 * Abs(f2.y) + e1 * Abs(f2.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+
+		// Test axis a10
+		p0 = v[0].z * v[2].y - v[0].y * v[2].z;
+		p2 = v[1].z * (v[2].y - v[0].y) - v[1].y * (v[2].z - v[0].z);
+		r = e1 * Abs(f2.z) + e2 * Abs(f2.y);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+		
+		// Test axis a11
+		p0 = v[0].z * v[2].x - v[0].x * v[2].z;
+		p2 = v[1].z * (v[2].x - v[0].x) - v[1].x * (v[2].z - v[0].z);
+		r = e0 * Abs(f0.z) + e2 * Abs(f0.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+
+		// Test axis a12
+		p0 = v[0].y * v[2].x - v[0].x * v[2].y;
+		p2 = v[1].y * (v[2].x - v[0].x) - v[1].x * (v[2].y - v[0].y);
+		r = e0 * Abs(f1.y) + e1 * Abs(f1.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+		
+    
+		//Test axis a20
+		p0 = v[1].z * v[2].y - v[1].y * v[2].z;
+		p2 = v[0].z * (v[2].y - v[1].y) - v[0].y * (v[2].z - v[1].z);
+		r = e1 * Abs(f1.z) + e2 * Abs(f1.y);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+		
+		//Test axis a21
+		p0 = v[1].z * v[2].x - v[1].x * v[2].z;
+		p2 = v[0].z * (v[2].x - v[1].x) - v[0].x * (v[2].z - v[1].z);
+		r = e0 * Abs(f2.z) + e2 * Abs(f2.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+
+		//Test axis a22
+		p0 = v[1].y * v[2].x - v[1].x * v[2].y;
+		p2 = v[0].y * (v[2].x - v[1].x) - v[0].x * (v[2].y - v[1].y);
+		r = e0 * Abs(f0.y) + e1 * Abs(f0.x);
+		if (Max(-Max(p0, p2), Min(p0, p2)) > r) return false;
+
+		if(Max(v[0].x, v[1].x, v[2].x) < -e0 || Min(v[0].x, v[1].x, v[2].x) > e0 ) return false;
+		if(Max(v[0].y, v[1].y, v[2].y) < -e1 || Min(v[0].y, v[1].y, v[2].y) > e1 ) return false;
+		if(Max(v[0].z, v[1].z, v[2].z) < -e2 || Min(v[0].z, v[1].z, v[2].z) > e2 ) return false;
+
+		Plane p;
+		p.n = Cross(f0, f1);
+		p.d = Dot(p.n, v[0]);
+		return TestAABBPlane(b ,p);
+	}
 } // namespace Voxymore::Core::Math
 

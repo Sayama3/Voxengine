@@ -13,6 +13,7 @@
 #include "Capsule.hpp"
 #include "Rect.hpp"
 #include "Triangle.hpp"
+#include "Polygon.hpp"
 
 namespace Voxymore::Core::Math
 {
@@ -43,7 +44,31 @@ namespace Voxymore::Core::Math
 
 	// Return 2 times the signed triangle area. The result is positive if
 	//  abc is ccw, negative if abc is cw, zero is abc is degenerate.
-	static Real Signed2DTriArea(Triangle t);
+	[[nodiscard]] static Real Signed2DTriArea(Triangle t);
+
+	// === Collision Tests ===
+
+	// Intersection Test.
+	[[nodiscard]] static bool TestSpherePlane(Sphere s, Plane p);
+	// Strict inside test plane.
+	[[nodiscard]] static bool InsideSpherePlane(Sphere s, Plane p);
+	[[nodiscard]] static bool TestSphereHalfSpace(Sphere s, Plane p);
+
+	[[nodiscard]] static bool TestOBBPlane(OBB b, Plane p);
+	[[nodiscard]] static bool TestOBBHalfSpace(OBB b, Plane p);
+
+	[[nodiscard]] static bool TestAABBPlane(AABB b, Plane p);
+	[[nodiscard]] static bool TestAABBHalfSpace(AABB b, Plane p);
+
+	[[nodiscard]] static bool TestSphereAABB(Sphere s, AABB b);
+	[[nodiscard]] static bool TestSphereAABB(Sphere s, AABB b, Vec3& p);
+
+	[[nodiscard]] static bool TestSphereOBB(Sphere s, OBB b);
+	[[nodiscard]] static bool TestSphereOBB(Sphere s, OBB b, Vec3& p);
+
+	[[nodiscard]] static bool TestSphereTriangle(Sphere s, Triangle t, Vec3& p);
+	//TODO?: [[nodiscard]] static bool TestSpherePolygon(Sphere s, Polygon p);
+	[[nodiscard]] static bool TestTriangleAABB(Triangle v, AABB b);
 
 } // namespace Voxymore::Core::Math
 
