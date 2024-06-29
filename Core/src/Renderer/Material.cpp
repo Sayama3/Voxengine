@@ -402,7 +402,7 @@ namespace Voxymore::Core {
 		if(ImGui::CollapsingHeader("Metallic Roughtness"))
 		{
 			auto& metal = mat.PbrMetallicRoughness;
-			changed |= ImGui::ColorEdit4("Base Color", glm::value_ptr(metal.BaseColorFactor));
+			changed |= ImGui::ColorEdit4("Base Color", Math::ValuePtr(metal.BaseColorFactor));
 //			ImGui::BeginDisabled(true);
 			changed |= ImGui::InputInt("Base Index##BaseColor", &metal.BaseColorTexture.Index, 1, -1, 32);
 			changed |= ImGui::InputInt("Base TexCoord##BaseColor", &metal.BaseColorTexture.TexCoord);
@@ -439,7 +439,7 @@ namespace Voxymore::Core {
 		if(ImGui::CollapsingHeader("Emissive"))
 		{
 			auto& emissive = mat.EmissiveTexture;
-			changed |= ImGui::ColorEdit3("Emissive Factor", glm::value_ptr(mat.EmissiveFactor));
+			changed |= ImGui::ColorEdit3("Emissive Factor", Math::ValuePtr(mat.EmissiveFactor));
 			changed |= ImGui::InputInt("Index##EmissiveTexture", &emissive.Index, 1, -1, 32);
 			changed |= ImGui::InputInt("TexCoord##EmissiveTexture", &emissive.TexCoord);
 		}

@@ -89,7 +89,7 @@ namespace Voxymore::Core
 			if(!plane.m_Body) plane.m_Body = e.HasComponent<RigidbodyComponent>() ? reinterpret_cast<Rigidbody*>(&e.GetComponent<RigidbodyComponent>()) : nullptr;
 			if(!plane.m_Transform) plane.m_Transform = &e.GetComponent<TransformComponent>();
 			bool changed = false;
-			changed |=  ImGuiLib::DragReal3("Normal", glm::value_ptr(plane.m_Normal));
+			changed |=  ImGuiLib::DragReal3("Normal", Math::ValuePtr(plane.m_Normal));
 			changed |=  ImGuiLib::DragReal("Offset", &plane.m_Offset);
 			changed |=  ImGuiLib::DragReal2("Size", Math::ValuePtr(plane.m_Size));
 			return changed;
@@ -97,7 +97,7 @@ namespace Voxymore::Core
 		auto useBox = [&e](Box& box) -> bool {
 			if(!box.m_Body) box.m_Body = e.HasComponent<RigidbodyComponent>() ? reinterpret_cast<Rigidbody*>(&e.GetComponent<RigidbodyComponent>()) : nullptr;
 			if(!box.m_Transform) box.m_Transform = &e.GetComponent<TransformComponent>();
-			return ImGuiLib::DragReal3("Half Size", glm::value_ptr(box.m_HalfSize));
+			return ImGuiLib::DragReal3("Half Size", Math::ValuePtr(box.m_HalfSize));
 		};
 		return std::visit(overloads{useBox, useSphere, usePlane}, m_Collider);
 	}

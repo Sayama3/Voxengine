@@ -106,7 +106,7 @@ namespace Voxymore::Editor
 												: gizmoScaleSnapValue;
 
 			float snapValues[3] = {snapValue, snapValue, snapValue};
-			bool manipulate = ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(gizmoOperation), static_cast<ImGuizmo::MODE>(gizmoMode), glm::value_ptr(modelMatrix), nullptr, isSnapping ? snapValues : nullptr);
+			bool manipulate = ImGuizmo::Manipulate(Math::ValuePtr(viewMatrix), Math::ValuePtr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(gizmoOperation), static_cast<ImGuizmo::MODE>(gizmoMode), Math::ValuePtr(modelMatrix), nullptr, isSnapping ? snapValues : nullptr);
 			m_EditorCamera.EnableMovement(!manipulate);
 			if(ImGuizmo::IsUsing())
 			{
@@ -124,7 +124,7 @@ namespace Voxymore::Editor
 
 		for (const auto& panel : panels) {
 			ImGuizmo::PushID((const void*)static_cast<uint64_t>(panel->GetHandle()));
-			panel->OnImGuizmo(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix));
+			panel->OnImGuizmo(Math::ValuePtr(viewMatrix), Math::ValuePtr(projectionMatrix));
 			ImGuizmo::PopID();
 		}
 	}
