@@ -13,7 +13,6 @@
 #include "Capsule.hpp"
 #include "Rect.hpp"
 #include "Triangle.hpp"
-#include "Polygon.hpp"
 
 namespace Voxymore::Core::Math
 {
@@ -69,6 +68,13 @@ namespace Voxymore::Core::Math
 	[[nodiscard]] static bool TestSphereTriangle(Sphere s, Triangle t, Vec3& p);
 	//TODO?: [[nodiscard]] static bool TestSpherePolygon(Sphere s, Polygon p);
 	[[nodiscard]] static bool TestTriangleAABB(Triangle v, AABB b);
+
+	[[nodiscard]] static bool TestSegmentPlane(Segment s, Plane p, Real& t, Vec3& q);
+	[[nodiscard]] static bool TestRaySphere(Ray r, Sphere s, Real& t, Vec3& q);
+	[[nodiscard]] static bool TestRaySphere(Ray r, Sphere s);
+	[[nodiscard]] static bool TestRayAABB(Ray r, AABB a, Real&tmin, Vec3& q);
+	[[nodiscard]] static bool TestRayOBB(Ray r, OBB b, Real& tmin, Vec3& q);
+	// TODO?: [[nodiscard]] static bool TestRayTriangle(Ray r, Triangle t, Real& u, Real& v, Real& w);
 
 } // namespace Voxymore::Core::Math
 

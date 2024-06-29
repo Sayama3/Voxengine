@@ -394,8 +394,8 @@ namespace Voxymore::Core::Math
 
 		// TODO: Check the SAT a00 to a22
 		// Test Axis a00
-		p0 = v[0].z*v[1].y - v[0].y*v[1].z;
-		p2 = v[2].z*(v[1].y - v[0].y) - v[2].y*(v[1].z - v[0].z);
+		p0 = v[0].z * v[1].y - v[0].y * v[1].z;
+		p2 = v[2].z * (v[1].y - v[0].y) - v[2].y * (v[1].z - v[0].z);
 		r = e1 * Abs(f0.z) + e2 * Abs(f0.y);
 		if(Max(-Max(p0,p2), Min(p0,p2)) < r) return false;
 
@@ -456,6 +456,129 @@ namespace Voxymore::Core::Math
 		p.n = Cross(f0, f1);
 		p.d = Dot(p.n, v[0]);
 		return TestAABBPlane(b ,p);
+	}
+
+	bool TestSegmentPlane(Segment s, Plane p, Real &t, Vec3 &q)
+	{
+		// Compute t of directed line s.
+		Vec3 sDir = s.Direction();
+		t = (p.d - Dot(p.n, s.begin)) / Dot(p.n, sDir);
+
+		// Search if t is in [0, 1]
+		if (0 <= t && t <= 1) {
+			q = s.begin + t * sDir;
+			return true;
+		}
+
+		// No Intersection
+		return false;
+	}
+
+	bool TestRaySphere(Ray r, Sphere s, Real &t, Vec3 &q)
+	{
+		Vec3 m = r.origin - s.c;
+		Real b = Dot(m, r.direction);
+		Real c = Dot(m, m) - s.r * s.r;
+
+		if (c > Real(0) && b > Real(0)) return false;
+
+		Real discr = b * b - c;
+		if (discr < Real(0)) return false;
+
+		t = -b - Sqrt(discr);
+		if (t < Real(0)) t = Real(0);
+
+		q = r.origin + t * r.direction;
+		return true;
+	}
+
+	// Lost of early exit for the version requiring only a check.
+	bool Math::TestRaySphere(Ray r, Sphere s)
+	{
+		Vec3 m = r.origin - s.c;
+		Real c = Dot(m, m) - s.r * s.r;
+		if(c<=Real(0)) return true;
+
+		Real b = Dot(m, r.direction);
+		if (b > Real(0)) return false;
+
+		Real discr = b * b - c;
+		if (discr < Real(0)) return false;
+
+		return true;
+	}
+	bool TestRayAABB(Ray r, AABB a, Real& tmin, Vec3& q)
+	{
+		tmin = Real(0);
+		Real tmax = REAL_MAX;
+
+		for (int i = 0; i < 3; i++) {
+			if (Abs(r.direction[i]) < Epsilon) {
+				if (r.origin[i] < a.min[i] || r.origin[i] > a.max[i]) {
+					return false;
+				}
+			}
+			else {
+				Real ood = Real(1) / r.direction[i];
+				Real t1 = (a.min[i] - r.origin[i]) * ood;
+				Real t2 = (a.max[i] - r.origin[i]) * ood;
+				if (t1 > t2) {
+					std::swap(t1, t2);
+				}
+				tmin = Max(tmin, t1);
+				tmax = Min(tmax, t2);
+				if (tmin > tmax) {
+					return false;
+				}
+			}
+		}
+
+		q = r.GetPoint(tmin);
+
+		return true;
+	}
+
+	bool TestRayOBB(Ray r, OBB b, Real &tmin, Vec3 &q)
+	{
+		Vec3 p = b.c - r.origin;
+
+		Vec3 X = b.mat[0];
+		Vec3 Y = b.mat[1];
+		Vec3 Z = b.mat[2];
+
+		Vec3 ex(X.x, Y.x, Z.x);
+		Vec3 ey(X.y, Y.y, Z.y);
+		Vec3 ez(X.z, Y.z, Z.z);
+		Vec3 f(Dot(ex, p), Dot(ey, p), Dot(ez, p));
+		Vec3 u(Dot(ex, r.direction), Dot(ey, r.direction), Dot(ez, r.direction));
+
+		tmin = -REAL_MAX;
+		Real tmax = REAL_MAX;
+
+		for (int i = 0; i < 3; i++) {
+			if (Abs(u[i]) < Epsilon) {
+				if (f[i] < -b.e[i] || f[i] > b.e[i]) {
+					return false;
+				}
+			}
+			else {
+				Real ood = Real(1) / u[i];
+				Real t1 = (f[i] - b.e[i]) * ood;
+				Real t2 = (f[i] + b.e[i]) * ood;
+				if (t1 > t2) {
+					std::swap(t1, t2);
+				}
+				tmin = Max(tmin, t1);
+				tmax = Min(tmax, t2);
+				if (tmin > tmax) {
+					return false;
+				}
+			}
+		}
+
+		q = r.GetPoint(tmin);
+
+		return true;
 	}
 } // namespace Voxymore::Core::Math
 

@@ -22,6 +22,9 @@ namespace Voxymore::Core::Math
 	 */
 	struct Plane
 	{
+		Plane() = default;
+		Plane(Vec3 normal, Real distance) : n(normal), d(distance) {}
+		~Plane() = default;
 		// Plane Normal
 		Vec3 n;
 		// d = Dot(n,p); for a given point p on the plane.

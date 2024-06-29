@@ -10,6 +10,9 @@ namespace Voxymore::Core::Math
 {
 	struct Sphere
 	{
+		Sphere() = default;
+		Sphere(Vec3 center, Real radius) : c(center), r(radius) {}
+		~Sphere() = default;
 		Vec3 c;
 		Real r;
 
