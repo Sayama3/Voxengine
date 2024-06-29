@@ -330,8 +330,8 @@ namespace Voxymore::Core
 			return glm::abs(val);
 		}
 
-		inline static bool Approx(Real a, Real b) { return Abs(b-a) < Epsilon; }
-		inline static bool Approx0(Real a) { return Abs(a) < Epsilon; }
+		inline static bool Approx(Real a, Real b, Real e = Epsilon) { return Abs(b-a) < e; }
+		inline static bool Approx0(Real a, Real e = Epsilon) { return Abs(a) < e; }
 
 
 		/**

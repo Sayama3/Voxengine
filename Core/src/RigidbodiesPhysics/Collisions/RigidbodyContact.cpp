@@ -196,15 +196,15 @@ namespace Voxymore::Core
 		Vec3 linear, angular;
 
 		linear = bodies[0]->GetLinearVelocity();
-		if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
-		if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
-		if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+		if(Math::Approx0(linear.x, c_VelocityLimit)) {linear.x = 0;}
+		if(Math::Approx0(linear.y, c_VelocityLimit)) {linear.y = 0;}
+		if(Math::Approx0(linear.z, c_VelocityLimit)) {linear.z = 0;}
 		bodies[0]->SetLinearVelocity(linear);
 
 		angular = bodies[0]->GetAngularVelocity();
-		if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
-		if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
-		if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+		if(Math::Approx0(angular.x, c_VelocityLimit)) {angular.x = 0;}
+		if(Math::Approx0(angular.y, c_VelocityLimit)) {angular.y = 0;}
+		if(Math::Approx0(angular.z, c_VelocityLimit)) {angular.z = 0;}
 		bodies[0]->SetAngularVelocity(angular);
 
 		if (bodies[1])
@@ -221,15 +221,15 @@ namespace Voxymore::Core
 
 
 			linear = bodies[1]->GetLinearVelocity();
-			if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
-			if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
-			if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+			if(Math::Approx0(linear.x, c_VelocityLimit)) {linear.x = 0;}
+			if(Math::Approx0(linear.y, c_VelocityLimit)) {linear.y = 0;}
+			if(Math::Approx0(linear.z, c_VelocityLimit)) {linear.z = 0;}
 			bodies[1]->SetLinearVelocity(linear);
 
 			angular = bodies[1]->GetAngularVelocity();
-			if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
-			if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
-			if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+			if(Math::Approx0(angular.x, c_VelocityLimit)) {angular.x = 0;}
+			if(Math::Approx0(angular.y, c_VelocityLimit)) {angular.y = 0;}
+			if(Math::Approx0(angular.z, c_VelocityLimit)) {angular.z = 0;}
 			bodies[1]->SetAngularVelocity(angular);
 		}
 	}
@@ -339,7 +339,7 @@ namespace Voxymore::Core
 				impulseContact.y*impulseContact.y +
 				impulseContact.z*impulseContact.z
 		);
-		if (planarImpulse > impulseContact.x * friction)
+		if (planarImpulse != 0 && planarImpulse > impulseContact.x * friction)
 		{
 			VXM_CORE_ASSERT(impulseContact.x != 0, "impulseContact.x != 0");
 			VXM_CORE_ASSERT(planarImpulse != 0, "planarImpulse != 0");
@@ -458,18 +458,21 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 
+		Vec3 scaledContact = contactNormal * ts.as<Real>();
+
+		Real velocityFromAcc = Math::Dot(bodies[0]->GetLastFrameAcceleration(), scaledContact);
+		if (bodies[1])
+		{
+			velocityFromAcc -= Math::Dot(bodies[1]->GetLastFrameAcceleration(), scaledContact);
+		}
+
 		Real thisRestitution = restitution;
 		if(Math::Abs(m_ContactVelocity.x) < c_VelocityLimit)
 		{
 			thisRestitution = (Real)0;
 		}
 
-		Real accVelocity = Math::Dot(bodies[0]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
-		if (bodies[1])
-		{
-			accVelocity -= Math::Dot(bodies[1]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
-		}
-		m_DesiredDeltaVelocity = -m_ContactVelocity.x - thisRestitution * (m_ContactVelocity.x - accVelocity);
+		m_DesiredDeltaVelocity = -m_ContactVelocity.x - thisRestitution * (m_ContactVelocity.x - velocityFromAcc);
 	}
 
 	const Mat3& RigidbodyContact::GetContactToWorld() const

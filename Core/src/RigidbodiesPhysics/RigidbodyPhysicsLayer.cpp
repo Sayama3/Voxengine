@@ -76,8 +76,8 @@ namespace Voxymore::Core
 
 		// Filter False Positive
 		std::erase_if(m_Contacts.contacts, [](RigidbodyContact rc) -> bool {
-			if(Math::Approx0(Math::SqrMagnitude(rc.contactNormal))) return true;
-			if(Math::Approx0(rc.penetration)) return true;
+			if(Math::Approx0(Math::SqrMagnitude(rc.contactNormal), 0.001)) return true;
+			if(Math::Approx0(rc.penetration, 0.001)) return true;
 			return false;
 		});
 

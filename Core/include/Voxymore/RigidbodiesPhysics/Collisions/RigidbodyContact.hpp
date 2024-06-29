@@ -65,7 +65,7 @@ namespace Voxymore::Core
 		Vec3 m_ContactVelocity = glm::vec3{0,0,0};
 		Real m_DesiredDeltaVelocity = 0 ;
 		std::array<Vec3, 2> m_RelativeContactPosition = {glm::vec3{0,0,0}, glm::vec3{0,0,0}};
-		static constexpr Real c_VelocityLimit = Real(0.25);
+		static constexpr Real c_VelocityLimit = Real(0.35);
 	};
 
 	//TODO: Create Default Collision Data and customizable one
@@ -78,7 +78,7 @@ namespace Voxymore::Core
 		CollisionData();
 		~CollisionData();
 		Real friction = 0.6;
-		Real restitution = .8;
+		Real restitution = .5;
 
 		void AddContact(int i = 1);
 
