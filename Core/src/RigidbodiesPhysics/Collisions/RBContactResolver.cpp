@@ -22,7 +22,8 @@ namespace Voxymore::Core
 			return;
 		}
 
-		PrepareContacts(ts, contacts);
+		// Is now suppose to be done before by the user.
+		// PrepareContacts(ts, contacts);
 
 		AdjustVelocities(ts, contacts);
 

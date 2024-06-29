@@ -23,7 +23,7 @@ namespace Voxymore::Core
 
 		void makeOrthonormalBasis(Vec3 &x, Vec3 &y, Vec3 &z)
 		{
-			const Real s = 1.0 / Math::Sqrt(x.z * x.z + x.y * x.y);
+			const Real s = Real(1.0) / Math::Sqrt(x.z * x.z + x.y * x.y);
 
 			z.x = x.z * s;
 			z.y = 0;
@@ -78,6 +78,7 @@ namespace Voxymore::Core
 				// continuing.
 			}
 
+		VXM_CORE_ASSERT(!Math::Approx0(totalInertia), "!Math::Approx0(totalInertia)");
 		// Loop through again calculating and applying the changes
 		for (unsigned i = 0; i < 2; i++) if (bodies[i])
 			{
@@ -128,6 +129,7 @@ namespace Voxymore::Core
 
 					Mat3 inverseInertiaTensor;
 					bodies[i]->GetInverseInertiaTensorWorld(inverseInertiaTensor);
+					VXM_CORE_ASSERT(angularInertia[i] != 0, "angularInertia[{}] != 0", i);
 
 					// Work out the direction we'd need to rotate to achieve that
 					angularChange[i] =
@@ -157,7 +159,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		// Get hold of the inverse mass and inverse inertia tensor, both in
 		// world coordinates.
-		std::array<Mat3,2> inverseInertiaTensor;
+		std::array<Mat3,2> inverseInertiaTensor{Math::Identity<Mat3>(), Math::Identity<Mat3>()};
 		bodies[0]->GetInverseInertiaTensorWorld(inverseInertiaTensor[0]);
 		if (bodies[1]) {
 			bodies[1]->GetInverseInertiaTensorWorld(inverseInertiaTensor[1]);
@@ -267,6 +269,7 @@ namespace Voxymore::Core
 		}
 
 		// Calculate the required size of the impulse
+		VXM_CORE_ASSERT(!Math::Approx0(deltaVelocity), "!Math::Approx0(deltaVelocity)");
 		impulseContact.x = m_DesiredDeltaVelocity / deltaVelocity;
 		impulseContact.y = 0;
 		impulseContact.z = 0;
@@ -338,8 +341,10 @@ namespace Voxymore::Core
 		);
 		if (planarImpulse > impulseContact.x * friction)
 		{
+			VXM_CORE_ASSERT(impulseContact.x != 0, "impulseContact.x != 0");
+			VXM_CORE_ASSERT(planarImpulse != 0, "planarImpulse != 0");
 			// We need to use dynamic friction
-			impulseContact.y /= planarImpulse;
+					impulseContact.y /= planarImpulse;
 			impulseContact.z /= planarImpulse;
 
 			impulseContact.x = deltaVelocity[0][0] +
@@ -392,11 +397,11 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		std::array<Vec3, 2> contactTangent {};
 
-		//VXM_CORE_ASSERT(Math::Abs(Math::SqrMagnitude(contactNormal)-1) < 0.001, "The vector contact normal is not normalized.");
-
 		if(Math::Abs(contactNormal.x) > Math::Abs(contactNormal.y))
 		{
-			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x);
+			const Real divisor = Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x);
+			VXM_CORE_ASSERT(!Math::Approx0(divisor), "Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x) != 0");
+			const Real s = (Real)1.0 / divisor;
 
 			contactTangent[0].x = contactNormal.z * s;
 			contactTangent[0].y = 0;
@@ -408,7 +413,9 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y);
+			const Real divisor = Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y);
+			VXM_CORE_ASSERT(!Math::Approx0(divisor), "Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y) != 0");
+			const Real s = (Real)1.0 / divisor;
 
 			contactTangent[0].x = 0;
 			contactTangent[0].y = -contactNormal.z * s;

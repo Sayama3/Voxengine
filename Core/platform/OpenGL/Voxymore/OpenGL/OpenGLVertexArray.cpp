@@ -77,7 +77,7 @@ namespace Voxymore::Core {
         for (int i = 0; i < elementCount; ++i) {
             const auto& element = layout.GetElements()[i];
             glEnableVertexAttribArray(i);
-            glVertexAttribPointer(i, static_cast<GLint>(element.GetComponentCount()), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(layout.GetStride()), (const void*)element.Offset);
+            glVertexAttribPointer(i, static_cast<GLint>(element.GetComponentCount()), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(layout.GetStride()), reinterpret_cast<const void*>(element.Offset));
         }
 
         m_VertexBuffers.emplace_back(vertexBuffer);

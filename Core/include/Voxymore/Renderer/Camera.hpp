@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Math/Math.hpp"
 

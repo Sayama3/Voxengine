@@ -30,7 +30,7 @@ namespace Voxymore::Core
 				Plane& plane = std::get<Plane>(m_Collider);
 				DeserializeField(node, plane.m_Normal, "Normal", Vec3, Vec3(0,1,0));
 				DeserializeField(node, plane.m_Offset, "Offset", Real, 0);
-				DeserializeField(node, plane.m_Size, "Size", Real, 1);
+				DeserializeField(node, plane.m_Size, "Size", Vec2, Vec2(1, 1));
 				plane.m_Body = e.HasComponent<RigidbodyComponent>() ? reinterpret_cast<Rigidbody*>(&e.GetComponent<RigidbodyComponent>()) : nullptr;
 				plane.m_Transform = &e.GetComponent<TransformComponent>();
 				break;
@@ -91,7 +91,7 @@ namespace Voxymore::Core
 			bool changed = false;
 			changed |=  ImGuiLib::DragReal3("Normal", glm::value_ptr(plane.m_Normal));
 			changed |=  ImGuiLib::DragReal("Offset", &plane.m_Offset);
-			changed |=  ImGuiLib::DragReal("Size", &plane.m_Size);
+			changed |=  ImGuiLib::DragReal2("Size", Math::ValuePtr(plane.m_Size));
 			return changed;
 		};
 		auto useBox = [&e](Box& box) -> bool {
@@ -107,7 +107,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto useSphere = [](const Sphere& sphere) -> BoundingSphere { return BoundingSphere(sphere.GetPosition(), sphere.m_Radius);};
 		auto useBox = [](const Box& box) -> BoundingSphere { return BoundingSphere(box.GetVertices());};
-		auto usePlane = [](const Plane& plane) -> BoundingSphere { return BoundingSphere(plane.GetPosition(), plane.m_Size);};
+		auto usePlane = [](const Plane& plane) -> BoundingSphere { return BoundingSphere(plane.GetPosition(), Math::Magnitude(plane.m_Size) * 0.5);};
 
 		return std::visit(overloads{useBox, useSphere, usePlane}, m_Collider);
 	}
@@ -117,7 +117,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		auto useSphere = [](const Sphere& sphere) -> BoundingBox { return BoundingBox(sphere.GetPosition() - Vec3(sphere.m_Radius), sphere.GetPosition() + Vec3(sphere.m_Radius));};
 		auto useBox = [](const Box& box) -> BoundingBox { return BoundingBox(box.GetVertices());};
-		auto usePlane = [](const Plane& plane) -> BoundingBox {const auto& pos = plane.GetPosition(); auto hf = glm::vec3(plane.m_Size); return BoundingBox(pos - hf, pos + hf);};
+		auto usePlane = [](const Plane& plane) -> BoundingBox {const auto& pos = plane.GetPosition(); auto hf = glm::vec3(plane.m_Size.x * 0.5f, Math::Magnitude(plane.m_Size) * 0.5f, plane.m_Size.y * 0.5f); return BoundingBox(pos - hf, pos + hf);};
 
 		return std::visit(overloads{useBox, useSphere, usePlane}, m_Collider);
 	}

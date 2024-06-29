@@ -20,6 +20,10 @@ namespace Voxymore::Core
 
 		void SetBodyData(Rigidbody* one, Rigidbody* two, Real friction, Real restitution);
 		operator bool() const;
+	public:
+		Vec3 GetContactVelocity() const {return m_ContactVelocity;}
+		Real GetDesiredDeltaVelocity() const {return m_DesiredDeltaVelocity;}
+		std::array<Vec3, 2> GetRelativeContactPosition() const {return m_RelativeContactPosition;}
 	private:
 		void ApplyPositionChange(std::array<Vec3, 2>& linearChange, std::array<Vec3, 2>& angularChange, Real penetration);
 		void ApplyVelocityChange(std::array<Vec3, 2>&linearChange, std::array<Vec3, 2>&angularChange);
@@ -61,7 +65,7 @@ namespace Voxymore::Core
 		Vec3 m_ContactVelocity = glm::vec3{0,0,0};
 		Real m_DesiredDeltaVelocity = 0 ;
 		std::array<Vec3, 2> m_RelativeContactPosition = {glm::vec3{0,0,0}, glm::vec3{0,0,0}};
-		constexpr static const Real c_VelocityLimit = Real(0.25);
+		static constexpr Real c_VelocityLimit = Real(0.25);
 	};
 
 	//TODO: Create Default Collision Data and customizable one

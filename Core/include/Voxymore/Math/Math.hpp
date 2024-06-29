@@ -95,11 +95,11 @@ namespace Voxymore::Core
 		 * @param scale The scale as a 3D vector.
 		 * @return A 4x4 matrix representation of the Transform matrix.
 		 */
-		static Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
-		static void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
+		Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
+		void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
 
-		static bool DecomposeTransform(const Mat4& transform, Vec3& position, Vec3& rotation, Vec3& scale);
-		static bool DecomposeTransform(const Mat4& transform, Vec3& position, glm::quat& rotation, Vec3& scale);
+		bool DecomposeTransform(const Mat4& transform, Vec3& position, Vec3& rotation, Vec3& scale);
+		bool DecomposeTransform(const Mat4& transform, Vec3& position, Quat& rotation, Vec3& scale);
 
 		template<typename T>
 		inline static std::string to_string(const T& value)
@@ -147,6 +147,32 @@ namespace Voxymore::Core
 		{
 			VXM_PROFILE_FUNCTION();
 			return glm::inverse(mat);
+		}
+
+		template<int C, int R, typename T, glm::qualifier Q = glm::defaultp>
+		inline static const T* ValuePtr(const glm::mat<C,R,T,Q>& mat) {
+			return glm::value_ptr(mat);
+		}
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		inline static const T* ValuePtr(const glm::vec<L,T,Q>& vec) {
+			return glm::value_ptr(vec);
+		}
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static const T* ValuePtr(const glm::qua<T,Q>& qua) {
+			return glm::value_ptr(qua);
+		}
+
+		template<int C, int R, typename T, glm::qualifier Q = glm::defaultp>
+		inline static T* ValuePtr(glm::mat<C,R,T,Q>& mat) {
+			return glm::value_ptr(mat);
+		}
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		inline static T* ValuePtr(glm::vec<L,T,Q>& vec) {
+			return glm::value_ptr(vec);
+		}
+		template<typename T, glm::qualifier Q = glm::defaultp>
+		inline static T* ValuePtr(glm::qua<T,Q>& qua) {
+			return glm::value_ptr(qua);
 		}
 
 		template<typename T> inline static T Min(T v1, T v2) { return glm::min(v1, v2); }
@@ -305,6 +331,7 @@ namespace Voxymore::Core
 		}
 
 		inline static bool Approx(Real a, Real b) { return Abs(b-a) < Epsilon; }
+		inline static bool Approx0(Real a) { return Abs(a) < Epsilon; }
 
 
 		/**
