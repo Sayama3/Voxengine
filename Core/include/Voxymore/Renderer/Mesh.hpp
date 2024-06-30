@@ -131,27 +131,27 @@ namespace Voxymore::Core
 			Square,
 			Cube,
 		};
-		static std::string GetTypeString(PrimitiveMesh::Type type);
-		inline static std::unordered_map<Type, std::string> GetTypesString() { return {{Type::Square, "Square"}, {Type::Cube, "Cube"}};}
-		inline static std::vector<Type> GetAllTypes() { return {Type::Square, Type::Cube};}
+		[[nodiscard]]static std::string GetTypeString(PrimitiveMesh::Type type);
+		[[nodiscard]]inline static std::unordered_map<Type, std::string> GetTypesString() { return {{Type::Square, "Square"}, {Type::Cube, "Cube"}};}
+		[[nodiscard]]inline static std::vector<Type> GetAllTypes() { return {Type::Square, Type::Cube};}
 	private:
-		static PrimitiveMesh * GetInstance();
+		[[nodiscard]]static PrimitiveMesh * GetInstance();
 	public:
 		static void InitPrimitives();
 		static void DestroyPrimitives();
-		static bool IsInit();
+		[[nodiscard]]static bool IsInit();
 
-		static Ref<Mesh> GetMesh(Type type);
-		static Ref<Mesh> CreateOrphan(Type type, const MaterialField& material);
+		[[nodiscard]]static Ref<Mesh> GetMesh(Type type);
+		[[nodiscard]]static Ref<Mesh> CreateOrphan(Type type, const MaterialField& material);
 
 	public:
 		PrimitiveMesh() = default;
 		~PrimitiveMesh() = default;
 	private:
-		Ref<Mesh> GetOrCreateSquare();
-		Ref<Mesh> GetOrCreateCube();
-		static Ref<Mesh> CreateSquare();
-		static Ref<Mesh> CreateCube();
+		[[nodiscard]]Ref<Mesh> GetOrCreateSquare();
+		[[nodiscard]]Ref<Mesh> GetOrCreateCube();
+		[[nodiscard]]static Ref<Mesh> CreateSquare();
+		[[nodiscard]]static Ref<Mesh> CreateCube();
 	private:
 		std::unordered_map<Type, Ref<Mesh>> m_Meshes;
 	};

@@ -12,13 +12,13 @@ namespace Voxymore::Core
 {
 	struct AssetMetadata {
 		inline AssetMetadata() = default;
-		inline AssetMetadata(Path p, AssetType t) : FilePath(p), Handle(), Type(t){}
+		inline AssetMetadata(Path p, AssetType t) : FilePath(std::move(p)), Handle(), Type(t){}
 		Path FilePath;
 		AssetHandle Handle;
 		AssetType Type = AssetType::None;
 
 		inline operator bool() const {
-			return Type != AssetType::None && Handle != 0;
+			return Type != AssetType::None && !Handle;
 		}
 		inline bool operator ==(const AssetMetadata& other ) const {
 			return Handle == other.Handle && Type == other.Type && FilePath == other.FilePath;

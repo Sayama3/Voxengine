@@ -22,7 +22,7 @@ namespace Voxymore::Core
 	public:
 
 		[[nodiscard]] inline bool HasHandle() const {
-			return Handle != 0;
+			return !Handle;
 		}
 
 		[[nodiscard]] inline Ref<T> GetAsset() const {
@@ -40,7 +40,7 @@ namespace Voxymore::Core
 		}
 
 		inline void Reset() {
-			Handle = 0;
+			Handle = NullAssetHandle;
 		}
 
 		[[nodiscard]] inline bool IsValid() const {
@@ -71,7 +71,7 @@ namespace Voxymore::Core
 			return !(rhs.Handle == Handle);
 		}
 	private:
-		AssetHandle Handle = 0;
+		AssetHandle Handle = NullAssetHandle;
 	};
 
 	template<typename T>

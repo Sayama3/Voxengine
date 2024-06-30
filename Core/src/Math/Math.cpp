@@ -8,17 +8,33 @@ namespace Voxymore::Core {
 	Mat4 Math::TRS(const Vec3& position, const Quat& rotation, const Vec3& scale) {
 		VXM_PROFILE_FUNCTION();
 		Mat4 trs(1.0f);
-		trs = glm::translate(trs, position); // Translation Matrix
-		trs = trs * glm::toMat4(rotation); // Rotation Matrix
-		trs = glm::scale(trs, scale); // Scale Matrix
+		trs = Math::Translate(trs, position); // Translation Matrix
+		trs = trs * Math::ToMat4(rotation); // Rotation Matrix
+		trs = Math::Scale(trs, scale); // Scale Matrix
 		return trs; // Translation * Rotation * Scale => TRS Matrix.
 	}
 
 	void Math::TRS(Mat4& trs, const Vec3& position, const Quat& rotation, const Vec3& scale) {
 		VXM_PROFILE_FUNCTION();
-		trs = glm::translate(trs, position); // Translation Matrix
-		trs = trs * glm::toMat4(rotation); // Rotation Matrix
-		trs = glm::scale(trs, scale); // Scale Matrix
+		trs = Math::Translate(trs, position); // Translation Matrix
+		trs = trs * Math::ToMat4(rotation); // Rotation Matrix
+		trs = Math::Scale(trs, scale); // Scale Matrix
+	}
+
+	void Math::TRS(Mat4& trs, const Vec3& position, const Mat3& rotation, const Vec3& scale)
+	{
+		VXM_PROFILE_FUNCTION();
+		trs = Math::Translate(trs, position); // Translation Matrix
+		trs = trs * Mat4(rotation); // Rotation Matrix
+		trs = Math::Scale(trs, scale); // Scale Matrix
+	}
+
+	void Math::TRS(Mat4& trs, const Vec3& position, const Mat4& rotation, const Vec3& scale)
+	{
+		VXM_PROFILE_FUNCTION();
+		trs = Math::Translate(trs, position); // Translation Matrix
+		trs = trs * rotation; // Rotation Matrix
+		trs = Math::Scale(trs, scale); // Scale Matrix
 	}
 
 	bool Math::DecomposeTransform(const Mat4 &transform, Vec3 &position, Vec3 &rotation, Vec3 &scale)

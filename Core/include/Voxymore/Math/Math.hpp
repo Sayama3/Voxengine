@@ -95,8 +95,10 @@ namespace Voxymore::Core
 		 * @param scale The scale as a 3D vector.
 		 * @return A 4x4 matrix representation of the Transform matrix.
 		 */
-		Mat4 TRS(const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
-		void TRS(Mat4& trs, const Vec3& position, const glm::quat& rotation, const Vec3& scale = Vec3(1.0));
+		Mat4 TRS(const Vec3& position, const Quat& rotation, const Vec3& scale = Vec3(1.0));
+		void TRS(Mat4& trs, const Vec3& position, const Quat& rotation, const Vec3& scale = Vec3(1.0));
+		void TRS(Mat4& trs, const Vec3& position, const Mat3& rotation, const Vec3& scale = Vec3(1.0));
+		void TRS(Mat4& trs, const Vec3& position, const Mat4& rotation, const Vec3& scale = Vec3(1.0));
 
 		bool DecomposeTransform(const Mat4& transform, Vec3& position, Vec3& rotation, Vec3& scale);
 		bool DecomposeTransform(const Mat4& transform, Vec3& position, Quat& rotation, Vec3& scale);
@@ -212,8 +214,6 @@ namespace Voxymore::Core
 		inline static T Clamp(T value, T min, T max) {
 			return Math::Max(Math::Min(value, max), min);
 		}
-
-
 		/**
 		 * @brief Returns the clamped value between 0 and 1.
 		 *
@@ -228,11 +228,30 @@ namespace Voxymore::Core
 		template<typename T>
 		inline static T Clamp01(T value) {return Clamp(value, T(0), T(1));}
 
+		[[nodiscard]] inline static Real Ceil(Real v) { return std::ceil(v); }
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		[[nodiscard]] inline static glm::vec<L,T,Q>  Ceil( const glm::vec<L,T,Q>& v) { return glm::ceil(v); }
+
+		[[nodiscard]] inline static Real Round(Real v) { return std::round(v); }
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		[[nodiscard]] inline static glm::vec<L,T,Q>  Round( const glm::vec<L,T,Q>& v) { return glm::round(v); }
+
+		[[nodiscard]] inline static Real Floor(Real v) { return std::floor(v); }
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		[[nodiscard]] inline static glm::vec<L,T,Q>  Floor( const glm::vec<L,T,Q>& v) { return glm::floor(v); }
+
+		[[nodiscard]] inline static Real Trunc(Real v) { return std::trunc(v); }
+		template<glm::length_t L, typename T, glm::qualifier Q = glm::defaultp>
+		[[nodiscard]] inline static glm::vec<L,T,Q>  Trunc( const glm::vec<L,T,Q>& v) { return glm::trunc(v); }
+
+
+
 		inline static Mat4 ToMat4(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat4(q); }
 		inline static Mat3 ToMat3(const Quat& q) { VXM_PROFILE_FUNCTION(); return glm::toMat3(q); }
 
 		inline static Mat4 Translate(const Mat4& mat, Vec3 translation) { VXM_PROFILE_FUNCTION(); return glm::translate(mat, translation); }
 		inline static Mat4 Scale(const Mat4& mat, Vec3 scale) { VXM_PROFILE_FUNCTION(); return glm::scale(mat, scale); }
+
 
 		inline static Real Pow(Real value, Real power) { VXM_PROFILE_FUNCTION(); return glm::pow(value, power); }
 

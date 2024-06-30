@@ -37,13 +37,23 @@ namespace Voxymore::Editor {
 		VXM_PROFILE_FUNCTION();
 		ImGui::PushID(this);
 		if (HasSelectedEntity()) {
-			ImGui::PushID((const void*)s_SelectedEntity.id().operator uint64_t());
+			const auto nbIdToPush = s_SelectedEntity.id().size();
+			for (int i = 0; i < nbIdToPush; ++i) {
+				ImGui::PushID(reinterpret_cast<const void*>(s_SelectedEntity.id()[i]));
+			}
 			RenderEntity();
-			ImGui::PopID();
+			for (int i = 0; i < nbIdToPush; ++i) {
+				ImGui::PopID();
+			}
 		} else if(HasSelectedAsset()) {
-			ImGui::PushID((const void*)s_SelectedAsset->Handle.operator uint64_t());
+			const auto nbIdToPush = s_SelectedAsset->Handle.size();
+			for (int i = 0; i < nbIdToPush; ++i) {
+				ImGui::PushID(reinterpret_cast<const void*>(s_SelectedAsset->Handle[i]));
+			}
 			RenderAsset();
-			ImGui::PopID();
+			for (int i = 0; i < nbIdToPush; ++i) {
+				ImGui::PopID();
+			}
 		} else {
 			ImGui::Text("Nothing selected.");
 		}

@@ -220,6 +220,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Math/Rect.hpp
         src/Math/Triangle.cpp
         include/Voxymore/Math/Triangle.hpp
+        src/Renderer/Gizmos.cpp
+        include/Voxymore/Renderer/Gizmos.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

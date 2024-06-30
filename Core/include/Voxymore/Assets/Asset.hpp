@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/UUID.hpp"
 #include <string_view>
 
 #define VXM_IMPLEMENT_ASSET(assetType) inline static AssetType GetStaticType() {return assetType;} \
@@ -14,7 +15,7 @@ inline virtual AssetType GetType() const override {return GetStaticType();}
 namespace Voxymore::Core
 {
 	using AssetHandle = UUID;
-	[[maybe_unused]] static inline const AssetHandle NullAssetHandle = AssetHandle(0);
+	static inline constexpr AssetHandle NullAssetHandle{0u};
 
 	enum class AssetType : uint16_t
 	{

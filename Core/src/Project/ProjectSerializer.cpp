@@ -30,6 +30,14 @@ namespace Voxymore::Core
 		{
 			out << KEYVAL("StartSceneId", config.startSceneId.value());
 		}
+		if(config.defaultShaderId.has_value())
+		{
+			out << KEYVAL("DefaultShaderId", config.defaultShaderId.value());
+		}
+		if(config.gizmosShaderId.has_value())
+		{
+			out << KEYVAL("GizmosShaderId", config.gizmosShaderId.value());
+		}
 
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -81,7 +89,9 @@ namespace Voxymore::Core
 		config.systemDirectory = projectNode["AssetRegistryPath"].as<std::string>("AssetRegistry.vxm");
 
 //		VXM_CORE_ASSERT(projectNode["StartScene"], "The node StartScene doesn't exist.");
-		if(projectNode["StartSceneId"]) config.startSceneId = projectNode["StartSceneId"].as<UUID>();
+		if(projectNode["StartSceneId"]) config.startSceneId = projectNode["StartSceneId"].as<AssetHandle>(NullAssetHandle);
+		if(projectNode["DefaultShaderId"]) config.defaultShaderId = projectNode["DefaultShaderId"].as<AssetHandle>(NullAssetHandle);
+		if(projectNode["GizmosShaderId"]) config.gizmosShaderId = projectNode["GizmosShaderId"].as<AssetHandle>(NullAssetHandle);
 
 		m_ProjectHandle->m_ProjectPath = filepath;
 		if(m_ProjectHandle->m_ProjectPath.is_relative()) {

@@ -185,6 +185,56 @@ namespace Voxymore::Core {
 			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
+		//TODO: Use a dedicated shader for the Gizmo configurable in the project directly. (Just as a possible "Default Shader".)
+		for (Gizmos& gizmo : s_Data.Gizmos) {
+			gizmo.AddFrame();
+			VXM_CORE_ASSERT(gizmo.IsCoherent(), "The gizmo is not coherent.");
+			if(!gizmo.IsCoherent()) continue;
+
+			switch (gizmo.GetType()) {
+				case Gizmos::Type::AABB :
+				{
+					auto* aabb = gizmo.GetGizmo<Math::AABB>();
+					auto cube = PrimitiveMesh::GetMesh(PrimitiveMesh::Cube);
+					glm::mat4 model = Math::TRS(aabb->Center(), Math::Identity<Mat4>(), aabb->HalfExtents());
+					//TODO: Chose whether to draw in full or in wire
+					DrawMesh(cube, model);
+					// TODO: Reverse the draw mode to usual.
+				}
+				break;
+				case Gizmos::Type::OBB :
+				{
+					auto* obb = gizmo.GetGizmo<Math::OBB>();
+					Mat4 Rotation{obb->mat};
+					auto cube = PrimitiveMesh::GetMesh(PrimitiveMesh::Cube);
+					glm::mat4 model = Math::TRS(obb->c, obb->mat, obb->e);
+					//TODO: Chose whether to draw in full or in wire
+					DrawMesh(cube, model);
+					// TODO: Reverse the draw mode to usual.
+				}
+				break;
+				case Gizmos::Type::Plane :
+				{
+					//TODO: Draw the Plane gizmo.
+				}
+				break;
+				case Gizmos::Type::Sphere :
+				{
+					//TODO: Draw the Sphere gizmo.
+				}
+				break;
+				case Gizmos::Type::Segment :
+				{
+					//TODO: Draw the Segment gizmo.
+				}
+				break;
+				default: {/*Nothing to do.*/}
+			}
+		}
+
+		// Removing all past end Gizmos
+		std::erase_if(s_Data.Gizmos, [](const Gizmos& g) {return !g.ShouldBeActive();});
+
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
@@ -327,6 +377,12 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		RenderCommand::SetViewport(0,0,width,height);
+	}
+
+	void Renderer::Submit(Gizmos gizmo)
+	{
+		VXM_PROFILE_FUNCTION();
+		s_Data.Gizmos.emplace_back(gizmo);
 	}
 
 } // Core

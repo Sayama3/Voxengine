@@ -76,6 +76,6 @@ namespace Voxymore::Core
 	}
 	bool EntityField::Valid()
 	{
-		return EntityId != 0 || SceneId != 0;
+		return !EntityId || !SceneId;
 	}
 }

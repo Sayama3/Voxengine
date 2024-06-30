@@ -4,34 +4,33 @@
 
 #include "Voxymore/Project/Project.hpp"
 #include "Voxymore/Project/ProjectSerializer.hpp"
-#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include <algorithm>
 
 
 namespace Voxymore::Core
 {
-	std::unordered_map<UUID, void_func_ptr>* Project::s_OnLoad = nullptr;
+	std::unordered_map<AssetHandle, void_func_ptr>* Project::s_OnLoad = nullptr;
 	Ref<Project> Project::s_ActiveProject = nullptr;
 
-	std::unordered_map<UUID, void_func_ptr>& Project::GetOnLoad()
+	std::unordered_map<AssetHandle, void_func_ptr>& Project::GetOnLoad()
 	{
 		VXM_PROFILE_FUNCTION();
 		if(Project::s_OnLoad == nullptr) {
-			s_OnLoad = new std::unordered_map<UUID, void_func_ptr>();
+			s_OnLoad = new std::unordered_map<AssetHandle, void_func_ptr>();
 		}
 		return *Project::s_OnLoad;
 	}
 
-	UUID Project::AddOnLoad(const void_func_ptr& func)
+	AssetHandle Project::AddOnLoad(const void_func_ptr& func)
 	{
 		VXM_PROFILE_FUNCTION();
-		UUID id;
+		AssetHandle id;
 		GetOnLoad()[id] = func;
 		return id;
 	}
 
-	void Project::RemoveOnLoad(UUID id)
+	void Project::RemoveOnLoad(AssetHandle id)
 	{
 		VXM_PROFILE_FUNCTION();
 		const auto it = GetOnLoad().find(id);
@@ -201,7 +200,7 @@ namespace Voxymore::Core
 		s_ActiveProject->m_Config.startSceneId = {};
 	}
 
-	void Project::SetMainScene(UUID id)
+	void Project::SetMainScene(AssetHandle id)
 	{
         VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
@@ -222,12 +221,25 @@ namespace Voxymore::Core
 		s_ActiveProject->m_Config.startSceneId = scene->id();
 	}
 
-	UUID Project::GetMainScene()
+	AssetHandle Project::GetMainScene()
 	{
         VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		VXM_CORE_ASSERT(s_ActiveProject->m_Config.startSceneId.has_value(), "Not Start Scene associated with the project.");
 		return s_ActiveProject->m_Config.startSceneId.value();
+	}
+
+	AssetHandle Project::GetDefaultShader()
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->m_Config.defaultShaderId.value_or(NullAssetHandle);
+	}
+	AssetHandle Project::GetGizmosShader()
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		return s_ActiveProject->m_Config.gizmosShaderId.value_or(NullAssetHandle);
 	}
 
 } // namespace Voxymore::Core

@@ -55,8 +55,8 @@ namespace Voxymore::Core
 
 	YAML::Emitter &operator<<(YAML::Emitter &out, const std::filesystem::path &v);
 
-	inline YAML::Emitter &operator<<(YAML::Emitter &out, const UUID &v) {out << v.operator uint64_t(); return out;}
-	inline YAML::Emitter &operator<<(YAML::Emitter &out, const ::Voxymore::Core::AssetType &rhs) {out << AssetTypeToString(rhs); return out;}
+	YAML::Emitter &operator<<(YAML::Emitter &out, const UUID& v);
+	inline YAML::Emitter &operator<<(YAML::Emitter &out, const AssetType& rhs) {out << AssetTypeToString(rhs); return out;}
 }
 
 namespace YAML
@@ -140,13 +140,22 @@ namespace YAML
 		inline static Node encode(const ::Voxymore::Core::UUID& rhs)
 		{
 			Node node;
-			node.push_back(rhs.operator uint64_t());
+			for(const auto& val : rhs) {
+				node.push_back(val);
+			}
 			return node;
 		}
 
 		inline static bool decode(const Node& node, ::Voxymore::Core::UUID& rhs)
 		{
-			rhs = node.as<uint64_t>(0);
+			std::fill(rhs.begin(), rhs.end(), 0u);
+			if(node.IsScalar()) rhs[0] = node.as<::Voxymore::Core::UUID::value_base>(0);
+			else {
+				for (int i = 0; i < std::min(rhs.size(), node.size()); ++i) {
+					rhs[i] = node[i].as<::Voxymore::Core::UUID::value_base>();
+				}
+			}
+
 			return true;
 		}
 	};
