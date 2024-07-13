@@ -1,21 +1,22 @@
 //
-// Created by ianpo on 29/07/2023.
+// Created by ianpo on 13/07/2024.
 //
 
-#include "OpenGLTexture2D.hpp"
+#include "OpenGLTexture2DArray.hpp"
 
 #include <utility>
+#include <cmath>
 #include <glad/glad.h>
 
-
-namespace Voxymore::Core {
+namespace Voxymore::Core
+{
 	class TexSpecHelper
 	{
 	private:
-		Texture2DSpecification& spec;
+		Texture2DArraySpecification& spec;
 
 	public:
-		TexSpecHelper(Texture2DSpecification& specification) : spec(specification) {}
+		TexSpecHelper(Texture2DArraySpecification& specification) : spec(specification) {}
 		~TexSpecHelper() = default;
 
 		[[nodiscard]] GLenum GetInternalFormat() const
@@ -242,62 +243,66 @@ namespace Voxymore::Core {
 		}
 	};
 
-	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs) : m_TextureSpecification(textureSpecs)
+	OpenGLTexture2DArray::OpenGLTexture2DArray(Texture2DArraySpecification textureSpecs) : m_TextureSpecification(textureSpecs)
 	{
-		VXM_PROFILE_FUNCTION();
 		CreateTexture();
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(Texture2DSpecification textureSpecs, Buffer buffer) : m_TextureSpecification(textureSpecs)
+	OpenGLTexture2DArray::OpenGLTexture2DArray(Texture2DArraySpecification textureSpecs, Buffer buffer) : m_TextureSpecification(textureSpecs)
 	{
-		VXM_PROFILE_FUNCTION();
 		CreateTexture();
 		SetData(buffer);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const uint8_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
+	OpenGLTexture2DArray::~OpenGLTexture2DArray()
 	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
-		m_TextureSpecification.pixelType = PX_8;
-		m_TextureSpecification.width = width;
-		m_TextureSpecification.height = height;
-		m_TextureSpecification.channels = channels;
-
-		CreateTexture();
-		SetData({(void*)data, width * height * channels * sizeof(uint8_t)});
+		glDeleteTextures(1, &m_RendererID);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const uint16_t* data, int width, int height, int channels) : m_Width(width), m_Height(height), m_Channels(channels)
+	uint32_t OpenGLTexture2DArray::GetWidth() const
 	{
-		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(channels > 0 && channels < 5, "The number of channel {0} is not handle at the moment.", channels);
-		m_TextureSpecification.pixelFormat = static_cast<PixelFormat>(channels);
-		m_TextureSpecification.pixelType = PX_16;
-		m_TextureSpecification.width = width;
-		m_TextureSpecification.height = height;
-		m_TextureSpecification.channels = channels;
-
-		CreateTexture();
-		SetData({(void*)data, width * height * channels * sizeof(uint16_t)});
+		return 0;
 	}
 
-	void OpenGLTexture2D::CreateTexture()
+	uint32_t OpenGLTexture2DArray::GetHeight() const
+	{
+		return 0;
+	}
+
+	uint32_t OpenGLTexture2DArray::GetChannelCount() const
+	{
+		return 0;
+	}
+
+	uint32_t OpenGLTexture2DArray::GetRendererID() const
+	{
+		return 0;
+	}
+
+	uint32_t OpenGLTexture2DArray::GetDepth() const
+	{
+		return 0;
+	}
+
+	void OpenGLTexture2DArray::Bind(uint32_t slot) const
+	{
+	}
+
+	void OpenGLTexture2DArray::CreateTexture()
 	{
 		VXM_PROFILE_FUNCTION();
 		TexSpecHelper helper(m_TextureSpecification);
 
-		m_Width = m_TextureSpecification.width;
-		m_Height = m_TextureSpecification.height;
-		m_Channels = m_TextureSpecification.channels;
+		auto width = m_TextureSpecification.width;
+		auto height = m_TextureSpecification.height;
+		auto count = m_TextureSpecification.count;
 
 		VXM_CORE_ASSERT(m_TextureSpecification.channels > 0 && m_TextureSpecification.channels < 5, "The number of channel {0} is not handle at the moment.", m_TextureSpecification.channels);
 
 		GLenum internalFormat = helper.GetInternalFormat();
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_RendererID);
+		glTextureStorage3D(m_RendererID, 1, internalFormat, width, height, count);
 
 		//TODO: Add parameter on the Texture API to be able to change this type of parameters.
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, helper.GetMinFilter());
@@ -306,28 +311,44 @@ namespace Voxymore::Core {
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, helper.GetWrapT());
 	}
 
-	void OpenGLTexture2D::SetData(Buffer data)
+	void OpenGLTexture2DArray::SetData(Buffer data)
 	{
 		VXM_PROFILE_FUNCTION();
 		TexSpecHelper helper(m_TextureSpecification);
 		GLenum dataFormat = helper.GetFormat();
 		GLenum pixelType = helper.GetType();
+		GLsizei width = m_TextureSpecification.width;
+		GLsizei height = m_TextureSpecification.height;
+		auto channels = m_TextureSpecification.channels;
+		GLsizei count = m_TextureSpecification.count;
 		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
-		VXM_CORE_ASSERT(m_Width * m_Height * m_Channels * helper.GetPixelSize() == data.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, m_Width, m_Height, m_Channels, helper.GetTypeToString());
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, pixelType, data.Data);
-		if(m_TextureSpecification.generateMipMaps) {
-			glGenerateTextureMipmap(m_RendererID);
+		VXM_CORE_ASSERT(width * height * channels * count * helper.GetPixelSize() == data.Size, "The size of the image ({}) is different from the information of the texture (width: {}, height: {}, channel: {}, count: {}, pixelType: '{}')", data.Size, width, height, channels, count, helper.GetTypeToString());
+		glTexSubImage3D(m_RendererID, 0, 0, 0, 0, width, height, count, dataFormat, pixelType, data.Data);
+
+	}
+	void OpenGLTexture2DArray::SetData(uint32_t index, Buffer data)
+	{
+		VXM_PROFILE_FUNCTION();
+		TexSpecHelper helper(m_TextureSpecification);
+		GLenum dataFormat = helper.GetFormat();
+		GLenum pixelType = helper.GetType();
+		GLsizei width = m_TextureSpecification.width;
+		GLsizei height = m_TextureSpecification.height;
+		auto channels = m_TextureSpecification.channels;
+		GLsizei count = m_TextureSpecification.count;
+		VXM_CORE_ASSERT(data.Data != nullptr, "No data where found on the image ({0}).", Handle.string());
+		VXM_CORE_ASSERT(index < count, "The index {} is superior to the number of texture {} in the array of texture.", index, count);
+		VXM_CORE_ASSERT(width * height * channels * helper.GetPixelSize() == data.Size, "The size of the image ({0}) is different from the information of the texture (width: {1}, height: {2}, channel: {3}, pixelType: '{4}')", data.Size, width, height, channels, helper.GetTypeToString());
+		glTexSubImage3D(m_RendererID, 0, 0, 0, index, width, height, 1, dataFormat, pixelType, data.Data);
+
+	}
+	void OpenGLTexture2DArray::SetData(std::vector<Buffer> data)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_CHECK(data.size() > m_TextureSpecification.count, "Cannot send {} image. Only {} available.", data.size(), m_TextureSpecification.count);
+
+		for (int i = 0; i < std::min(uint64_t(m_TextureSpecification.count), data.size()); ++i) {
+			SetData(i, data[i]);
 		}
 	}
-
-	OpenGLTexture2D::~OpenGLTexture2D() {
-		VXM_PROFILE_FUNCTION();
-		glDeleteTextures(1, &m_RendererID);
-	}
-
-	void OpenGLTexture2D::Bind(uint32_t slot) const {
-		VXM_PROFILE_FUNCTION();
-		glBindTextureUnit(slot, m_RendererID);
-	}
-} // Voxymore
-// Core
+}// namespace Voxymore::Core

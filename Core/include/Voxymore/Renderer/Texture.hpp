@@ -33,6 +33,9 @@ namespace Voxymore::Core {
 		RG = 2,
 		RGB = 3,
 		RGBA = 4,
+		STENCIL,
+		DEPTH,
+		DEPTH_STENCIL,
 	};
 
 	enum PixelType : uint8_t
@@ -71,6 +74,23 @@ namespace Voxymore::Core {
 		bool generateMipMaps = true;
 	};
 
+	struct Texture2DArraySpecification
+	{
+		inline Texture2DArraySpecification() = default;
+		inline ~Texture2DArraySpecification() = default;
+
+		uint32_t width = 0, height = 0, channels = 0, count = 0;
+
+		TextureFilter filterMag = TextureFilter::Linear;
+		TextureFilter filterMin = TextureFilter::Linear;
+
+		TextureWrapper wrapperS = TextureWrapper::Repeat;
+		TextureWrapper wrapperT = TextureWrapper::Repeat;
+
+		PixelFormat pixelFormat = PixelFormat::RGBA;
+		PixelType pixelType = PixelType::PX_8;
+	};
+
     class Texture : public Asset
 	{
     public:
@@ -102,10 +122,33 @@ namespace Voxymore::Core {
 
 		[[nodiscard]] virtual uint32_t GetChannelCount() const = 0;
 		//TODO: Add a 'T GetPixel<T>(uint32_t x, uint32_t y) const;' function.
-		//TODO: Add a 'void SetPixel<T>(uint32_t x, uint32_t y, T pixel);' function.
+		//TODO: Add a 'void SetPixel<T>(uint32_t x, uint32_t y, T& pixel);' function.
 
 		VXM_IMPLEMENT_ASSET(AssetType::Texture2D);
     };
 
+    class Texture2DArray : public Texture {
+    public:
+		static Ref<Texture2DArray> Create(const Texture2DArraySpecification& textureSpecs);
+		static Ref<Texture2DArray> Create(const Texture2DArraySpecification& textureSpecs, Buffer buffer);
+
+		[[nodiscard]] virtual uint32_t GetChannelCount() const = 0;
+		virtual void SetData(uint32_t index, Buffer data) = 0;
+		virtual void SetData(const std::vector<Buffer> data) = 0;
+		template<uint32_t N>
+		void SetData(const std::array<Buffer, N>& data) {
+			VXM_PROFILE_FUNCTION();
+			VXM_CORE_CHECK(data.size() > GetDepth(), "Cannot send {} image. Only {} available.", data.size(), GetDepth());
+			for (uint32_t i = 0; i < std::min(N, GetDepth()); i++) {
+				SetData(i, data[i]);
+			}
+		}
+		//TODO: Add a 'T GetPixel<T>(uint32_t x, uint32_t y, uint32_t index) const;' function.
+		//TODO: Add a 'void SetPixel<T>(uint32_t x, uint32_t y, uint32_t index, T& pixel);' function.
+
+		VXM_IMPLEMENT_ASSET(AssetType::Texture2DArray);
+    };
+
 	using Texture2DField = AssetField<Texture2D>;
+	using Texture2DArrayField = AssetField<Texture2DArray>;
 } // Core

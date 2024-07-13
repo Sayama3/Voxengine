@@ -5,6 +5,7 @@
 #include "Voxymore/Renderer/Texture.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/OpenGL/OpenGLTexture2D.hpp"
+#include "Voxymore/OpenGL/OpenGLTexture2DArray.hpp"
 
 namespace Voxymore::Core {
 	Ref<Texture2D> Core::Texture2D::Create(const uint8_t* data, int width, int height, int channels) {
@@ -86,6 +87,40 @@ namespace Voxymore::Core {
 				VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()));
 				break;
 		}
+	}
+
+	Ref<Texture2DArray> Texture2DArray::Create(const Texture2DArraySpecification &textureSpecs)
+	{
+		VXM_PROFILE_FUNCTION();
+		switch (Renderer::GetAPI()) {
+
+			case RendererAPI::API::None:
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
+				return nullptr;
+				break;
+			case RendererAPI::API::OpenGL:
+				return CreateRef<OpenGLTexture2DArray>(textureSpecs);
+				break;
+		}
+		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
+		return nullptr;
+	}
+
+	Ref<Texture2DArray> Texture2DArray::Create(const Texture2DArraySpecification &textureSpecs, Buffer buffer)
+	{
+		VXM_PROFILE_FUNCTION();
+		switch (Renderer::GetAPI()) {
+
+			case RendererAPI::API::None:
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a texture.")
+				return nullptr;
+				break;
+			case RendererAPI::API::OpenGL:
+				return CreateRef<OpenGLTexture2DArray>(textureSpecs, buffer);
+				break;
+		}
+		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.",RendererAPIToString(Renderer::GetAPI()))
+		return nullptr;
 	}
 } // Voxymore
 // Core

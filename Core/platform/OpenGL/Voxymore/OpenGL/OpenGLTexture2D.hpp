@@ -15,6 +15,8 @@ namespace Voxymore::Core {
 		OpenGLTexture2D(const uint8_t* data, int width, int height, int channels);
 		OpenGLTexture2D(const uint16_t* data, int width, int height, int channels);
         virtual ~OpenGLTexture2D() override;
+		OpenGLTexture2D(const OpenGLTexture2D&) = delete;
+		OpenGLTexture2D& operator=(const OpenGLTexture2D&) = delete;
 
         [[nodiscard]] inline virtual uint32_t GetWidth() const override {return m_Width; }
         [[nodiscard]] inline virtual uint32_t GetHeight() const override {return m_Height; }

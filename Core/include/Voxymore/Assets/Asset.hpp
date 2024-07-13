@@ -21,6 +21,7 @@ namespace Voxymore::Core
 		None = 0,
 		Scene,
 		Texture2D,
+		Texture2DArray,
 		CubeMap,
 		ShaderSource,
 		Shader,
