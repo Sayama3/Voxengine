@@ -28,9 +28,7 @@ namespace Voxymore::Core {
 	{
 		int Index = -1;
 		int TexCoord = 0;
-
-		//		void Deserialize(YAML::Node& node);
-		//		void Serialize(YAML::Emitter& emitter) const;
+		int Padding[2];
 	};
 
 	struct NormalTextureInfo
@@ -38,9 +36,7 @@ namespace Voxymore::Core {
 		int Index = -1;
 		int TexCoord = 0;
 		float Scale = 1.0f;
-
-		//		void Deserialize(YAML::Node& node);
-		//		void Serialize(YAML::Emitter& emitter) const;
+		int Padding[1];
 	};
 
 	struct OcclusionTextureInfo
@@ -48,21 +44,17 @@ namespace Voxymore::Core {
 		int Index = -1;
 		int TexCoord = 0;
 		float Strength = 1.0f;
-
-		//		void Deserialize(YAML::Node& node);
-		//		void Serialize(YAML::Emitter& emitter) const;
+		int Padding[1];
 	};
 
 	struct MetallicRoughtness
 	{
 		glm::vec4 BaseColorFactor = {1, 1, 1, 1};
 		TextureInfo BaseColorTexture;
+		TextureInfo MetallicRoughnessTexture;
 		float MetallicFactor = 1.0f;
 		float RoughnessFactor = 1.0f;
-		TextureInfo MetallicRoughnessTexture;
-
-		//		void Deserialize(YAML::Node& node);
-		//		void Serialize(YAML::Emitter& emitter) const;
+		int Padding[2];
 	};
 
 	struct MaterialParameters
@@ -75,6 +67,7 @@ namespace Voxymore::Core {
 		int AlphaMode = AlphaMode::Opaque;
 		float AlphaCutoff = 0.5f;
 		int DoubleSided = false;
+		int GammaCorrection = false;
 	};
 
 	class Material : public Serializable, public Asset
