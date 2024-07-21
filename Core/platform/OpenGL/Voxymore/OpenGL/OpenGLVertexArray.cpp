@@ -44,12 +44,12 @@ namespace Voxymore::Core {
 
     OpenGLVertexArray::OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
-        glGenVertexArrays(1, &m_RendererID);
+		glCreateVertexArrays(1, &m_RendererID);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
         VXM_PROFILE_FUNCTION();
-        glDeleteVertexArrays(1, &m_RendererID);
+		glDeleteVertexArrays(1, &m_RendererID);
     }
 
     void OpenGLVertexArray::Bind() const {
@@ -65,8 +65,8 @@ namespace Voxymore::Core {
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer) {
         VXM_PROFILE_FUNCTION();
 
-        glBindVertexArray(m_RendererID);
-        vertexBuffer->Bind();
+        // glBindVertexArray(m_RendererID);
+        // vertexBuffer->Bind();
 
         if(!vertexBuffer->GetLayout().GetElements().size()){
             VXM_CORE_ERROR("The vertex buffer doesn't have a layout.");
@@ -74,27 +74,27 @@ namespace Voxymore::Core {
 
         const auto& layout = vertexBuffer->GetLayout();
         const auto elementCount = layout.GetElements().size();
+		int vbIndex = 0; //TODO: Change the vbIndex
+		glVertexArrayVertexBuffer(m_RendererID, vbIndex, vertexBuffer->GetRendererID(), 0, static_cast<GLsizei>(layout.GetStride()));
         for (int i = 0; i < elementCount; ++i) {
             const auto& element = layout.GetElements()[i];
-            glEnableVertexAttribArray(i);
-            glVertexAttribPointer(i, static_cast<GLint>(element.GetComponentCount()), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(layout.GetStride()), (const void*)element.Offset);
+			glEnableVertexArrayAttrib(m_RendererID, i);
+			glVertexArrayAttribFormat(m_RendererID, i, static_cast<GLint>(element.GetComponentCount()), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(element.Offset));//, (const void*)(layoutOffset + element.Offset));
+			glVertexArrayAttribBinding(m_RendererID, i, vbIndex);
+
+//            glEnableVertexAttribArray(i);
+//            glVertexAttribPointer(i, static_cast<GLint>(element.GetComponentCount()), ShaderDataTypeToOpenGLBaseType(element.Type), element.Normalized ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(layout.GetStride()), (const void*)element.Offset);
         }
 
         m_VertexBuffers.emplace_back(vertexBuffer);
 
-        glBindVertexArray(0);
-        vertexBuffer->Unbind();
+//        glBindVertexArray(0);
+//        vertexBuffer->Unbind();
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &indexBuffer) {
         VXM_PROFILE_FUNCTION();
-
-        glBindVertexArray(m_RendererID);
-        indexBuffer->Bind();
-
         m_IndexBuffer = indexBuffer;
-
-        glBindVertexArray(0);
-        m_IndexBuffer->Unbind();
+		glVertexArrayElementBuffer(m_RendererID, m_IndexBuffer ? m_IndexBuffer->GetRendererID() : 0);
     }
 } // Core
