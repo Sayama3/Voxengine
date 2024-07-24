@@ -11,6 +11,8 @@ struct TextureInfo
 {
     int Index;
     int TexCoord;
+    int Padding1;
+    int Padding2;
 };
 
 struct NormalTextureInfo
@@ -18,6 +20,7 @@ struct NormalTextureInfo
     int Index;
     int TexCoord;
     float Scale;
+    int Padding1;
 };
 
 struct OcclusionTextureInfo
@@ -25,15 +28,18 @@ struct OcclusionTextureInfo
     int Index;
     int TexCoord;
     float Strenght;
+    int Padding1;
 };
 
 struct MetallicRoughtness
 {
     vec4 BaseColorFactor;
     TextureInfo BaseColorTexture;
+    TextureInfo MetallicRoughnessTexture;
     float MetallicFactor;
     float RoughtnessFactor;
-    TextureInfo MetallicRoughnessTexture;
+    int Padding1;
+    int Padding2;
 };
 
 struct MaterialParams
@@ -46,6 +52,7 @@ struct MaterialParams
     int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
     float AlphaCutoff;
     int DoubleSided;
+    int GammaCorrection;
 };
 
 struct Light
@@ -211,6 +218,19 @@ vec3 AddSpotLight(Light light)
     return CalculateLighting(lightColor, lightPos, lightDir, lightIntensity);
 }
 
+vec3 GammaCorrection3(vec3 color)
+{
+    // apply gamma correction
+    float gamma = 2.2;
+    return pow(color.rgb, vec3(1.0/gamma));
+}
+
+vec4 GammaCorrection4(vec4 color)
+{
+    return vec4(GammaCorrection3(color.rgb), color.a);
+}
+
+
 void main()
 {
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
@@ -248,6 +268,9 @@ void main()
 
 //    float alpha = materialParameters.AlphaMode == int(2) ? o_Color.a : 1.0f;
     float alpha = o_Color.a;
+    if(materialParameters.GammaCorrection == 1) {
+        result = GammaCorrection3(result);
+    }
     o_Color = vec4(result, alpha);
     o_Entity = v_EntityId;
 }

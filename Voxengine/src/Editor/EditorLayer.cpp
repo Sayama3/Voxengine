@@ -650,7 +650,7 @@ namespace Voxymore::Editor {
 			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		} else {
 			VXM_CORE_ERROR("Fail to load the scene '{0}'.", path.string());
-			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
+			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Scene>();
 			m_FilePath = "";
 			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		}
@@ -667,7 +667,7 @@ namespace Voxymore::Editor {
 			m_FilePath = metadata.FilePath;
 		} else {
 			VXM_CORE_ERROR("Fail to load the scene '{0}'.", id.string());
-			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateAsset<Scene>();
+			m_ActiveScene = Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Scene>();
 			m_FilePath = "";
 			SceneHierarchyPanel::SetContext(m_ActiveScene);
 		}

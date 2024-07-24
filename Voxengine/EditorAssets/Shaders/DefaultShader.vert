@@ -11,6 +11,8 @@ struct TextureInfo
 {
     int Index;
     int TexCoord;
+    int Padding1;
+    int Padding2;
 };
 
 struct NormalTextureInfo
@@ -18,6 +20,7 @@ struct NormalTextureInfo
     int Index;
     int TexCoord;
     float Scale;
+    int Padding1;
 };
 
 struct OcclusionTextureInfo
@@ -25,15 +28,18 @@ struct OcclusionTextureInfo
     int Index;
     int TexCoord;
     float Strenght;
+    int Padding1;
 };
 
 struct MetallicRoughtness
 {
     vec4 BaseColorFactor;
     TextureInfo BaseColorTexture;
+    TextureInfo MetallicRoughnessTexture;
     float MetallicFactor;
     float RoughtnessFactor;
-    TextureInfo MetallicRoughnessTexture;
+    int Padding1;
+    int Padding2;
 };
 
 struct MaterialParams
@@ -43,9 +49,10 @@ struct MaterialParams
     OcclusionTextureInfo OcclusionTexture;
     TextureInfo EmissiveTexture;
     vec4 EmissiveFactor;
-    int AlphaMode;
+    int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
     float AlphaCutoff;
     int DoubleSided;
+    int GammaCorrection;
 };
 
 struct Light
