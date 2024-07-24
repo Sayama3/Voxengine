@@ -47,6 +47,7 @@ ie. `VULKAN_SDK=C:\VulkanSDK\1.3.250.1`
 a little credit list to all the library I use. I should update this list pretty often but don't hesitate to make an issue if I forgot one.
 
 - [imgui](https://github.com/ocornut/imgui): Bloat-free Graphical User interface for C++ with minimal dependencies
+- [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui
 - [stb_image.h](https://github.com/nothings/stb/blob/master/stb_image.h): public domain image loader
 - [stb_image_write.h](https://github.com/nothings/stb/blob/master/stb_image_write.h): public domain image loader
 - [glfw](https://www.glfw.org): an Open source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop
