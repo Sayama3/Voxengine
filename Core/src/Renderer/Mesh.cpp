@@ -27,14 +27,14 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		//TODO: Call the **REAL** AssetManager to create a memory asset.
-		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes));
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Mesh>(vertices, indexes));
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const MaterialField& material)
 	{
 		VXM_PROFILE_FUNCTION();
 		//TODO: Call the **REAL** AssetManager to create a memory asset.
-		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes));
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Mesh>(vertices, indexes));
 		m_Meshes[m_Meshes.size() - 1].GetAsset()->SetMaterial(material);
 	}
 
@@ -42,14 +42,14 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		//TODO: Call the **REAL** AssetManager to create a memory asset.
-		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes, aabb));
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Mesh>(vertices, indexes, aabb));
 	}
 
 	void MeshGroup::AddSubMesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indexes, const BoundingBox& aabb, const MaterialField& material)
 	{
 		VXM_PROFILE_FUNCTION();
 		//TODO: Call the **REAL** AssetManager to create a memory asset.
-		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateAsset<Mesh>(vertices, indexes, aabb));
+		m_Meshes.emplace_back(Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Mesh>(vertices, indexes, aabb));
 		m_Meshes[m_Meshes.size() - 1].GetAsset()->SetMaterial(material);
 	}
 	void MeshGroup::AddSubMesh(MeshField mesh)

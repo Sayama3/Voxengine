@@ -8,11 +8,8 @@ namespace Voxymore::Core {
 
     OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size, const void* vertices) {
         VXM_PROFILE_FUNCTION();
-        glGenBuffers(1, &m_RendererID);
-        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-        // TODO: abstract the GL_STATIC_DRAW to have it as a param.
-        glBufferData(GL_ARRAY_BUFFER, (long)size, vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glCreateBuffers(1, &m_RendererID);
+		glNamedBufferData(m_RendererID, static_cast<GLsizeiptr>(size), vertices, GL_STATIC_DRAW);
     }
 
     void OpenGLVertexBuffer::Bind() const {
@@ -27,16 +24,14 @@ namespace Voxymore::Core {
 
     OpenGLVertexBuffer::~OpenGLVertexBuffer() {
         VXM_PROFILE_FUNCTION();
-        glDeleteBuffers(1, &m_RendererID);
+		glDeleteBuffers(1, &m_RendererID);
+		m_RendererID = 0;
     }
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t count, const uint32_t *indices) : m_Count(count) {
         VXM_PROFILE_FUNCTION();
-        glGenBuffers(1, &m_RendererID);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-        // TODO: abstract the GL_STATIC_DRAW to have it as a param.
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glCreateBuffers(1, &m_RendererID);
+		glNamedBufferData(m_RendererID, static_cast<GLsizeiptr>(count * sizeof(uint32_t)), indices, GL_STATIC_DRAW);
     }
 
     void OpenGLIndexBuffer::Bind() const {

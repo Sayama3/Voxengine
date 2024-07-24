@@ -240,6 +240,11 @@ namespace Voxymore::Core {
 		} else {
 			mat.DoubleSided = false;
 		}
+		if(node["GammaCorrection"].IsDefined()) {
+			mat.GammaCorrection = node["GammaCorrection"].as<int>();
+		} else {
+			mat.GammaCorrection = false;
+		}
 
 		{
 			auto& metal = mat.PbrMetallicRoughness;
@@ -348,6 +353,7 @@ namespace Voxymore::Core {
 		out << KEYVAL("AlphaMode", mat.AlphaMode);
 		out << KEYVAL("AlphaCutoff", mat.AlphaCutoff);
 		out << KEYVAL("DoubleSided", mat.DoubleSided);
+		out << KEYVAL("GammaCorrection", mat.GammaCorrection);
 
 		{
 			auto& metal = mat.PbrMetallicRoughness;
@@ -397,6 +403,7 @@ namespace Voxymore::Core {
 		changed |= ImGui::DragFloat("Alpha Cutoff", &mat.AlphaCutoff, 0.01f, 0.0f, 1.0f);
 		ImGui::EndDisabled();
 		bool doubleSided = mat.DoubleSided; if(ImGui::Checkbox("Double Sided", &doubleSided)) { mat.DoubleSided = doubleSided; changed = true; }
+		bool gammaCorrection = mat.GammaCorrection; if(ImGui::Checkbox("Gamma Correction", &gammaCorrection)) { mat.GammaCorrection = gammaCorrection; changed = true; }
 
 		// ===== MetallicRoughtness PbrMetallicRoughness =====
 		if(ImGui::CollapsingHeader("Metallic Roughtness"))

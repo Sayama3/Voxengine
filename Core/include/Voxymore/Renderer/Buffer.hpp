@@ -62,6 +62,8 @@ namespace Voxymore::Core {
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
+
+		virtual uint32_t GetRendererID() const = 0;
 	};
 
     class VertexBuffer : public RendererBuffer

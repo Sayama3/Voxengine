@@ -22,6 +22,7 @@ namespace Voxymore::Core {
         virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
 
         virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
+		virtual uint32_t GetRendererID() const = 0;
     };
 
 } // Core

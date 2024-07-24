@@ -17,6 +17,7 @@ namespace Voxymore::Core {
 
         inline virtual void SetLayout(const BufferLayout& layout) override {m_Layout = layout;}
         inline virtual const BufferLayout& GetLayout() const override {return m_Layout;}
+		virtual uint32_t GetRendererID() const {return m_RendererID;};
 
         OpenGLVertexBuffer(const OpenGLVertexBuffer &) = delete;
         OpenGLVertexBuffer &operator=(const OpenGLVertexBuffer &) = delete;
@@ -32,6 +33,7 @@ namespace Voxymore::Core {
         virtual void Bind() const override;
         virtual void Unbind() const override;
         inline virtual uint32_t GetCount() const override { return m_Count; }
+		virtual uint32_t GetRendererID() const {return m_RendererID;};
         OpenGLIndexBuffer(const OpenGLIndexBuffer &) = delete;
         OpenGLIndexBuffer &operator=(const OpenGLIndexBuffer &) = delete;
     private:
