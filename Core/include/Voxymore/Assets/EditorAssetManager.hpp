@@ -47,7 +47,7 @@ namespace Voxymore::Core
 		Ref<Asset> GetLoadedAsset(AssetHandle handle) const;
 
 		template<typename T, typename ...Args>
-		Ref<T> CreateAsset(Args&&... args);
+		Ref<T> CreateMemoryAsset(Args&&... args);
 
 		template<typename T, typename ...Args>
 		Ref<T> CreateAsset(Path path, Args&&... args);
@@ -61,17 +61,10 @@ namespace Voxymore::Core
 
 
 	template<typename T, typename... Args>
-	Ref<T> EditorAssetManager::CreateAsset(Args &&...args)
+	Ref<T> EditorAssetManager::CreateMemoryAsset(Args &&...args)
 	{
-		AssetMetadata metadata;
-		metadata.FilePath = {FileSource::Cache, "MemoryAssets/"};
-		metadata.FilePath.path += metadata.Handle.string() + ".vxm_memory";
-		metadata.Type = T::GetStaticType();
 		Ref<T> asset = CreateRef<T>(std::forward<Args>(args)...);
-		asset->Handle = metadata.Handle;
-		m_AssetRegistry.emplace(metadata.Handle, metadata);
-		m_LoadedAssets.emplace(metadata.Handle, asset);
-		SerializeAssetRegistry();
+		m_MemoryAssets.emplace(asset->Handle, asset);
 		return asset;
 	}
 
@@ -79,7 +72,7 @@ namespace Voxymore::Core
 	inline Ref<T> EditorAssetManager::CreateAsset(Path path, Args&&... args)
 	{
 		AssetMetadata metadata;
-		metadata.FilePath = path;
+		metadata.FilePath = std::move(path);
 		metadata.Type = T::GetStaticType();
 		Ref<T> asset = CreateRef<T>(std::forward<Args>(args)...);
 		asset->Handle = metadata.Handle;

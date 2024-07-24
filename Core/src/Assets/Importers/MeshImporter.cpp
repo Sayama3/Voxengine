@@ -284,6 +284,7 @@ namespace Voxymore::Core
 			}
 		}
 
+		vxmModel->m_Materials.resize(model.materials.size());
 		{
 			VXM_PROFILE_SCOPE("Model::Model -> Create Meshes");
 			vxmModel->m_Meshes.reserve(model.meshes.size());
@@ -392,13 +393,9 @@ namespace Voxymore::Core
 
 							std::string matName = std::to_string(modelId) + "_" + mat.name;
 
-							if (vxmModel->m_Materials.size() >= primitive.material || !vxmModel->m_Materials[primitive.material]) {
+							if (!vxmModel->m_Materials[primitive.material]) {
 
 								VXM_CORE_INFO("There is {0} material, we want to set the index {1}.", vxmModel->m_Materials.size(), primitive.material);
-								for (uint64_t i = vxmModel->m_Materials.size(); i < primitive.material+1; ++i) {
-									vxmModel->m_Materials.emplace_back();
-									VXM_CORE_INFO("Inserting a new material for a total of {0}", vxmModel->m_Materials.size());
-								}
 
 								MaterialParameters materialParams;
 
@@ -446,7 +443,7 @@ namespace Voxymore::Core
 								if(materialParams.OcclusionTexture.Index >= 0) materialTextures.push_back(materialParams.OcclusionTexture.Index);
 								if(materialParams.EmissiveTexture.Index >= 0) materialTextures.push_back(materialParams.EmissiveTexture.Index);
 
-								material = assetManager->CreateAsset<Material>(matName, shader, materialParams);
+								material = assetManager->CreateMemoryAsset<Material>(matName, shader, materialParams);
 
 								for (uint32_t binding : materialTextures)
 								{
@@ -459,9 +456,18 @@ namespace Voxymore::Core
 								material = vxmModel->m_Materials[primitive.material];
 							}
 						}
+						else {
+							if(vxmModel->m_Materials.size() <= model.materials.size()) {
+								MaterialParameters materialParams;
+								material = assetManager->CreateMemoryAsset<Material>("Default Material", shader, materialParams);
+								vxmModel->m_Materials.push_back(material);
+							} else {
+								material = vxmModel->m_Materials[model.materials.size()];
+							}
+						}
 					}
 
-					Ref<Mesh> m = assetManager->CreateAsset<Mesh>(vertexes, index, aabb);
+					Ref<Mesh> m = assetManager->CreateMemoryAsset<Mesh>(vertexes, index, aabb);
 					m->SetMaterial(material);
 					meshGroup.AddSubMesh(m);
 				}
