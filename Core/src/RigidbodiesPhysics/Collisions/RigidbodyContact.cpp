@@ -339,17 +339,18 @@ namespace Voxymore::Core
 				impulseContact.y*impulseContact.y +
 				impulseContact.z*impulseContact.z
 		);
-		if (planarImpulse != 0 && planarImpulse > impulseContact.x * friction)
+		if (!Math::Approx0(planarImpulse) && planarImpulse > impulseContact.x * friction)
 		{
-			VXM_CORE_ASSERT(impulseContact.x != 0, "impulseContact.x != 0");
 			VXM_CORE_ASSERT(planarImpulse != 0, "planarImpulse != 0");
 			// We need to use dynamic friction
-					impulseContact.y /= planarImpulse;
+			impulseContact.y /= planarImpulse;
 			impulseContact.z /= planarImpulse;
 
 			impulseContact.x = deltaVelocity[0][0] +
 							   deltaVelocity[1][0]*friction*impulseContact.y +
 							   deltaVelocity[2][0]*friction*impulseContact.z;
+			VXM_CORE_ASSERT(impulseContact.x != 0, "impulseContact.x != 0");
+			if(impulseContact.x == 0) impulseContact.x = 0.001f;
 			impulseContact.x = m_DesiredDeltaVelocity / impulseContact.x;
 			impulseContact.y *= friction * impulseContact.x;
 			impulseContact.z *= friction * impulseContact.x;
