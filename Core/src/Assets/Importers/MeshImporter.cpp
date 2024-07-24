@@ -266,7 +266,7 @@ namespace Voxymore::Core
 				else {
 					VXM_CORE_ASSERT(!image.uri.empty(), "The image don't have any way to be fetch.");
 					VXM_CORE_ASSERT(!image.uri.starts_with("http"), "The engine cannot fetch the image from the internet for now.");
-					VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif", "Cannot handle the image type {0}.", image.mimeType);
+					VXM_CORE_ASSERT(image.mimeType == "image/jpeg" || image.mimeType == "image/png" || image.mimeType == "image/bmp" || image.mimeType == "image/gif" || image.uri.ends_with(".png") || image.uri.ends_with(".jpg") || image.uri.ends_with(".jepg") || image.uri.ends_with(".bmp") || image.uri.ends_with(".gif"), "Cannot handle the image ({}) type {}.", image.uri, image.mimeType);
 					auto parentFolder = metadata.FilePath.GetFullPath().parent_path();
 					// TODO: Use the AssetManager
 					Ref<Texture2D> asset = TextureImporter::LoadTexture2D(Path::GetPath(parentFolder / image.uri));
@@ -305,17 +305,22 @@ namespace Voxymore::Core
 						VXM_PROFILE_SCOPE("Model::Model -> Create Vertex RendererBuffer");
 						//TODO: Optimize this to be able to add the rest of the possible attributes. (at least multiple tex coords);
 						//TODO2: Add other render mode.
-						VXM_CORE_ASSERT(primitive.mode == GLTF::MeshRenderMode::TRIANGLES, "The Render Mode {0} cannot be used for the moment.", primitive.mode);
-						VXM_CORE_ASSERT(primitive.indices > 0, "The indices are currently required to load a 3d model.");
+						VXM_CORE_CHECK(primitive.mode == GLTF::MeshRenderMode::TRIANGLES, "The Render Mode {0} cannot be used for the moment.", primitive.mode);
+
+						if(!(primitive.mode == GLTF::MeshRenderMode::TRIANGLES)) continue;
 
 						std::string positionAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::POSITION);
 						std::string normalAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::NORMAL);
 						std::string texcoordAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::TEXCOORD);
 						std::string colorAttribute = GLTF::Helper::GetPrimitiveAttributeString(GLTF::PrimitiveAttribute::COLOR);
 
-						VXM_CORE_ASSERT(primitive.attributes.contains(positionAttribute), "A primitive must possess Positions.");
-						VXM_CORE_ASSERT(primitive.attributes.contains(normalAttribute), "A primitive must possess Normals.");
-						VXM_CORE_ASSERT(primitive.attributes.contains(texcoordAttribute), "A primitive must possess Texcoords.");
+						VXM_CORE_CHECK(primitive.attributes.contains(positionAttribute), "A primitive must possess Positions.");
+						VXM_CORE_CHECK(primitive.attributes.contains(normalAttribute), "A primitive must possess Normals.");
+						VXM_CORE_CHECK(primitive.attributes.contains(texcoordAttribute), "A primitive must possess Texcoords.");
+
+						if(!primitive.attributes.contains(positionAttribute)) continue;
+						if(!primitive.attributes.contains(normalAttribute)) continue;
+						if(!primitive.attributes.contains(texcoordAttribute)) continue;
 
 						//Safeguards
 						VXM_CORE_ASSERT(sizeof(glm::vec3) == sizeof(float) * 3, "glm::vec3 is not equal to 3 floats...");
@@ -346,40 +351,49 @@ namespace Voxymore::Core
 					// Index RendererBuffer
 					{
 						VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer");
-						auto &accessor = model.accessors[primitive.indices];
-						auto &&[indexBuffer, indexSize] = GetRawBuffer(primitive.indices, model, primitive);
-						switch ((GLTF::ComponentType) accessor.componentType) {
-							case GLTF::ComponentType::UnsignedByte: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedByte");
-								size_t sizeofValue = sizeof(uint8_t);
-								size_t bufferItemsCount = indexSize / sizeofValue;
-								const auto *bufferPtr = static_cast<const uint8_t *>(indexBuffer);
-								index.resize(bufferItemsCount);
-								for (int i = 0; i < bufferItemsCount; ++i) {
-									index[i] = bufferPtr[i];
+						if(primitive.indices > 0) {
+							auto &accessor = model.accessors[primitive.indices];
+							auto &&[indexBuffer, indexSize] = GetRawBuffer(primitive.indices, model, primitive);
+							switch ((GLTF::ComponentType) accessor.componentType) {
+								case GLTF::ComponentType::UnsignedByte: {
+									VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedByte");
+									size_t sizeofValue = sizeof(uint8_t);
+									size_t bufferItemsCount = indexSize / sizeofValue;
+									const auto *bufferPtr = static_cast<const uint8_t *>(indexBuffer);
+									index.resize(bufferItemsCount);
+									for (int i = 0; i < bufferItemsCount; ++i) {
+										index[i] = bufferPtr[i];
+									}
+									break;
 								}
-								break;
-							}
-							case GLTF::ComponentType::UnsignedShort: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedShort");
-								size_t sizeofValue = sizeof(uint16_t);
-								size_t bufferItemsCount = indexSize / sizeofValue;
-								const auto *bufferPtr = static_cast<const uint16_t *>(indexBuffer);
-								index.resize(bufferItemsCount);
-								for (int i = 0; i < bufferItemsCount; ++i) {
-									index[i] = bufferPtr[i];
+								case GLTF::ComponentType::UnsignedShort: {
+									VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedShort");
+									size_t sizeofValue = sizeof(uint16_t);
+									size_t bufferItemsCount = indexSize / sizeofValue;
+									const auto *bufferPtr = static_cast<const uint16_t *>(indexBuffer);
+									index.resize(bufferItemsCount);
+									for (int i = 0; i < bufferItemsCount; ++i) {
+										index[i] = bufferPtr[i];
+									}
+									break;
 								}
-								break;
+								case GLTF::ComponentType::UnsignedInt: {
+									VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedInt");
+									size_t sizeofValue = sizeof(uint32_t);
+									size_t bufferItemsCount = indexSize / sizeofValue;
+									const auto *bufferPtr = static_cast<const uint32_t *>(indexBuffer);
+									index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
+									break;
+								}
+								default: VXM_CORE_ASSERT(false, "The component type {0} is not supported for an index buffer.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType) accessor.componentType));
 							}
-							case GLTF::ComponentType::UnsignedInt: {
-								VXM_PROFILE_SCOPE("Model::Model -> Create Index RendererBuffer -> UnsignedInt");
-								size_t sizeofValue = sizeof(uint32_t);
-								size_t bufferItemsCount = indexSize / sizeofValue;
-								const auto *bufferPtr = static_cast<const uint32_t *>(indexBuffer);
-								index.insert(index.end(), &bufferPtr[0], &bufferPtr[bufferItemsCount]);
-								break;
+						}
+						else {
+							VXM_CORE_CHECK(vertexes.size() % 3 == 0, "There is no index buffer and the number of vertex is not divisible by 3 ({})", vertexes.size());
+							index.reserve(vertexes.size());
+							for (int i = 0; i < (vertexes.size() / 3) * 3; ++i) {
+								index.push_back(i);
 							}
-							default: VXM_CORE_ASSERT(false, "The component type {0} is not supported for an index buffer.", GLTF::Helper::ComponentTypeToString((GLTF::ComponentType) accessor.componentType));
 						}
 					}
 

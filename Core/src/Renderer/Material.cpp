@@ -127,15 +127,15 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
-		if(binding >= 0 && binding < m_Textures.max_size()) return;
-		m_Textures[binding] = std::move(texture);
+		if(binding < 0 || binding >= m_Textures.max_size()) return;
+		m_Textures[binding] = texture;
 	}
 
 	void Material::UnsetTexture(int binding)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(binding >= 0 && binding < m_Textures.max_size(), "The texture binding {0} is not valid.", binding);
-		if(binding >= 0 && binding < m_Textures.max_size()) return;
+		if(binding < 0 || binding >= m_Textures.max_size()) return;
 		m_Textures[binding].Reset();
 	}
 
