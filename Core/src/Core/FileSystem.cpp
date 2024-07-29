@@ -174,7 +174,6 @@ namespace Voxymore::Core
 	bool FileSystem::Equivalent(const Path& lt, const Path& rt)
 	{
 		VXM_PROFILE_FUNCTION();
-
 		return lt.source == rt.source && std::filesystem::equivalent(lt.GetFullPath(), rt.GetFullPath());
 	}
 

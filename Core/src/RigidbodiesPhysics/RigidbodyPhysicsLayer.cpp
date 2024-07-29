@@ -3,6 +3,7 @@
 //
 
 #include <utility>
+#include <algorithm>
 
 #include "Voxymore/Core/TypeHelpers.hpp"
 #include "Voxymore/Components/Components.hpp"
@@ -73,15 +74,22 @@ namespace Voxymore::Core
 
 		if(!FineCollisionCheck(ts)) return;
 
+		// Filter False Positive
+		std::erase_if(m_Contacts.contacts, [](RigidbodyContact rc) -> bool {
+			if(Math::Approx0(Math::SqrMagnitude(rc.contactNormal), 0.001)) return true;
+			if(Math::Approx0(rc.penetration, 0.001)) return true;
+			return false;
+		});
+
 		CollisionResolution(ts);
 	}
 
 	void RigidbodyPhysicsLayer::Integrate(TimeStep ts)
 	{
 		VXM_PROFILE_FUNCTION();
+
 		// Integrate all Rigidbodies
 		auto func = [&ts](entt::entity e, RigidbodyComponent& rc, TransformComponent& tc){
-
 			rc.SetTransform(&tc);
 			rc.Integrate(ts);
 		};
@@ -94,14 +102,15 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		delete m_Root;
 		m_Root = nullptr;
-		auto view = m_SceneHandle->view<RigidbodyComponent, ColliderComponent, TransformComponent>(exclude<DisableComponent, DisableRigidbody>);
+		auto view = m_SceneHandle->view<ColliderComponent, TransformComponent>(exclude<DisableComponent>);
 		for (auto e : view)
 		{
-			RigidbodyComponent& rc = view.get<RigidbodyComponent>(e);
+			Entity entity(e, m_SceneHandle.get());
+			RigidbodyComponent* rc = entity.HasComponent<RigidbodyComponent>() ? &entity.GetComponent<RigidbodyComponent>() : nullptr;
 			TransformComponent& tc = view.get<TransformComponent>(e);
 			ColliderComponent& cc = view.get<ColliderComponent>(e);
 			cc.SetTransform(&tc);
-			cc.SetRigidbody(&rc);
+			cc.SetRigidbody(rc);
 			if(m_Root) m_Root->Insert(reinterpret_cast<Rigidbody*>(&rc), Entity(e,m_SceneHandle.get()), cc.GetBoundingSphere());
 			else m_Root = new BVHNode<BoundingSphere>(nullptr, reinterpret_cast<Rigidbody*>(&rc), Entity(e,m_SceneHandle.get()), cc.GetBoundingSphere());
 		}
@@ -141,7 +150,7 @@ namespace Voxymore::Core
 			auto sp = [&contacts](Sphere& one, Plane& two){ return CollisionDetector::Collide(one,two,contacts);};
 			auto pb = [&contacts](Plane& one, Box& two){ return CollisionDetector::Collide(one,two,contacts);};
 			auto ps = [&contacts](Plane& one, Sphere& two){ return CollisionDetector::Collide(one,two,contacts);};
-			auto pp = [](Plane& one, Plane& two){ return 0u;};
+			auto pp = [](Plane& one, Plane& two){ return uint32_t(0u);};
 
 			auto collisionPoints = std::visit(overloads{bb, bs, bp, sb, ss, sp, pb, ps, pp}, col0.m_Collider, col1.m_Collider);
 		}
@@ -156,7 +165,17 @@ namespace Voxymore::Core
 		{
 			VXM_CORE_INFO("Resolve {0} contacts with maximum {1} m_Iterations.",m_Contacts.size() , m_Contacts.size() * 2);
 			m_Resolver.SetIterations(m_Contacts.size() * 2);
-			m_Resolver.ResolveContacts(ts, m_Contacts.contacts);
+			m_Resolver.PrepareContacts(ts, m_Contacts.contacts);
+			// Second Filter False Positive
+			std::erase_if(m_Contacts.contacts, [](RigidbodyContact rc) -> bool {
+				auto cv = rc.GetContactVelocity();
+				auto ddv = rc.GetDesiredDeltaVelocity();
+				if(Math::Approx0(Math::Magnitude(cv)) && Math::Approx0(ddv)) return true;
+				return false;
+			});
+			if(!m_Contacts.empty()) {
+				m_Resolver.ResolveContacts(ts, m_Contacts.contacts);
+			}
 		}
 	}
 

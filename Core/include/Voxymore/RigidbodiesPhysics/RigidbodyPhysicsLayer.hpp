@@ -56,7 +56,7 @@ namespace Voxymore::Core
 	private:
 		Vec3 m_Gravity = Vec3(0.0, -9.8, 0.0);
 		Ref<Scene> m_SceneHandle = nullptr;
-		std::vector<PotentialContact> m_PotentialContacts {};
+		PotentialContactsHolder m_PotentialContacts {};
 		CollisionData m_Contacts;
 		RBContactResolver m_Resolver;
 		BVHNode<BoundingSphere>* m_Root = nullptr;

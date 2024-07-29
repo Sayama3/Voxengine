@@ -429,4 +429,5 @@ namespace Voxymore::Core
 			return 1;
 		}
 	}
+
 } // namespace Voxymore::Core

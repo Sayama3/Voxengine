@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Math/Geometry.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 
@@ -45,21 +46,28 @@ namespace Voxymore::Core
 	class Sphere : public PrimitiveCollider
 	{
 	public:
+		Math::Sphere AsSphere() {return Math::Sphere{GetPosition(), m_Radius};}
+	public:
 		Real m_Radius = .5;
 	};
 
 	class Plane : public PrimitiveCollider
 	{
 	public:
+		Math::Plane AsPlane() {return Math::Plane{m_Normal, m_Offset};}
+	public:
 		Vec3 m_Normal = {0,1,0};
 		Real m_Offset = 0;
-		Real m_Size = 1;
+		//TODO: Replace the size of the plane by a Vec2
+		Vec2 m_Size = {1, 1};
 	};
 
 	class Box : public PrimitiveCollider
 	{
 	public:
 		Vec3 m_HalfSize = {.5,.5,.5};
+
+		Math::OBB AsOBB() { return Math::OBB{GetPosition(), GetMatrix(), m_HalfSize}; }
 
 		[[nodiscard]] std::array<Vec3, 8> GetVertices() const;
 	};

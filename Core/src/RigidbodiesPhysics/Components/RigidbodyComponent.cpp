@@ -108,16 +108,16 @@ namespace Voxymore::Core
 		changed |= ImGuiLib::DragReal("Linear Damping", &m_LinearDamping, 0.001, 0, 1, "%.3f");
 		changed |= ImGuiLib::DragReal("Angular Damping", &m_AngularDamping, 0.001, 0, 1, "%.3f");
 		ImGui::Spacing();
-		changed |= ImGuiLib::DragReal3("Linear Velocity", glm::value_ptr(m_LinearVelocity));
-		changed |= ImGuiLib::DragReal3("Angular Velocity", glm::value_ptr(m_AngularVelocity));
+		changed |= ImGuiLib::DragReal3("Linear Velocity", Math::ValuePtr(m_LinearVelocity));
+		changed |= ImGuiLib::DragReal3("Angular Velocity", Math::ValuePtr(m_AngularVelocity));
 		ImGui::Spacing();
 
 		auto tensor = glm::inverse(m_InverseInertiaTensor);
 		auto tensorChanged = false;
 		ImGui::LabelText("Inertia Tensor","");
-		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c1", glm::value_ptr(tensor[0]), 0.01, 0,0,"%.2f");
-		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c2", glm::value_ptr(tensor[1]), 0.01, 0,0,"%.2f");
-		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c3", glm::value_ptr(tensor[2]), 0.01, 0,0,"%.2f");
+		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c1", Math::ValuePtr(tensor[0]), 0.01, 0,0,"%.2f");
+		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c2", Math::ValuePtr(tensor[1]), 0.01, 0,0,"%.2f");
+		tensorChanged |= ImGuiLib::DragReal3("##Inertia Tensor_c3", Math::ValuePtr(tensor[2]), 0.01, 0,0,"%.2f");
 		if(tensorChanged)
 		{
 			changed = true;
@@ -125,10 +125,10 @@ namespace Voxymore::Core
 		}
 
 		ImGui::Spacing();
-		changed |= ImGuiLib::DragReal3("Force Accumulate", glm::value_ptr(m_ForceAccumulate));
-		changed |= ImGuiLib::DragReal3("Torque Accumulate", glm::value_ptr(m_TorqueAccumulate));
+		changed |= ImGuiLib::DragReal3("Force Accumulate", Math::ValuePtr(m_ForceAccumulate));
+		changed |= ImGuiLib::DragReal3("Torque Accumulate", Math::ValuePtr(m_TorqueAccumulate));
 		ImGui::Spacing();
-		changed |= ImGuiLib::DragReal3("Acceleration", glm::value_ptr(m_Acceleration));
+		changed |= ImGuiLib::DragReal3("Acceleration", Math::ValuePtr(m_Acceleration));
 		ImGui::Spacing();
 //		changed |= ImGui::Checkbox("IsAwake", &m_IsAwake);
 

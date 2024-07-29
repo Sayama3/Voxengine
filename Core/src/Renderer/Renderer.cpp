@@ -299,6 +299,8 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		//model->Bind();
+		VXM_CORE_CHECK(model, "No model sent to be drawn.");
+		if(!model) return;
 		for (int nodeIndex : model->GetDefaultScene())
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);

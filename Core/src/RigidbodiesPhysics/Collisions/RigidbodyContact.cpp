@@ -23,7 +23,7 @@ namespace Voxymore::Core
 
 		void makeOrthonormalBasis(Vec3 &x, Vec3 &y, Vec3 &z)
 		{
-			const Real s = 1.0 / Math::Sqrt(x.z * x.z + x.y * x.y);
+			const Real s = Real(1.0) / Math::Sqrt(x.z * x.z + x.y * x.y);
 
 			z.x = x.z * s;
 			z.y = 0;
@@ -34,141 +34,6 @@ namespace Voxymore::Core
 			y.z = -x.y * z.x;
 		}
 	}
-
-	/*
-	RigidbodyContact::RigidbodyContact(Rigidbody *p0, Vec3 contactNormal, Real restitution, Real penetration) : rigidbodies({p0, nullptr}), contactNormal(contactNormal), restitution(restitution), penetration(penetration)
-	{
-		VXM_CORE_ASSERT(rigidbodies[0] != nullptr, "The Rigidbody contact MUST have at least one Rigidbody associated.");
-	}
-
-	RigidbodyContact::RigidbodyContact(Rigidbody *p0, Rigidbody *p1, Vec3 contactNormal, Real restitution, Real penetration) : rigidbodies({p0, p1}), contactNormal(contactNormal), restitution(restitution), penetration(penetration)
-	{
-		VXM_CORE_ASSERT(rigidbodies[0] != nullptr, "The Rigidbody contact MUST have at least one Rigidbody associated.");
-	}
-
-	RigidbodyContact::RigidbodyContact(Rigidbody* p[2], Vec3 contactNormal, Real restitution, Real penetration) : rigidbodies({p[0], p[1]}), contactNormal(contactNormal), restitution(restitution), penetration(penetration)
-	{
-		VXM_CORE_ASSERT(rigidbodies[0] != nullptr, "The Rigidbody contact MUST have at least one Rigidbody associated.");
-	}
-
-	RigidbodyContact::RigidbodyContact(const std::array<Rigidbody*, 2>& p, Vec3 contactNormal, Real restitution, Real penetration) : rigidbodies(p), contactNormal(contactNormal), restitution(restitution), penetration(penetration)
-	{
-		VXM_CORE_ASSERT(rigidbodies[0] != nullptr, "The Rigidbody contact MUST have at least one Rigidbody associated.");
-	}
-
-	void RigidbodyContact::Resolve(TimeStep duration)
-	{
-		VXM_PROFILE_FUNCTION();
-		ResolveVelocity(duration);
-		ResolveInterpenetration(duration);
-	}
-
-	Real RigidbodyContact::CalculateSeparatingVelocity() const
-	{
-		VXM_PROFILE_FUNCTION();
-		Vec3 relativeVelocity = rigidbodies[0]->GetLinearVelocity();
-
-		if(rigidbodies[1])
-		{
-			relativeVelocity -= rigidbodies[1]->GetLinearVelocity();
-		}
-
-		return Math::Dot(relativeVelocity, contactNormal);
-	}
-
-	void RigidbodyContact::ResolveVelocity(TimeStep duration)
-	{
-		VXM_PROFILE_FUNCTION();
-		// Find the velocity in the direction of the contact.
-		auto separatingVelocity = CalculateSeparatingVelocity();
-
-		if(separatingVelocity > 0) // Don't need to be resolved.
-		{
-			return;
-		}
-
-		Real newSepVelocity = -separatingVelocity * restitution;
-
-		Vec3 accCausedVelocity = Vec3{0,-9.81, 0};
-		if(rigidbodies[1])
-		{
-			accCausedVelocity -= Vec3{0,-9.81, 0};
-		}
-		Real accCausedSepVel = Math::Dot(accCausedVelocity, contactNormal) * duration;
-		if(accCausedSepVel < 0)
-		{
-			newSepVelocity += restitution * accCausedSepVel;
-			if(newSepVelocity < 0)
-			{
-				newSepVelocity = 0;
-			}
-		}
-
-		Real deltaVelocity = newSepVelocity - separatingVelocity;
-
-		Real totalInverseMass = rigidbodies[0]->GetInverseMass();
-		if(rigidbodies[1])
-		{
-			totalInverseMass += rigidbodies[1]->GetInverseMass();
-		}
-
-		// Infinite mass, therefore, no resolving.
-		if(totalInverseMass <= 0)
-		{
-			return;
-		}
-
-		Real impulse = deltaVelocity / totalInverseMass;
-
-		Vec3 impulsePerIMass = contactNormal * impulse;
-
-		rigidbodies[0]->AddLinearVelocity(impulsePerIMass * (+rigidbodies[0]->GetInverseMass()));
-		if(rigidbodies[1])
-		{
-			// The other rigidbody should go the other way around.
-			rigidbodies[1]->AddLinearVelocity(impulsePerIMass * (-rigidbodies[1]->GetInverseMass()));
-		}
-	}
-
-	void RigidbodyContact::ResolveInterpenetration(TimeStep duration)
-	{
-		VXM_PROFILE_FUNCTION();
-
-		if(penetration <= 0)
-		{
-			// No penetration, doing nothing.
-			return;
-		}
-
-		Real totalInverseMass = rigidbodies[0]->GetInverseMass();
-		if(rigidbodies[1])
-		{
-			totalInverseMass += rigidbodies[1]->GetInverseMass();
-		}
-
-		// Infinite mass, therefore, no resolving.
-		if(totalInverseMass <= 0)
-		{
-			return;
-		}
-
-		Vec3 movePerIMass = contactNormal * (penetration * (penetration  / totalInverseMass));
-
-		std::array<Vec3, 2> rigidbodyMovement = {Vec3(0), Vec3(0)};
-		rigidbodyMovement[0] = movePerIMass * rigidbodies[0]->GetInverseMass();
-		if(rigidbodies[1])
-		{
-			// Go the other way around.
-			rigidbodyMovement[1] = movePerIMass * -rigidbodies[1]->GetInverseMass();
-		}
-
-		rigidbodies[0]->AddMovement(rigidbodyMovement[0]);
-		if(rigidbodies[1])
-		{
-			rigidbodies[1]->AddMovement(rigidbodyMovement[1]);
-		}
-	}
- */
 
 	void RigidbodyContact::SetBodyData(Rigidbody *one, Rigidbody *two, Real friction, Real restitution)
 	{
@@ -213,6 +78,7 @@ namespace Voxymore::Core
 				// continuing.
 			}
 
+		VXM_CORE_ASSERT(!Math::Approx0(totalInertia), "!Math::Approx0(totalInertia)");
 		// Loop through again calculating and applying the changes
 		for (unsigned i = 0; i < 2; i++) if (bodies[i])
 			{
@@ -263,6 +129,7 @@ namespace Voxymore::Core
 
 					Mat3 inverseInertiaTensor;
 					bodies[i]->GetInverseInertiaTensorWorld(inverseInertiaTensor);
+					VXM_CORE_ASSERT(angularInertia[i] != 0, "angularInertia[{}] != 0", i);
 
 					// Work out the direction we'd need to rotate to achieve that
 					angularChange[i] =
@@ -292,7 +159,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		// Get hold of the inverse mass and inverse inertia tensor, both in
 		// world coordinates.
-		std::array<Mat3,2> inverseInertiaTensor;
+		std::array<Mat3,2> inverseInertiaTensor{Math::Identity<Mat3>(), Math::Identity<Mat3>()};
 		bodies[0]->GetInverseInertiaTensorWorld(inverseInertiaTensor[0]);
 		if (bodies[1]) {
 			bodies[1]->GetInverseInertiaTensorWorld(inverseInertiaTensor[1]);
@@ -329,15 +196,15 @@ namespace Voxymore::Core
 		Vec3 linear, angular;
 
 		linear = bodies[0]->GetLinearVelocity();
-		if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
-		if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
-		if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+		if(Math::Approx0(linear.x, c_VelocityLimit)) {linear.x = 0;}
+		if(Math::Approx0(linear.y, c_VelocityLimit)) {linear.y = 0;}
+		if(Math::Approx0(linear.z, c_VelocityLimit)) {linear.z = 0;}
 		bodies[0]->SetLinearVelocity(linear);
 
 		angular = bodies[0]->GetAngularVelocity();
-		if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
-		if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
-		if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+		if(Math::Approx0(angular.x, c_VelocityLimit)) {angular.x = 0;}
+		if(Math::Approx0(angular.y, c_VelocityLimit)) {angular.y = 0;}
+		if(Math::Approx0(angular.z, c_VelocityLimit)) {angular.z = 0;}
 		bodies[0]->SetAngularVelocity(angular);
 
 		if (bodies[1])
@@ -354,15 +221,15 @@ namespace Voxymore::Core
 
 
 			linear = bodies[1]->GetLinearVelocity();
-			if(Math::Abs(linear.x) < c_VelocityLimit) {linear.x = 0;}
-			if(Math::Abs(linear.y) < c_VelocityLimit) {linear.y = 0;}
-			if(Math::Abs(linear.z) < c_VelocityLimit) {linear.z = 0;}
+			if(Math::Approx0(linear.x, c_VelocityLimit)) {linear.x = 0;}
+			if(Math::Approx0(linear.y, c_VelocityLimit)) {linear.y = 0;}
+			if(Math::Approx0(linear.z, c_VelocityLimit)) {linear.z = 0;}
 			bodies[1]->SetLinearVelocity(linear);
 
 			angular = bodies[1]->GetAngularVelocity();
-			if(Math::Abs(angular.x) < c_VelocityLimit) {angular.x = 0;}
-			if(Math::Abs(angular.y) < c_VelocityLimit) {angular.y = 0;}
-			if(Math::Abs(angular.z) < c_VelocityLimit) {angular.z = 0;}
+			if(Math::Approx0(angular.x, c_VelocityLimit)) {angular.x = 0;}
+			if(Math::Approx0(angular.y, c_VelocityLimit)) {angular.y = 0;}
+			if(Math::Approx0(angular.z, c_VelocityLimit)) {angular.z = 0;}
 			bodies[1]->SetAngularVelocity(angular);
 		}
 	}
@@ -402,6 +269,7 @@ namespace Voxymore::Core
 		}
 
 		// Calculate the required size of the impulse
+		VXM_CORE_ASSERT(!Math::Approx0(deltaVelocity), "!Math::Approx0(deltaVelocity)");
 		impulseContact.x = m_DesiredDeltaVelocity / deltaVelocity;
 		impulseContact.y = 0;
 		impulseContact.z = 0;
@@ -471,8 +339,9 @@ namespace Voxymore::Core
 				impulseContact.y*impulseContact.y +
 				impulseContact.z*impulseContact.z
 		);
-		if (planarImpulse > impulseContact.x * friction)
+		if (!Math::Approx0(planarImpulse) && planarImpulse > impulseContact.x * friction)
 		{
+			VXM_CORE_ASSERT(planarImpulse != 0, "planarImpulse != 0");
 			// We need to use dynamic friction
 			impulseContact.y /= planarImpulse;
 			impulseContact.z /= planarImpulse;
@@ -480,6 +349,8 @@ namespace Voxymore::Core
 			impulseContact.x = deltaVelocity[0][0] +
 							   deltaVelocity[1][0]*friction*impulseContact.y +
 							   deltaVelocity[2][0]*friction*impulseContact.z;
+			VXM_CORE_ASSERT(impulseContact.x != 0, "impulseContact.x != 0");
+			if(impulseContact.x == 0) impulseContact.x = 0.001f;
 			impulseContact.x = m_DesiredDeltaVelocity / impulseContact.x;
 			impulseContact.y *= friction * impulseContact.x;
 			impulseContact.z *= friction * impulseContact.x;
@@ -527,11 +398,11 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		std::array<Vec3, 2> contactTangent {};
 
-		VXM_CORE_ASSERT(Math::Abs(Math::SqrMagnitude(contactNormal)-1) < 0.001, "The vector contact normal is not normalized.");
-
 		if(Math::Abs(contactNormal.x) > Math::Abs(contactNormal.y))
 		{
-			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x);
+			const Real divisor = Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x);
+			VXM_CORE_ASSERT(!Math::Approx0(divisor), "Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.x * contactNormal.x) != 0");
+			const Real s = (Real)1.0 / divisor;
 
 			contactTangent[0].x = contactNormal.z * s;
 			contactTangent[0].y = 0;
@@ -543,7 +414,9 @@ namespace Voxymore::Core
 		}
 		else
 		{
-			const Real s = (Real)1.0 / Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y);
+			const Real divisor = Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y);
+			VXM_CORE_ASSERT(!Math::Approx0(divisor), "Math::Sqrt(contactNormal.z*contactNormal.z + contactNormal.y * contactNormal.y) != 0");
+			const Real s = (Real)1.0 / divisor;
 
 			contactTangent[0].x = 0;
 			contactTangent[0].y = -contactNormal.z * s;
@@ -586,18 +459,21 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 
+		Vec3 scaledContact = contactNormal * ts.as<Real>();
+
+		Real velocityFromAcc = Math::Dot(bodies[0]->GetLastFrameAcceleration(), scaledContact);
+		if (bodies[1])
+		{
+			velocityFromAcc -= Math::Dot(bodies[1]->GetLastFrameAcceleration(), scaledContact);
+		}
+
 		Real thisRestitution = restitution;
 		if(Math::Abs(m_ContactVelocity.x) < c_VelocityLimit)
 		{
 			thisRestitution = (Real)0;
 		}
 
-		Real accVelocity = Math::Dot(bodies[0]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
-		if (bodies[1])
-		{
-			accVelocity -= Math::Dot(bodies[1]->GetLastFrameAcceleration() * ts.as<Real>(), contactNormal);
-		}
-		m_DesiredDeltaVelocity = -m_ContactVelocity.x - thisRestitution * (m_ContactVelocity.x - accVelocity);
+		m_DesiredDeltaVelocity = -m_ContactVelocity.x - thisRestitution * (m_ContactVelocity.x - velocityFromAcc);
 	}
 
 	const Mat3& RigidbodyContact::GetContactToWorld() const
@@ -642,6 +518,16 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(i >= 0 && i < contacts.size(), "Contact {0} is not a valid index.");
 		if(i < 0 || i >= contacts.size()) return nullptr;
 		return &contacts[i];
+	}
+
+	RigidbodyContact& CollisionData::operator[](uint64_t index)
+	{
+		return contacts[index];
+	}
+
+	const RigidbodyContact& CollisionData::operator[](uint64_t index) const
+	{
+		return contacts[index];
 	}
 
 	void CollisionData::AddContact(const RigidbodyContact& contact)

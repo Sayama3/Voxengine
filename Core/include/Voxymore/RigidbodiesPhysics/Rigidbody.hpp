@@ -40,6 +40,7 @@ namespace Voxymore::Core
 
 		void SetInertiaTensor(const Mat3& inertiaTensor);
 		void SetInverseInertiaTensor(const Mat3& inverseInertiaTensor);
+
 		const Mat3& GetInverseInertiaTensor() const;
 		Mat3 GetInverseInertiaTensorWorld() const;
 		void GetInverseInertiaTensorWorld(Mat3& iitWorld) const;
@@ -89,7 +90,6 @@ namespace Voxymore::Core
 		void AddAngularVelocity(const Vec3& angularVelocity);
 
 		Vec3 GetLastFrameAcceleration() const;
-
 	protected:
 
 		/**
@@ -187,6 +187,8 @@ namespace Voxymore::Core
 		* This is a scalar value, with its unit being force time per radian.
 		*/
 		Real m_AngularDamping = 0.9;
+
+		bool m_Awake = true;
 	};
 
 } // namespace Voxymore::Core

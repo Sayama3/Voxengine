@@ -28,9 +28,9 @@ namespace Voxymore::Core
 
 		void SetIterations(uint32_t iterations);
 
+		void PrepareContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 		void ResolveContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 	private:
-		void PrepareContacts(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 		void AdjustPositions(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 		void AdjustVelocities(TimeStep ts, std::vector<RigidbodyContact>& contacts);
 	};
