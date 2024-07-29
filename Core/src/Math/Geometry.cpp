@@ -346,7 +346,7 @@ namespace Voxymore::Core::Math
 		return sqDist <= Pow2(s.r);
 	}
 
-	bool Math::TestSphereAABB(Sphere s, AABB b, Vec3 &p)
+	bool TestSphereAABB(Sphere s, AABB b, Vec3 &p)
 	{
 		VXM_PROFILE_FUNCTION();
 		ClosestPointToAABB(s.c, b, p);
@@ -360,7 +360,7 @@ namespace Voxymore::Core::Math
 		Real sqDist = SqDistPointOBB(s.c, b);
 		return sqDist <= Pow2(s.r);
 	}
-	bool Math::TestSphereOBB(Sphere s, OBB b, Vec3 &p)
+	bool TestSphereOBB(Sphere s, OBB b, Vec3 &p)
 	{
 		VXM_PROFILE_FUNCTION();
 		ClosestPointToOBB(s.c, b, p);
@@ -493,7 +493,7 @@ namespace Voxymore::Core::Math
 	}
 
 	// Lost of early exit for the version requiring only a check.
-	bool Math::TestRaySphere(Ray r, Sphere s)
+	bool TestRaySphere(Ray r, Sphere s)
 	{
 		Vec3 m = r.ray.origin - s.c;
 		Real c = Dot(m, m) - s.r * s.r;
