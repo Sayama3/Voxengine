@@ -20,6 +20,8 @@
 #include "Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp"
 #include "Voxymore/RigidbodiesPhysics/Collisions/CollisionDetector.hpp"
 
+#include <Jolt/Jolt.h>
+
 
 namespace Voxymore::Core
 {

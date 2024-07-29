@@ -20,6 +20,9 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+
 namespace Voxymore::Editor {
 	class SceneHierarchyPanel;
 }
@@ -185,6 +188,7 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
+		JPH::PhysicsSystem m_PhysicsSystem;
 	public:
 		[[deprecated("Use the 'each<>()' function to get the desire result.")]]
 		inline entt::registry& GetRegistry() { return m_Registry; }

@@ -33,10 +33,15 @@ add_subdirectory(hash-library)
 
 #TODO: use "Fetch Content" instead of git submodules.
 
+# set(JPH_DEBUG_RENDERER)
+set(JPH_SHARED_LIBRARY OFF)
+set(JPH_CROSS_PLATFORM_DETERMINISTIC ON)
+
 FetchContent_Declare(
     jolt
-    GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics
+    GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
     GIT_TAG v5.0.0
+    SOURCE_SUBDIR Build
 )
 
 FetchContent_MakeAvailable(jolt)
