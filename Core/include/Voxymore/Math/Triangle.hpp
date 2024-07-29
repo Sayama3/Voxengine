@@ -16,11 +16,14 @@ namespace Voxymore::Core::Math
 
 		Triangle() = default;
 		~Triangle() = default;
-		Triangle(Vec3 A, Vec3 B, Vec3 C) : a(A), b(B), c(C) {}
+		Triangle(Vec3 A, Vec3 B, Vec3 C) : tri(A,B,C) {}
 		Triangle(std::array<Vec3, 3> pts) : points(pts) {}
 
+		struct Tri {
+			Vec3 a; Vec3 b; Vec3 c;
+		};
 		union {
-			struct {Vec3 a; Vec3 b; Vec3 c;};
+			Tri tri;
 			std::array<Vec3, 3> points;
 			Vec3 p[3];
 		};

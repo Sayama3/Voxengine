@@ -36,8 +36,8 @@ namespace Voxymore::Core::Math
 	void ClosestPointOnPointSegment(Vec3 c, Segment seg, Real &t, Vec3 &d)
 	{
 		VXM_PROFILE_FUNCTION();
-		Vec3 a = seg.begin;
-		Vec3 b = seg.end;
+		Vec3 a = seg.seg.begin;
+		Vec3 b = seg.seg.end;
 		Vec3 ab = b - a;
 
 		t = Dot(c - a, ab) / Dot(ab, ab);
@@ -47,8 +47,8 @@ namespace Voxymore::Core::Math
 
 	Real SqDistPointSegment(Segment seg, Vec3 c)
 	{
-		Vec3 a = seg.begin;
-		Vec3 b = seg.end;
+		Vec3 a = seg.seg.begin;
+		Vec3 b = seg.seg.end;
 
 		Vec3 ab = b - a;
 		Vec3 ac = c - a;
@@ -132,9 +132,9 @@ namespace Voxymore::Core::Math
 
 		// Computing the closest point using the voronoi regions of the triangle
 		//  and the Barycentric Coordinate of the point p in the triangle t;
-		Vec3 a = t.a;
-		Vec3 b = t.b;
-		Vec3 c = t.c;
+		Vec3 a = t.tri.a;
+		Vec3 b = t.tri.b;
+		Vec3 c = t.tri.c;
 
 		Vec3 ab = b - a;
 		Vec3 ac = c - a;
@@ -148,13 +148,13 @@ namespace Voxymore::Core::Math
 		Real tnom = Dot(p - a, ac);
 		Real tdenom = Dot(p - c, a - c);
 
-		if(snom <= 0 && tnom <= 0) return a; // Vertex region early out.
+		if(snom <= 0 && tnom <= 0) return a; // Vertex region early out.tri.
 
 		Real unom = Dot(p - b, bc);
 		Real udenom = Dot(p - c, b - c);
 
-		if(sdenom <= 0 && unom <= 0) return b; // Vertex region early out.
-		if(tdenom <= 0 && udenom <= 0) return c; // Vertex region early out.
+		if(sdenom <= 0 && unom <= 0) return b; // Vertex region early out.tri.
+		if(tdenom <= 0 && udenom <= 0) return c; // Vertex region early out.tri.
 
 		// If P outside AB, Triple Scalar Product [N PA PB] <= 0
 		Vec3 n = Cross(b - a, c - a);
@@ -178,7 +178,7 @@ namespace Voxymore::Core::Math
 			return a + tnom / (tnom + tdenom) * ac;
 		}
 
-		// P is inside the region. Use barycentric coordinate to compute the result.
+		// P is inside the region. Use barycentric coordinate to compute the result.tri.
 		Real u = va / (va + vb + vc);
 		Real v = vb / (va + vb + vc);
 		Real w = Real(1) - u - v;
@@ -187,10 +187,10 @@ namespace Voxymore::Core::Math
 	Real ClosestPointOfTwoSegment(Segment seg1, Segment seg2, Real &s, Real &t, Vec3 &c1, Vec3 &c2)
 	{
 		VXM_PROFILE_FUNCTION();
-		Vec3 p1 = seg1.begin;
-		Vec3 q1 = seg1.end;
-		Vec3 p2 = seg2.begin;
-		Vec3 q2 = seg2.end;
+		Vec3 p1 = seg1.seg.begin;
+		Vec3 q1 = seg1.seg.end;
+		Vec3 p2 = seg2.seg.begin;
+		Vec3 q2 = seg2.seg.end;
 
 		Vec3 d1 = seg1.Direction();
 		Vec3 d2 = seg2.Direction();
@@ -208,7 +208,7 @@ namespace Voxymore::Core::Math
 			return Dot(c1 - c2, c1 - c2);
 		}
 		if (a <= Epsilon) {
-			// First Segment Degenerate into point.
+			// First Segment Degenerate into point.tri.
 			s = 0;
 			t = f / e;
 			t = Clamp01(t);
@@ -216,7 +216,7 @@ namespace Voxymore::Core::Math
 		else {
 			Real c = Dot(d1, r);
 			if (e <= Epsilon) {
-				// Second Segment Degenerate into point.
+				// Second Segment Degenerate into point.tri.
 				t = 0;
 				s = Clamp01(-c / a);
 			} else {
@@ -249,9 +249,9 @@ namespace Voxymore::Core::Math
 
 	Real Signed2DTriArea(Triangle t)
 	{
-		const Vec3& a = t.a;
-		const Vec3& b = t.b;
-		const Vec3& c = t.c;
+		const Vec3& a = t.tri.a;
+		const Vec3& b = t.tri.b;
+		const Vec3& c = t.tri.c;
 		return (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
 	}
 
@@ -462,11 +462,11 @@ namespace Voxymore::Core::Math
 	{
 		// Compute t of directed line s.
 		Vec3 sDir = s.Direction();
-		t = (p.d - Dot(p.n, s.begin)) / Dot(p.n, sDir);
+		t = (p.d - Dot(p.n, s.seg.begin)) / Dot(p.n, sDir);
 
 		// Search if t is in [0, 1]
 		if (0 <= t && t <= 1) {
-			q = s.begin + t * sDir;
+			q = s.seg.begin + t * sDir;
 			return true;
 		}
 
@@ -476,8 +476,8 @@ namespace Voxymore::Core::Math
 
 	bool TestRaySphere(Ray r, Sphere s, Real &t, Vec3 &q)
 	{
-		Vec3 m = r.origin - s.c;
-		Real b = Dot(m, r.direction);
+		Vec3 m = r.ray.origin - s.c;
+		Real b = Dot(m, r.ray.direction);
 		Real c = Dot(m, m) - s.r * s.r;
 
 		if (c > Real(0) && b > Real(0)) return false;
@@ -488,18 +488,18 @@ namespace Voxymore::Core::Math
 		t = -b - Sqrt(discr);
 		if (t < Real(0)) t = Real(0);
 
-		q = r.origin + t * r.direction;
+		q = r.ray.origin + t * r.ray.direction;
 		return true;
 	}
 
 	// Lost of early exit for the version requiring only a check.
 	bool Math::TestRaySphere(Ray r, Sphere s)
 	{
-		Vec3 m = r.origin - s.c;
+		Vec3 m = r.ray.origin - s.c;
 		Real c = Dot(m, m) - s.r * s.r;
 		if(c<=Real(0)) return true;
 
-		Real b = Dot(m, r.direction);
+		Real b = Dot(m, r.ray.direction);
 		if (b > Real(0)) return false;
 
 		Real discr = b * b - c;
@@ -513,15 +513,15 @@ namespace Voxymore::Core::Math
 		Real tmax = REAL_MAX;
 
 		for (int i = 0; i < 3; i++) {
-			if (Abs(r.direction[i]) < Epsilon) {
-				if (r.origin[i] < a.min[i] || r.origin[i] > a.max[i]) {
+			if (Abs(r.ray.direction[i]) < Epsilon) {
+				if (r.ray.origin[i] < a.min[i] || r.ray.origin[i] > a.max[i]) {
 					return false;
 				}
 			}
 			else {
-				Real ood = Real(1) / r.direction[i];
-				Real t1 = (a.min[i] - r.origin[i]) * ood;
-				Real t2 = (a.max[i] - r.origin[i]) * ood;
+				Real ood = Real(1) / r.ray.direction[i];
+				Real t1 = (a.min[i] - r.ray.origin[i]) * ood;
+				Real t2 = (a.max[i] - r.ray.origin[i]) * ood;
 				if (t1 > t2) {
 					std::swap(t1, t2);
 				}
@@ -540,7 +540,7 @@ namespace Voxymore::Core::Math
 
 	bool TestRayOBB(Ray r, OBB b, Real &tmin, Vec3 &q)
 	{
-		Vec3 p = b.c - r.origin;
+		Vec3 p = b.c - r.ray.origin;
 
 		Vec3 X = b.mat[0];
 		Vec3 Y = b.mat[1];
@@ -550,7 +550,7 @@ namespace Voxymore::Core::Math
 		Vec3 ey(X.y, Y.y, Z.y);
 		Vec3 ez(X.z, Y.z, Z.z);
 		Vec3 f(Dot(ex, p), Dot(ey, p), Dot(ez, p));
-		Vec3 u(Dot(ex, r.direction), Dot(ey, r.direction), Dot(ez, r.direction));
+		Vec3 u(Dot(ex, r.ray.direction), Dot(ey, r.ray.direction), Dot(ez, r.ray.direction));
 
 		tmin = -REAL_MAX;
 		Real tmax = REAL_MAX;

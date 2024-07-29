@@ -32,7 +32,6 @@ namespace Voxymore::Core::Math
 		union {
 			Real e[2];
 			Vec2 halfExtents;
-			struct {Real halfWidth; Real halfHeight;};
 		};
 	};
 

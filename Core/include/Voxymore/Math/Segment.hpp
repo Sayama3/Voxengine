@@ -14,12 +14,15 @@ namespace Voxymore::Core::Math
 		~Segment() = default;
 		Segment(const Segment&) = default;
 		Segment& operator=(const Segment&) = default;
-		Segment(Vec3 b, Vec3 e) : begin(b), end(e) {}
+		Segment(Vec3 b, Vec3 e) : seg(b,e) {}
 
-		[[nodiscard]] Vec3 Direction() const { return end - begin;}
+		[[nodiscard]] Vec3 Direction() const { return seg.end - seg.begin;}
 
+		struct Orientation {
+			Vec3 begin; Vec3 end;
+		};
 		union {
-			struct {Vec3 begin; Vec3 end;};
+			Orientation seg;
 			std::array<Vec3, 2> points;
 			Vec3 rawPoints[2];
 		};
@@ -29,14 +32,17 @@ namespace Voxymore::Core::Math
 		Ray() = default;
 		~Ray() = default;
 
-		Ray(Vec3 origin, Vec3 direction) : origin(origin), direction(Normalize(direction)) {}
-		Ray(Segment seg) : origin(seg.begin), direction(Normalize(seg.end - seg.begin)) {}
+		Ray(Vec3 origin, Vec3 direction) : ray(origin,Normalize(direction)) {}
+		Ray(Segment seg) : ray(seg.seg.begin,Normalize(seg.seg.end - seg.seg.begin)) {}
 
+		struct Orientation {
+			Vec3 origin; Vec3 direction;
+		};
 		union {
-			struct {Vec3 origin; Vec3 direction;};
+			Orientation ray;
 			std::array<Vec3, 2> data;
 		};
 
-		Vec3 GetPoint(Real t) { return origin + t * direction; }
+		Vec3 GetPoint(Real t) { return ray.origin + t * ray.direction; }
 	};
 }

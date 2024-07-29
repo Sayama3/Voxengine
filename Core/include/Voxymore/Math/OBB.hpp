@@ -32,9 +32,12 @@ namespace Voxymore::Core::Math
 		};
 
 		// Positive halfwidth extents of OBB along each axis.
+		struct Extent {
+			Real halfWidth; Real halfHeight; Real halfDepth;
+		};
 		union {
 			Vec3 e;
-			struct {Real halfWidth; Real halfHeight; Real halfDepth;};
+			Extent extent;
 		};
 
 		static bool Overlap(const OBB& a, const OBB& b);
