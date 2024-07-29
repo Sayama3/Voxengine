@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.16)
+
+include(FetchContent)
 
 add_subdirectory(glad)
 
@@ -28,4 +30,14 @@ option(TRACY_ON_DEMAND "" ON)
 add_subdirectory(tracy)
 
 add_subdirectory(hash-library)
+
+#TODO: use "Fetch Content" instead of git submodules.
+
+FetchContent_Declare(
+    jolt
+    GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics
+    GIT_TAG v5.0.0
+)
+
+FetchContent_MakeAvailable(jolt)
 

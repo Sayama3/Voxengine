@@ -63,6 +63,7 @@ a little credit list to all the library I use. I should update this list pretty 
 - [hash-library](https://create.stephan-brumme.com/hash-library/) (version 8): Portable C++ Hashing Library (*a little edition has been made to add `<machine/endian.h>` or other include to make it work on MacOS.*)
 - [json](https://github.com/nlohmann/json) JSON for Modern C++
 - [static_block](Core/vendor/static_block.hpp) An implementation of a Java-style static block, in C++ (and potentially a GCC/clang extension to avoid warnings).
+- [Jolt Physics](https://github.com/jrouwe/JoltPhysics): A multi core friendly rigid body physics and collision detection library.
 
 # License
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 
 # set enable the debugger (when the debug mode is enable?)
 if(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
@@ -39,7 +39,7 @@ target_link_libraries(Voxengine PUBLIC Voxymore::Core)
 
 target_compile_definitions(Voxengine PUBLIC VXM_USE_SIMPLE_FUNCTION)
 
-configure_file(imgui.ini ${CMAKE_CURRENT_BINARY_DIR}/imgui.ini NO_SOURCE_PERMISSIONS COPYONLY)
+configure_file(imgui.ini ${CMAKE_CURRENT_BINARY_DIR}/imgui.ini COPYONLY)
 
 if(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
     file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/EditorAssets/ ${CMAKE_CURRENT_BINARY_DIR}/EditorAssets/ RESULT copy_result COPY_ON_ERROR SYMBOLIC)

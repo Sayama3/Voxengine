@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 
 target_sources(${LIBRARY_TARGET_NAME} PRIVATE
         Voxymore/OpenGL/OpenGLContext.cpp
