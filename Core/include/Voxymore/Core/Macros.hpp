@@ -6,7 +6,6 @@
 
 #include "Voxymore/Core/PlatformDetection.hpp"
 #include "Voxymore/Core/Logger.hpp"
-#include <csignal>
 
 #ifndef IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 	#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM 1
@@ -58,17 +57,19 @@
 	#endif
 #endif
 
+#if (_MSC_VER && !__INTEL_COMPILER) || (__MINGW32__ || __MINGW64__)
+	#define VXM_BREAK() __debugbreak();
+#elif _POSIX
+	#include <csignal>
+	#define VXM_BREAK() std::raise(SIGTRAP)
+#else
+	#define VXM_BREAK()
+#endif
+
+
 #if VXM_USE_ASSERT
-    #if (_MSC_VER && !__INTEL_COMPILER) || (__MINGW32__ || __MINGW64__)
-        #define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); __debugbreak(); }
-        #define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); __debugbreak(); }
-    #elif _POSIX
-        #define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
-        #define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); std::raise(SIGTRAP) }
-    #else
-        #define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); }
-        #define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); }
-    #endif
+	#define VXM_CORE_ASSERT(condition, ...) if(!(condition)) { VXM_CORE_ERROR(__VA_ARGS__); VXM_BREAK(); }
+	#define VXM_ASSERT(condition, ...) if(!(condition)) { VXM_ERROR(__VA_ARGS__); VXM_BREAK(); }
 #else
     #define VXM_CORE_ASSERT(condition, ...)
     #define VXM_ASSERT(condition, ...)

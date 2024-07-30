@@ -25,24 +25,26 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
-option(TRACY_ENABLE "" ON)
-option(TRACY_ON_DEMAND "" ON)
+set(TRACY_ENABLE ON)
+set(TRACY_ON_DEMAND ON)
 add_subdirectory(tracy)
 
 add_subdirectory(hash-library)
 
 #TODO: use "Fetch Content" instead of git submodules.
 
-# set(JPH_DEBUG_RENDERER)
-set(JPH_SHARED_LIBRARY OFF)
-set(JPH_CROSS_PLATFORM_DETERMINISTIC ON)
+#set(JPH_DEBUG_RENDERER)
+set(CROSS_PLATFORM_DETERMINISTIC ON)
 
 FetchContent_Declare(
-    jolt
-    GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
-    GIT_TAG v5.0.0
-    SOURCE_SUBDIR Build
+        jolt
+        GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics.git"
+        GIT_TAG "v5.0.0"
+        SOURCE_SUBDIR "Build"
 )
 
 FetchContent_MakeAvailable(jolt)
 
+set_target_properties(Jolt PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+)

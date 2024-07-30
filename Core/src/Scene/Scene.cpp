@@ -30,19 +30,19 @@
 
 namespace Voxymore::Core
 {
-	Scene::Scene() : m_Name("Scene_"+std::to_string(Handle))
+	Scene::Scene() : m_Name("Scene_"+std::to_string(Handle)), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(std::string name) : m_Name(std::move(name))
+	Scene::Scene(std::string name) : m_Name(std::move(name)), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(Ref<Scene> scene) : m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
+	Scene::Scene(Ref<Scene> scene) : m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
 	{
 		VXM_PROFILE_FUNCTION();
 		Handle = scene->Handle;
@@ -57,7 +57,7 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheScene);
 	}
 
-	Scene::Scene(const Scene &scene) : m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
+	Scene::Scene(const Scene &scene) : m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
 	{
 		VXM_PROFILE_FUNCTION();
 		Handle = scene.Handle;

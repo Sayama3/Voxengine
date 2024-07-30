@@ -188,7 +188,7 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
-		JPH::PhysicsSystem m_PhysicsSystem;
+		Scope<JPH::PhysicsSystem> m_PhysicsSystem{nullptr};
 	public:
 		[[deprecated("Use the 'each<>()' function to get the desire result.")]]
 		inline entt::registry& GetRegistry() { return m_Registry; }
