@@ -160,8 +160,8 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/ImGui/TextureImGui.cpp
         src/Renderer/Cubemap.cpp
         include/Voxymore/Renderer/Cubemap.hpp
-        src/RigidbodiesPhysics/RigidbodyPhysicsLayer.cpp
-        include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp
+        src/Physics/PhysicsLayer.cpp
+        include/Voxymore/Physics/PhysicsLayer.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

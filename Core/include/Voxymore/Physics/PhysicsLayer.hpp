@@ -20,11 +20,11 @@
 namespace Voxymore::Core
 {
 
-	class RigidbodyPhysicsLayer : public Layer
+	class PhysicsLayer : public Layer
 	{
 	public:
-		RigidbodyPhysicsLayer();
-		~RigidbodyPhysicsLayer() override;
+		PhysicsLayer();
+		~PhysicsLayer() override;
 
 		virtual void OnUpdate(TimeStep ts) override;
 		virtual void OnAttach() override;

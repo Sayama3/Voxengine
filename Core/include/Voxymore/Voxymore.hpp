@@ -42,7 +42,7 @@
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
 
-#include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"

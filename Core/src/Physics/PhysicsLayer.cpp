@@ -5,11 +5,11 @@
 #include <utility>
 #include <algorithm>
 
-#include "Voxymore/Core/TypeHelpers.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/Components/CustomComponent.hpp"
+#include "Voxymore/Core/TypeHelpers.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Voxymore/Scene/Entity.decl.hpp"
-#include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
 
 #include <Jolt/Jolt.h>
 // Jolt includes
@@ -28,13 +28,13 @@
 
 namespace Voxymore::Core
 {
-	RigidbodyPhysicsLayer::RigidbodyPhysicsLayer() : Layer("Rigidbody Physics Layer")
+	PhysicsLayer::PhysicsLayer() : Layer("Rigidbody Physics Layer")
 	{
 	}
 
-	RigidbodyPhysicsLayer::~RigidbodyPhysicsLayer() = default;
+	PhysicsLayer::~PhysicsLayer() = default;
 
-	void RigidbodyPhysicsLayer::OnAttach()
+	void PhysicsLayer::OnAttach()
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -48,7 +48,7 @@ namespace Voxymore::Core
 		JPH::RegisterTypes();
 	}
 
-	void RigidbodyPhysicsLayer::OnDetach()
+	void PhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -60,7 +60,7 @@ namespace Voxymore::Core
 		JPH::Factory::sInstance = nullptr;
 	}
 
-	void RigidbodyPhysicsLayer::OnUpdate(TimeStep ts)
+	void PhysicsLayer::OnUpdate(TimeStep ts)
 	{
 		//TODO: Use a Coherence System to handle object not moving on a ground.
 
@@ -75,18 +75,18 @@ namespace Voxymore::Core
 		}
 	}
 
-	void RigidbodyPhysicsLayer::SetScene(Ref<Scene> scene)
+	void PhysicsLayer::SetScene(Ref<Scene> scene)
 	{
 		VXM_PROFILE_FUNCTION();
 		m_SceneHandle = std::move(scene);
 	}
 
-	void RigidbodyPhysicsLayer::ResetScene()
+	void PhysicsLayer::ResetScene()
 	{
 		m_SceneHandle = nullptr;
 	}
 
-	bool RigidbodyPhysicsLayer::HasScene() const
+	bool PhysicsLayer::HasScene() const
 	{
 		return m_SceneHandle != nullptr;
 	}

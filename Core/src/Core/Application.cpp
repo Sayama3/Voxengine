@@ -48,7 +48,7 @@ namespace Voxymore::Core {
 //		if(m_Parameters.addRBPhysicsLayer)
 //		{
 //			// Will be deleted by the LayerStack
-//			m_RBPhysicsLayer = new RigidbodyPhysicsLayer();
+//			m_RBPhysicsLayer = new PhysicsLayer();
 //			PushOverlay(m_RBPhysicsLayer);
 //		}
     }

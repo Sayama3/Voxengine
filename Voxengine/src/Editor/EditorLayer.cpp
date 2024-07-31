@@ -826,8 +826,8 @@ namespace Voxymore::Editor {
 //        m_ActiveScene->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
         m_ActiveScene->StartScene();
 
-		RigidbodyPhysicsLayer* rpl;
-		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		PhysicsLayer * rpl;
+		if(Application::Get().TryGetLayer<PhysicsLayer>(rpl))
 		{
 			rpl->SetScene(m_ActiveScene);
 		}
@@ -839,8 +839,8 @@ namespace Voxymore::Editor {
         m_SceneState = SceneState::Edit;
         m_CacheScene->StopScene();
 
-		RigidbodyPhysicsLayer* rpl;
-		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		PhysicsLayer * rpl;
+		if(Application::Get().TryGetLayer<PhysicsLayer>(rpl))
 		{
 			rpl->ResetScene();
 		}
@@ -860,8 +860,8 @@ namespace Voxymore::Editor {
 		if (m_SceneState != SceneState::Play) return;
 		m_SceneState = SceneState::Pause;
 
-		RigidbodyPhysicsLayer* rpl;
-		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		PhysicsLayer * rpl;
+		if(Application::Get().TryGetLayer<PhysicsLayer>(rpl))
 		{
 			rpl->ResetScene();
 		}
@@ -872,8 +872,8 @@ namespace Voxymore::Editor {
 		if (m_SceneState != SceneState::Pause) return;
 		m_SceneState = SceneState::Play;
 
-		RigidbodyPhysicsLayer* rpl;
-		if(Application::Get().TryGetLayer<RigidbodyPhysicsLayer>(rpl))
+		PhysicsLayer * rpl;
+		if(Application::Get().TryGetLayer<PhysicsLayer>(rpl))
 		{
 			rpl->SetScene(m_ActiveScene);
 		}
