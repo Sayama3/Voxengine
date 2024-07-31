@@ -14,14 +14,23 @@
 #include "Voxymore/Core/MultiThreading.hpp"
 #include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Renderer/EditorCamera.hpp"
+
+#include "Voxymore/Physics/ObjectLayerPairFilter.hpp"
+#include "Voxymore/Physics/BroadPhaseLayerInterface.hpp"
+#include "Voxymore/Physics/PhysicsListener.hpp"
+#include "Voxymore/Physics/ObjectVsBroadPhaseLayerFilter.hpp"
+
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Core/TempAllocator.h>
+#include <Jolt/Core/JobSystemThreadPool.h>
+
 #include <entt/entt.hpp>
+
 #include <algorithm>
 #include <execution>
 #include <unordered_set>
 #include <unordered_map>
-
-#include <Jolt/Jolt.h>
-#include <Jolt/Physics/PhysicsSystem.h>
 
 namespace Voxymore::Editor {
 	class SceneHierarchyPanel;
@@ -31,6 +40,7 @@ namespace Voxymore::Core
 {
 	class SceneSerializer;
 	class System;
+	class RigidbodyComponent;
 
 	class Scene : public Asset
 	{
@@ -77,6 +87,14 @@ namespace Voxymore::Core
 		[[deprecated("Use id()")]]
 		inline UUID GetID() const {return id();}
 		inline UUID id() const {return Handle;}
+	private:
+		void StartPhysics();
+		void UpdatePhysics(TimeStep ts);
+		void StopPhysics();
+	private:
+		void CreatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
+		void UpdatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
+		void UpdateShape(entt::entity e, RigidbodyComponent& rb);
 	public:
 
 		/**
@@ -188,7 +206,32 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
-		Scope<JPH::PhysicsSystem> m_PhysicsSystem{nullptr};
+	private:
+		JPH::PhysicsSystem m_PhysicsSystem;
+
+		/// Create mapping table from object layer to broadphase layer
+		/// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		BroadPhaseLayerInterface m_BroadPhaseLayer;
+
+		/// Create class that filters object vs broadphase layers
+		/// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		ObjectVsBroadPhaseLayerFilter m_ObjectVsBroadphaseLayerFilter;
+
+		/// Create class that filters object vs object layers
+		/// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		ObjectLayerPairFilter m_ObjectVsObjectLayerFilter;
+
+		/// A body activation listener gets notified when bodies activate and go to sleep
+		/// Note that this is called from a job so whatever you do here needs to be thread safe.
+		/// Registering one is entirely optional.
+		LoggerActivationListener m_BodyActivationListener;
+
+		/// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
+		/// Note that this is called from a job so whatever you do here needs to be thread safe.
+		/// Registering one is entirely optional.
+		LoggerContactListener m_ContactListener;
+
+		JPH::BodyInterface* m_BodyInterface = nullptr;
 	public:
 		[[deprecated("Use the 'each<>()' function to get the desire result.")]]
 		inline entt::registry& GetRegistry() { return m_Registry; }

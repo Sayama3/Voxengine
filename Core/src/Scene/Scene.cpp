@@ -14,7 +14,20 @@
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
+#include "Voxymore/Core/Application.hpp"
 
+
+#include "Voxymore/Physics/ObjectLayerPairFilter.hpp"
+#include "Voxymore/Physics/BroadPhaseLayerInterface.hpp"
+#include "Voxymore/Physics/PhysicsListener.hpp"
+#include "Voxymore/Physics/ObjectVsBroadPhaseLayerFilter.hpp"
+#include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Physics/RigidbodyComponent.hpp"
+#include "Voxymore/Physics/ColliderComponent.hpp"
+#include "Voxymore/Scene/Scene.decl.hpp"
+
+
+#include <Jolt/Jolt.h>
 // Jolt includes
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
@@ -30,19 +43,19 @@
 
 namespace Voxymore::Core
 {
-	Scene::Scene() : m_Name("Scene_"+std::to_string(Handle)), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
+	Scene::Scene() : m_Name("Scene_"+std::to_string(Handle))
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(std::string name) : m_Name(std::move(name)), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
+	Scene::Scene(std::string name) : m_Name(std::move(name))
 	{
 		VXM_PROFILE_FUNCTION();
 		InitScene();
 	}
 
-	Scene::Scene(Ref<Scene> scene) : m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
+	Scene::Scene(Ref<Scene> scene) : m_Name(scene->m_Name), m_ViewportHeight(scene->m_ViewportHeight), m_ViewportWidth(scene->m_ViewportWidth)
 	{
 		VXM_PROFILE_FUNCTION();
 		Handle = scene->Handle;
@@ -57,7 +70,7 @@ namespace Voxymore::Core
 		cacheSerializer.Deserialize(cacheScene);
 	}
 
-	Scene::Scene(const Scene &scene) : m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth), m_PhysicsSystem(CreateScope<JPH::PhysicsSystem>())
+	Scene::Scene(const Scene &scene) : m_Name(scene.m_Name), m_ViewportHeight(scene.m_ViewportHeight), m_ViewportWidth(scene.m_ViewportWidth)
 	{
 		VXM_PROFILE_FUNCTION();
 		Handle = scene.Handle;
@@ -98,6 +111,23 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		m_Registry.on_construct<IDComponent>().connect<&Scene::OnCreateIDComponent>(this);
 		m_Registry.on_destroy<IDComponent>().connect<&Scene::OnDestroyIDComponent>(this);
+
+
+		m_PhysicsSystem.Init(PhysicsLayer::cMaxBodies, PhysicsLayer::cNumBodyMutexes, PhysicsLayer::cMaxBodyPairs, PhysicsLayer::cMaxContactConstraints, m_BroadPhaseLayer, m_ObjectVsBroadphaseLayerFilter, m_ObjectVsObjectLayerFilter);
+
+		// A body activation listener gets notified when bodies activate and go to sleep
+		// Note that this is called from a job so whatever you do here needs to be thread safe.
+		// Registering one is entirely optional.
+		m_PhysicsSystem.SetBodyActivationListener(&m_BodyActivationListener);
+
+		// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
+		// Note that this is called from a job so whatever you do here needs to be thread safe.
+		// Registering one is entirely optional.
+		m_PhysicsSystem.SetContactListener(&m_ContactListener);
+
+		// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
+		// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
+		m_BodyInterface = &m_PhysicsSystem.GetBodyInterface();
 	}
 
 	Scene::~Scene()
@@ -154,6 +184,7 @@ namespace Voxymore::Core
 			SystemManager::GetSystem(toStopSystem)->OnStop(*this);
 			m_StartedSystem.erase(toStopSystem);
 		}
+		StartPhysics();
 		m_Started = true;
 	}
 
@@ -166,6 +197,7 @@ namespace Voxymore::Core
 			SystemManager::GetSystem(system)->OnStop(*this);
 			m_StartedSystem.erase(system);
 		}
+		StopPhysics();
 		m_Started = false;
 	}
 
@@ -250,11 +282,12 @@ namespace Voxymore::Core
 																						 });
 		}
 
+		UpdatePhysics(ts);
+
 		if(doRendering) {
 			RenderRuntime(ts);
 		}
 	}
-
 
 	void Scene::RenderEditor(TimeStep ts, EditorCamera& camera)
 	{
@@ -434,7 +467,6 @@ namespace Voxymore::Core
 		return duplicateEntity;
 	}
 
-
 	Entity Scene::GetEntity(UUID id)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -484,6 +516,172 @@ namespace Voxymore::Core
 			}
 		}
 		return Entity();
+	}
+
+
+	void Scene::StartPhysics()
+	{
+		VXM_CORE_ASSERT(m_BodyInterface, "The body interface is not initialized.");
+		if(!m_BodyInterface) return;
+		auto func = [this](entt::entity e, RigidbodyComponent& rb) {CreatePhysicsBody(e,rb);};
+		each<RigidbodyComponent>(func);
+
+		m_PhysicsSystem.OptimizeBroadPhase();
+	}
+
+	void Scene::UpdatePhysics(TimeStep ts)
+	{
+		PhysicsLayer* physicsLayer = Application::Get().FindLayer<PhysicsLayer>();
+
+		if(!physicsLayer) {VXM_CORE_ERROR("No Physics Layer in the application."); return; }
+
+		/// === Create New Rigidbody===
+		auto createPhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {CreatePhysicsBody(e,rb);};
+		each<RigidbodyComponent>(exclude<RigibodyIDComponent>,createPhysicsBodyFunc);
+		// Dont update Physics Parameters in runtime yet.
+		auto updatePhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {
+			UpdatePhysicsBody(e,rb);
+			Entity ent(e,this);
+			if(ent.HasComponent<RigidbodyDirty>()) ent.RemoveComponent<RigidbodyDirty>();
+		};
+
+		/// === Update Dirty Rigidbody ===
+		auto viewRb = m_Registry.view<RigidbodyComponent, RigidbodyDirty>();
+		std::for_each(viewRb.begin(), viewRb.end(), [&viewRb, &updatePhysicsBodyFunc](auto e)
+		{
+			auto& rbComponent = viewRb.template get<RigidbodyComponent>(e);
+			updatePhysicsBodyFunc(e,rbComponent);
+		});
+		auto updateShapeFunc = [this](entt::entity e, RigidbodyComponent& rb) {
+			UpdateShape(e,rb);
+			Entity ent(e,this);
+			if(ent.HasComponent<ColliderDirty>()) ent.RemoveComponent<ColliderDirty>();
+		};
+
+		/// === Update Dirty Collider ===
+		auto viewCol = m_Registry.view<RigidbodyComponent, ColliderDirty>();
+		std::for_each(viewCol.begin(), viewCol.end(), [&viewCol, &updateShapeFunc](auto e)
+		{
+			auto& rbComponent = viewCol.template get<RigidbodyComponent>(e);
+			updateShapeFunc(e,rbComponent);
+		});
+
+
+		/// === Update Physics System ===
+		/// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
+		const int cCollisionSteps = 1;
+		// TODO: Defer the collision update for stability.
+		m_PhysicsSystem.Update(ts.GetSeconds(), cCollisionSteps, &physicsLayer->m_TempAllocator, &physicsLayer->m_JobSystem);
+
+		auto updatePosFunc = [this](entt::entity e, RigibodyIDComponent& id, TransformComponent& trans) {
+			if(id.BodyID.IsInvalid()) return;
+			auto pos = m_BodyInterface->GetPosition(id.BodyID);
+			auto rot = m_BodyInterface->GetRotation(id.BodyID);
+			trans.SetPosition(pos.GetX(), pos.GetY(), pos.GetZ());
+			trans.SetRotation(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
+		};
+		each<RigibodyIDComponent, TransformComponent>( MultiThreading::ExecutionPolicy::Parallel, updatePosFunc);
+
+	}
+
+	void Scene::StopPhysics()
+	{
+		auto func = [this](entt::entity e, RigibodyIDComponent& rb) {
+		  Entity entity(e, this);
+		  auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
+		  if(!idComp.BodyID.IsInvalid() && m_BodyInterface) {
+			  m_BodyInterface->DestroyBody(idComp.BodyID);
+		  }
+		  entity.RemoveComponent<RigibodyIDComponent>();
+		};
+		each<RigibodyIDComponent>(func);
+	}
+
+#define VXM_GET_SHAPE(entity, shp, comp) if(entity.HasComponent<comp>()) shp = entity.GetComponent<comp>().GetShape()
+	void Scene::CreatePhysicsBody(entt::entity e, RigidbodyComponent &rb)
+	{
+		Entity entity(e, this);
+		const JPH::Shape* shp{nullptr};
+
+		VXM_GET_SHAPE(entity, shp, ColliderComponent);
+		else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
+		else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
+		VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+		if(!shp) return;
+
+		auto creationSettings = rb.GetCreationSettings(shp, entity);
+		auto activation = rb.GetActivation();
+		auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
+		if(idComp.BodyID.IsInvalid()) {
+			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
+		} else {
+			m_BodyInterface->SetShape(idComp.BodyID, shp, true, activation);
+			m_BodyInterface->SetPosition(idComp.BodyID, creationSettings.mPosition, activation);
+			m_BodyInterface->SetRotation(idComp.BodyID, creationSettings.mRotation, activation);
+			m_BodyInterface->SetMotionType(idComp.BodyID, creationSettings.mMotionType, activation);
+			m_BodyInterface->SetObjectLayer(idComp.BodyID, creationSettings.mObjectLayer);
+		}
+		auto lin = rb.GetLinearVelocity();
+		auto ang = rb.GetAngularVelocity();
+
+		m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
+		m_BodyInterface->SetFriction(idComp.BodyID, rb.GetFriction());
+		m_BodyInterface->SetGravityFactor(idComp.BodyID, rb.GetGravityFactor());
+	}
+
+	void Scene::UpdatePhysicsBody(entt::entity e, RigidbodyComponent &rb)
+	{
+		Entity entity(e, this);
+
+		auto activation = rb.GetActivation();
+		auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
+		if(idComp.BodyID.IsInvalid()) {
+			const JPH::Shape* shp{nullptr};
+
+			VXM_GET_SHAPE(entity, shp, ColliderComponent);
+			else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
+			else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
+			VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+			if(!shp) return;
+			auto creationSettings = rb.GetCreationSettings(shp, entity);
+			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
+			auto lin = rb.GetLinearVelocity();
+			auto ang = rb.GetAngularVelocity();
+			m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
+		} else {
+			m_BodyInterface->SetMotionType(idComp.BodyID, rb.GetMotionType(), activation);
+			m_BodyInterface->SetObjectLayer(idComp.BodyID, rb.GetLayer());
+		}
+
+		m_BodyInterface->SetFriction(idComp.BodyID, rb.GetFriction());
+		m_BodyInterface->SetGravityFactor(idComp.BodyID, rb.GetGravityFactor());
+	}
+
+	void Scene::UpdateShape(entt::entity e, RigidbodyComponent &rb)
+	{
+		Entity entity(e, this);
+
+		const JPH::Shape* shp{nullptr};
+		VXM_GET_SHAPE(entity, shp, ColliderComponent);
+		else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
+		else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
+		VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+		if(!shp) return;
+
+		auto activation = rb.GetActivation();
+
+		auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
+		if(idComp.BodyID.IsInvalid()) {
+			auto creationSettings = rb.GetCreationSettings(shp, entity);
+			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
+			auto lin = rb.GetLinearVelocity();
+			auto ang = rb.GetAngularVelocity();
+			m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
+			m_BodyInterface->SetFriction(idComp.BodyID, rb.GetFriction());
+			m_BodyInterface->SetGravityFactor(idComp.BodyID, rb.GetGravityFactor());
+		} else {
+			m_BodyInterface->SetShape(idComp.BodyID, shp, true, activation);
+		}
 	}
 } // Voxymore
 // Core

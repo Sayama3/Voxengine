@@ -162,6 +162,18 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Cubemap.hpp
         src/Physics/PhysicsLayer.cpp
         include/Voxymore/Physics/PhysicsLayer.hpp
+        src/Physics/ObjectLayerPairFilter.cpp
+        include/Voxymore/Physics/ObjectLayerPairFilter.hpp
+        src/Physics/BroadPhaseLayerInterface.cpp
+        include/Voxymore/Physics/BroadPhaseLayerInterface.hpp
+        src/Physics/ObjectVsBroadPhaseLayerFilter.cpp
+        include/Voxymore/Physics/ObjectVsBroadPhaseLayerFilter.hpp
+        src/Physics/PhysicsListener.cpp
+        include/Voxymore/Physics/PhysicsListener.hpp
+        src/Physics/RigidbodyComponent.cpp
+        include/Voxymore/Physics/RigidbodyComponent.hpp
+        src/Physics/ColliderComponent.cpp
+        include/Voxymore/Physics/ColliderComponent.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

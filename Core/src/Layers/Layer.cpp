@@ -12,4 +12,4 @@ namespace Voxymore::Core {
     Layer::~Layer() {
 
     }
-} // Layers
+} // PhysicalLayers

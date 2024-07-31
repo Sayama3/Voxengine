@@ -10,6 +10,8 @@
 #include "Voxymore/Core/TypeHelpers.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Voxymore/Scene/Entity.decl.hpp"
+#include "Voxymore/Physics/RigidbodyComponent.hpp"
+#include "Voxymore/Physics/ColliderComponent.hpp"
 
 #include <Jolt/Jolt.h>
 // Jolt includes
@@ -46,11 +48,27 @@ namespace Voxymore::Core
 		// If you have your own custom shape types you probably need to register their handlers with the CollisionDispatch before calling this function.
 		// If you implement your own default material (PhysicsMaterial::sDefault) make sure to initialize it before this function or else this function will create one for you.
 		JPH::RegisterTypes();
+
+		RigidbodyComponent::RegisterComponent();
+		RigibodyIDComponent::RegisterComponent();
+		ColliderComponent::RegisterComponent();
+		RigidbodyDirty::RegisterComponent();
+		ColliderDirty::RegisterComponent();
+		MeshColliderComponent::RegisterComponent();
+		HeightFieldColliderComponent::RegisterComponent();
 	}
 
 	void PhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
+
+		RigidbodyDirty::UnregisterComponent();
+		RigibodyIDComponent::UnregisterComponent();
+		ColliderDirty::UnregisterComponent();
+		ColliderComponent::UnregisterComponent();
+		MeshColliderComponent::UnregisterComponent();
+		HeightFieldColliderComponent::UnregisterComponent();
+		RigidbodyComponent::UnregisterComponent();
 
 		// Unregisters all types with the factory and cleans up the default material
 		JPH::UnregisterTypes();
@@ -62,8 +80,6 @@ namespace Voxymore::Core
 
 	void PhysicsLayer::OnUpdate(TimeStep ts)
 	{
-		//TODO: Use a Coherence System to handle object not moving on a ground.
-
 		VXM_PROFILE_FUNCTION();
 
 		if(!HasScene()) {
