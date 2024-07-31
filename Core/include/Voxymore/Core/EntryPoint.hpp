@@ -39,6 +39,7 @@ static bool AssertFailedImpl(const char *inExpression, const char *inMessage, co
 	VXM_BREAK();
 	return true;
 };
+
 //#ifndef VXM_Core_EXPORTS
 int main(int argc, char** argv)
 {
@@ -49,6 +50,7 @@ int main(int argc, char** argv)
 
 	Voxymore::Core::Log::Init();
 
+	// Initialize Jolt. It's need to be done before the application started.
 	// Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
 	// This needs to be done before any other Jolt function is called.
 	JPH::RegisterDefaultAllocator();

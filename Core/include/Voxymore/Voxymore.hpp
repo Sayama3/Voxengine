@@ -27,8 +27,6 @@
 #include "Voxymore/Assets/AssetManager.hpp"
 
 #include "Voxymore/Math/Math.hpp"
-#include "Voxymore/Math/BoundingObject.hpp"
-#include "Voxymore/Math/BoundingSphere.hpp"
 
 #include "Voxymore/Layers/Layer.hpp"
 
@@ -44,27 +42,12 @@
 #include "Voxymore/Components/PrimitiveComponent.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
 
-#include "Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp"
-#include "Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp"
-#include "Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp"
-#include "Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp"
-#include "Voxymore/ParticlesPhysics/Particle.hpp"
-#include "Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp"
-#include "Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp"
-#include "Voxymore/ParticlesPhysics/Systems/SpringForceSystem.hpp"
-
-#include "Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp"
-#include "Voxymore/RigidbodiesPhysics/Collisions/RBContactResolver.hpp"
-#include "Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp"
-#include "Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp"
-#include "Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp"
-#include "Voxymore/RigidbodiesPhysics/Rigidbody.hpp"
 #include "Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp"
-#include "Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp"
 
 #include "Voxymore/Scene/Entity.hpp"
 #include "Voxymore/Scene/Scene.hpp"
 #include "Voxymore/Scene/SceneSerializer.hpp"
+#include "Voxymore/Scene/Systems.hpp"
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Renderer/RenderCommand.hpp"
