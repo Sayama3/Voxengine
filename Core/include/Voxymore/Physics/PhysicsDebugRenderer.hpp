@@ -21,6 +21,9 @@ namespace Voxymore::Core
 	class PhysicsDebugRenderer : public JPH::DebugRenderer
 	{
 	public:
+		static inline std::unordered_map<uint32_t, AssetHandle> s_Materials{};
+		static AssetHandle GetOrCreateMaterial(JPH::Color color);
+	public:
 		PhysicsDebugRenderer();
 
 		/// Should be called every frame by the application to provide the camera position.
@@ -31,7 +34,7 @@ namespace Voxymore::Core
 			mCameraPosSet = true;
 		}
 	public:
-		static inline Ref<Material> s_Material {nullptr};
+		static inline Ref<Shader> s_Shader {nullptr};
 	public:
 		virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor) override;
 

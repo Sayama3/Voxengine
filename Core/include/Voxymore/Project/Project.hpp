@@ -30,7 +30,7 @@ namespace Voxymore::Core
 		std::optional<AssetHandle> startSceneId;
 		std::optional<AssetHandle> defaultMaterialId{std::nullopt};
 		std::optional<AssetHandle> defaultShaderId{std::nullopt};
-		std::optional<AssetHandle> gizmoMaterialId{std::nullopt};
+		std::optional<AssetHandle> gizmoShaderId{std::nullopt};
 
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};
@@ -55,8 +55,8 @@ namespace Voxymore::Core
 		static void SetMainScene(const Ref<Scene>& scene);
 		static AssetHandle GetMainScene();
 
-		static void SetGizmoMaterial(AssetHandle id);
-		static AssetHandle GetGizmoMaterial();
+		static void SetGizmoShader(AssetHandle id);
+		static AssetHandle GetGizmoShader();
 		static void SetDefaultMaterial(AssetHandle id);
 		static AssetHandle GetDefaultMaterial();
 		static void SetDefaultShader(AssetHandle id);

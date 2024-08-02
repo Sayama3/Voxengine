@@ -21,11 +21,11 @@ namespace Voxymore::Core
 	{
 		if(!Project::ProjectIsLoaded()) return;
 		const ProjectConfig& config = Project::GetConfig();
-		if(!config.gizmoMaterialId.has_value()) return;
-		MaterialField gizmoMat {config.gizmoMaterialId.value()};
+		if(!config.gizmoShaderId.has_value()) return;
+		ShaderField gizmoMat {config.gizmoShaderId.value()};
 		if(!gizmoMat.IsValid()) return;
 		VXM_CORE_INFO("Assigning a new Gizmo Material to the PhysicsDebugRenderer.");
-		PhysicsDebugRenderer::s_Material = gizmoMat.GetAsset();
+		PhysicsDebugRenderer::s_Shader = gizmoMat.GetAsset();
 	}
 
 	std::unordered_map<AssetHandle, void_func_ptr>& Project::GetOnLoad()
@@ -241,7 +241,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		VXM_CORE_ASSERT(s_ActiveProject->m_Config.startSceneId.has_value(), "Not Start Scene associated with the project.");
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.startSceneId.has_value(), "No Start Scene associated with the project.");
 		return s_ActiveProject->m_Config.startSceneId.value();
 	}
 
@@ -256,7 +256,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultMaterialId.has_value(), "Not Default Material associated with the project.");
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultMaterialId.has_value(), "No Default Material associated with the project.");
 		return s_ActiveProject->m_Config.defaultMaterialId.value();
 	}
 	void Project::SetDefaultShader(AssetHandle id)
@@ -269,29 +269,29 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultShaderId.has_value(), "Not Default Shader associated with the project.");
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultShaderId.has_value(), "No Default Shader associated with the project.");
 		return s_ActiveProject->m_Config.defaultShaderId.value();
 	}
 
-	void Project::SetGizmoMaterial(AssetHandle id)
+	void Project::SetGizmoShader(AssetHandle id)
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		s_ActiveProject->m_Config.gizmoMaterialId = id;
+		s_ActiveProject->m_Config.gizmoShaderId = id;
 		//TODO: #ifdef with a 'VXM_DRAW_GIZMO' to know if we compile this thing.
-		MaterialField gizmoMat{id};
+		ShaderField gizmoMat{id};
 		if(gizmoMat) {
 			VXM_CORE_INFO("Assigning a new Gizmo Material to the PhysicsDebugRenderer.");
-			PhysicsDebugRenderer::s_Material = gizmoMat.GetAsset();
+			PhysicsDebugRenderer::s_Shader = gizmoMat.GetAsset();
 		}
 	}
 
-	AssetHandle Project::GetGizmoMaterial()
+	AssetHandle Project::GetGizmoShader()
 	{
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
-		VXM_CORE_ASSERT(s_ActiveProject->m_Config.gizmoMaterialId.has_value(), "Not Gizmo Material associated with the project.");
-		return s_ActiveProject->m_Config.gizmoMaterialId.value();
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.gizmoShaderId.has_value(), "No Gizmo Shader associated with the project.");
+		return s_ActiveProject->m_Config.gizmoShaderId.value();
 	}
 
 } // namespace Voxymore::Core

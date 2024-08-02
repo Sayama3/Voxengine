@@ -15,7 +15,7 @@ namespace Voxymore::Core {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		glLineWidth(1);
+		glLineWidth(2);
 	}
 
 	void OpenGLRenderAPI::Shutdown() {

@@ -34,9 +34,9 @@ namespace Voxymore::Core
 		{
 			out << KEYVAL("DefaultMaterialId", config.defaultMaterialId.value());
 		}
-		if(config.gizmoMaterialId.has_value())
+		if(config.gizmoShaderId.has_value())
 		{
-			out << KEYVAL("GizmoMaterialId", config.gizmoMaterialId.value());
+			out << KEYVAL("GizmoShaderId", config.gizmoShaderId.value());
 		}
 		if(config.defaultShaderId.has_value())
 		{
@@ -97,8 +97,8 @@ namespace Voxymore::Core
 		else config.startSceneId = std::nullopt;
 		if(projectNode["DefaultMaterialId"]) config.defaultMaterialId = projectNode["DefaultMaterialId"].as<UUID>();
 		else config.defaultMaterialId = std::nullopt;
-		if(projectNode["GizmoMaterialId"]) config.gizmoMaterialId = projectNode["GizmoMaterialId"].as<UUID>();
-		else config.gizmoMaterialId = std::nullopt;
+		if(projectNode["GizmoShaderId"]) config.gizmoShaderId = projectNode["GizmoShaderId"].as<UUID>();
+		else config.gizmoShaderId = std::nullopt;
 		if(projectNode["DefaultShaderId"]) config.defaultShaderId = projectNode["DefaultShaderId"].as<UUID>();
 		else config.defaultShaderId = std::nullopt;
 

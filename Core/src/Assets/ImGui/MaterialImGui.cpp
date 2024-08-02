@@ -35,13 +35,13 @@ namespace Voxymore::Core
 			shouldClose = true;
 		}
 
-		name = "Set as gizmo material##";
-		name += asset.Handle.string();
-		if(ImGui::MenuItem(name.c_str())) {
-			Project::SetGizmoMaterial(asset.Handle);
-			Project::SaveActive();
-			shouldClose = true;
-		}
+//		name = "Set as gizmo material##";
+//		name += asset.Handle.string();
+//		if(ImGui::MenuItem(name.c_str())) {
+//			Project::SetGizmoMaterial(asset.Handle);
+//			Project::SaveActive();
+//			shouldClose = true;
+//		}
 
 		return shouldClose;
 	}

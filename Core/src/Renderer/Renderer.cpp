@@ -241,6 +241,11 @@ namespace Voxymore::Core {
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
+
+		//TODO: Find something better.
+		{
+
+		}
 	}
 
 	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform, int entityId) {

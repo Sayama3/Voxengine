@@ -80,7 +80,7 @@ namespace Voxymore::Core
 //		Vec3 up{-ab.z, ab.x, -ab.y};
 //
 //		Ref<Mesh> m = GetOrCreateLine();
-//		VXM_CORE_ASSERT(s_Material, "No material for the Physics Debug Renderer.");
+//		VXM_CORE_ASSERT(s_Shader, "No shader for the Physics Debug Renderer.");
 //		if(s_Material) m->SetMaterial(s_Material->Handle);
 //		m->SetDrawMode(DrawMode::Triangles);
 //		Renderer::SubmitGizmo(m, Math::TRS((a+b) * Real(0.5), glm::quatLookAt(ab, up), {1,1,Math::Max(lenAB, Real(0.001))}));
@@ -116,8 +116,7 @@ namespace Voxymore::Core
 		Vec3 up{-ab.z, ab.x, -ab.y};
 
 		Ref<Mesh> m = GetOrCreateLine();
-		VXM_CORE_ASSERT(s_Material, "No material for the Physics Debug Renderer.");
-		if(s_Material) m->SetMaterial(s_Material->Handle);
+		m->SetMaterial(GetOrCreateMaterial(inColor));
 		Renderer::SubmitGizmo(m, Math::TRS((a+b) * Real(0.5), glm::quatLookAt(ab, up), {1,1,Math::Max(lenAB, Real(0.001))}));
 	}
 
@@ -133,7 +132,7 @@ namespace Voxymore::Core
 //		Vec4 color{1,1,1,1};
 //		Ref<Mesh> m = CreateRef<Mesh>(std::initializer_list<Core::Vertex>{{a,normal,texCoord,color},{b,normal,texCoord,color}});
 //		m->SetDrawMode(DrawMode::Lines);
-//		VXM_CORE_ASSERT(s_Material, "No material for the Physics Debug Renderer.");
+//		VXM_CORE_ASSERT(s_Shader, "No shader for the Physics Debug Renderer.");
 //		if(s_Material) m->SetMaterial(s_Material->Handle);
 //		Renderer::SubmitGizmo(m);
 //	}
@@ -141,7 +140,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		Vec3 a{inV1.GetX(), inV1.GetY(), inV1.GetZ()},b{inV2.GetX(), inV2.GetY(), inV2.GetZ()},c{inV3.GetX(), inV3.GetY(), inV3.GetZ()};
-		Vec4 color{inColor.r, inColor.g, inColor.b, inColor.a};
+		Vec4 color = Convert(inColor);
 		Vec3 normal;
 		{
 			Vec3 u = b - a;
@@ -152,8 +151,7 @@ namespace Voxymore::Core
 			normal.z = (u.x * v.y) - (u.y * v.x);
 		}
 		Ref<Mesh> m = CreateRef<Mesh>(std::initializer_list<Voxymore::Core::Vertex>{{a,normal, Vec2{0,0},color},{b,normal, Vec2{0,0},color},{c,normal, Vec2{0,0},color}});
-		VXM_CORE_ASSERT(s_Material, "No material for the Physics Debug Renderer.");
-		if(s_Material) m->SetMaterial(s_Material->Handle);
+		m->SetMaterial(GetOrCreateMaterial(inColor));
 		Renderer::SubmitGizmo(m);
 	}
 
@@ -217,13 +215,37 @@ namespace Voxymore::Core
 		const BatchImpl* batch = static_cast<const BatchImpl *>(lod->mTriangleBatch.GetPtr());
 
 		Ref<Mesh> m = CreateRef<Mesh>(batch->mVertices, batch->mIndices, Convert(inWorldSpaceBounds));
-		VXM_CORE_ASSERT(s_Material, "No material for the Physics Debug Renderer.");
-		if(s_Material) m->SetMaterial(s_Material->Handle);
+		m->SetMaterial(GetOrCreateMaterial(inModelColor));
 		Renderer::SubmitGizmo(m, Convert(inModelMatrix), inDrawMode == EDrawMode::Wireframe);
 	}
 
 	PhysicsDebugRenderer::PhysicsDebugRenderer()
 	{
 		Initialize();
+	}
+
+	AssetHandle PhysicsDebugRenderer::GetOrCreateMaterial(JPH::Color color)
+	{
+		static_assert(sizeof(JPH::Color) == sizeof(uint32_t));
+		union {
+			JPH::Color col;
+			uint32_t id;
+		};
+		col = color;
+
+		if(s_Materials.contains(id)) {
+			if (s_Shader) {
+				MaterialField mat = s_Materials[id];
+				if(mat) mat.GetAsset()->ChangeShader(s_Shader);
+			}
+		} else {
+			VXM_CORE_ASSERT(s_Shader, "No shader for the Physics Debug Renderer.");
+			Ref<Material> mat;
+			if(s_Shader) mat = Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Material>(s_Shader);
+			else mat = Project::GetActive()->GetEditorAssetManager()->CreateMemoryAsset<Material>();
+			mat->GetMaterialsParameters().PbrMetallicRoughness.BaseColorFactor = Convert(color);
+			s_Materials[id] = mat->Handle;
+		}
+		return s_Materials[id];
 	}
 }// namespace Voxymore::Core

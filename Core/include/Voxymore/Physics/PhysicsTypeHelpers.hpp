@@ -13,6 +13,7 @@ namespace Voxymore::Core
 {
 	inline Vec3 Convert(JPH::Vec3 val) {return {val.GetX(),val.GetY(),val.GetZ()};}
 	inline Vec4 Convert(JPH::Vec4 val) {return {val.GetX(),val.GetY(),val.GetZ(),val.GetW()};}
+	inline Vec4 Convert(JPH::Color val) {return {Real(val.r) / Real(255),Real(val.g) / Real(255),Real(val.b) / Real(255),Real(val.a) / Real(255)};}
 	inline Quat Convert(JPH::Quat val) {return Quat::wxyz(val.GetW(), val.GetX(), val.GetY(), val.GetZ());}
 	inline Mat4 Convert(JPH::Mat44 inModelMatrix) {return {
 				inModelMatrix(0,0),inModelMatrix(1,0),inModelMatrix(2,0),inModelMatrix(3,0),
@@ -25,7 +26,7 @@ namespace Voxymore::Core
 			{vert.mPosition.x,vert.mPosition.y,vert.mPosition.z},
 			{vert.mNormal.x,vert.mNormal.y,vert.mNormal.z},
 			{vert.mUV.x,vert.mUV.y},
-			{Real(vert.mColor.r) / Real(255),Real(vert.mColor.g) / Real(255),Real(vert.mColor.b) / Real(255),Real(vert.mColor.a) / Real(255)}
+			Convert(vert.mColor)
 		};
 	}
 
