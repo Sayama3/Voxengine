@@ -92,7 +92,7 @@ namespace Voxymore::Core {
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 	public:
-		static void SubmitGizmo(Ref<Mesh> model, const glm::mat4& transform = glm::identity<glm::mat4>(), bool ignoreDepth = true, bool wireModel = false);
+		static void SubmitGizmo(Ref<Mesh> model, const glm::mat4& transform = glm::identity<glm::mat4>(), bool wireModel = false, bool ignoreDepth = true);
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

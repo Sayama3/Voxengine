@@ -213,7 +213,9 @@ namespace Voxymore::Core {
 		for(const auto& [mesh, matrix, wireframe] : s_Data.DepthGizmos)
 		{
 			if(wireframe) RenderCommand::EnableWireframe();
+//			if(wireframe) RenderCommand::DisableDoubleSided();
 			DrawGizmo(mesh, matrix);
+//			if(wireframe) RenderCommand::DisableDoubleSided();
 			if(wireframe) RenderCommand::DisableWireframe();
 		}
 
@@ -227,7 +229,9 @@ namespace Voxymore::Core {
 		for(const auto& [mesh, matrix, wireframe] : s_Data.NonDepthGizmos)
 		{
 			if(wireframe) RenderCommand::EnableWireframe();
+//			if(wireframe) RenderCommand::DisableDoubleSided();
 			DrawGizmo(mesh, matrix);
+//			if(wireframe) RenderCommand::DisableDoubleSided();
 			if(wireframe) RenderCommand::DisableWireframe();
 		}
 		RenderCommand::EnableDepth();
@@ -389,7 +393,7 @@ namespace Voxymore::Core {
 		RenderCommand::SetViewport(0,0,width,height);
 	}
 
-	void Renderer::SubmitGizmo(Ref<Mesh> model, const glm::mat4& matrix, bool ignoreDepth, bool wireModel)
+	void Renderer::SubmitGizmo(Ref<Mesh> model, const glm::mat4& matrix, bool wireModel, bool ignoreDepth)
 	{
 		if(ignoreDepth) {
 			s_Data.NonDepthGizmos.emplace_back(std::move(model), matrix, wireModel);
