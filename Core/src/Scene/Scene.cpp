@@ -24,6 +24,7 @@
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Voxymore/Physics/RigidbodyComponent.hpp"
 #include "Voxymore/Physics/ColliderComponent.hpp"
+#include "Voxymore/Physics/PhysicsDebugRenderer.hpp"
 #include "Voxymore/Scene/Scene.decl.hpp"
 
 
@@ -214,6 +215,8 @@ namespace Voxymore::Core
 			}
 		}
 
+		UpdatePhysicsState();
+
 		if(doRendering) {
 			VXM_ASSERT(camera, "Camera cannot be null if we do the Editor Rendering.");
 			RenderEditor(ts, *camera);
@@ -282,6 +285,7 @@ namespace Voxymore::Core
 																						 });
 		}
 
+		UpdatePhysicsState();
 		UpdatePhysics(ts);
 
 		if(doRendering) {
@@ -308,26 +312,8 @@ namespace Voxymore::Core
 		ShaderField cubemapShader = cc ? cc->CubemapShader : NullAssetHandle;
 
 		Renderer::BeginScene(camera, lights, cubemap, cubemapShader);
-		{
-			auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (auto entity: modelsView) {
-				auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-				if(model.IsValid())
-				{
-					Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
-				}
-			}
 
-			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : primitives)
-			{
-				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
-				if(pc.IsValid())
-				{
-					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
-				}
-			}
-		}
+		RenderLoop();
 
 		Renderer::EndScene();
 	}
@@ -369,29 +355,69 @@ namespace Voxymore::Core
 
 			Renderer::BeginScene(*mainCamera, cameraTransform, lights, cubemap, cubemapShader);
 
-			{
-				auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
-				for (auto entity: modelsView) {
-					auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
-					if(model.IsValid())
-					{
-						Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
-					}
-				}
-			}
-
-			auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : primitives)
-			{
-				auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
-				if(pc.IsLoaded())
-				{
-					Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
-				}
-			}
+			RenderLoop();
 
 			Renderer::EndScene();
 		}
+	}
+
+	void Scene::RenderLoop()
+	{
+		auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
+		for (auto entity: modelsView) {
+			auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
+			if(model.IsValid())
+			{
+				Renderer::Submit(model.GetModel(), transform.GetTransform(), static_cast<int>(entity));
+			}
+		}
+
+		auto primitives = m_Registry.view<PrimitiveComponent, TransformComponent>(entt::exclude<DisableComponent>);
+		for (entt::entity entity : primitives)
+		{
+			auto&& [pc, transform] = primitives.get<PrimitiveComponent, TransformComponent>(entity);
+			if(pc.IsValid())
+			{
+				Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
+			}
+		}
+
+		// Draw Physics
+		if(JPH::DebugRenderer::sInstance == nullptr) {
+			JPH::DebugRenderer::sInstance = new PhysicsDebugRenderer();
+		}
+		Entity camera = GetPrimaryCameraEntity();
+		if(camera) {
+			auto pos = camera.GetComponent<TransformComponent>().GetPosition();
+			reinterpret_cast<PhysicsDebugRenderer*>(JPH::DebugRenderer::sInstance)->SetCameraPos({pos.x, pos.y, pos.z});
+		}
+
+		// TODO: Fetch the 'JPH::BodyManager::DrawSettings' from some project settings somewhere
+		static JPH::BodyManager::DrawSettings s_DrawSettings {
+				false, 												// mDrawGetSupportFunction
+				false, 												// mDrawSupportDirection
+				false, 												// mDrawGetSupportingFace
+				true, 												// mDrawShape
+				true, 												// mDrawShapeWireframe
+				JPH::BodyManager::EShapeColor::SleepColor, 	// mDrawShapeColor
+				false, 												// mDrawBoundingBox
+				false, 												// mDrawCenterOfMassTransform
+				false, 												// mDrawWorldTransform
+				true, 												// mDrawVelocity
+				false, 												// mDrawMassAndInertia
+				false, 												// mDrawSleepStats
+				false, 												// mDrawSoftBodyVertices
+				false, 												// mDrawSoftBodyVertexVelocities
+				false, 												// mDrawSoftBodyEdgeConstraints
+				false, 												// mDrawSoftBodyBendConstraints
+				false, 												// mDrawSoftBodyVolumeConstraints
+				false, 												// mDrawSoftBodySkinConstraints
+				false, 												// mDrawSoftBodyLRAConstraints
+				false, 												// mDrawSoftBodyPredictedBounds
+		};
+
+		m_PhysicsSystem.DrawBodies(s_DrawSettings, JPH::DebugRenderer::sInstance);
+		m_PhysicsSystem.DrawConstraints(JPH::DebugRenderer::sInstance);
 	}
 
 	Entity Scene::CreateEntity()
@@ -518,14 +544,11 @@ namespace Voxymore::Core
 		return Entity();
 	}
 
-
 	void Scene::StartPhysics()
 	{
 		VXM_CORE_ASSERT(m_BodyInterface, "The body interface is not initialized.");
 		if(!m_BodyInterface) return;
-		auto func = [this](entt::entity e, RigidbodyComponent& rb) {CreatePhysicsBody(e,rb);};
-		each<RigidbodyComponent>(func);
-
+		UpdatePhysicsState();
 		m_PhysicsSystem.OptimizeBroadPhase();
 	}
 
@@ -535,38 +558,6 @@ namespace Voxymore::Core
 
 		if(!physicsLayer) {VXM_CORE_ERROR("No Physics Layer in the application."); return; }
 
-		/// === Create New Rigidbody===
-		auto createPhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {CreatePhysicsBody(e,rb);};
-		each<RigidbodyComponent>(exclude<RigibodyIDComponent>,createPhysicsBodyFunc);
-		// Dont update Physics Parameters in runtime yet.
-		auto updatePhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {
-			UpdatePhysicsBody(e,rb);
-			Entity ent(e,this);
-			if(ent.HasComponent<RigidbodyDirty>()) ent.RemoveComponent<RigidbodyDirty>();
-		};
-
-		/// === Update Dirty Rigidbody ===
-		auto viewRb = m_Registry.view<RigidbodyComponent, RigidbodyDirty>();
-		std::for_each(viewRb.begin(), viewRb.end(), [&viewRb, &updatePhysicsBodyFunc](auto e)
-		{
-			auto& rbComponent = viewRb.template get<RigidbodyComponent>(e);
-			updatePhysicsBodyFunc(e,rbComponent);
-		});
-		auto updateShapeFunc = [this](entt::entity e, RigidbodyComponent& rb) {
-			UpdateShape(e,rb);
-			Entity ent(e,this);
-			if(ent.HasComponent<ColliderDirty>()) ent.RemoveComponent<ColliderDirty>();
-		};
-
-		/// === Update Dirty Collider ===
-		auto viewCol = m_Registry.view<RigidbodyComponent, ColliderDirty>();
-		std::for_each(viewCol.begin(), viewCol.end(), [&viewCol, &updateShapeFunc](auto e)
-		{
-			auto& rbComponent = viewCol.template get<RigidbodyComponent>(e);
-			updateShapeFunc(e,rbComponent);
-		});
-
-
 		/// === Update Physics System ===
 		/// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
 		const int cCollisionSteps = 1;
@@ -574,11 +565,11 @@ namespace Voxymore::Core
 		m_PhysicsSystem.Update(ts.GetSeconds(), cCollisionSteps, &physicsLayer->m_TempAllocator, &physicsLayer->m_JobSystem);
 
 		auto updatePosFunc = [this](entt::entity e, RigibodyIDComponent& id, TransformComponent& trans) {
-			if(id.BodyID.IsInvalid()) return;
-			auto pos = m_BodyInterface->GetPosition(id.BodyID);
-			auto rot = m_BodyInterface->GetRotation(id.BodyID);
-			trans.SetPosition(pos.GetX(), pos.GetY(), pos.GetZ());
-			trans.SetRotation(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
+		  if(id.BodyID.IsInvalid()) return;
+		  auto pos = m_BodyInterface->GetPosition(id.BodyID);
+		  auto rot = m_BodyInterface->GetRotation(id.BodyID);
+		  trans.SetPosition(pos.GetX(), pos.GetY(), pos.GetZ());
+		  trans.SetRotation(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 		};
 		each<RigibodyIDComponent, TransformComponent>( MultiThreading::ExecutionPolicy::Parallel, updatePosFunc);
 
@@ -586,15 +577,75 @@ namespace Voxymore::Core
 
 	void Scene::StopPhysics()
 	{
-		auto func = [this](entt::entity e, RigibodyIDComponent& rb) {
-		  Entity entity(e, this);
-		  auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
-		  if(!idComp.BodyID.IsInvalid() && m_BodyInterface) {
-			  m_BodyInterface->DestroyBody(idComp.BodyID);
-		  }
-		  entity.RemoveComponent<RigibodyIDComponent>();
+		VXM_PROFILE_FUNCTION();
+		// TODO ?
+	}
+
+
+	void Scene::UpdatePhysicsState()
+	{
+		VXM_PROFILE_FUNCTION();
+		PhysicsLayer* physicsLayer = Application::Get().FindLayer<PhysicsLayer>();
+
+		if(!physicsLayer) {VXM_CORE_ERROR("No Physics Layer in the application."); return; }
+
+		/// === Update the position of the Rigidbody Already Created ===
+		if(!IsStarted()) {
+			auto updatePositions = [this](entt::entity e, TransformComponent& trans,  RigidbodyComponent& rc, RigibodyIDComponent& id) {
+			  if(!id.BodyID.IsInvalid()) {
+				  auto pos = trans.GetPosition();
+				  auto rot = trans.GetRotation();
+				  m_BodyInterface->SetPositionAndRotation(id.BodyID, JPH::RVec3Arg{pos.x, pos.y, pos.z}, JPH::QuatArg{rot.x, rot.y, rot.z, rot.w}, rc.GetActivation());
+			  }
+			};
+			each<TransformComponent, RigidbodyComponent, RigibodyIDComponent>(exclude<DisableComponent>,updatePositions);
+		}
+
+		/// === Create New Rigidbody===
+		auto createPhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {CreatePhysicsBody(e,rb);};
+		each<RigidbodyComponent>(exclude<RigibodyIDComponent, DisableComponent>,createPhysicsBodyFunc);
+		// Dont update Physics Parameters in runtime yet.
+		auto updatePhysicsBodyFunc = [this](entt::entity e, RigidbodyComponent& rb) {
+		  UpdatePhysicsBody(e,rb);
+		  Entity ent(e,this);
+		  if(ent.HasComponent<RigidbodyDirty>()) ent.RemoveComponent<RigidbodyDirty>();
 		};
-		each<RigibodyIDComponent>(func);
+
+		/// === Update Dirty Rigidbody ===
+		auto viewRb = m_Registry.view<RigidbodyComponent, RigidbodyDirty>(exclude<DisableComponent>);
+		std::for_each(viewRb.begin(), viewRb.end(), [&viewRb, &updatePhysicsBodyFunc](auto e)
+		{
+		  auto& rbComponent = viewRb.template get<RigidbodyComponent>(e);
+		  updatePhysicsBodyFunc(e,rbComponent);
+		});
+		auto updateShapeFunc = [this](entt::entity e, RigidbodyComponent& rb) {
+		  UpdateShape(e,rb);
+		  Entity ent(e,this);
+		  if(ent.HasComponent<ColliderDirty>()) ent.RemoveComponent<ColliderDirty>();
+		};
+
+		/// === Update Dirty Collider ===
+		auto viewCol = m_Registry.view<RigidbodyComponent, ColliderDirty>(exclude<DisableComponent>);
+		std::for_each(viewCol.begin(), viewCol.end(), [&viewCol, &updateShapeFunc](auto e)
+		{
+		  auto& rbComponent = viewCol.template get<RigidbodyComponent>(e);
+		  updateShapeFunc(e,rbComponent);
+		});
+
+		/// === Destroy Disabled Rigidbody ===
+		auto toDestroyView = m_Registry.view<RigibodyIDComponent, DisableComponent>();
+		std::for_each(toDestroyView.begin(), toDestroyView.end(), [this, &toDestroyView, &updateShapeFunc](auto e)
+		{
+		  RigibodyIDComponent& idCom = toDestroyView.template get<RigibodyIDComponent>(e);
+		  if(!idCom.BodyID.IsInvalid()) {
+			  m_BodyInterface->DestroyBody(idCom.BodyID);
+			  idCom.BodyID = JPH::BodyID();
+		  }
+		  m_Registry.remove<RigibodyIDComponent>(e);
+		  Entity entity(e, this);
+		  if(entity.HasComponent<ColliderDirty>()) entity.RemoveComponent<ColliderDirty>();
+		  if(entity.HasComponent<RigidbodyDirty>()) entity.RemoveComponent<RigidbodyDirty>();
+		});
 	}
 
 #define VXM_GET_SHAPE(entity, shp, comp) if(entity.HasComponent<comp>()) shp = entity.GetComponent<comp>().GetShape()

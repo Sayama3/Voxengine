@@ -174,6 +174,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Physics/RigidbodyComponent.hpp
         src/Physics/ColliderComponent.cpp
         include/Voxymore/Physics/ColliderComponent.hpp
+        src/Physics/PhysicsDebugRenderer.cpp
+        include/Voxymore/Physics/PhysicsDebugRenderer.hpp
+        include/Voxymore/Core/Optional.hpp
+        include/Voxymore/Physics/PhysicsTypeHelpers.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

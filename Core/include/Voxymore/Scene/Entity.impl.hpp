@@ -68,6 +68,16 @@ namespace Voxymore::Core
 	}
 
 	template<typename T>
+	inline void Entity::EnsureHasEmptyComponent()
+	{
+		VXM_PROFILE_FUNCTION();
+		if(!HasComponent<T>())
+		{
+			return AddEmptyComponent<T>();
+		}
+	}
+
+	template<typename T>
 	inline void Entity::RemoveComponent()
 	{
 		VXM_PROFILE_FUNCTION();

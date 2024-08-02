@@ -127,5 +127,19 @@ namespace Voxymore::Core
 
 		return changed;
 	}
+
+	bool ShaderImGui::OnMenuShaderImGui(AssetMetadata asset)
+	{
+		if(asset.Type != AssetType::Shader) return false;
+
+		std::string name = "Set as default shader##";
+		name += asset.Handle.string();
+		if(ImGui::MenuItem(name.c_str())) {
+			Project::SetDefaultShader(asset.Handle);
+			Project::SaveActive();
+			return true;
+		}
+		return false;
+	}
 } // namespace Voxymore::Core
 

@@ -23,5 +23,28 @@ namespace Voxymore::Core
 		return changed;
 	}
 
+	bool MaterialImGui::OnMenuMaterialImGui(AssetMetadata asset)
+	{
+		if(asset.Type != AssetType::Material) return false;
+		bool shouldClose = false;
+		std::string name = "Set as default material##";
+		name += asset.Handle.string();
+		if(ImGui::MenuItem(name.c_str())) {
+			Project::SetDefaultMaterial(asset.Handle);
+			Project::SaveActive();
+			shouldClose = true;
+		}
+
+		name = "Set as gizmo material##";
+		name += asset.Handle.string();
+		if(ImGui::MenuItem(name.c_str())) {
+			Project::SetGizmoMaterial(asset.Handle);
+			Project::SaveActive();
+			shouldClose = true;
+		}
+
+		return shouldClose;
+	}
+
 } // namespace Voxymore::Core
 

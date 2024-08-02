@@ -26,6 +26,12 @@ namespace Voxymore::Core {
 			virtual void DrawPatches(uint32_t verticesPerPatch) override;
 			virtual void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) override;
 			void SetPatchSize(int32_t verticesPerPatch);
+			virtual void DisableDepth() override;
+			virtual void EnableDepth() override;
+			virtual void DisableWireframe() override;
+			virtual void EnableWireframe() override;
+			virtual void EnableDoubleSided() override;
+			virtual void DisableDoubleSided() override;
         };
 
     } // Core

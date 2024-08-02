@@ -41,6 +41,7 @@ namespace Voxymore::Core
 	class SceneSerializer;
 	class System;
 	class RigidbodyComponent;
+	struct Light;
 
 	class Scene : public Asset
 	{
@@ -79,6 +80,7 @@ namespace Voxymore::Core
 
 		void RenderEditor(TimeStep ts, EditorCamera& camera);
 		void RenderRuntime(TimeStep ts);
+		void RenderLoop();
 
 		void SetViewportSize(uint32_t width, uint32_t height);
 
@@ -92,6 +94,7 @@ namespace Voxymore::Core
 		void UpdatePhysics(TimeStep ts);
 		void StopPhysics();
 	private:
+		void UpdatePhysicsState();
 		void CreatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdateShape(entt::entity e, RigidbodyComponent& rb);

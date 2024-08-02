@@ -17,6 +17,7 @@ namespace Voxymore::Core
 	{
 	public:
 		static bool OnMaterialImGui(Ref<Asset> asset);
+		static bool OnMenuMaterialImGui(AssetMetadata asset);
 	};
 
 } // namespace Voxymore::Core

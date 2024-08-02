@@ -70,23 +70,13 @@ namespace Voxymore::Core
 		bool m_IsAwake{true};
 	};
 
-	class RigibodyIDComponent : public Component<RigibodyIDComponent>
+	struct RigibodyIDComponent
 	{
-		VXM_IMPLEMENT_COMPONENT(RigibodyIDComponent);
-	public:
-		RigibodyIDComponent() = default;
-		~RigibodyIDComponent() = default;
-	public:
-		void DeserializeComponent(YAML::Node& node) {}
-		void SerializeComponent(YAML::Emitter& out) {}
-		bool OnImGuiRender() {return false;}
-	public:
 		JPH::BodyID BodyID;
 	};
 
-	class RigidbodyDirty : public EmptyComponent<RigidbodyDirty>
+	struct RigidbodyDirty
 	{
-		public: inline static std::string GetName() { return "RigidbodyDirty";};
 	};
 
 

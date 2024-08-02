@@ -13,7 +13,9 @@ namespace Voxymore::Core {
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		glLineWidth(1);
 	}
 
 	void OpenGLRenderAPI::Shutdown() {
@@ -93,6 +95,29 @@ namespace Voxymore::Core {
 		glPatchParameteri(GL_PATCH_VERTICES, verticesPerPatch);
 	}
 
+	void OpenGLRenderAPI::DisableDepth() {
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRenderAPI::EnableDepth() {
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRenderAPI::EnableWireframe() {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	void OpenGLRenderAPI::DisableWireframe() {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	void OpenGLRenderAPI::EnableDoubleSided()
+	{
+		glEnable(GL_CULL_FACE);
+	}
+	void OpenGLRenderAPI::DisableDoubleSided()
+	{
+		glDisable(GL_CULL_FACE);
+	}
 
 	void OpenGLRenderAPI::DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh)
 	{

@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <map>
 #include "Asset.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 

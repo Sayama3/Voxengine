@@ -17,14 +17,32 @@
 namespace Voxymore::Core
 {
 	namespace ColliderShapes {
-		struct Box {Vec3 Size;};
-		struct Sphere {Real Radius;};
-		struct Capsule {Real HeightCylinder; Real Radius;};
-		struct Cylinder {Real Height; Real Radius; Real ConvexRadius = Real(0.05);};
+		struct Box {Vec3 Size {1,1,1};};
+		struct Sphere {Real Radius {0.5};};
+		struct Capsule {Real Height {1}; Real Radius{0.5};};
+		struct Cylinder {Real Height {1}; Real Radius{0.5}; };
+
+		const JPH::Shape* CreateShape(Box box);
+		const JPH::Shape* CreateShape(Sphere sphere);
+		const JPH::Shape* CreateShape(Capsule capsule);
+		const JPH::Shape* CreateShape(Cylinder cylinder);
 	}
 
 	class ColliderComponent : public SelfAwareComponent<ColliderComponent>
 	{
+	public:
+		using ShapeVariant = std::variant<ColliderShapes::Box,
+										  ColliderShapes::Sphere,
+										  ColliderShapes::Capsule,
+										  ColliderShapes::Cylinder>;
+		enum Type : int {
+			Box,
+			Sphere,
+			Capsule,
+			Cylinder,
+		};
+		static inline const std::array<std::string, 4> TypeNames {"Box","Sphere","Capsule","Cylinder"};
+		static inline constexpr char TypeNamesCombo[] = "Box\0Sphere\0Capsule\0Cylinder";
 	public:
 		inline static std::string GetName() { return "Collider";}
 		inline bool OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix) {return false;};
@@ -38,10 +56,7 @@ namespace Voxymore::Core
 	public:
 		const JPH::Shape* GetShape();
 	public:
-		std::variant<ColliderShapes::Box,
-				ColliderShapes::Sphere,
-				ColliderShapes::Capsule,
-				ColliderShapes::Cylinder> m_Shape;
+		ShapeVariant m_Shape;
 	};
 
 	class MeshColliderComponent : public SelfAwareComponent<MeshColliderComponent>
@@ -62,7 +77,7 @@ namespace Voxymore::Core
 		JPH::Array<JPH::Triangle> m_Triangles;
 	};
 
-	class HeightFieldColliderComponent : public SelfAwareComponent<MeshColliderComponent>
+	class HeightFieldColliderComponent : public SelfAwareComponent<HeightFieldColliderComponent>
 	{
 	public:
 		inline static std::string GetName() { return "Height Field Collider";}
@@ -87,9 +102,8 @@ namespace Voxymore::Core
 		std::vector<Real> m_HeightSamples;
 	};
 
-	class ColliderDirty : public EmptyComponent<ColliderDirty>
+	class ColliderDirty
 	{
-		VXM_IMPLEMENT_EMPTYCOMPONENT(ColliderDirty);
 	};
 
 } // namespace Voxymore::Core

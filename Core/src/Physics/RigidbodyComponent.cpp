@@ -113,12 +113,20 @@ namespace Voxymore::Core
 	bool RigidbodyComponent::OnImGuiRender(Entity e)
 	{
 		bool changed{false};
+		bool sceneStarted = e.GetScene()?e.GetScene()->IsStarted() : false;
 		changed |= ImGui::Combo("Rigidbody Type", (int*)&m_Type, "Static\0Dynamic\0Kinematic");
+		ImGui::BeginDisabled(sceneStarted);
 		changed |= ImGuiLib::DrawVec3Control("Linear Velocity", m_LinearVelocity);
 		changed |= ImGuiLib::DrawVec3Control("Angular Velocity", m_AngularVelocity);
+		ImGui::EndDisabled();
 		changed |= ImGuiLib::DragReal("Friction", &m_Friction);
 		changed |= ImGuiLib::DragReal("Gravity Factor", &m_GravityFactor);
 		changed |= ImGui::Checkbox("IsAwake", &m_IsAwake);
+
+		if(changed) {
+			e.EnsureHasEmptyComponent<RigidbodyDirty>();
+		}
+
 		return changed;
 	}
 }// namespace Voxymore::Core

@@ -50,25 +50,19 @@ namespace Voxymore::Core
 		JPH::RegisterTypes();
 
 		RigidbodyComponent::RegisterComponent();
-		RigibodyIDComponent::RegisterComponent();
 		ColliderComponent::RegisterComponent();
-		RigidbodyDirty::RegisterComponent();
-		ColliderDirty::RegisterComponent();
-		MeshColliderComponent::RegisterComponent();
-		HeightFieldColliderComponent::RegisterComponent();
+//		MeshColliderComponent::RegisterComponent();
+//		HeightFieldColliderComponent::RegisterComponent();
 	}
 
 	void PhysicsLayer::OnDetach()
 	{
 		VXM_PROFILE_FUNCTION();
 
-		RigidbodyDirty::UnregisterComponent();
-		RigibodyIDComponent::UnregisterComponent();
-		ColliderDirty::UnregisterComponent();
-		ColliderComponent::UnregisterComponent();
-		MeshColliderComponent::UnregisterComponent();
-		HeightFieldColliderComponent::UnregisterComponent();
 		RigidbodyComponent::UnregisterComponent();
+		ColliderComponent::UnregisterComponent();
+//		MeshColliderComponent::UnregisterComponent();
+//		HeightFieldColliderComponent::UnregisterComponent();
 
 		// Unregisters all types with the factory and cleans up the default material
 		JPH::UnregisterTypes();
