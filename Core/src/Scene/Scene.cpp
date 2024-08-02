@@ -399,9 +399,9 @@ namespace Voxymore::Core
 				false, 												// mDrawGetSupportingFace
 				true, 												// mDrawShape
 				true, 												// mDrawShapeWireframe
-				JPH::BodyManager::EShapeColor::SleepColor, 	// mDrawShapeColor
+				JPH::BodyManager::EShapeColor::SleepColor,			// mDrawShapeColor
 				false, 												// mDrawBoundingBox
-				false, 												// mDrawCenterOfMassTransform
+				true, 												// mDrawCenterOfMassTransform
 				false, 												// mDrawWorldTransform
 				true, 												// mDrawVelocity
 				false, 												// mDrawMassAndInertia
@@ -581,7 +581,6 @@ namespace Voxymore::Core
 		// TODO ?
 	}
 
-
 	void Scene::UpdatePhysicsState()
 	{
 		VXM_PROFILE_FUNCTION();
@@ -648,16 +647,19 @@ namespace Voxymore::Core
 		});
 	}
 
-#define VXM_GET_SHAPE(entity, shp, comp) if(entity.HasComponent<comp>()) shp = entity.GetComponent<comp>().GetShape()
+	const JPH::Shape* GetShape(Entity entity)
+	{
+		const JPH::Shape* shp{nullptr};
+		if(entity.HasComponent<MeshColliderComponent>()) shp = entity.GetComponent<MeshColliderComponent>().GetShape();
+		else if(entity.HasComponent<HeightFieldColliderComponent>()) shp = entity.GetComponent<HeightFieldColliderComponent>().GetShape();
+		else if(entity.HasComponent<ColliderComponent>()) shp = entity.GetComponent<ColliderComponent>().GetShape();
+		return shp;
+	}
+
 	void Scene::CreatePhysicsBody(entt::entity e, RigidbodyComponent &rb)
 	{
 		Entity entity(e, this);
-		const JPH::Shape* shp{nullptr};
-
-		VXM_GET_SHAPE(entity, shp, ColliderComponent);
-		else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
-		else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
-		VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+		const JPH::Shape* shp = GetShape(entity);
 		if(!shp) return;
 
 		auto creationSettings = rb.GetCreationSettings(shp, entity);
@@ -687,12 +689,7 @@ namespace Voxymore::Core
 		auto activation = rb.GetActivation();
 		auto& idComp = entity.GetOrAddComponent<RigibodyIDComponent>();
 		if(idComp.BodyID.IsInvalid()) {
-			const JPH::Shape* shp{nullptr};
-
-			VXM_GET_SHAPE(entity, shp, ColliderComponent);
-			else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
-			else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
-			VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+			const JPH::Shape* shp = GetShape(entity);
 			if(!shp) return;
 			auto creationSettings = rb.GetCreationSettings(shp, entity);
 			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
@@ -712,11 +709,7 @@ namespace Voxymore::Core
 	{
 		Entity entity(e, this);
 
-		const JPH::Shape* shp{nullptr};
-		VXM_GET_SHAPE(entity, shp, ColliderComponent);
-		else VXM_GET_SHAPE(entity, shp, MeshColliderComponent);
-		else VXM_GET_SHAPE(entity, shp, HeightFieldColliderComponent);
-		VXM_CORE_ASSERT(shp, "No valid collider found on the Entity {}", entity.GetComponent<TagComponent>().Tag);
+		const JPH::Shape* shp = GetShape(entity);
 		if(!shp) return;
 
 		auto activation = rb.GetActivation();

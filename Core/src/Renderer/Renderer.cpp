@@ -190,6 +190,7 @@ namespace Voxymore::Core {
 		if(mat)
 		{
 			Ref<Material> matPtr = mat.GetAsset();
+			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
 
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
@@ -213,9 +214,7 @@ namespace Voxymore::Core {
 		for(const auto& [mesh, matrix, wireframe] : s_Data.DepthGizmos)
 		{
 			if(wireframe) RenderCommand::EnableWireframe();
-//			if(wireframe) RenderCommand::DisableDoubleSided();
 			DrawGizmo(mesh, matrix);
-//			if(wireframe) RenderCommand::DisableDoubleSided();
 			if(wireframe) RenderCommand::DisableWireframe();
 		}
 
@@ -229,9 +228,7 @@ namespace Voxymore::Core {
 		for(const auto& [mesh, matrix, wireframe] : s_Data.NonDepthGizmos)
 		{
 			if(wireframe) RenderCommand::EnableWireframe();
-//			if(wireframe) RenderCommand::DisableDoubleSided();
 			DrawGizmo(mesh, matrix);
-//			if(wireframe) RenderCommand::DisableDoubleSided();
 			if(wireframe) RenderCommand::DisableWireframe();
 		}
 		RenderCommand::EnableDepth();
@@ -245,11 +242,6 @@ namespace Voxymore::Core {
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
-
-		//TODO: Find something better.
-		{
-
-		}
 	}
 
 	void Renderer::Submit(Ref<Shader>& shader, const Ref<VertexArray> &vertexArray, const glm::mat4& transform, int entityId) {

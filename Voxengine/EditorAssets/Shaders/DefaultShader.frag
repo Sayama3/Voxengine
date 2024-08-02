@@ -269,7 +269,7 @@ void main()
     result += materialParameters.EmissiveFactor.rgb;
     if(materialParameters.EmissiveTexture.Index > -1)
     {
-        result += SampleTexture(materialParameters.EmissiveTexture.Index);
+        result += SampleTexture(materialParameters.EmissiveTexture.Index).xyz;
     }
 
 //    float alpha = materialParameters.AlphaMode == int(2) ? o_Color.a : 1.0f;

@@ -62,4 +62,5 @@ layout (location = 0) out vec4 o_Color;
 
 void main() {
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
+//    o_Color = v_Color;
 }
