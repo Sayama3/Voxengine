@@ -83,6 +83,8 @@
 #else
 #define VXM_CORE_CHECK(condition, ...)
 #define VXM_CHECK(condition, ...)
+#define VXM_CORE_CHECK_ERROR(condition, ...)
+#define VXM_CHECK_ERROR(condition, ...)
 #endif
 
 #ifndef BIT
