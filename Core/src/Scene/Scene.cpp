@@ -647,7 +647,7 @@ namespace Voxymore::Core
 		});
 	}
 
-	const JPH::Shape* GetShape(Entity entity)
+	const JPH::Shape* Scene::GetShape(Entity entity)
 	{
 		const JPH::Shape* shp{nullptr};
 		if(entity.HasComponent<MeshColliderComponent>()) shp = entity.GetComponent<MeshColliderComponent>().GetShape();

@@ -98,6 +98,8 @@ namespace Voxymore::Core
 		void CreatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdateShape(entt::entity e, RigidbodyComponent& rb);
+	private:
+		static const JPH::Shape* GetShape(Entity entity);
 	public:
 
 		/**
