@@ -4,20 +4,20 @@
 
 The Voxengine is currently a general purpose Game Engine with it's own tech. Inside there is :
 - a Renderer made with OpenGL.
-- a physic engine
-- an editor (made with [ImGui](https://github.com/ocornut/imgui))
-- scripting in C++
+- a Physic Engine (made with [Jolt](https://github.com/jrouwe/JoltPhysics))
+- an Editor (made with [ImGui](https://github.com/ocornut/imgui))
+- Scripting in C++
 
 And will have later on :
 
 - [ ] Audio Engine
-- [ ] Lua Scritping
+- [ ] Scritping (Lua or C#)
 - [ ] Nodal Scripting
 - [ ] Nodal Shader Creation
 
 ---
 
-The renderer support the GLTF 2.0 format for the 3D model and will support import of other formats later on.
+The renderer supports the GLTF 2.0 format for the 3D model and will support import of other formats later on. (Probably using something like [assimp](https://github.com/assimp/assimp))
 
 ## Core
 
@@ -30,21 +30,20 @@ It's the editor for the Voxengine project. Later on, as the project advanced and
 
 # Previews
 
-Here's a bit of a preview of the Engine capability as of March 2024.
+Here's a bit of a preview of the Engine capability as of August 2024.
 
-![Rigidbody_Basic_Buoyancy.gif](ReadMe%2FRigidbody_Basic_Buoyancy.gif)
-![Rigidbody_Spring.gif](ReadMe%2FRigidbody_Spring.gif)
+![Demo_Jolt_Physics.gif](ReadMe%2FDemo_Jolt_Physics.gif)
 
 # Requirement
 
 For the project to work, you **need** to have the [Vulkan SDK]() installed.
 
-On windows, do not forget to add the installation path to the environement variable (if it's not done by default).
+On windows, do not forget to add the installation path to the environment variable (if it's not done by default).
 ie. `VULKAN_SDK=C:\VulkanSDK\1.3.250.1`
 
 # Credits
 
-a little credit list to all the library I use. I should update this list pretty often but don't hesitate to make an issue if I forgot one.
+a little credit list to all the libraries I use. I should update this list pretty often but don't hesitate to make an issue if I forgot one.
 
 - [imgui](https://github.com/ocornut/imgui): Bloat-free Graphical User interface for C++ with minimal dependencies
 - [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui
