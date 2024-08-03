@@ -89,6 +89,7 @@ namespace Voxymore::Core
 	public:
 		inline Vec3 GetPosition() const { return Position; }
 		inline void SetPosition(const Vec3& position) { Position = position; }
+		inline void SetPosition(Real x,Real y,Real z) { Position = {x,y,z}; }
 		inline void AddMovement(const Vec3& movement) { Position += movement; }
 
 		inline Vec3 GetScale() const { return Scale; }
@@ -96,6 +97,7 @@ namespace Voxymore::Core
 
 		inline Quat GetRotation() const { return Rotation; }
 		inline void SetRotation(const Quat& rotation) {Rotation = rotation; EulerRotation = glm::degrees(glm::eulerAngles(rotation));}
+		inline void SetRotation(Real x,Real y,Real z,Real w) {Rotation = Quat::wxyz(w,x,y,z); EulerRotation = glm::degrees(glm::eulerAngles(Rotation));}
 
 		/**
 		 * @brief : Get the Euler rotation of the transform component.

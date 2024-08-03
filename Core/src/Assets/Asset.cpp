@@ -3,6 +3,8 @@
 //
 
 #include "Voxymore/Assets/Asset.hpp"
+#include "Voxymore/Core/Core.hpp"
+#include <string_view>
 
 
 namespace Voxymore::Core

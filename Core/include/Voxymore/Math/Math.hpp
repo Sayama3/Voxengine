@@ -4,7 +4,9 @@
 
 #pragma once
 
+#ifndef GLM_ENABLE_EXPERIMENTAL
 #define GLM_ENABLE_EXPERIMENTAL
+#endif
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -15,6 +17,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/string_cast.hpp"
 #include <cmath>
+#include <numbers>
 #include <cstdint>
 #include <algorithm>
 #include <iostream>
@@ -174,6 +177,10 @@ namespace Voxymore::Core
 		inline static T* ValuePtr(glm::qua<T,Q>& qua) {
 			return glm::value_ptr(qua);
 		}
+
+		inline static constexpr Real Pi{ std::numbers::pi_v<Real> };
+		inline static Real Cos(Real value){ return std::cos(value); };
+		inline static Real Sin(Real value){ return std::sin(value); };
 
 		template<typename T> inline static T Min(T v1, T v2) { return glm::min(v1, v2); }
 		template<typename T> inline static T Max(T v1, T v2) { return glm::max(v1, v2); }

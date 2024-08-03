@@ -61,7 +61,8 @@ namespace Voxymore::Core
 	Mesh::Mesh(const std::vector<Vertex> &vertices)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(vertices.size() % 3 == 0, "Invalid vertices count. The number of vertices should be divisible by 3 to form triangles.")
+		// Might not be a triangle...
+		VXM_CORE_CHECK(vertices.size() % 3 == 0, "The mesh is not composed of triangles.")
 
 		std::vector<uint32_t> indexes(vertices.size());
 		for (int i = 0; i < indexes.size(); ++i) {

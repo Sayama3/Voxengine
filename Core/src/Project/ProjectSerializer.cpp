@@ -30,6 +30,18 @@ namespace Voxymore::Core
 		{
 			out << KEYVAL("StartSceneId", config.startSceneId.value());
 		}
+		if(config.defaultMaterialId.has_value())
+		{
+			out << KEYVAL("DefaultMaterialId", config.defaultMaterialId.value());
+		}
+		if(config.gizmoShaderId.has_value())
+		{
+			out << KEYVAL("GizmoShaderId", config.gizmoShaderId.value());
+		}
+		if(config.defaultShaderId.has_value())
+		{
+			out << KEYVAL("DefaultShaderId", config.defaultShaderId.value());
+		}
 
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -82,6 +94,13 @@ namespace Voxymore::Core
 
 //		VXM_CORE_ASSERT(projectNode["StartScene"], "The node StartScene doesn't exist.");
 		if(projectNode["StartSceneId"]) config.startSceneId = projectNode["StartSceneId"].as<UUID>();
+		else config.startSceneId = std::nullopt;
+		if(projectNode["DefaultMaterialId"]) config.defaultMaterialId = projectNode["DefaultMaterialId"].as<UUID>();
+		else config.defaultMaterialId = std::nullopt;
+		if(projectNode["GizmoShaderId"]) config.gizmoShaderId = projectNode["GizmoShaderId"].as<UUID>();
+		else config.gizmoShaderId = std::nullopt;
+		if(projectNode["DefaultShaderId"]) config.defaultShaderId = projectNode["DefaultShaderId"].as<UUID>();
+		else config.defaultShaderId = std::nullopt;
 
 		m_ProjectHandle->m_ProjectPath = filepath;
 		if(m_ProjectHandle->m_ProjectPath.is_relative()) {

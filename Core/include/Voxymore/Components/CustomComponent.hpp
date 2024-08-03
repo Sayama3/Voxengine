@@ -93,6 +93,45 @@ public:
 		}
 	};
 
+	template<class T>
+	class EmptyComponent
+	{
+	public:
+		inline static bool HasComponent(::Voxymore::Core::Entity e) {return e.HasComponent<T>();}
+		inline static void AddComponent(::Voxymore::Core::Entity e) { e.AddEmptyComponent<T>(); }
+		inline static void RemoveComponent(::Voxymore::Core::Entity e) { e.RemoveComponent<T>(); }
+		inline static void StaticDeserializeComponent(YAML::Node& node, ::Voxymore::Core::Entity targetEntity) {}
+		inline static void StaticSerializeComponent(YAML::Emitter& out, ::Voxymore::Core::Entity sourceEntity) {}
+		inline static bool StaticOnImGuiRender(::Voxymore::Core::Entity sourceEntity) {return false;}
+		inline static bool StaticOnImGuizmo(::Voxymore::Core::Entity sourceEntity, const float* viewMatrix, const float* projectionMatrix) {return false;}
+		inline static void StaticDuplicateComponent(::Voxymore::Core::Entity from, ::Voxymore::Core::Entity to) {if(from.HasComponent<T>()) {to.AddEmptyComponent<T>();}}
+		inline static std::string StaticGetName() { return T::GetName(); }
+
+		inline static void RegisterComponent()
+		{
+			std::string name = StaticGetName();
+			if(ComponentManager::HasComponent(name)) return;
+			ComponentChecker cc;
+			cc.ComponentName = name;
+			cc.ComponentHash = typeid(T).hash_code();
+			cc.HasComponent = T::HasComponent;
+			cc.AddComponent = T::AddComponent;
+			cc.RemoveComponent = T::RemoveComponent;
+			cc.SerializeComponent = T::StaticSerializeComponent;
+			cc.DeserializeComponent = T::StaticDeserializeComponent;
+			cc.OnImGuiRender = T::StaticOnImGuiRender;
+			cc.OnImGuizmo = T::StaticOnImGuizmo;
+			cc.DuplicateComponent = T::StaticDuplicateComponent;
+			ComponentManager::AddComponent(cc);
+		}
+
+		inline static void UnregisterComponent()
+		{
+			std::string name = StaticGetName();
+			ComponentManager::RemoveComponent(name);
+		}
+	};
+
 
 	template<class T>
 	class SelfAwareComponent
@@ -135,7 +174,11 @@ public:
 }
 
 #define VXM_IMPLEMENT_COMPONENT(COMP) public: inline static std::string GetName() { return #COMP;} inline bool OnImGuizmo(const float* viewMatrix, const float* projectionMatrix) {return false;}
+#define VXM_IMPLEMENT_EMPTYCOMPONENT(COMP) public: inline static std::string GetName() { return #COMP;}
+#define VXM_IMPLEMENT_COMPONENT_CUSTOM_NAME(COMP, NAME) public: inline static std::string GetName() { return NAME;} inline bool OnImGuizmo(const float* viewMatrix, const float* projectionMatrix) {return false;}
 #define VXM_IMPLEMENT_SELFAWARECOMPONENT(COMP) public: inline static std::string GetName() { return #COMP;} inline bool OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix) {return false;}
+#define VXM_IMPLEMENT_SELFAWARECOMPONENT_CUSTOM_NAME(COMP, NAME) public: inline static std::string GetName() { return NAME;} inline bool OnImGuizmo(Entity e, const float* viewMatrix, const float* projectionMatrix) {return false;}
+
 #define VXM_IMPLEMENT_NAME(COMP) public: inline static std::string GetName() { return #COMP;}
 
 

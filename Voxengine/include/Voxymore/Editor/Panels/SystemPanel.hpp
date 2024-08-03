@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Voxymore/Editor/Panels/Panel.hpp"
+#include "Voxymore/Scene/Systems.hpp"
 #include "Voxymore/Voxymore.hpp"
 
 using namespace Voxymore::Core;

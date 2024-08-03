@@ -27,4 +27,4 @@ namespace Voxymore::Core {
         std::string m_DebugName;
     };
 
-} // Layers
+} // PhysicalLayers
