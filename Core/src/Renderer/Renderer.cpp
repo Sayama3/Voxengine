@@ -4,6 +4,7 @@
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
 
 namespace Voxymore::Core {
