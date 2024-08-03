@@ -12,6 +12,7 @@ option(VXM_USE_DOUBLE "Set the application to use double as default" OFF)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 add_subdirectory(lib)
 add_subdirectory(Core)
