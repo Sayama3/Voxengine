@@ -58,11 +58,11 @@ a little credit list to all the libraries I use. I should update this list prett
 - [spriv-cross](https://github.com/KhronosGroup/SPIRV-Cross): practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.
 - [shaderc](https://github.com/google/shaderc): A collection of tools, libraries, and tests for Vulkan shader compilation.
 - [tinygltf](https://github.com/syoyo/tinygltf) (_2.8.17_) : Header only C++11 tiny glTF 2.0 library.
-- [tracy](https://github.com/wolfpld/tracy) (_0.10.0_): A Real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
+- [tracy](https://github.com/wolfpld/tracy) (_0.11.0_): A Real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
 - [hash-library](https://create.stephan-brumme.com/hash-library/) (version 8): Portable C++ Hashing Library (*a little edition has been made to add `<machine/endian.h>` or other include to make it work on MacOS.*)
 - [json](https://github.com/nlohmann/json) JSON for Modern C++
 - [static_block](Core/vendor/static_block.hpp) An implementation of a Java-style static block, in C++ (and potentially a GCC/clang extension to avoid warnings).
-- [Jolt Physics](https://github.com/jrouwe/JoltPhysics): A multi core friendly rigid body physics and collision detection library.
+- [Jolt Physics](https://github.com/jrouwe/JoltPhysics): (_5.0.0_) A multi core friendly rigid body physics and collision detection library.
 
 # License
 
