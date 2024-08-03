@@ -25,10 +25,6 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
-set(TRACY_ENABLE ON)
-set(TRACY_ON_DEMAND ON)
-add_subdirectory(tracy)
-
 add_subdirectory(hash-library)
 
 #TODO: use "Fetch Content" instead of git submodules.
@@ -43,7 +39,18 @@ FetchContent_Declare(
         SOURCE_SUBDIR "Build"
 )
 
-FetchContent_MakeAvailable(jolt)
+set(TRACY_ENABLE ON)
+set(TRACY_ON_DEMAND ON)
+
+FetchContent_Declare(
+        Tracy
+        GIT_REPOSITORY "https://github.com/wolfpld/tracy.git"
+        GIT_TAG "v0.11.0"
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(jolt Tracy)
 
 set_target_properties(Jolt PROPERTIES
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
