@@ -33,8 +33,8 @@ add_subdirectory(hash-library)
 
 #TODO: use "Fetch Content" instead of git submodules.
 
-#set(JPH_DEBUG_RENDERER)
 set(CROSS_PLATFORM_DETERMINISTIC ON)
+set(ENABLE_ALL_WARNINGS OFF)
 
 FetchContent_Declare(
         jolt
