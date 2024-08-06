@@ -98,6 +98,9 @@ namespace Voxymore::Core
 		void CreatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdatePhysicsBody(entt::entity e, RigidbodyComponent& rb);
 		void UpdateShape(entt::entity e, RigidbodyComponent& rb);
+		void DestroyPhysicsBody(entt::entity e, RigidbodyComponent &rc);
+
+		static bool CheckHasPhysicsLayer();
 	private:
 		static const JPH::Shape* GetShape(Entity entity);
 	public:
@@ -115,7 +118,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 		template<typename... Get, typename Func>
-		void each(Func& func);
+		void each(Func func);
 
 		/**
 		 * @brief Executes a function on each entity in the registry that has the specified components.
@@ -130,7 +133,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 		template<typename... Get, typename... Exclude, typename Func>
-		void each(entt::exclude_t<Exclude...> ex, Func& func);
+		void each(entt::exclude_t<Exclude...> ex, Func func);
 
 		/**
 		 * @brief Executes a function on each entity in the registry that has the specified components.
@@ -147,7 +150,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 		template<typename... Get, typename Func>
-		void each(MultiThreading::ExecutionPolicy exec, Func& func);
+		void each(MultiThreading::ExecutionPolicy exec, Func func);
 
 		/**
 		 * @brief Executes a function on each entity in the registry that has the specified components.
@@ -166,7 +169,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 		template<typename... Get, typename... Exclude, typename Func>
-		void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func);
+		void each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func func);
 
 		/**
 		 * @brief Creates a view of entities with specified components.

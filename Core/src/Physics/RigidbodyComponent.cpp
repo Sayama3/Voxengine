@@ -129,4 +129,7 @@ namespace Voxymore::Core
 
 		return changed;
 	}
+	void RigidbodyComponent::AddForce(Vec3 force)
+	{
+	}
 }// namespace Voxymore::Core

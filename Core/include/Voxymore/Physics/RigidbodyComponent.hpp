@@ -6,6 +6,7 @@
 
 #include "Voxymore/Components/CustomComponent.hpp"
 #include "Voxymore/Physics/ObjectLayerPairFilter.hpp"
+#include "Voxymore/Scene/Scene.forward.hpp"
 #include "Voxymore/Scene/Entity.hpp"
 
 #include <Jolt/Jolt.h>
@@ -58,9 +59,12 @@ namespace Voxymore::Core
 		// Setters
 		void SetLinearVelocity(Vec3 linearVelocity) {m_LinearVelocity = linearVelocity;}
 		void SetAngularVelocity(Vec3 angularVelocity) {m_AngularVelocity = angularVelocity;}
+
 		void SetFriction(Real friction) {m_Friction = friction;}
 		void SetGravityFactor(Real gravityFactor) {m_GravityFactor = gravityFactor;}
 		void SetIsAwake(bool isAwake) {m_IsAwake = isAwake;}
+	public:
+		void AddForce(Vec3 force);
 	private:
 		RigidbodyType m_Type{RigidbodyType::Dynamic};
 		Vec3 m_LinearVelocity{0};
@@ -68,11 +72,15 @@ namespace Voxymore::Core
 		Real m_Friction{0.5};
 		Real m_GravityFactor{1.0};
 		bool m_IsAwake{true};
+	private:
+		JPH::Body* m_Body{nullptr};
+		JPH::BodyID m_BodyID{};
+	private:
+		friend class Scene;
 	};
 
-	struct RigibodyIDComponent
+	struct RigidbodyInitialized
 	{
-		JPH::BodyID BodyID;
 	};
 
 	struct RigidbodyDirty

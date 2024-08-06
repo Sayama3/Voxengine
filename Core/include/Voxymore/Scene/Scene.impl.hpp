@@ -23,7 +23,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename Func>
-	inline void Scene::each(Func& func)
+	inline void Scene::each(Func func)
 	{
 		each<Get...>(MultiThreading::ExecutionPolicy::None, func);
 	}
@@ -41,7 +41,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename... Exclude, typename Func>
-	inline void Scene::each(entt::exclude_t<Exclude...> ex, Func& func)
+	inline void Scene::each(entt::exclude_t<Exclude...> ex, Func func)
 	{
 		each<Get...>(ex, MultiThreading::ExecutionPolicy::None, func);
 	}
@@ -61,7 +61,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename Func>
-	inline void Scene::each(MultiThreading::ExecutionPolicy exec, Func& func)
+	inline void Scene::each(MultiThreading::ExecutionPolicy exec, Func func)
 	{
 		VXM_PROFILE_FUNCTION();
 		auto view = m_Registry.view<Get...>();
@@ -90,7 +90,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename... Exclude, typename Func>
-	inline void Scene::each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
+	inline void Scene::each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func func)
 	{
 		VXM_PROFILE_FUNCTION();
 		auto view = m_Registry.view<Get...>(ex);
