@@ -116,8 +116,8 @@ namespace Voxymore::Core
 		bool sceneStarted = e.GetScene()?e.GetScene()->IsStarted() : false;
 		changed |= ImGui::Combo("Rigidbody Type", (int*)&m_Type, "Static\0Dynamic\0Kinematic");
 		ImGui::BeginDisabled(sceneStarted);
-		changed |= ImGuiLib::DrawVec3Control("Linear Velocity", m_LinearVelocity);
-		changed |= ImGuiLib::DrawVec3Control("Angular Velocity", m_AngularVelocity);
+		changed |= ImGuiLib::DrawVec3ControlAdvanced("Linear Velocity", m_LinearVelocity, 0.5, 0, 0, "%.1f");
+		changed |= ImGuiLib::DrawVec3ControlAdvanced("Angular Velocity", m_AngularVelocity, 5, 0, 0, "%.1f");
 		ImGui::EndDisabled();
 		changed |= ImGuiLib::DragReal("Friction", &m_Friction);
 		changed |= ImGuiLib::DragReal("Gravity Factor", &m_GravityFactor);

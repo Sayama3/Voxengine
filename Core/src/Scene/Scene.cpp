@@ -675,7 +675,7 @@ namespace Voxymore::Core
 			m_BodyInterface->SetObjectLayer(idComp.BodyID, creationSettings.mObjectLayer);
 		}
 		auto lin = rb.GetLinearVelocity();
-		auto ang = rb.GetAngularVelocity();
+		auto ang = rb.GetRadAngularVelocity();
 
 		m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
 		m_BodyInterface->SetFriction(idComp.BodyID, rb.GetFriction());
@@ -694,7 +694,7 @@ namespace Voxymore::Core
 			auto creationSettings = rb.GetCreationSettings(shp, entity);
 			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
 			auto lin = rb.GetLinearVelocity();
-			auto ang = rb.GetAngularVelocity();
+			auto ang = rb.GetRadAngularVelocity();
 			m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
 		} else {
 			m_BodyInterface->SetMotionType(idComp.BodyID, rb.GetMotionType(), activation);
@@ -719,7 +719,7 @@ namespace Voxymore::Core
 			auto creationSettings = rb.GetCreationSettings(shp, entity);
 			idComp.BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
 			auto lin = rb.GetLinearVelocity();
-			auto ang = rb.GetAngularVelocity();
+			auto ang = rb.GetRadAngularVelocity();
 			m_BodyInterface->SetLinearAndAngularVelocity(idComp.BodyID, JPH::Vec3(lin.x, lin.y, lin.z), JPH::Vec3(ang.x, ang.y, ang.z));
 			m_BodyInterface->SetFriction(idComp.BodyID, rb.GetFriction());
 			m_BodyInterface->SetGravityFactor(idComp.BodyID, rb.GetGravityFactor());
