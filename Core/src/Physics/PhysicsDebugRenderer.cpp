@@ -8,6 +8,7 @@
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Math/BoundingBox.hpp"
+#include "Voxymore/Debug/Gizmos.hpp"
 
 namespace Voxymore::Core
 {
@@ -117,7 +118,7 @@ namespace Voxymore::Core
 
 		Ref<Mesh> m = GetOrCreateLine();
 		m->SetMaterial(GetOrCreateMaterial(inColor));
-		Renderer::SubmitGizmo(m, Math::TRS((a+b) * Real(0.5), glm::quatLookAt(ab, up), {1,1,Math::Max(lenAB, Real(0.001))}));
+		Gizmos::DrawMesh(m, Math::TRS((a+b) * Real(0.5), glm::quatLookAt(ab, up), {1,1,Math::Max(lenAB, Real(0.001))}));
 	}
 
 // 4.45ms
@@ -152,7 +153,7 @@ namespace Voxymore::Core
 		}
 		Ref<Mesh> m = CreateRef<Mesh>(std::initializer_list<Voxymore::Core::Vertex>{{a,normal, Vec2{0,0},color},{b,normal, Vec2{0,0},color},{c,normal, Vec2{0,0},color}});
 		m->SetMaterial(GetOrCreateMaterial(inColor));
-		Renderer::SubmitGizmo(m);
+		Gizmos::DrawMesh(m);
 	}
 
 	void PhysicsDebugRenderer::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view &inString, JPH::ColorArg inColor, float inHeight)
@@ -216,7 +217,7 @@ namespace Voxymore::Core
 
 		Ref<Mesh> m = CreateRef<Mesh>(batch->mVertices, batch->mIndices, Convert(inWorldSpaceBounds));
 		m->SetMaterial(GetOrCreateMaterial(inModelColor));
-		Renderer::SubmitGizmo(m, Convert(inModelMatrix), inDrawMode == EDrawMode::Wireframe);
+		Gizmos::DrawMesh(m, Convert(inModelMatrix), Convert(inModelColor), 0, false, inDrawMode == EDrawMode::Wireframe);
 	}
 
 	PhysicsDebugRenderer::PhysicsDebugRenderer()

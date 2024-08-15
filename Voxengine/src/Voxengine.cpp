@@ -3,6 +3,7 @@
 #include "Voxymore/Core/EntryPoint.hpp"
 #include "Voxymore/Editor/EditorLayer.hpp"
 #include "Voxymore/Physics/PhysicsLayer.hpp"
+#include "Voxymore/Debug/Gizmos.hpp"
 #include "Voxymore/Voxymore.hpp"
 
 namespace Voxymore::Editor {
@@ -10,7 +11,9 @@ namespace Voxymore::Editor {
 class Voxengine : public Voxymore::Core::Application {
     public:
         Voxengine(const ApplicationParameters& parameters) : Voxymore::Core::Application(parameters) {
-//			PushOverlay(new ParticlePhysicsLayer());
+#ifndef VXM_DIST
+			PushOverlay<Gizmos>();
+#endif
 			PushOverlay(new PhysicsLayer());
 			PushOverlay(new ImGuiLayer());
 			PushLayer(new EditorLayer());
