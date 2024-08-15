@@ -17,7 +17,7 @@ namespace Voxymore::Core
 		std::vector<uint32_t> Indices {};
 		Mat4 ModelMatrix;
 		Vec4 Color {1,1,1,1};
-		Ref<Mesh> Mesh {nullptr};
+		Ref<::Voxymore::Core::Mesh> Mesh {nullptr};
 		void EnsureMeshExist();
 	};
 
