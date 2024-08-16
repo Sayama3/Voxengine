@@ -6,6 +6,7 @@
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
+#include "Voxymore/Debug/Gizmos.hpp"
 
 namespace Voxymore::Core {
 	static RendererData s_Data;
@@ -105,8 +106,6 @@ namespace Voxymore::Core {
 
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
-		s_Data.DepthGizmos.clear();
-		s_Data.NonDepthGizmos.clear();
 
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
 		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
@@ -134,8 +133,6 @@ namespace Voxymore::Core {
 
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
-		s_Data.DepthGizmos.clear();
-		s_Data.NonDepthGizmos.clear();
 
 
 		const glm::vec4 p = transform * glm::vec4{0,0,0,1};
@@ -212,12 +209,17 @@ namespace Voxymore::Core {
 			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
-		for(const auto& [mesh, matrix, wireframe] : s_Data.DepthGizmos)
+		RenderCommand::EnableWireframe();
+		bool enableWireframe = true;
+		for(auto it = Gizmos::get_cbegin_depth(); it != Gizmos::get_cend_depth(); ++it)
 		{
-			if(wireframe) RenderCommand::EnableWireframe();
-			DrawGizmo(mesh, matrix);
-			if(wireframe) RenderCommand::DisableWireframe();
+			if(enableWireframe && !it->first.IsWiremesh) {
+				RenderCommand::DisableWireframe();
+				enableWireframe = false;
+			}
+			DrawGizmo(it->second.Mesh, it->second.ModelMatrix);
 		}
+		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
 
 		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
@@ -225,21 +227,20 @@ namespace Voxymore::Core {
 			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
+		RenderCommand::EnableWireframe();
 		RenderCommand::DisableDepth();
-		for(const auto& [mesh, matrix, wireframe] : s_Data.NonDepthGizmos)
+		enableWireframe = true;
+		for(auto it = Gizmos::get_cbegin_non_depth(); it != Gizmos::get_cend_non_depth(); ++it)
 		{
-			if(wireframe) RenderCommand::EnableWireframe();
-			DrawGizmo(mesh, matrix);
-			if(wireframe) RenderCommand::DisableWireframe();
+			if(enableWireframe && !it->first.IsWiremesh) {
+				RenderCommand::DisableWireframe();
+				enableWireframe = false;
+			}
+			DrawGizmo(it->second.Mesh, it->second.ModelMatrix);
 		}
+		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
 		RenderCommand::EnableDepth();
 
-//		VXM_CORE_INFO(R"(Mesh Drawn :
-//	- OpaqueMeshes : {}
-//	- DepthGizmos : {}
-//	- AlphaMeshes : {}
-//	- NonDepthGizmos : {}
-//	- Total : {})", s_Data.OpaqueMeshes.size(), s_Data.DepthGizmos.size(), s_Data.AlphaMeshes.size(), s_Data.NonDepthGizmos.size(),(s_Data.OpaqueMeshes.size() + s_Data.DepthGizmos.size() + s_Data.AlphaMeshes.size() + s_Data.NonDepthGizmos.size()));
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
@@ -384,15 +385,6 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		RenderCommand::SetViewport(0,0,width,height);
-	}
-
-	void Renderer::SubmitGizmo(Ref<Mesh> model, const glm::mat4& matrix, bool wireModel, bool ignoreDepth)
-	{
-		if(ignoreDepth) {
-			s_Data.NonDepthGizmos.emplace_back(std::move(model), matrix, wireModel);
-		} else {
-			s_Data.DepthGizmos.emplace_back(std::move(model), matrix, wireModel);
-		}
 	}
 
 } // Core
