@@ -447,6 +447,14 @@ namespace Voxymore::Core
 
 } // Voxymore::Core
 
+// Might decide to put it in its own namespace...
+namespace Voxymore
+{
+	// Not using "_r" as it's already used by Jolt (which gave me the idea btw).
+	constexpr ::Voxymore::Core::Real operator "" _R (long double inValue) { return ::Voxymore::Core::Real(inValue); }
+	constexpr ::Voxymore::Core::Real operator "" _R (unsigned long long inValue) { return ::Voxymore::Core::Real(inValue); }
+}
+
 template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
 inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q>& value){
 	VXM_PROFILE_FUNCTION();
