@@ -661,7 +661,7 @@ namespace Voxymore::Core
 		auto activation = rb.GetActivation();
 		rb.m_BodyID = m_BodyInterface->CreateAndAddBody(creationSettings, activation);
 
-		m_BodyInterface->SetLinearAndAngularVelocity(rb.m_BodyID, Convert(rb.GetLinearVelocity()), Convert(rb.GetAngularVelocity()));
+		m_BodyInterface->SetLinearAndAngularVelocity(rb.m_BodyID, Convert(rb.GetLinearVelocity()), Convert(rb.GetRadAngularVelocity()));
 		m_BodyInterface->SetFriction(rb.m_BodyID, rb.GetFriction());
 		m_BodyInterface->SetGravityFactor(rb.m_BodyID, rb.GetGravityFactor());
 
@@ -674,7 +674,7 @@ namespace Voxymore::Core
 			CreatePhysicsBody(e, rb);
 		} else {
 			auto activation = rb.GetActivation();
-			if(!IsStarted()) m_BodyInterface->SetLinearAndAngularVelocity(rb.m_BodyID, Convert(rb.GetLinearVelocity()), Convert(rb.GetAngularVelocity()));
+			if(!IsStarted()) m_BodyInterface->SetLinearAndAngularVelocity(rb.m_BodyID, Convert(rb.GetLinearVelocity()), Convert(rb.GetRadAngularVelocity()));
 			m_BodyInterface->SetFriction(rb.m_BodyID, rb.GetFriction());
 			m_BodyInterface->SetGravityFactor(rb.m_BodyID, rb.GetGravityFactor());
 			m_BodyInterface->SetMotionType(rb.m_BodyID, rb.GetMotionType(), activation);

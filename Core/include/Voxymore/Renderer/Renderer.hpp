@@ -63,8 +63,6 @@ namespace Voxymore::Core {
 		Ref<UniformBuffer> MaterialUniformBuffer;
 		std::multimap<Real, std::tuple<const Ref<Mesh>, glm::mat4, int>> AlphaMeshes;
 		std::vector<std::tuple<const Ref<Mesh>, glm::mat4, int>> OpaqueMeshes;
-		std::vector<std::tuple<Ref<Mesh>, glm::mat4, bool>> NonDepthGizmos;
-		std::vector<std::tuple<Ref<Mesh>, glm::mat4, bool>> DepthGizmos;
 	};
 
 	class Renderer {
@@ -91,8 +89,6 @@ namespace Voxymore::Core {
 		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-	public:
-		static void SubmitGizmo(Ref<Mesh> model, const glm::mat4& transform = glm::identity<glm::mat4>(), bool wireModel = false, bool ignoreDepth = true);
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

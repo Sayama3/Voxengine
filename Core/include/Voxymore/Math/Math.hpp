@@ -178,7 +178,9 @@ namespace Voxymore::Core
 			return glm::value_ptr(qua);
 		}
 
-		inline static constexpr Real Pi{ std::numbers::pi_v<Real> };
+		inline static constexpr Real Pi { std::numbers::pi_v<Real> };
+		inline static constexpr Real DegToRad { Pi / Real(180) };
+		inline static constexpr Real RadToDeg { Real(180) / Pi };
 		inline static Real Cos(Real value){ return std::cos(value); };
 		inline static Real Sin(Real value){ return std::sin(value); };
 

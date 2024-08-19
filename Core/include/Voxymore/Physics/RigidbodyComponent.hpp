@@ -49,12 +49,13 @@ namespace Voxymore::Core
 		[[nodiscard]] JPH::EMotionType GetMotionType() const;
 	public:
 		// Getters
-		Vec3 GetLinearVelocity() const {return m_LinearVelocity;}
-		Vec3 GetAngularVelocity() const {return m_AngularVelocity;}
-		Real GetFriction() const {return m_Friction;}
-		Real GetGravityFactor() const {return m_GravityFactor;}
-		bool GetIsAwake() const {return m_IsAwake;}
-		JPH::EActivation GetActivation() {return m_IsAwake ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;}
+		[[nodiscard]] Vec3 GetLinearVelocity() const {return m_LinearVelocity;}
+		[[nodiscard]] Vec3 GetRadAngularVelocity() const {return m_AngularVelocity * Math::DegToRad;}
+		[[nodiscard]] Vec3 GetDegAngularVelocity() const {return m_AngularVelocity;}
+		[[nodiscard]] Real GetFriction() const {return m_Friction;}
+		[[nodiscard]] Real GetGravityFactor() const {return m_GravityFactor;}
+		[[nodiscard]] bool GetIsAwake() const {return m_IsAwake;}
+		[[nodiscard]] JPH::EActivation GetActivation() const {return m_IsAwake ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;}
 
 		// Setters
 		void SetLinearVelocity(Vec3 linearVelocity) {m_LinearVelocity = linearVelocity;}
