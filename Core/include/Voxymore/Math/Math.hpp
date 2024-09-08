@@ -105,6 +105,7 @@ namespace Voxymore::Core
 		bool DecomposeTransform(const Mat4& transform, Vec3& position, Quat& rotation, Vec3& scale);
 
 		template<typename T>
+		[[deprecated("Use Math::ToString")]]
 		inline static std::string to_string(const T& value)
 		{
 			VXM_PROFILE_FUNCTION();
@@ -395,18 +396,18 @@ namespace Voxymore::Core
 		}
 	}; // Math
 
-	template<> inline std::string Math::to_string(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const float& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const long double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const uint8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const uint16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const uint32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const uint64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const int8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const int16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
-	template<> inline std::string Math::to_string(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const float& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const long double& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const uint8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const uint16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const uint32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const uint64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const int8_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const int16_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const int32_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
+	template<> [[deprecated("Use Math::ToString")]] inline std::string Math::to_string(const int64_t& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 
 	template<> inline std::string Math::ToString(const bool& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
 	template<> inline std::string Math::ToString(const float& value) { VXM_PROFILE_FUNCTION(); return std::to_string(value); }
@@ -457,18 +458,15 @@ namespace Voxymore
 
 template<glm::length_t C, glm::length_t R, typename T, glm::qualifier Q>
 inline std::ostream& operator << (std::ostream & os, const glm::mat<C,R,T,Q>& value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
+	return os << Voxymore::Core::Math::ToString(value);
 }
 
 template<typename T, glm::qualifier Q>
 inline std::ostream& operator << (std::ostream & os, const glm::qua<T,Q>& value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
+	return os << Voxymore::Core::Math::ToString(value);
 }
 
 template<glm::length_t L, typename T, glm::qualifier Q>
 inline std::ostream& operator << (std::ostream & os, const glm::vec<L, T, Q>& value){
-	VXM_PROFILE_FUNCTION();
-	return os << glm::to_string(value);
+	return os << Voxymore::Core::Math::ToString(value);
 }

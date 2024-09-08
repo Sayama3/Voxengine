@@ -177,7 +177,7 @@ set(SRC_FILES src/Core/Application.cpp
         src/Physics/PhysicsDebugRenderer.cpp
         include/Voxymore/Physics/PhysicsDebugRenderer.hpp
         include/Voxymore/Core/Optional.hpp
-        include/Voxymore/Physics/PhysicsTypeHelpers.hpp
+        include/Voxymore/Physics/PhysicsTypeConverter.hpp
         src/Debug/Gizmos.cpp
         include/Voxymore/Debug/Gizmos.hpp
 )

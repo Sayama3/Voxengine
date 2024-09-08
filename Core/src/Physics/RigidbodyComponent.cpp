@@ -5,6 +5,7 @@
 #include "Voxymore/Physics/RigidbodyComponent.hpp"
 #include "Voxymore/Components/Components.hpp"
 #include "Voxymore/ImGui/ImGuiLib.hpp"
+#include "Voxymore/Physics/PhysicsTypeConverter.hpp"
 
 namespace Voxymore::Core
 {
@@ -129,7 +130,56 @@ namespace Voxymore::Core
 
 		return changed;
 	}
+
 	void RigidbodyComponent::AddForce(Vec3 force)
 	{
+		if(!m_Body) return;
+		m_Body->AddForce(Convert(force));
+	}
+
+	void RigidbodyComponent::AddForce(Vec3 force, Vec3 worldPosition)
+	{
+		if(!m_Body) return;
+		m_Body->AddForce(Convert(force), Convert(worldPosition));
+	}
+
+	void RigidbodyComponent::AddTorque(Vec3 torque)
+	{
+		if(!m_Body) return;
+		m_Body->AddTorque(Convert(torque));
+	}
+	void RigidbodyComponent::AddImpulse(Vec3 impulse)
+	{
+		if(!m_Body) return;
+		m_Body->AddImpulse(Convert(impulse));
+	}
+
+	void RigidbodyComponent::AddImpulse(Vec3 impulse, Vec3 worldPosition)
+	{
+		if(!m_Body) return;
+		m_Body->AddImpulse(Convert(impulse), Convert(worldPosition));
+	}
+	void RigidbodyComponent::AddAngularImpulse(Vec3 angularImpulse)
+	{
+		if(!m_Body) return;
+		m_Body->AddAngularImpulse(Convert(angularImpulse));
+	}
+
+	void RigidbodyComponent::MoveKinematic(Vec3 targetPosition, Quat targetRotation, Real duration)
+	{
+		if(!m_Body) return;
+		m_Body->MoveKinematic(Convert(targetPosition), Convert(targetRotation), float(duration));
+	}
+
+	void RigidbodyComponent::Move(Vec3 movement)
+	{
+		if(!m_Body) return;
+		m_Body->AddPositionStep(Convert(movement));
+	}
+
+	void RigidbodyComponent::Rotate(Vec3 angularRotation)
+	{
+		if(!m_Body) return;
+		m_Body->AddRotationStep(Convert(angularRotation));
 	}
 }// namespace Voxymore::Core

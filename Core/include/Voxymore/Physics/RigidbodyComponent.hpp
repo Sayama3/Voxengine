@@ -62,16 +62,37 @@ namespace Voxymore::Core
 		void SetAngularVelocity(Vec3 angularVelocity) {m_AngularVelocity = angularVelocity;}
 
 		void SetFriction(Real friction) {m_Friction = friction;}
+		void SetClampFriction(Real friction) {SetFriction(Math::Clamp01(friction));}
 		void SetGravityFactor(Real gravityFactor) {m_GravityFactor = gravityFactor;}
+		void DisableGravity() {m_GravityFactor = 0.0_R;}
 		void SetIsAwake(bool isAwake) {m_IsAwake = isAwake;}
 	public:
+		/// Add force (unit: N) at center of mass for the next time step, will be reset after the next call to PhysicsSystem::Update
 		void AddForce(Vec3 force);
+		/// Add force (unit: N) to point in world space for the next time step, will be reset after the next call to PhysicsSystem::Update
+		void AddForce(Vec3 force, Vec3 worldPosition);
+//		/// Add force (unit: N) to point in local space for the next time step, will be reset after the next call to PhysicsSystem::Update
+//		void AddForceAtLocalPosition(Vec3 force, Vec3 localPosition);
+		/// Add torque (unit: N m) for the next time step, will be reset after the next call to PhysicsSystem::Update
+		void AddTorque(Vec3 torque);
+		/// Add impulse to center of mass (unit: kg m/s)
+		void AddImpulse(Vec3 impulse);
+		/// Add impulse to point in world space (unit: kg m/s)
+		void AddImpulse(Vec3 impulse, Vec3 worldPosition);
+		/// Add angular impulse in world space (unit: N m s)
+		void AddAngularImpulse(Vec3 angularImpulse);
+		/// Set velocity of body such that it will be positioned at targetPosition/Rotation in duration seconds.
+		void MoveKinematic(Vec3 targetPosition, Quat targetRotation, Real duration);
+		/// Add a movement during the integration (unit: m)
+		void Move(Vec3 movement);
+		/// Add a rotation during the integration (unit: rad)
+		void Rotate(Vec3 angularRotation);
 	private:
 		RigidbodyType m_Type{RigidbodyType::Dynamic};
-		Vec3 m_LinearVelocity{0};
-		Vec3 m_AngularVelocity{0};
-		Real m_Friction{0.5};
-		Real m_GravityFactor{1.0};
+		Vec3 m_LinearVelocity{0_R};
+		Vec3 m_AngularVelocity{0_R};
+		Real m_Friction{0.5_R};
+		Real m_GravityFactor{1_R};
 		bool m_IsAwake{true};
 	private:
 		JPH::Body* m_Body{nullptr};

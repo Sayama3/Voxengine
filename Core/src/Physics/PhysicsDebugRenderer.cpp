@@ -3,12 +3,12 @@
 //
 
 #include "Voxymore/Physics/PhysicsDebugRenderer.hpp"
-#include "Voxymore/Physics/PhysicsTypeHelpers.hpp"
+#include "Voxymore/Debug/Gizmos.hpp"
+#include "Voxymore/Math/BoundingBox.hpp"
+#include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Physics/PhysicsTypeConverter.hpp"
 #include "Voxymore/Renderer/Material.hpp"
 #include "Voxymore/Renderer/Renderer.hpp"
-#include "Voxymore/Math/Math.hpp"
-#include "Voxymore/Math/BoundingBox.hpp"
-#include "Voxymore/Debug/Gizmos.hpp"
 
 namespace Voxymore::Core
 {
