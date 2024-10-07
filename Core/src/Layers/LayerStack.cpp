@@ -40,4 +40,4 @@ namespace Voxymore::Core {
             m_Layers.erase(it);
         }
     }
-} // Layers
+} // PhysicalLayers

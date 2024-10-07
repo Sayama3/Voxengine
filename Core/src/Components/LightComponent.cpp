@@ -27,7 +27,7 @@ namespace Voxymore::Core
 	bool LightComponent::OnImGuiRender()
 	{
 		bool changed = false;
-		changed |= ImGui::ColorPicker4("Color", glm::value_ptr(m_Color));
+		changed |= ImGui::ColorPicker4("Color", Math::ValuePtr(m_Color));
 		changed |= ImGui::DragFloat("Intensity", &m_Intensity, 1);
 		changed |= ImGui::DragFloat("Range", &m_Range, 0.1);
 		changed |= ImGui::DragFloat("Cutoff", &m_Cutoff, 0.1, 0, 360);

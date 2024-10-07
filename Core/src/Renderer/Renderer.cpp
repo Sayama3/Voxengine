@@ -4,7 +4,9 @@
 
 #include "Voxymore/Renderer/Renderer.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
+#include "Voxymore/Debug/Gizmos.hpp"
 
 namespace Voxymore::Core {
 	static RendererData s_Data;
@@ -16,7 +18,6 @@ namespace Voxymore::Core {
 	static Ref<Mesh> s_CubemapMesh;
 
 	RendererData::ModelData::ModelData(glm::mat4 transformMatrix, glm::mat4 normalMatrix, int entityId) : TransformMatrix(transformMatrix), NormalMatrix(normalMatrix), EntityId(entityId) {}
-
 
 	void Renderer::DrawCubemap(const glm::mat4& view, const glm::mat4& projection, const Ref<Cubemap>& cubemap, const Ref<Shader>& cubemapShader)
 	{
@@ -133,6 +134,7 @@ namespace Voxymore::Core {
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
 
+
 		const glm::vec4 p = transform * glm::vec4{0,0,0,1};
 		const auto view = glm::inverse(transform);
 		const auto proj = camera.GetProjectionMatrix();
@@ -145,30 +147,58 @@ namespace Voxymore::Core {
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
-	void Renderer::DrawMesh(Ref<Mesh> m, const glm::mat4& modelMatrix, int entityId)
+	void Renderer::DrawMesh(const Ref<Mesh>& m, const glm::mat4& modelMatrix, int entityId)
 	{
+		VXM_PROFILE_FUNCTION();
 		s_Data.ModelBuffer.TransformMatrix = modelMatrix;
 		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(modelMatrix));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
 
 		MaterialField mat = m->GetMaterial();
-		VXM_CORE_ASSERT(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
-		Ref<Material> matPtr = mat.GetAsset();
-		//if(mat != s_BindedMaterial && mat) {
+		VXM_CORE_CHECK_ERROR(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
+		if(mat)
+		{
+			Ref<Material> matPtr = mat.GetAsset();
+			//if(mat != s_BindedMaterial && mat) {
 			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
 			matPtr->Bind(false);
 			s_BindedMaterial = mat;
-		//}
+			//}
 
-		ShaderField shader = matPtr->GetShaderHandle();
-		VXM_CORE_ASSERT(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
-		if (shader != s_BindedShader && shader) {
-			shader.GetAsset()->Bind();
-			s_BindedShader = shader;
+			ShaderField shader = matPtr->GetShaderHandle();
+			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
+			if (shader != s_BindedShader && shader) {
+				shader.GetAsset()->Bind();
+				s_BindedShader = shader;
+			}
 		}
 		m->Bind();
-		RenderCommand::DrawIndexed(m->GetVertexArray());
+		RenderCommand::DrawIndexed(m->GetDrawMode(), m->GetVertexArray());
+	}
+
+	void Renderer::DrawGizmo(const Ref<Mesh>& m, const glm::mat4& modelMatrix)
+	{
+		VXM_PROFILE_FUNCTION();
+		s_Data.ModelBuffer.TransformMatrix = modelMatrix;
+		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+
+		MaterialField mat = m->GetMaterial();
+		VXM_CORE_CHECK_ERROR(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
+		if(mat)
+		{
+			Ref<Material> matPtr = mat.GetAsset();
+			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
+
+			ShaderField shader = matPtr->GetShaderHandle();
+			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
+			if (shader != s_BindedShader && shader) {
+				shader.GetAsset()->Bind();
+				s_BindedShader = shader;
+			}
+		}
+		m->Bind();
+		RenderCommand::DrawIndexed(m->GetDrawMode(), m->GetVertexArray());
 	}
 
 	void Renderer::EndScene() {
@@ -179,11 +209,37 @@ namespace Voxymore::Core {
 			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
+		RenderCommand::EnableWireframe();
+		bool enableWireframe = true;
+		for(auto it = Gizmos::get_cbegin_depth(); it != Gizmos::get_cend_depth(); ++it)
+		{
+			if(enableWireframe && !it->first.IsWiremesh) {
+				RenderCommand::DisableWireframe();
+				enableWireframe = false;
+			}
+			DrawGizmo(it->second.Mesh, it->second.ModelMatrix);
+		}
+		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
+
 		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
 			auto& mesh = it->second;
 			DrawMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
+
+		RenderCommand::EnableWireframe();
+		RenderCommand::DisableDepth();
+		enableWireframe = true;
+		for(auto it = Gizmos::get_cbegin_non_depth(); it != Gizmos::get_cend_non_depth(); ++it)
+		{
+			if(enableWireframe && !it->first.IsWiremesh) {
+				RenderCommand::DisableWireframe();
+				enableWireframe = false;
+			}
+			DrawGizmo(it->second.Mesh, it->second.ModelMatrix);
+		}
+		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
+		RenderCommand::EnableDepth();
 
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
@@ -299,6 +355,8 @@ namespace Voxymore::Core {
 	{
 		VXM_PROFILE_FUNCTION();
 		//model->Bind();
+		VXM_CORE_CHECK(model, "No model sent to be drawn.");
+		if(!model) return;
 		for (int nodeIndex : model->GetDefaultScene())
 		{
 			Submit(model, model->GetNode(nodeIndex), transform, entityId);

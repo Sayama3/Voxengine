@@ -14,7 +14,7 @@ namespace Voxymore::Core
 	bool EditorAssetManager::IsAssetHandleValid(AssetHandle handle) const
 	{
 		VXM_PROFILE_FUNCTION();
-		return handle != 0 && (m_AssetRegistry.contains(handle) || m_MemoryAssets.contains(handle));
+		return handle && (m_AssetRegistry.contains(handle) || m_MemoryAssets.contains(handle));
 	}
 
 	bool EditorAssetManager::IsAssetLoaded(AssetHandle handle) const

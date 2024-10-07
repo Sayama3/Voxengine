@@ -12,7 +12,6 @@
 #include "Voxymore/Events/Event.hpp"
 #include "Voxymore/ImGui/ImGuiLayer.hpp"
 #include "Voxymore/Layers/LayerStack.hpp"
-#include "Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp"
 #include "Window.hpp"
 
 namespace Voxymore::Core {
@@ -38,6 +37,11 @@ namespace Voxymore::Core {
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
+
+		template<typename T, typename ... Args>
+		void PushLayer(Args&& ... args) {PushLayer(new T(std::forward<Args>(args)...));}
+		template<typename T, typename ... Args>
+		void PushOverlay(Args&& ... args) {PushOverlay(new T(std::forward<Args>(args)...));}
 
 		inline static Application& Get() {return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.16)
 
 # message("Voxymore::Core is a STATIC library.")
 
@@ -6,12 +6,19 @@ set(LIBRARY_TARGET_NAME Core)
 
 set(SRC_FILES src/Core/Application.cpp
         src/Math/Math.cpp
+        include/Voxymore/Math/Math.hpp
+        src/Math/Image.cpp
+        include/Voxymore/Math/Image.hpp
+        include/Voxymore/Math/BoundingObject.hpp
+        src/Math/BoundingBox.cpp
+        include/Voxymore/Math/BoundingBox.hpp
+        src/Math/BoundingSphere.cpp
+        include/Voxymore/Math/BoundingSphere.hpp
         src/Core/Logger.cpp
         include/Voxymore/Voxymore.hpp
         include/Voxymore/Core/Application.hpp
         include/Voxymore/Core/EntryPoint.hpp
         include/Voxymore/Core/Logger.hpp
-        include/Voxymore/Math/Math.hpp
         vendor/stb_image.h
         include/Voxymore/Core/SystemHelper.hpp
         include/Voxymore/Events/Event.hpp
@@ -101,67 +108,19 @@ set(SRC_FILES src/Core/Application.cpp
         src/Scene/Entity.cpp
         src/ImGui/ImGuiLib.cpp
         include/Voxymore/ImGui/ImGuiLib.hpp
-        src/ParticlesPhysics/ParticlePhysicsLayer.cpp
-        include/Voxymore/ParticlesPhysics/ParticlePhysicsLayer.hpp
-        include/Voxymore/ParticlesPhysics/Particle.hpp
-        src/ParticlesPhysics/Components/ParticleComponent.cpp
-        include/Voxymore/ParticlesPhysics/Components/ParticleComponent.hpp
-        src/ParticlesPhysics/Particle.cpp
         src/Components/PrimitiveComponent.cpp
         include/Voxymore/Components/PrimitiveComponent.hpp
-        src/ParticlesPhysics/Components/AnchoredSpringComponent.cpp
-        include/Voxymore/ParticlesPhysics/Components/AnchoredSpringComponent.hpp
-        src/ParticlesPhysics/Systems/SpringForceSystem.cpp
-        include/Voxymore/ParticlesPhysics/Systems/SpringForceSystem.hpp
         vendor/static_block.hpp
-        src/ParticlesPhysics/Systems/BuoyancyForceSystem.cpp
-        include/Voxymore/ParticlesPhysics/Systems/BuoyancyForceSystem.hpp
-        src/ParticlesPhysics/Components/FloatingComponent.cpp
-        include/Voxymore/ParticlesPhysics/Components/FloatingComponent.hpp
-        src/ParticlesPhysics/Collisions/ParticleContact.cpp
-        include/Voxymore/ParticlesPhysics/Collisions/ParticleContact.hpp
         include/Voxymore/Core/MultiThreading.hpp
-        src/ParticlesPhysics/Collisions/ParticleContactResolver.cpp
-        include/Voxymore/ParticlesPhysics/Collisions/ParticleContactResolver.hpp
         include/Voxymore/Scene/Entity.forward.hpp
         include/Voxymore/Scene/Entity.decl.hpp
         include/Voxymore/Scene/Entity.impl.hpp
         include/Voxymore/Scene/Scene.forward.hpp
         include/Voxymore/Scene/Scene.decl.hpp
         include/Voxymore/Scene/Scene.impl.hpp
-        src/RigidbodiesPhysics/Rigidbody.cpp
-        include/Voxymore/RigidbodiesPhysics/Rigidbody.hpp
-        src/RigidbodiesPhysics/Components/RigidbodyComponent.cpp
-        include/Voxymore/RigidbodiesPhysics/Components/RigidbodyComponent.hpp
-        src/RigidbodiesPhysics/RigidbodyPhysicsLayer.cpp
-        include/Voxymore/RigidbodiesPhysics/RigidbodyPhysicsLayer.hpp
-        src/RigidbodiesPhysics/Collisions/RigidbodyContact.cpp
-        include/Voxymore/RigidbodiesPhysics/Collisions/RigidbodyContact.hpp
-        src/RigidbodiesPhysics/Collisions/RBContactResolver.cpp
-        include/Voxymore/RigidbodiesPhysics/Collisions/RBContactResolver.hpp
         src/Components/LightComponent.cpp
         include/Voxymore/Components/LightComponent.hpp
         include/Voxymore/Renderer/Light.hpp
-        src/RigidbodiesPhysics/Systems/RigidbodySpringSystem.cpp
-        include/Voxymore/RigidbodiesPhysics/Systems/RigidbodySpringSystem.hpp
-        src/RigidbodiesPhysics/Components/RigidbodySpringComponent.cpp
-        include/Voxymore/RigidbodiesPhysics/Components/RigidbodySpringComponent.hpp
-        src/RigidbodiesPhysics/Systems/RigidbodyBuoyancySystem.cpp
-        include/Voxymore/RigidbodiesPhysics/Systems/RigidbodyBuoyancySystem.hpp
-        src/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.cpp
-        include/Voxymore/RigidbodiesPhysics/Components/RigidbodyFloatingComponent.hpp
-        include/Voxymore/Math/BoundingObject.hpp
-        src/Math/BoundingSphere.cpp
-        include/Voxymore/Math/BoundingSphere.hpp
-        include/Voxymore/RigidbodiesPhysics/Collisions/BroadCollisions.hpp
-        src/Math/BoundingBox.cpp
-        include/Voxymore/Math/BoundingBox.hpp
-        src/RigidbodiesPhysics/Primitive.cpp
-        include/Voxymore/RigidbodiesPhysics/Primitive.hpp
-        src/RigidbodiesPhysics/Collisions/CollisionDetector.cpp
-        include/Voxymore/RigidbodiesPhysics/Collisions/CollisionDetector.hpp
-        src/RigidbodiesPhysics/Collisions/ColliderComponent.cpp
-        include/Voxymore/RigidbodiesPhysics/Components/ColliderComponent.hpp
         include/Voxymore/Core/TypeHelpers.hpp
         src/Assets/Asset.cpp
         include/Voxymore/Assets/Asset.hpp
@@ -201,8 +160,26 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/ImGui/TextureImGui.cpp
         src/Renderer/Cubemap.cpp
         include/Voxymore/Renderer/Cubemap.hpp
-        src/Math/Image.cpp
-        include/Voxymore/Math/Image.hpp
+        src/Physics/PhysicsLayer.cpp
+        include/Voxymore/Physics/PhysicsLayer.hpp
+        src/Physics/ObjectLayerPairFilter.cpp
+        include/Voxymore/Physics/ObjectLayerPairFilter.hpp
+        src/Physics/BroadPhaseLayerInterface.cpp
+        include/Voxymore/Physics/BroadPhaseLayerInterface.hpp
+        src/Physics/ObjectVsBroadPhaseLayerFilter.cpp
+        include/Voxymore/Physics/ObjectVsBroadPhaseLayerFilter.hpp
+        src/Physics/PhysicsListener.cpp
+        include/Voxymore/Physics/PhysicsListener.hpp
+        src/Physics/RigidbodyComponent.cpp
+        include/Voxymore/Physics/RigidbodyComponent.hpp
+        src/Physics/ColliderComponent.cpp
+        include/Voxymore/Physics/ColliderComponent.hpp
+        src/Physics/PhysicsDebugRenderer.cpp
+        include/Voxymore/Physics/PhysicsDebugRenderer.hpp
+        include/Voxymore/Core/Optional.hpp
+        include/Voxymore/Physics/PhysicsTypeHelpers.hpp
+        src/Debug/Gizmos.cpp
+        include/Voxymore/Debug/Gizmos.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -249,7 +226,7 @@ target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
 target_include_directories(${LIBRARY_TARGET_NAME} PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 
-target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp tracy hash-library)
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC glm spdlog::spdlog_header_only imgui ImGuizmo EnTT::EnTT yaml-cpp::yaml-cpp hash-library Jolt TracyClient)
 target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE glad glfw)
 
 # REQUIRED to find vulkan correctly.

@@ -17,10 +17,6 @@ namespace Voxymore::Core
 	{
 	}
 
-	UUID::UUID(uint64_t id) : m_UUID(id)
-	{
-	}
-
 	UUID UUID::FromString(const std::string& str)
 	{
 		std::hash<std::string> hash_fn;
@@ -31,5 +27,15 @@ namespace Voxymore::Core
 	std::string UUID::string() const
 	{
 		return std::to_string(m_UUID);
+	}
+
+	bool operator==(const UUID &lft, const UUID &rht)
+	{
+		return lft.m_UUID == rht.m_UUID;
+	}
+
+	bool operator!=(const UUID &lft, const UUID &rht)
+	{
+		return !(lft == rht);
 	}
 }// namespace Voxymore::Core

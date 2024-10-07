@@ -97,4 +97,4 @@ namespace Voxymore::Core {
 		unsigned int m_LayerInsertIndex = 0;
 	};
 
-} // Layers
+} // PhysicalLayers

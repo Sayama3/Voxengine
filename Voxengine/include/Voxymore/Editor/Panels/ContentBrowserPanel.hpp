@@ -11,6 +11,7 @@ namespace Voxymore::Editor
 {
 	class ContentBrowserPanel : public Panel<ContentBrowserPanel>
 	{
+		using ImGuiMenuFunc = std::function<bool(Voxymore::Core::AssetMetadata)>;
 	private:
 		enum ButtonClickState {
 			STATE_NONE = 0,
@@ -45,6 +46,8 @@ namespace Voxymore::Editor
 		static inline float s_ThumbnailSize = 64.0f;
 		static inline float s_Padding = 16.0f;
 		static inline constexpr float c_Increment = 16.0f;
+
+		static std::unordered_map<Core::AssetType, ImGuiMenuFunc> s_MenuFunc;
 
 		static inline Core::Ref<Core::Texture2D> s_BackTexture = nullptr;
 		static inline Core::Ref<Core::Texture2D> s_FolderTexture = nullptr;

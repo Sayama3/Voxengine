@@ -55,8 +55,6 @@ namespace Voxymore::Core
 		AssetMap m_LoadedAssets;
 		AssetMap m_MemoryAssets;
 		AssetRegistry m_AssetRegistry;
-
-		//TODO: Memory-only assets;
 	};
 
 

@@ -63,6 +63,14 @@ namespace Voxymore::Core {
 			if(!cubemap || !shader || !mesh) return;
 			s_RendererAPI->DrawCubemap(cubemap, shader, mesh);
 		}
+		inline static void DisableDepth() {VXM_PROFILE_FUNCTION(); s_RendererAPI->DisableDepth();}
+		inline static void EnableDepth() {VXM_PROFILE_FUNCTION(); s_RendererAPI->EnableDepth();}
+
+		inline static void EnableWireframe() {VXM_PROFILE_FUNCTION(); s_RendererAPI->EnableWireframe();}
+		inline static void DisableWireframe() {VXM_PROFILE_FUNCTION(); s_RendererAPI->DisableWireframe();}
+
+		inline static void EnableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->EnableDoubleSided();}
+		inline static void DisableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->DisableDoubleSided();}
     private:
         static RendererAPI* s_RendererAPI;
     };

@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.16)
+
+include(FetchContent)
 
 add_subdirectory(glad)
 
@@ -23,9 +25,33 @@ add_subdirectory(yaml-cpp)
 add_subdirectory(ImGuizmo)
 target_link_libraries(ImGuizmo PUBLIC imgui)
 
-option(TRACY_ENABLE "" ON)
-option(TRACY_ON_DEMAND "" ON)
-add_subdirectory(tracy)
-
 add_subdirectory(hash-library)
 
+#TODO: use "Fetch Content" instead of git submodules.
+
+set(CROSS_PLATFORM_DETERMINISTIC ON)
+set(ENABLE_ALL_WARNINGS OFF)
+
+FetchContent_Declare(
+        jolt
+        GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics.git"
+        GIT_TAG "v5.0.0"
+        SOURCE_SUBDIR "Build"
+)
+
+set(TRACY_ENABLE ON)
+set(TRACY_ON_DEMAND ON)
+
+FetchContent_Declare(
+        Tracy
+        GIT_REPOSITORY "https://github.com/wolfpld/tracy.git"
+        GIT_TAG "v0.11.0"
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(jolt Tracy)
+
+set_target_properties(Jolt PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+)

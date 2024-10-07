@@ -42,9 +42,10 @@ namespace Voxymore::Core
 		T& GetOrAddComponent(Args &&...args);
 
 		template<typename T>
+		void EnsureHasEmptyComponent();
+
+		template<typename T>
 		void RemoveComponent();
-
-
 
 		inline operator bool() const { return IsValid(); }
 		operator entt::entity() const;
@@ -54,7 +55,6 @@ namespace Voxymore::Core
 
 		bool operator!=(const Entity& other) const;
 
-
 		bool IsValid() const;
 		bool IsActive() const;
 		void SetActive(bool enable);
@@ -62,6 +62,8 @@ namespace Voxymore::Core
 		inline UUID GetUUID() const {return id();}
 		UUID id() const;
 		UUID scene_id() const;
+	public:
+		const Scene* GetScene() const {return m_Scene;}
 	};
 
 	struct EntityField
@@ -73,7 +75,7 @@ namespace Voxymore::Core
 		UUID EntityId;
 		UUID SceneId;
 
-		bool Valid();
+		bool Valid() const;
 		Entity GetEntity(Scene& scene);
 	};
 }

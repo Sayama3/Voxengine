@@ -6,10 +6,6 @@
 
 #include "Voxymore/Core/Core.hpp"
 
-#ifndef BIT
-#define BIT(X) (1 << X)
-#endif
-
 namespace Voxymore::Core {
 
         enum class EventType : int {
@@ -79,7 +75,4 @@ namespace Voxymore::Core {
         {
             return os << e.string();
         }
-
-
-
 } // Events

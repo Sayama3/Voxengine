@@ -27,8 +27,6 @@ namespace Voxymore::Editor {
 
 	class EditorLayer : public Layer {
 	private:
-		Ref<Texture2D> m_Texture;
-	private:
 		// TODO: Create a SubPanel system. (openable, closable, etc.)
 		// Panels
 		struct PanelMetadata {
@@ -39,46 +37,13 @@ namespace Voxymore::Editor {
 			uint64_t typeId;
 			Core::Ref<BasePanel>(* createPanelFunc)(void);
 		};
-		std::map<uint64_t, PanelMetadata> m_PanelCreator;
-		std::vector<Core::Ref<BasePanel>> m_Panels;
-		std::vector<Core::Ref<Viewport>> m_Viewports;
-		std::multimap<uint64_t, Core::Ref<BasePanel>> m_UnloadedPanels;
-		std::vector<Core::Ref<Viewport>> m_UnloadedViewport;
-
-		Ref<Scene> m_ActiveScene = nullptr;
-		Ref<Scene> m_CacheScene = nullptr;
-		std::filesystem::path m_FilePath;
-		std::filesystem::path m_CacheFilePath;
-
-		// Editor.
-//        EditorCamera m_EditorCamera;
-		SceneState m_SceneState = SceneState::Edit;
-		Ref<Texture2D> m_PlayTexture;
-		Ref<Texture2D> m_StopTexture;
-		Ref<Texture2D> m_PauseTexture;
-	private:
-//		Ref<Framebuffer> m_Framebuffer;
-//		std::array<glm::vec2, 2> m_ViewportBounds;
-//        glm::uvec2 m_ViewportSize = glm::uvec2(0);
-//        bool m_ViewportFocused;
-//        bool m_ViewportHovered;
-	private: // Gizmo
-		GizmoOperation m_GizmoOperation = GizmoOperation::TRANSLATE;
-		GizmoMode m_GizmoMode = GizmoMode::LOCAL;
-		float m_GizmoTranslationSnapValue = 0.5f;
-		float m_GizmoRotationSnapValue = 45.0f;
-		float m_GizmoScaleSnapValue = 0.5f;
-	private:
-		UUID m_OnProjectReloadId;
 	public:
 		EditorLayer();
+		virtual ~EditorLayer() = default;
 
 		virtual void OnUpdate(TimeStep timeStep) override;
-
 		virtual void OnImGuiRender() override;
-
 		virtual void OnEvent(Event& event);
-
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 	private:
@@ -97,7 +62,6 @@ namespace Voxymore::Editor {
 		void SaveProjectAs();
 		void SaveProjectAs(const std::filesystem::path& path);
 
-
 		void CreateNewScene();
 		void SaveSceneAs();
 		void SaveScene();
@@ -107,13 +71,38 @@ namespace Voxymore::Editor {
 	public:
 		void OpenScene(AssetHandle id);
 	private:
-
 		void OnScenePlay();
 		void OnSceneStop();
 		void OnScenePause();
 		void OnSceneResume();
-
 		void ReloadAssets();
+	private:
+		std::map<uint64_t, PanelMetadata> m_PanelCreator;
+		std::vector<Core::Ref<BasePanel>> m_Panels;
+		std::vector<Core::Ref<Viewport>> m_Viewports;
+		std::multimap<uint64_t, Core::Ref<BasePanel>> m_UnloadedPanels;
+		std::vector<Core::Ref<Viewport>> m_UnloadedViewport;
+
+		Ref<Scene> m_ActiveScene = nullptr;
+		Ref<Scene> m_CacheScene = nullptr;
+		std::filesystem::path m_FilePath;
+		std::filesystem::path m_CacheFilePath;
+
+		// Editor.
+		SceneState m_SceneState = SceneState::Edit;
+		Ref<Texture2D> m_PlayTexture;
+		Ref<Texture2D> m_StopTexture;
+		Ref<Texture2D> m_PauseTexture;
+	private: // Gizmo
+		GizmoOperation m_GizmoOperation = GizmoOperation::TRANSLATE;
+		GizmoMode m_GizmoMode = GizmoMode::LOCAL;
+		float m_GizmoTranslationSnapValue = 0.5f;
+		float m_GizmoRotationSnapValue = 45.0f;
+		float m_GizmoScaleSnapValue = 0.5f;
+	private:
+		Ref<Texture2D> m_Texture;
+	private:
+		UUID m_OnProjectReloadId;
 	};
 
 } // Voxymore

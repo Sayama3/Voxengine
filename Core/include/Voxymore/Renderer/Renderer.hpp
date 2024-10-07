@@ -69,7 +69,8 @@ namespace Voxymore::Core {
 	private:
 		static void DrawCubemap(const glm::mat4& view, const glm::mat4& projection, const Ref<Cubemap>& cubemap, const Ref<Shader>& cubemapShader);
 		static void Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-		static void DrawMesh(Ref<Mesh> mesh, const glm::mat4& modelMatrix, int entityId = -1);
+		static void DrawMesh(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId = -1);
+		static void DrawGizmo(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix);
 	public:
 		static void Init();
 		static void Shutdown();
@@ -88,7 +89,7 @@ namespace Voxymore::Core {
 		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-
+	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:
 		//            static Scope<RendererData> s_Data;

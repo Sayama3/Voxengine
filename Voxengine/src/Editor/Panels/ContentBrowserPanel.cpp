@@ -3,8 +3,10 @@
 //
 
 #include "Voxymore/Editor/Panels/ContentBrowserPanel.hpp"
+#include "DefaultShaders.hpp"
 #include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Assets/EditorAssetManager.hpp"
+#include "Voxymore/Assets/ImGui/MaterialImGui.hpp"
 #include "Voxymore/Assets/ImGui/ShaderImGui.hpp"
 #include "Voxymore/Assets/Importers/MaterialSerializer.hpp"
 #include "Voxymore/Assets/Importers/MeshImporter.hpp"
@@ -23,123 +25,16 @@ namespace fs = std::filesystem;
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-static constexpr const char* c_DefaultShader = R"(
-#version 450 core
-
-#define ALPHA_MODE_OPAQUE 0
-#define ALPHA_MODE_MASK 1
-#define ALPHA_MODE_BLEND 2
-
-#define MAX_LIGHT_COUNT 20
-#define EPSILON 0.1
-
-struct TextureInfo
-{
-    int Index;
-    int TexCoord;
-};
-
-struct NormalTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Scale;
-};
-
-struct OcclusionTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Strenght;
-};
-
-struct MetallicRoughtness
-{
-    vec4 BaseColorFactor;
-    TextureInfo BaseColorTexture;
-    float MetallicFactor;
-    float RoughtnessFactor;
-    TextureInfo MetallicRoughnessTexture;
-};
-
-struct MaterialParams
-{
-    MetallicRoughtness PbrMetallicRoughness;
-    NormalTextureInfo NormalTexture;
-    OcclusionTextureInfo OcclusionTexture;
-    TextureInfo EmissiveTexture;
-    vec4 EmissiveFactor;
-    int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
-    float AlphaCutoff;
-    int DoubleSided;
-};
-
-struct Light
-{
-    vec4 Color;
-    vec4 Position;
-    vec4 Direction;
-    float Range;
-    float Intensity;
-    float Cutoff;
-    int Type; //0 = Directional ; 1 = Point ; 2 = Spot
-};
-
-struct LightData
-{
-    Light lights[MAX_LIGHT_COUNT];
-//    Light lights;
-    int lightCount;
-};
-
-layout(std140, binding = 0) uniform Camera
-{
-    mat4 u_ViewProjectionMatrix;
-    vec4 u_CameraPosition;
-    vec4 u_CameraDirection;
-};
-
-layout(std140, binding = 1) uniform Model
-{
-    mat4 u_ModelMatrix;
-    mat4 u_NormalMatrix;
-    int u_EntityId;
-};
-
-layout(std140, binding = 2) uniform Lights
-{
-    LightData lights;
-};
-
-layout(std140, binding = 3) uniform MaterialParameters
-{
-    MaterialParams materialParameters;
-};
-
-layout(std140, binding = 4) uniform CurveParameters
-{
-    vec4 u_ControlPoints[NUM_CONTROL_POINTS_MAX];
-    int u_NumberOfSegment;
-    int u_NumberControlPoint; // 4 by default.
-};
-
-vec3 GetControlPoint(int i)
-{
-    i = min(i, NUM_CONTROL_POINTS_MAX);
-    int index = int(gl_in[i/4].gl_Position[i%4]);
-    return u_ControlPoints[index].xyz;
-}
-
-
-void main() {
-
-}
-
-)";
+using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
+	std::unordered_map<Core::AssetType, ContentBrowserPanel::ImGuiMenuFunc> ContentBrowserPanel::s_MenuFunc = {
+			{AssetType::Material, &MaterialImGui::OnMenuMaterialImGui},
+			{AssetType::Shader, &ShaderImGui::OnMenuShaderImGui},
+	};
 	static const std::vector<std::string> s_SourceNames = GetFileSourceNames();
+
 	ContentBrowserPanel::ContentBrowserPanel() : m_Path({FileSource::None, ""}), m_ThumbnailSize(s_ThumbnailSize), m_Padding(s_Padding)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -439,7 +334,6 @@ namespace Voxymore::Editor
 
 	}
 
-
 	void ContentBrowserPanel::DrawRoot()
 	{
 		VXM_PROFILE_FUNCTION();
@@ -475,7 +369,6 @@ namespace Voxymore::Editor
 
 		ImGui::Columns(1);
 	}
-
 
 	void ContentBrowserPanel::DrawContent()
 	{
@@ -616,6 +509,13 @@ namespace Voxymore::Editor
 							else {
 								if (ImGui::MenuItem("Load")) {
 									assetManager->GetAsset(metadata.Handle);
+									ImGui::CloseCurrentPopup();
+								}
+							}
+
+							if(s_MenuFunc.contains(metadata.Type)) {
+								bool shouldClose = s_MenuFunc.at(metadata.Type)(metadata);
+								if(shouldClose) {
 									ImGui::CloseCurrentPopup();
 								}
 							}

@@ -5,10 +5,10 @@
 #pragma once
 
 #include "Voxymore/Core/FileSystem.hpp"
-#include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Scene/Scene.hpp"
+#include "Voxymore/Assets/Asset.hpp"
 #include "Voxymore/Assets/AssetManagerBase.hpp"
 #include "Voxymore/Assets/EditorAssetManager.hpp"
 #include "Voxymore/Assets/RuntimeAssetManager.hpp"
@@ -28,6 +28,9 @@ namespace Voxymore::Core
 		std::filesystem::path assetRegistryPath = "AssetRegistry.vxm";
 
 		std::optional<AssetHandle> startSceneId;
+		std::optional<AssetHandle> defaultMaterialId{std::nullopt};
+		std::optional<AssetHandle> defaultShaderId{std::nullopt};
+		std::optional<AssetHandle> gizmoShaderId{std::nullopt};
 
 		//TODO: Add script path once i've got scripting (i.e. C#/Lua/...).
 	};
@@ -47,10 +50,17 @@ namespace Voxymore::Core
 		static const std::filesystem::path& GetProjectFilePath();
 
 		static void ResetMainScene();
-		static void SetMainScene(UUID id);
+		static void SetMainScene(AssetHandle id);
 		static void SetMainScene(const Scene& scene);
 		static void SetMainScene(const Ref<Scene>& scene);
-		static UUID GetMainScene();
+		static AssetHandle GetMainScene();
+
+		static void SetGizmoShader(AssetHandle id);
+		static AssetHandle GetGizmoShader();
+		static void SetDefaultMaterial(AssetHandle id);
+		static AssetHandle GetDefaultMaterial();
+		static void SetDefaultShader(AssetHandle id);
+		static AssetHandle GetDefaultShader();
 
 		static const ProjectConfig& GetConfig();
 		inline static bool ProjectIsLoaded() { return s_ActiveProject != nullptr; }
@@ -60,8 +70,8 @@ namespace Voxymore::Core
 		static bool SaveActive(const std::filesystem::path& path);
 		static bool SaveActive();
 
-		static UUID AddOnLoad(const void_func_ptr&);
-		static void RemoveOnLoad(UUID id);
+		static AssetHandle AddOnLoad(const void_func_ptr&);
+		static void RemoveOnLoad(AssetHandle id);
 	public: // all the public members
 		Project();
 		Project(ProjectConfig parameters);
@@ -80,7 +90,7 @@ namespace Voxymore::Core
 		}
 	private: // the rest of the private things
 		void CallOnLoad();
-		static std::unordered_map<UUID, void_func_ptr>& GetOnLoad();
+		static std::unordered_map<AssetHandle, void_func_ptr>& GetOnLoad();
 	private:
 		[[nodiscard]] std::filesystem::path GetAsset() const;
 		[[nodiscard]] std::filesystem::path GetCache() const;
@@ -92,7 +102,7 @@ namespace Voxymore::Core
 		ProjectConfig m_Config;
 		Ref<AssetManagerBase> m_AssetManager;
 	private:
-		static std::unordered_map<UUID, void_func_ptr>* s_OnLoad;
+		static std::unordered_map<AssetHandle, void_func_ptr>* s_OnLoad;
 		static Ref<Project> s_ActiveProject;
 		friend class ProjectSerializer;
 	};

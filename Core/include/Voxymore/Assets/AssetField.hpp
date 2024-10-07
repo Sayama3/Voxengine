@@ -19,10 +19,11 @@ namespace Voxymore::Core
 		inline AssetField(AssetHandle handle) : Handle(handle) {}
 		inline AssetField(Ref<T> asset) : Handle(asset->Handle) {}
 		inline AssetField(const T& asset) : Handle(asset.Handle) {}
+		inline AssetField(const T* asset) : Handle(asset->Handle) {}
 	public:
 
 		[[nodiscard]] inline bool HasHandle() const {
-			return Handle != 0;
+			return Handle != NullAssetHandle;
 		}
 
 		[[nodiscard]] inline Ref<T> GetAsset() const {
@@ -71,7 +72,7 @@ namespace Voxymore::Core
 			return !(rhs.Handle == Handle);
 		}
 	private:
-		AssetHandle Handle = 0;
+		AssetHandle Handle = NullAssetHandle;
 	};
 
 	template<typename T>
