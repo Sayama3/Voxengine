@@ -40,6 +40,7 @@ FetchContent_Declare(
 )
 
 set(TRACY_ENABLE ON)
+set(TRACY_STATIC ON)
 set(TRACY_ON_DEMAND ON)
 
 FetchContent_Declare(
