@@ -287,10 +287,19 @@ namespace Voxymore::Core {
 		static Ref<Shader> Create(const std::string& name, const std::vector<ShaderSourceField>& sources);
     };
 
-	class ComputeShader : public Shader
+	class GraphicsShader : public Shader/*, public Asset*/
+	{
+	public:
+		static Ref<GraphicsShader> Create(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources);
+		static Ref<GraphicsShader> Create(const std::string& name, const std::vector<ShaderSourceField>& sources);
+	};
+
+	class ComputeShader : public Shader/*, public Asset*/
 	{
 	public:
 		virtual void Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ) = 0;
+	public:
+		static Ref<ComputeShader> Create(const std::string& name, ShaderSourceField source);
 	};
 
 	using ShaderField = AssetField<Shader>;

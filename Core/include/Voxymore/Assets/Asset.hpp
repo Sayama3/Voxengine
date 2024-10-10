@@ -26,6 +26,7 @@ namespace Voxymore::Core
 		CubeMap,
 		ShaderSource,
 		Shader,
+//		ComputeShader,
 		Material,
 		Model,
 		Mesh,

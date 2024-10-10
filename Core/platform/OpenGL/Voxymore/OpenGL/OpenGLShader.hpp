@@ -10,7 +10,8 @@
 
 namespace Voxymore::Core {
     // TODO: Analyse shaders to get the different uniform inside.
-    class OpenGLShader : public Shader {
+    class OpenGLShader
+	{
 	private:
 		enum Target
 		{
@@ -52,7 +53,11 @@ namespace Voxymore::Core {
         unsigned int m_RendererID = 0;
     };
 
-	class OpenGLComputeShader : public ComputeShader
+	class OpenGLGraphicsShader : public OpenGLShader, public GraphicsShader
+	{
+	};
+
+	class OpenGLComputeShader : public OpenGLShader, public ComputeShader
 	{
 	public:
 		virtual void Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ) override;
