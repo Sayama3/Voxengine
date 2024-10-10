@@ -6,6 +6,7 @@
 
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/Buffer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core {
@@ -58,6 +59,10 @@ namespace Voxymore::Core {
 	class RendererBuffer
 	{
 	public:
+		RendererBuffer(const RendererBuffer&) = delete;
+		RendererBuffer& operator=(const RendererBuffer&) = delete;
+
+		RendererBuffer() = default;
 		virtual ~RendererBuffer() {}
 
 		virtual void Bind() const = 0;
@@ -92,4 +97,87 @@ namespace Voxymore::Core {
 
         static Ref<IndexBuffer> Create(uint32_t count, const uint32_t* indices);
     };
+
+	class SSBO : public RendererBuffer
+	{
+	public:
+	/**
+	 * The frequency of access may be one of these:
+	 * STREAM 	- The data store contents will be modified once and used at most a few times.
+	 * STATIC 	- The data store contents will be modified once and used many times.
+	 * DYNAMIC	- The data store contents will be modified repeatedly and used many times.
+	 *
+	 * The nature of access may be one of these:
+	 * DRAW 	- The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
+	 * READ 	- The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
+	 * COPY 	- The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
+	 * */
+		enum Usage {
+			StreamDraw,
+			StreamRead,
+			StreamCopy,
+
+			StaticDraw,
+			StaticRead,
+			StaticCopy,
+
+			DynamicDraw,
+			DynamicRead,
+			DynamicCopy,
+		};
+	public:
+		virtual ~SSBO() {}
+
+		virtual void Bind(uint32_t index) = 0;
+		virtual void SetData(Buffer data, int64_t offset = 0) = 0;
+
+		template<typename T>
+		void SetData(const T* data, int64_t offset = 0);
+
+		template<typename T>
+		void SetArray(const T* data, uint64_t count, int64_t offset = 0);
+
+		template<typename T>
+		void SetVector(const std::vector<T>& data, int64_t offset = 0);
+
+		template<typename Iter>
+		void SetData(Iter begin, Iter end, int64_t offset = 0);
+
+		template<typename T>
+		void SetElementInArray(const T* element, int64_t index, int64_t rawOffset = 0);
+
+	public:
+		static Ref<SSBO> Create(uint64_t size, Usage usage = Usage::DynamicDraw);
+		static Ref<SSBO> Create(Buffer data, Usage usage = Usage::DynamicDraw);
+	};
+
+	template<typename T>
+	void SSBO::SetElementInArray(const T *element, int64_t index, int64_t rawOffset) {
+		SetData(Buffer{const_cast<T*>(element), sizeof(T)}, rawOffset + index * sizeof(T));
+	}
+
+	template<typename T>
+	void SSBO::SetVector(const std::vector<T> &data, int64_t offset) {
+		SetData(Buffer{const_cast<T*>(data.data()), data.size() * sizeof(T)}, offset);
+	}
+
+	template<typename T>
+	void SSBO::SetArray(const T *data, uint64_t count, int64_t offset) {
+		SetData(Buffer{const_cast<T*>(data), sizeof(T) * count}, offset);
+	}
+
+	template<typename T>
+	void SSBO::SetData(const T *data, int64_t offset) {
+		SetData(Buffer{const_cast<T*>(data), sizeof(T)}, offset);
+	}
+
+	template<typename Iter>
+	void SSBO::SetData(Iter begin, Iter end, int64_t offset)
+	{
+		uint64_t index = 0;
+		for (auto it = begin; it != end; ++it)
+		{
+			SetElementInArray(&(*it), index++, offset);
+		}
+	}
 }

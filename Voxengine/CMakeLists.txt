@@ -40,6 +40,8 @@ target_link_libraries(Voxengine PUBLIC Voxymore::Core)
 
 target_compile_definitions(Voxengine PUBLIC VXM_USE_SIMPLE_FUNCTION)
 
+target_precompile_headers(Voxengine REUSE_FROM Voxymore::Core)
+
 configure_file(imgui.ini ${CMAKE_CURRENT_BINARY_DIR}/imgui.ini COPYONLY)
 
 if(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")

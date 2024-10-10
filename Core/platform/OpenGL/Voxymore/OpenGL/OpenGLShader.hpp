@@ -52,6 +52,10 @@ namespace Voxymore::Core {
         unsigned int m_RendererID = 0;
     };
 
-
+	class OpenGLComputeShader : public ComputeShader
+	{
+	public:
+		virtual void Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ) override;
+	};
 
 } // Core

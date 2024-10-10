@@ -700,4 +700,11 @@ namespace Voxymore::Core
 		CreateProgram();
 	}
 
+	void OpenGLComputeShader::Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ)
+	{
+		VXM_PROFILE_FUNCTION();
+		Bind();
+		glDispatchCompute(groupX, groupY, groupZ);
+		Unbind();
+	}
 }// namespace Voxymore::Core
