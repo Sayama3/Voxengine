@@ -417,7 +417,12 @@ namespace Voxymore::Editor
 				std::string pathStr = entry.path().string();
 				std::string filename = path.filename().string();
 				std::string stem = path.stem().string();
+
 				if (filename.ends_with(".meta")) {
+					continue;
+				}
+
+				if(filename.starts_with("vxm_ignore")) {
 					continue;
 				}
 
