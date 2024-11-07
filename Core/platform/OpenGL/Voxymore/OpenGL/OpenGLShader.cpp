@@ -353,7 +353,38 @@ namespace Voxymore::Core
 		}
 	}// namespace Utils
 
-	Path OpenGLShader::GetCachePath(ShaderType shaderType, Target target) const
+
+	OpenGLShader::OpenGLShader() = default;
+
+	OpenGLShader::~OpenGLShader()
+	{
+		DeleteProgram();
+	}
+
+	OpenGLShader::OpenGLShader(OpenGLShader&& other) noexcept
+	{
+		swap(other);
+	}
+
+	OpenGLShader& OpenGLShader::operator=(OpenGLShader&& other) noexcept
+	{
+		swap(other);
+		return *this;
+	}
+
+	void OpenGLShader::swap(OpenGLShader& other)
+	{
+		std::swap(m_Sources, other.m_Sources);
+		std::swap(m_VulkanSPIRV, other.m_VulkanSPIRV);
+		std::swap(m_OpenGLSPIRV, other.m_OpenGLSPIRV);
+		std::swap(m_OpenGLSourceCode, other.m_OpenGLSourceCode);
+		std::swap(m_Name, other.m_Name);
+		std::swap(m_RendererID, other.m_RendererID);
+	}
+	void OpenGLShader::SetName(std::string name) {m_Name = std::move(name);}
+
+	const std::string& OpenGLShader::GetName() const {return m_Name;}
+	Path OpenGLShader::GetCachePath(ShaderType shaderType, OpenGLShader::Target target) const
 	{
 		Path p = {FileSource::Cache, std::filesystem::path("shader/opengl") / m_Name / m_Name};
 
@@ -375,26 +406,26 @@ namespace Voxymore::Core
 		return p;
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources) : m_Name(name), m_Sources(sources)
+	void OpenGLShader::AddSource(ShaderType type, ShaderSourceField shaderSource)
 	{
-		VXM_PROFILE_FUNCTION();
-
-		VXM_CORE_ASSERT(!m_Sources.empty(), "No source where given to create the shader.");
-		CompileOrGetVulkanBinaries(m_Sources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
+		m_Sources[type] = shaderSource;
 	}
 
-	OpenGLShader::~OpenGLShader()
+	void OpenGLShader::RemoveSource(ShaderType type)
 	{
-		DeleteProgram();
+		m_Sources.erase(type);
 	}
 
-	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, ShaderSourceField> &shaders)
+	void OpenGLShader::ClearSources()
+	{
+		m_Sources.clear();
+	}
+
+	void OpenGLShader::CompileOrGetVulkanBinaries()
 	{
 		//Profiling
 		VXM_PROFILE_FUNCTION();
-
+		const std::unordered_map<ShaderType, ShaderSourceField> &shaders = m_Sources;
 		// Setup of the shader compiler to compile the glsl to spirv
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
@@ -445,10 +476,6 @@ namespace Voxymore::Core
 				FileSystem::Write(hashPath, sourceHash);
 			}
 		}
-
-		// Useless as no reflection is done yet...
-//		for (auto &&[stage, data]: shaderData)
-//			Reflect(stage, data);
 	}
 
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
@@ -521,7 +548,7 @@ namespace Voxymore::Core
 			if (spirv.empty())
 			{
 				VXM_CORE_ERROR("Shader ({0}) - Vulkan Pass {1} failed. Skipping this stage during the shader creation.", m_Name, Utils::ShaderTypeToString(stage));
- 				continue;
+				continue;
 			}
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(Utils::ShaderTypeToOpenGL(stage)));
 			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
@@ -563,141 +590,136 @@ namespace Voxymore::Core
 	void OpenGLShader::DeleteProgram()
 	{
 		VXM_PROFILE_FUNCTION();
-		glDeleteProgram(m_RendererID);
-		m_RendererID = 0;
-	}
-
-	Test::ShaderDataMember GetShaderDataMember(const spirv_cross::Compiler &compiler, const spirv_cross::SPIRType &type, const std::string &name)
-	{
-		VXM_PROFILE_FUNCTION();
-		Test::ShaderDataMember shaderDataMember;
-		shaderDataMember.m_Type = Test::GetShaderDataType(type.basetype);
-		shaderDataMember.m_Name = name;
-		if (shaderDataMember.m_Type == Test::ShaderDataType::Struct) {
-			unsigned member_count = type.member_types.size();
-			shaderDataMember.m_Children.reserve(member_count);
-			for (unsigned i = 0; i < member_count; i++) {
-				const spirv_cross::SPIRType &member_type = compiler.get_type(type.member_types[i]);
-				const std::string &memberName = compiler.get_member_name(type.self, i);
-				auto child = GetShaderDataMember(compiler, member_type, memberName);
-				shaderDataMember.m_Size += child.m_Size;
-				shaderDataMember.m_Children.push_back(child);
-			}
+		if(m_RendererID) {
+			glDeleteProgram(m_RendererID);
+			m_RendererID = 0;
 		}
-		else if (shaderDataMember.m_Type == Test::ShaderDataType::Image || shaderDataMember.m_Type == Test::ShaderDataType::SampledImage) {
-			//TODO: Process the image type to know what is wanted.
-			//            type.image.dim
-			//            type.image.depth
-			//            type.image.arrayed
-			//            type.image.ms
-			//            type.image.sampled
-			//            type.image.format
-			shaderDataMember.m_Size = 0;
-		}
-		else {
-			shaderDataMember.m_ColumnNumber = type.columns;
-			shaderDataMember.m_VectorSize = type.vecsize;
-			switch (shaderDataMember.m_Type) {
-				case Test::ShaderDataType::Unknown:
-				case Test::ShaderDataType::Void:
-				case Test::ShaderDataType::Boolean:// Bools are purely logical, and cannot be used for externally visible types.
-				case Test::ShaderDataType::AtomicCounter:
-				case Test::ShaderDataType::Image:
-				case Test::ShaderDataType::SampledImage:
-				case Test::ShaderDataType::Sampler: {
-					shaderDataMember.m_Size = 0;
-					break;
-				}
-				default: {
-					shaderDataMember.m_Size = (type.width / 8) * shaderDataMember.m_ColumnNumber * shaderDataMember.m_VectorSize;
-					break;
-				}
-			}
-			//TODO: handle arrays.
-		}
-		return shaderDataMember;
-	}
-
-	void OpenGLShader::Reflect(ShaderType stage, const std::vector<uint32_t> &shaderData)
-	{
-		VXM_PROFILE_FUNCTION();
-		Test::ShaderData analyzedShaderData;
-		//TODO: Create the uniforms.
-		spirv_cross::Compiler compiler(shaderData);
-		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
-
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1}", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle().string());
-
-		VXM_CORE_TRACE("Uniform buffers:");
-		analyzedShaderData.m_Uniform.reserve(resources.uniform_buffers.size());
-		for (const auto &resource: resources.uniform_buffers) {
-			const spirv_cross::SPIRType &type = compiler.get_type(resource.base_type_id);
-			uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			std::string name = resource.name;
-			auto member = GetShaderDataMember(compiler, type, resource.name);
-			analyzedShaderData.m_Uniform.push_back(member);
-			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
-		}
-
-		VXM_CORE_TRACE("Push Constant buffers:");
-		for (const auto &resource: resources.push_constant_buffers) {
-			const spirv_cross::SPIRType &type = compiler.get_type(resource.base_type_id);
-			uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-			uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-			std::string name = resource.name;
-			auto member = GetShaderDataMember(compiler, type, resource.name);
-			analyzedShaderData.m_Constants.push_back(member);
-			VXM_CORE_TRACE("ShaderData {0} analyzed.", name);
-		}
-		VXM_CORE_TRACE("OpenGLShader::Reflect - {0} {1} - Done", Utils::ShaderTypeToString(stage), m_Sources[stage].GetHandle().string());
-	}
-
-	void OpenGLShader::Bind() const
-	{
-		VXM_PROFILE_FUNCTION();
-		glUseProgram(m_RendererID);
-	}
-
-	void OpenGLShader::Unbind() const
-	{
-		VXM_PROFILE_FUNCTION();
-		glUseProgram(0);
-	}
-
-	void OpenGLShader::SetSources(const std::vector<ShaderSourceField>& sources)
-	{
-		VXM_PROFILE_FUNCTION();
-		m_Sources.clear();
-		for(auto& src : sources)
-		{
-			if(src.HasHandle()) {
-				m_Sources.insert_or_assign(src.GetAsset()->Type, src);
-			}
-		}
-
-		Reload();
-	}
-
-	std::vector<ShaderSourceField> OpenGLShader::GetSources() const
-	{
-		VXM_PROFILE_FUNCTION();
-		std::vector<ShaderSourceField> sources;
-		sources.reserve(m_Sources.size());
-		for(auto& source : m_Sources)
-		{
-			sources.push_back(source.second);
-		}
-		return sources;
 	}
 
 	void OpenGLShader::Reload()
 	{
 		DeleteProgram();
 
-		CompileOrGetVulkanBinaries(m_Sources);
+		CompileOrGetVulkanBinaries();
 		CompileOrGetOpenGLBinaries();
 		CreateProgram();
+	}
+
+	const std::unordered_map<ShaderType, ShaderSourceField>& OpenGLShader::GetSources() const
+	{
+		return m_Sources;
+	}
+
+	OpenGLGraphicsShader::OpenGLGraphicsShader(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources)
+	{
+		m_OpenGLShader.SetName(name);
+		for(const auto&[type,src] : sources)
+		{
+			m_OpenGLShader.AddSource(type, src);
+		}
+		m_OpenGLShader.Reload();
+	}
+
+	OpenGLGraphicsShader::~OpenGLGraphicsShader()
+	{
+	}
+
+	void OpenGLGraphicsShader::Bind() const
+	{
+		VXM_PROFILE_FUNCTION();
+		glUseProgram(m_OpenGLShader.GetRendererID());
+	}
+
+	void OpenGLGraphicsShader::Unbind() const
+	{
+		VXM_PROFILE_FUNCTION();
+		glUseProgram(0);
+	}
+
+	void OpenGLGraphicsShader::SetSources(const std::vector<ShaderSourceField>& sources)
+	{
+		VXM_PROFILE_FUNCTION();
+		m_OpenGLShader.ClearSources();
+		for(auto& src : sources)
+		{
+			if(src.HasHandle()) {
+				m_OpenGLShader.AddSource(src.GetAsset()->Type, src);
+			}
+		}
+
+		Reload();
+	}
+
+	std::vector<ShaderSourceField> OpenGLGraphicsShader::GetSources() const
+	{
+		VXM_PROFILE_FUNCTION();
+		std::vector<ShaderSourceField> sources;
+		const auto& sourcesMap = m_OpenGLShader.GetSources();
+		sources.reserve(sourcesMap.size());
+		for(auto& source : sourcesMap)
+		{
+			sources.push_back(source.second);
+		}
+		return sources;
+	}
+
+	OpenGLComputeShader::OpenGLComputeShader(const std::string &name, ShaderSourceField source)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(source && source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
+		m_OpenGLShader.SetName(name);
+		m_OpenGLShader.AddSource(ShaderType::COMPUTE_SHADER, source);
+		m_OpenGLShader.Reload();
+	}
+
+	void OpenGLGraphicsShader::Reload()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_OpenGLShader.Reload();
+	}
+
+	std::string OpenGLGraphicsShader::GetName() const
+	{
+		return m_OpenGLShader.GetName();
+	}
+
+	void OpenGLGraphicsShader::SetName(const std::string& name)
+	{
+		m_OpenGLShader.SetName(name);
+	}
+
+	void OpenGLComputeShader::Bind() const
+	{
+		glUseProgram(m_OpenGLShader.GetRendererID());
+	}
+	void OpenGLComputeShader::Unbind() const
+	{
+		glUseProgram(0);
+	}
+	void OpenGLComputeShader::Reload()
+	{
+		m_OpenGLShader.Reload();
+	}
+	std::string OpenGLComputeShader::GetName() const
+	{
+		return m_OpenGLShader.GetName();
+	}
+	void OpenGLComputeShader::SetName(const std::string &name)
+	{
+		m_OpenGLShader.SetName(name);
+	}
+
+	ShaderSourceField OpenGLComputeShader::GetSource() const
+	{
+		const auto& srcs = m_OpenGLShader.GetSources();
+		auto it = srcs.find(ShaderType::COMPUTE_SHADER);
+		if(it != srcs.end()) return it->second;
+		return {};
+	}
+	void OpenGLComputeShader::SetSource(ShaderSourceField source)
+	{
+		VXM_CORE_ASSERT(source && source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
+		m_OpenGLShader.AddSource(ShaderType::COMPUTE_SHADER, source);
 	}
 
 	void OpenGLComputeShader::Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ)

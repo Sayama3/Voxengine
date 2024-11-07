@@ -29,18 +29,16 @@ add_executable(Voxengine
         src/Editor/Panels/DefaultShaders.hpp
 )
 
-set(CMAKE_CXX_STANDARD 20)
 target_compile_features(Voxengine PUBLIC cxx_std_20)
 
 include_directories(include)
 
 target_link_libraries(Voxengine PUBLIC Voxymore::Core)
-#target_precompile_headers(Voxybox REUSE_FROM Core)
-#set_target_properties(Voxybox PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_precompile_headers(Voxengine REUSE_FROM Core)
+#set_target_properties(Voxengine PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_compile_definitions(Voxengine PUBLIC VXM_USE_SIMPLE_FUNCTION)
 
-target_precompile_headers(Voxengine REUSE_FROM Voxymore::Core)
 
 configure_file(imgui.ini ${CMAKE_CURRENT_BINARY_DIR}/imgui.ini COPYONLY)
 

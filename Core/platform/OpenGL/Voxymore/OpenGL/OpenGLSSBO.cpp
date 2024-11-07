@@ -28,13 +28,13 @@ namespace Voxymore::Core
 	OpenGLSSBO::OpenGLSSBO(uint64_t size, SSBO::Usage usage)
 	{
 		glCreateBuffers(1, &m_RendererID);
-		Allocate(size);
+		Allocate(size, usage);
 	}
 
 	OpenGLSSBO::OpenGLSSBO(Buffer data, SSBO::Usage usage)
 	{
 		glCreateBuffers(1, &m_RendererID);
-		Allocate(data.Size);
+		Allocate(data.Size, usage);
 		SetData(data, 0);
 	}
 
@@ -46,10 +46,6 @@ namespace Voxymore::Core
 	void OpenGLSSBO::Bind(uint32_t slot)
 	{
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, slot, m_RendererID);
-	}
-
-	void OpenGLSSBO::Unbind()
-	{
 	}
 
 	void OpenGLSSBO::Allocate(uint64_t size, SSBO::Usage usage)

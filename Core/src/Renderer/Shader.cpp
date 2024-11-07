@@ -29,7 +29,22 @@ namespace Voxymore::Core{
 				return nullptr;
 				break;
 			case RendererAPI::API::OpenGL: {
-				return CreateRef<OpenGLShader>(name, sources);
+				return CreateRef<OpenGLGraphicsShader>(name, sources);
+			} break;
+		}
+		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))
+		return nullptr;
+	}
+	Ref<ComputeShader> ComputeShader::Create(const std::string& name, ShaderSourceField source)
+	{
+		VXM_PROFILE_FUNCTION();
+		switch (Renderer::GetAPI()) {
+			case RendererAPI::API::None:
+				VXM_CORE_ASSERT(false, "RendererAPI::API::None is not supported to create a shader.")
+				return nullptr;
+				break;
+			case RendererAPI::API::OpenGL: {
+				return CreateRef<OpenGLComputeShader>(name, source);
 			} break;
 		}
 		VXM_CORE_ASSERT(false, "Render API '{0}' not supported.", RendererAPIToString(Renderer::GetAPI()))

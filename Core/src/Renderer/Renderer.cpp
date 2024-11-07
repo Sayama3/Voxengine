@@ -263,8 +263,8 @@ namespace Voxymore::Core {
 			s_BindedShader = shaderField;
 		}
 		//TODO: Set the view projection matrix once per frame not once per model drawn.
-		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_Data.ViewProjectionMatrix);
-		//        std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniformMat4("u_Transform", transform);
+		//        std::dynamic_pointer_cast<OpenGLGraphicsShader>(shader)->SetUniformMat4("u_ViewProjectionMatrix", s_Data.ViewProjectionMatrix);
+		//        std::dynamic_pointer_cast<OpenGLGraphicsShader>(shader)->SetUniformMat4("u_Transform", transform);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

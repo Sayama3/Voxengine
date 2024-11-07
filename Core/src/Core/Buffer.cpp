@@ -42,6 +42,13 @@ namespace Voxymore::Core
 		Size = 0;
 	}
 
+
+	void Buffer::swap(Buffer& other)
+	{
+		std::swap(Data, other.Data);
+		std::swap(Size, other.Size);
+	}
+
 	Buffer Buffer::Copy(const Buffer & other)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -71,6 +78,22 @@ namespace Voxymore::Core
 	ScopeBuffer::ScopeBuffer(Buffer& buffer) : buffer(buffer)
 	{
 		buffer.Clear();
+	}
+
+	ScopeBuffer::ScopeBuffer(ScopeBuffer&& other) noexcept
+	{
+		swap(other);
+	}
+
+	ScopeBuffer& ScopeBuffer::operator=(ScopeBuffer&& other) noexcept
+	{
+		swap(other);
+		return *this;
+	}
+
+	void ScopeBuffer::swap(ScopeBuffer& other)
+	{
+		std::swap(buffer, other.buffer);
 	}
 
 	void ScopeBuffer::Replace(Buffer&& buff)

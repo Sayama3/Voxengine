@@ -13,14 +13,15 @@ namespace Voxymore::Core
 	{
 	public:
 		OpenGLSSBO(uint64_t size, SSBO::Usage usage);
-		OpenGLSSBO(Buffer data, SSBO::Usage usage);
+		explicit OpenGLSSBO(Buffer data, SSBO::Usage usage);
 		virtual ~OpenGLSSBO() override;
+		OpenGLSSBO(const OpenGLSSBO&) = delete;
+		OpenGLSSBO& operator=(const OpenGLSSBO&) = delete;
 	public:
 		virtual void Bind(uint32_t slot) override;
-//		virtual void Bind() override {Bind(0u);}
-//		virtual void Unbind() override;
+		virtual uint32_t GetRendererID() const override {return m_RendererID;};
 	public:
-		void SetData(Buffer data, int64_t offset);
+		virtual void SetData(Buffer data, int64_t offset) override;
 	private:
 		void Allocate(uint64_t size, SSBO::Usage usage);
 	private:

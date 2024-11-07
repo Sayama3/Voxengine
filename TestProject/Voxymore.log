@@ -9,11 +9,11 @@
 [2024-04-09 10:46:59.810] [VOXYMORE] [info] [Systems.cpp:237] Reload Systems
 [2024-04-09 10:46:59.810] [VOXYMORE] [info] [Systems.cpp:242] Reload System RigidbodySpringSystem.
 [2024-04-09 10:46:59.810] [VOXYMORE] [info] [Systems.cpp:242] Reload System RigidbodyBuoyancySystem.
-[2024-04-09 10:46:59.812] [VOXYMORE] [info] [OpenGLShader.cpp:764] Shader 'FlatColor' Successfully created.
-[2024-04-09 10:46:59.813] [VOXYMORE] [info] [OpenGLShader.cpp:764] Shader 'Texture' Successfully created.
-[2024-04-09 10:46:59.818] [VOXYMORE] [info] [OpenGLShader.cpp:764] Shader 'Default' Successfully created.
-[2024-04-09 10:46:59.820] [VOXYMORE] [info] [OpenGLShader.cpp:764] Shader 'Bezier4' Successfully created.
-[2024-04-09 10:46:59.823] [VOXYMORE] [info] [OpenGLShader.cpp:764] Shader 'Bezier' Successfully created.
+[2024-04-09 10:46:59.812] [VOXYMORE] [info] [OpenGLGraphicsShader.cpp:764] Shader 'FlatColor' Successfully created.
+[2024-04-09 10:46:59.813] [VOXYMORE] [info] [OpenGLGraphicsShader.cpp:764] Shader 'Texture' Successfully created.
+[2024-04-09 10:46:59.818] [VOXYMORE] [info] [OpenGLGraphicsShader.cpp:764] Shader 'Default' Successfully created.
+[2024-04-09 10:46:59.820] [VOXYMORE] [info] [OpenGLGraphicsShader.cpp:764] Shader 'Bezier4' Successfully created.
+[2024-04-09 10:46:59.823] [VOXYMORE] [info] [OpenGLGraphicsShader.cpp:764] Shader 'Bezier' Successfully created.
 [2024-04-09 10:46:59.826] [VOXYMORE] [trace] [SceneSerializer.cpp:120] Deserialize Entity with name: Cube black and ID: 6197672930199883822
 [2024-04-09 10:46:59.826] [VOXYMORE] [trace] [SceneSerializer.cpp:120] Deserialize Entity with name: Cube White and ID: 7275291884409962700
 [2024-04-09 10:46:59.826] [VOXYMORE] [trace] [SceneSerializer.cpp:120] Deserialize Entity with name: Cube Color and ID: 7934402640759719094

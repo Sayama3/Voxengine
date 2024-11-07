@@ -69,6 +69,9 @@ namespace Voxymore::Core {
 				return CreateRef<OpenGLSSBO>(size, usage);
 			}
 		}
+
+		VXM_CORE_ERROR("Renderer API '{0}' is not supported.", RendererAPIToString(Renderer::GetAPI()));
+		return nullptr;
 	}
 
 	Ref<SSBO> SSBO::Create(Buffer data, SSBO::Usage usage)
@@ -86,5 +89,8 @@ namespace Voxymore::Core {
 				return CreateRef<OpenGLSSBO>(data, usage);
 			}
 		}
+
+		VXM_CORE_ERROR("Renderer API '{0}' is not supported.", RendererAPIToString(Renderer::GetAPI()));
+		return nullptr;
 	}
 }
