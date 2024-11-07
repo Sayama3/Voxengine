@@ -20,7 +20,9 @@ namespace Voxymore::Core
 
 		static bool OnShaderSourceImGui(Ref<Asset> asset);
 
-		static bool OnShaderImGui(Ref<Asset> asset);
+		static bool OnGraphicShaderImGui(Ref<Asset> asset);
+		static bool OnComputeShaderImGui(Ref<Asset> asset);
+
 		static bool OnMenuShaderImGui(AssetMetadata asset);
 	};
 

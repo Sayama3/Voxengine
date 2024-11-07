@@ -18,6 +18,7 @@ namespace Voxymore::Core
 			case AssetType::CubeMap: return "AssetType::CubeMap";
 			case AssetType::Material: return "AssetType::Material";
 			case AssetType::Shader: return "AssetType::Shader";
+			case AssetType::ComputeShader: return "AssetType::ComputeShader";
 			case AssetType::ShaderSource: return "AssetType::ShaderSource";
 			case AssetType::Model: return "AssetType::Model";
 			case AssetType::Mesh: return "AssetType::Mesh";
@@ -50,6 +51,10 @@ namespace Voxymore::Core
 		}
 		else if(assetType == "AssetType::Shader") {
 			type = AssetType::Shader;
+			return true;
+		}
+		else if(assetType == "AssetType::ComputeShader") {
+			type = AssetType::ComputeShader;
 			return true;
 		}
 		else if(assetType == "AssetType::ShaderSource") {

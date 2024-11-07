@@ -69,7 +69,7 @@ namespace Voxymore::Core
 		return changed;
 	}
 
-	bool ShaderImGui::OnShaderImGui(Ref<Asset> asset)
+	bool ShaderImGui::OnGraphicShaderImGui(Ref<Asset> asset)
 	{
 		if(asset->GetType() != Shader::GetStaticType()) return false;
 		Ref<Shader> shader = CastPtr<Shader>(asset);
@@ -122,7 +122,7 @@ namespace Voxymore::Core
 
 		if(ImGui::Button("Save")) {
 			auto assetManager = Project::GetActive()->GetEditorAssetManager();
-			ShaderSerializer::ExportEditorShader(assetManager->GetMetadata(shader->Handle), shader);
+			ShaderSerializer::ExportEditorGraphicShader(assetManager->GetMetadata(shader->Handle), shader);
 		}
 
 		return changed;
@@ -148,6 +148,41 @@ namespace Voxymore::Core
 			return true;
 		}
 		return false;
+	}
+
+
+	bool ShaderImGui::OnComputeShaderImGui(Ref<Asset> asset)
+	{
+		if(asset->GetType() != ComputeShader::GetStaticType()) return false;
+		Ref<ComputeShader> shader = CastPtr<ComputeShader>(asset);
+		bool changed = false;
+		std::string name = shader->GetName();
+
+		if(ImGuiLib::InputText("Name", &name)) {
+			changed = true;
+			shader->SetName(name);
+		}
+
+		AssetField<ShaderSource> shaderSource = shader->GetSource();
+		if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify(ShaderType::COMPUTE_SHADER).c_str(), &shaderSource))
+		{
+			if(!shaderSource || shaderSource.GetAsset()->Type == ShaderType::COMPUTE_SHADER)
+			{
+				changed = true;
+				shader->SetSource(shaderSource);
+			}
+		}
+
+		if(ImGui::Button("Reload")) {
+			shader->Reload();
+		}
+
+		if(ImGui::Button("Save")) {
+			auto assetManager = Project::GetActive()->GetEditorAssetManager();
+			ShaderSerializer::ExportEditorComputeShader(assetManager->GetMetadata(shader->Handle), shader);
+		}
+
+		return changed;
 	}
 } // namespace Voxymore::Core
 

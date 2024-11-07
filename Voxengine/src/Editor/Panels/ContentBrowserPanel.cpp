@@ -255,7 +255,7 @@ namespace Voxymore::Editor
 				if (!FileSystem::Exist(newShaderPath)) {
 					Ref<Shader> shader = Shader::Create(newShaderPath.path.stem().string(), std::unordered_map<ShaderType, ShaderSourceField>{});
 					if(assetManager->AddAsset(shader, newShaderPath)) {
-						ShaderSerializer::ExportEditorShader(assetManager->GetMetadata(shader->Handle), shader);
+						ShaderSerializer::ExportEditorGraphicShader(assetManager->GetMetadata(shader->Handle), shader);
 					}
 				}
 				else {

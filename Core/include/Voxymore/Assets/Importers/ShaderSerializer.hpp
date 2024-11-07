@@ -12,6 +12,7 @@
 
 
 #define ShaderExtension ".vxm_shader"
+#define ComputeShaderExtension ".vxm_compute_shader"
 
 namespace Voxymore::Core
 {
@@ -23,9 +24,13 @@ namespace Voxymore::Core
 		static Ref<Asset> ImportShaderSource(const AssetMetadata& metadata);
 		static void ExportEditorShaderSource(const AssetMetadata& metadata, Ref<ShaderSource> source);
 
-		static bool IsShader(const std::filesystem::path& path);
-		static void ExportEditorShader(const AssetMetadata& metadata, Ref<Shader> shader);
-		static Ref<Asset> ImportShader(const AssetMetadata& metadata);
+		static bool IsGraphicShader(const std::filesystem::path& path);
+		static void ExportEditorGraphicShader(const AssetMetadata& metadata, Ref<Shader> shader);
+		static Ref<Asset> ImportGraphicShader(const AssetMetadata& metadata);
+
+		static bool IsComputeShader(const std::filesystem::path& path);
+		static void ExportEditorComputeShader(const AssetMetadata& metadata, Ref<ComputeShader> shader);
+		static Ref<Asset> ImportComputeShader(const AssetMetadata& metadata);
 	};
 
 } // namespace Voxymore::Core

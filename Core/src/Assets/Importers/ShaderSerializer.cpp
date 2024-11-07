@@ -98,7 +98,7 @@ namespace Voxymore::Core
 	}
 
 
-	bool ShaderSerializer::IsShader(const std::filesystem::path& path)
+	bool ShaderSerializer::IsGraphicShader(const std::filesystem::path& path)
 	{
 		VXM_PROFILE_FUNCTION();
 		std::string extension = path.extension().string();
@@ -108,10 +108,10 @@ namespace Voxymore::Core
 		return path.has_extension() && extension == ShaderExtension;
 	}
 
-	Ref<Asset> ShaderSerializer::ImportShader(const AssetMetadata& metadata)
+	Ref<Asset> ShaderSerializer::ImportGraphicShader(const AssetMetadata& metadata)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(IsShader(metadata.FilePath), "The asset '{0}' is not a shader", metadata.FilePath.string());
+		VXM_CORE_ASSERT(IsGraphicShader(metadata.FilePath), "The asset '{0}' is not a shader", metadata.FilePath.string());
 		YAML::Node root = FileSystem::ReadFileAsYAML(metadata.FilePath);
 		YAML::Node node = root["Shader"];
 		if(!node) return nullptr;
@@ -128,10 +128,10 @@ namespace Voxymore::Core
 		return asset;
 	}
 
-	void ShaderSerializer::ExportEditorShader(const AssetMetadata& metadata, Ref<Shader> shader)
+	void ShaderSerializer::ExportEditorGraphicShader(const AssetMetadata& metadata, Ref<Shader> shader)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(IsShader(metadata.FilePath), "The asset '{0}' is not a shader", metadata.FilePath.string());
+		VXM_CORE_ASSERT(IsGraphicShader(metadata.FilePath), "The asset '{0}' is not a shader", metadata.FilePath.string());
 
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -155,4 +155,51 @@ namespace Voxymore::Core
 
 		FileSystem::WriteYamlFile(metadata.FilePath, out);
 	}
+
+	bool ShaderSerializer::IsComputeShader(const std::filesystem::path& path)
+	{
+		VXM_PROFILE_FUNCTION();
+		std::string extension = path.extension().string();
+
+		std::transform(extension.begin(), extension.end(), extension.begin(), [](char c){ return std::tolower(c);});
+
+		return path.has_extension() && extension == ComputeShaderExtension;
+	}
+
+	void ShaderSerializer::ExportEditorComputeShader(const AssetMetadata& metadata, Ref<ComputeShader> shader)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(IsComputeShader(metadata.FilePath), "The asset '{0}' is not a compute shader", metadata.FilePath.string());
+
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		{
+			out << KEYVAL("Type", AssetTypeToString(AssetType::ComputeShader));
+			out << KEYVAL("ComputeShader", YAML::BeginMap);
+			{
+				out << KEYVAL("Name", shader->GetName());
+				out << KEYVAL("Source", shader->GetSource());
+			}
+			out << YAML::EndMap;
+		}
+		out<< YAML::EndMap;
+
+		FileSystem::WriteYamlFile(metadata.FilePath, out);
+	}
+
+	Ref<Asset> ShaderSerializer::ImportComputeShader(const AssetMetadata& metadata)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(IsComputeShader(metadata.FilePath), "The asset '{0}' is not a compute shader", metadata.FilePath.string());
+		YAML::Node root = FileSystem::ReadFileAsYAML(metadata.FilePath);
+		YAML::Node node = root["ComputeShader"];
+		if(!node) return nullptr;
+
+		auto name = node["Name"].as<std::string>("NoName");
+		auto source = node["Source"].as<ShaderSourceField>(ShaderSourceField{});
+
+		auto asset = ComputeShader::Create(name, source);
+		return asset;
+	}
+
 } // namespace Voxymore::Core
