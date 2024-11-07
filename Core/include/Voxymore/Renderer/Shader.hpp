@@ -156,14 +156,14 @@ namespace Voxymore::Core {
 
     enum class ShaderType : uint8_t {
         None = 0,
-        COMPUTE_SHADER,
         VERTEX_SHADER,
         TESS_CONTROL_SHADER,
         TESS_EVALUATION_SHADER,
         GEOMETRY_SHADER,
         FRAGMENT_SHADER,
+		COMPUTE_SHADER,
     };
-    static const int ShaderTypeCount = 6;
+    inline static constexpr int ShaderTypeCount = 6;
 
 
 	namespace Utils {

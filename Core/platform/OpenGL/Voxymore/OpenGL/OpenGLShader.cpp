@@ -666,7 +666,7 @@ namespace Voxymore::Core
 	OpenGLComputeShader::OpenGLComputeShader(const std::string &name, ShaderSourceField source)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(source && source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
+		VXM_CORE_ASSERT(!source || source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
 		m_OpenGLShader.SetName(name);
 		m_OpenGLShader.AddSource(ShaderType::COMPUTE_SHADER, source);
 		m_OpenGLShader.Reload();

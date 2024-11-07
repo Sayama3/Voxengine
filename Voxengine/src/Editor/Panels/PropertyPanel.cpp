@@ -24,6 +24,7 @@ namespace Voxymore::Editor {
 			{AssetType::Texture2D, TextureImGui::OnTexture2DImGui},
 			{AssetType::CubeMap, TextureImGui::OnCubemapImGui},
 			{AssetType::Shader, ShaderImGui::OnGraphicShaderImGui},
+			{AssetType::ComputeShader, ShaderImGui::OnComputeShaderImGui},
 			{AssetType::ShaderSource, ShaderImGui::OnShaderSourceImGui},
 			//			{AssetType::Mesh, MeshImGui::OnMeshImGui},
 			{AssetType::Scene, SceneImGui::OnSceneImGui},

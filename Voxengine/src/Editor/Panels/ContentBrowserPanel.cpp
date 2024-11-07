@@ -249,7 +249,7 @@ namespace Voxymore::Editor
 
 			ImGui::InputText("New Shader Name", m_FileNameBuffer.data(), m_FileNameBuffer.size()-1);
 
-			if(ImGui::Button("Create Shader")) {
+			if(ImGui::Button("Create Graphic Shader")) {
 				auto newShaderPath = m_Path;
 				newShaderPath.path /= m_FileNameBuffer.data() + std::string(ShaderExtension);
 				if (!FileSystem::Exist(newShaderPath)) {
@@ -259,10 +259,26 @@ namespace Voxymore::Editor
 					}
 				}
 				else {
-					VXM_CORE_ERROR("A shader named '{0}' already exist here.", m_FileNameBuffer.data());
+					VXM_CORE_ERROR("A graphic shader named '{0}' already exist here.", m_FileNameBuffer.data());
 				}
 				ImGui::CloseCurrentPopup();
 			}
+
+			if(ImGui::Button("Create Compute Shader")) {
+				auto newShaderPath = m_Path;
+				newShaderPath.path /= m_FileNameBuffer.data() + std::string(ComputeShaderExtension);
+				if (!FileSystem::Exist(newShaderPath)) {
+					Ref<ComputeShader> shader = ComputeShader::Create(newShaderPath.path.stem().string(), {});
+					if(assetManager->AddAsset(shader, newShaderPath)) {
+						ShaderSerializer::ExportEditorComputeShader(assetManager->GetMetadata(shader->Handle), shader);
+					}
+				}
+				else {
+					VXM_CORE_ERROR("A compute shader named '{0}' already exist here.", m_FileNameBuffer.data());
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
 
 			ImGui::SameLine();
 			if(ImGui::Button("Cancel")) {

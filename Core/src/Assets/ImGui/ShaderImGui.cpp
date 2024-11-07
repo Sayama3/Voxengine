@@ -12,14 +12,14 @@ namespace Voxymore::Core
 	{
 		bool changed = false;
 
-		std::string shaderTypeName = Utils::ShaderTypeToString(*shaderType);
+		std::string shaderTypeName = Utils::ShaderTypeToStringBeautify(*shaderType);
 
 		if(ImGui::BeginCombo("Shader Type", shaderTypeName.c_str()))
 		{
 			for (int i = 0; i <= ShaderTypeCount; ++i) {
 				auto type = (ShaderType)i;
 				const bool is_selected = type == (*shaderType);
-				if(ImGui::Selectable(Utils::ShaderTypeToString(type).c_str(), is_selected))
+				if(ImGui::Selectable(Utils::ShaderTypeToStringBeautify(type).c_str(), is_selected))
 				{
 					changed |= (*shaderType) != type;
 					(*shaderType) = type;
@@ -82,11 +82,11 @@ namespace Voxymore::Core
 
 		if(ImGui::CollapsingHeader("Sources")) {
 			bool shaderSourcesChanged = false;
-			std::array<ShaderSourceField, 7> src;
+			std::array<ShaderSourceField, 6> src;
 
 			std::vector<ShaderSourceField> sources = shader->GetSources();
 
-			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i) {
+			for (uint8_t i = 1; i < ShaderTypeCount; ++i) {
 				auto it = std::find_if(sources.begin(), sources.end(), [i](const ShaderSourceField& src) {return src.IsValid() && src.GetAsset()->Type == (ShaderType)i;});
 				if(it != sources.end()) src[i] = *it;
 				else src[i] = NullAssetHandle;
@@ -94,7 +94,7 @@ namespace Voxymore::Core
 
 
 			uint32_t num = 0;
-			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i)
+			for (uint8_t i = 1; i < ShaderTypeCount; ++i)
 			{
 				auto s = src[i];
 				if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify((ShaderType)i).c_str(), &s))
@@ -108,7 +108,7 @@ namespace Voxymore::Core
 
 			if(shaderSourcesChanged) {
 				sources.clear();
-				sources.reserve(ShaderTypeCount);
+				sources.reserve(ShaderTypeCount - 1);
 				sources.insert(sources.end(), src.begin() + 1, src.end());
 
 				changed = true;
