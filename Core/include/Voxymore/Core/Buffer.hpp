@@ -81,6 +81,7 @@ namespace Voxymore::Core
 
 		ScopeBuffer(const ScopeBuffer& other) = delete;
 		ScopeBuffer& operator=(const ScopeBuffer& other) = delete;
+
 		ScopeBuffer(ScopeBuffer&& other) noexcept;
 		ScopeBuffer& operator=(ScopeBuffer&& other) noexcept;
 
@@ -92,6 +93,8 @@ namespace Voxymore::Core
 		void Replace(Buffer& buff);
 
 		void Replace(void* ptr, uint64_t size);
+
+		[[nodiscard]] ScopeBuffer Duplicate() const;
 
 		template<typename T>
 		T* As()

@@ -184,6 +184,10 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Pipeline/Pipeline.hpp
         src/Renderer/Pipeline/Action.cpp
         include/Voxymore/Renderer/Pipeline/Action.hpp
+        include/Voxymore/Serializer/Data.cpp
+        include/Voxymore/Serializer/Data.hpp
+        include/Voxymore/Serializer/Value.cpp
+        include/Voxymore/Serializer/Value.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

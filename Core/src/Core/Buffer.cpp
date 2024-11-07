@@ -123,4 +123,9 @@ namespace Voxymore::Core
 		buffer.Release();
 	}
 
+	ScopeBuffer ScopeBuffer::Duplicate() const
+	{
+		return ScopeBuffer{Buffer::Copy(buffer)};
+	}
+
 }// namespace Voxymore::Core
