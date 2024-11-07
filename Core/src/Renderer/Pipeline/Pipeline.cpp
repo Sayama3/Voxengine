@@ -30,6 +30,8 @@ namespace Voxymore::Core
 
 	void Pipeline::Execute(Action& action)
 	{
+		if(!action.Valid()) return;
+
 		std::unordered_set<UUID> params;
 		params.reserve(action.m_Inputs.size() + action.m_Outputs.size());
 
@@ -40,7 +42,8 @@ namespace Voxymore::Core
 
 			if(params.contains(param.value().first)) continue;
 
-			//TODO: do something with the params. I don't know.
+			//TODO: See if I should just load the params or give it to the action for it to do something with it.
+			LoadParameter(param.value().second);
 
 			params.emplace(param.value().first);
 		}
@@ -52,7 +55,8 @@ namespace Voxymore::Core
 
 			if(params.contains(param.value().first)) continue;
 
-			//TODO: do something with the params. I don't know.
+			//TODO: See if I should just load the params or give it to the action for it to do something with it.
+			LoadParameter(param.value().second);
 
 			params.emplace(param.value().first);
 		}
@@ -78,5 +82,10 @@ namespace Voxymore::Core
 		}
 
 		return std::nullopt;
+	}
+
+	void Pipeline::LoadParameter(Pipeline::RendererParameter &parameter)
+	{
+		VXM_INFO("We should load '{}'.", parameter.m_Parameter.m_Name);
 	}
 } // namespace Voxymore::Core

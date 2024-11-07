@@ -106,6 +106,7 @@ namespace Voxymore::Core
 		std::unordered_map<UUID, RendererParameter> m_Parameters;
 		std::vector<Action> m_Actions;
 	private:
+		void LoadParameter(RendererParameter &parameter);
 	};
 
 } // namespace Voxymore::Core
