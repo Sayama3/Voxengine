@@ -85,6 +85,7 @@ namespace Voxymore::Core
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		{
+			out << KEYVAL("ID", metadata.Handle);
 			out << KEYVAL("Type", AssetTypeToString(AssetType::ShaderSource));
 			out << KEYVAL("ShaderSource", YAML::BeginMap);
 			{
