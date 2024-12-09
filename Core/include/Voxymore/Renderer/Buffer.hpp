@@ -130,6 +130,7 @@ namespace Voxymore::Core {
 
 		virtual void Bind(uint32_t index) = 0;
 		virtual void SetData(Buffer data, int64_t offset = 0) = 0;
+		virtual ScopeBuffer GetData(uint64_t size, int64_t offset = 0) = 0;
 
 		template<typename T>
 		void SetData(const T* data, int64_t offset = 0);
@@ -146,6 +147,9 @@ namespace Voxymore::Core {
 		template<typename T>
 		void SetElementInArray(const T* element, int64_t index, int64_t rawOffset = 0);
 
+		template<typename T>
+		ScopeBuffer GetData(int64_t offset);
+
 	public:
 		static Ref<SSBO> Create(uint64_t size, Usage usage = Usage::DynamicDraw);
 		static Ref<SSBO> Create(Buffer data, Usage usage = Usage::DynamicDraw);
@@ -153,22 +157,27 @@ namespace Voxymore::Core {
 
 	template<typename T>
 	void SSBO::SetElementInArray(const T *element, int64_t index, int64_t rawOffset) {
-		SetData(Buffer{const_cast<T*>(element), sizeof(T)}, rawOffset + index * sizeof(T));
+		SSBO::SetData(Buffer{const_cast<T*>(element), sizeof(T)}, rawOffset + index * sizeof(T));
+	}
+
+	template<typename T>
+	ScopeBuffer SSBO::GetData(int64_t offset) {
+		return std::move(SSBO::GetData(sizeof(T), offset));
 	}
 
 	template<typename T>
 	void SSBO::SetVector(const std::vector<T> &data, int64_t offset) {
-		SetData(Buffer{const_cast<T*>(data.data()), data.size() * sizeof(T)}, offset);
+		SSBO::SetData(Buffer{const_cast<T*>(data.data()), data.size() * sizeof(T)}, offset);
 	}
 
 	template<typename T>
 	void SSBO::SetArray(const T *data, uint64_t count, int64_t offset) {
-		SetData(Buffer{const_cast<T*>(data), sizeof(T) * count}, offset);
+		SSBO::SetData(Buffer{const_cast<T*>(data), sizeof(T) * count}, offset);
 	}
 
 	template<typename T>
 	void SSBO::SetData(const T *data, int64_t offset) {
-		SetData(Buffer{const_cast<T*>(data), sizeof(T)}, offset);
+		SSBO::SetData(Buffer{const_cast<T*>(data), sizeof(T)}, offset);
 	}
 
 	template<typename Iter>
@@ -177,7 +186,7 @@ namespace Voxymore::Core {
 		uint64_t index = 0;
 		for (auto it = begin; it != end; ++it)
 		{
-			SetElementInArray(&(*it), index++, offset);
+			SSBO::SetElementInArray(&(*it), index++, offset);
 		}
 	}
 }

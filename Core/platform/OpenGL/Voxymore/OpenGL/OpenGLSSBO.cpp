@@ -35,7 +35,7 @@ namespace Voxymore::Core
 	{
 		glCreateBuffers(1, &m_RendererID);
 		Allocate(data.Size, usage);
-		SetData(data, 0);
+		OpenGLSSBO::SetData(data, 0);
 	}
 
 	OpenGLSSBO::~OpenGLSSBO()
@@ -55,6 +55,12 @@ namespace Voxymore::Core
 
 	void OpenGLSSBO::SetData(Buffer data, int64_t offset)
 	{
+		glNamedBufferSubData(m_RendererID, offset, data.Size, data.Data);
 	}
 
+	ScopeBuffer OpenGLSSBO::GetData(uint64_t size, int64_t offset) {
+		ScopeBuffer buffer(size);
+		glGetNamedBufferSubData(m_RendererID, offset, size, buffer.As<void>());
+		return std::move(buffer);
+	}
 } // namespace Voxymore::Core

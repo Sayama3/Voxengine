@@ -22,6 +22,7 @@ namespace Voxymore::Core
 		virtual uint32_t GetRendererID() const override {return m_RendererID;};
 	public:
 		virtual void SetData(Buffer data, int64_t offset) override;
+		virtual ScopeBuffer GetData(uint64_t size, int64_t offset) override;
 	private:
 		void Allocate(uint64_t size, SSBO::Usage usage);
 	private:

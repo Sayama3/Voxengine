@@ -34,6 +34,13 @@ namespace Voxymore::Core {
         	VXM_PROFILE_FUNCTION();
             s_RendererAPI->DrawPatches(patchCount);
         }
+
+		inline static void GPUDraw(uint32_t count, uint32_t offset, DrawMode drawMode) {
+	        VXM_PROFILE_FUNCTION();
+        	s_RendererAPI->GPUDraw(count, offset, drawMode);
+        }
+
+
         inline static void SetClearColor(const glm::vec4& color) {
         	VXM_PROFILE_FUNCTION();
             s_RendererAPI->SetClearColor(color);

@@ -39,6 +39,7 @@ namespace Voxymore::Core {
 		virtual void DrawIndexed(DrawMode drawMode, const Ref<VertexArray>& vertexArray) = 0;
 
 		virtual void DrawPatches(uint32_t verticesPerPatch) = 0;
+		virtual void GPUDraw(uint32_t count, uint32_t offset, DrawMode drawMode) = 0;
 
 		virtual void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) = 0;
 

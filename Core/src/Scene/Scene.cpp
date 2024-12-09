@@ -382,6 +382,12 @@ namespace Voxymore::Core
 			}
 		}
 
+		if (m_Terrain && m_Terrain->IsValid()) {
+			m_Terrain->Bind();
+			m_Terrain->Draw();
+			m_Terrain->Unbind();
+		}
+
 		// Draw Physics
 		if(JPH::DebugRenderer::sInstance == nullptr) {
 			JPH::DebugRenderer::sInstance = new PhysicsDebugRenderer();

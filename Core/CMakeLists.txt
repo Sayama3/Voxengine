@@ -186,8 +186,12 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Pipeline/Action.hpp
         include/Voxymore/Serializer/Data.cpp
         include/Voxymore/Serializer/Data.hpp
-        include/Voxymore/Serializer/Value.cpp
-        include/Voxymore/Serializer/Value.hpp
+        src/Terrain/Terrain.cpp
+        include/Voxymore/Terrain/Terrain.hpp
+        include/Voxymore/Assets/AssetField.impl.hpp
+        include/Voxymore/Assets/AssetField.decl.hpp
+        include/Voxymore/Assets/AssetField.forward.hpp
+        include/Voxymore/Assets/AssetHandle.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -212,6 +216,7 @@ target_precompile_headers(${LIBRARY_TARGET_NAME} PUBLIC
         <chrono>
         <coroutine>
         <bitset>
+        <execution>
 
         # Exception related stuff
         <exception>

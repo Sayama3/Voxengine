@@ -89,6 +89,7 @@ namespace Voxymore::Core {
 		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		static void GPUDraw(uint32_t count, uint32_t offset = 0, DrawMode drawMode = DrawMode::Triangles);
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

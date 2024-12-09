@@ -56,6 +56,11 @@ namespace Voxymore::Editor {
             }
         }
 
+    	if (s_Context->m_Terrain) s_Context->m_Terrain = std::make_unique<Terrain>();
+
+		ImGuiLib::DrawAssetField("Terrain Compute Shader", s_Context->m_Terrain->m_ComputeShaderField);
+		ImGuiLib::DrawAssetField("Terrain Grahics Shader", s_Context->m_Terrain->m_GraphicShaderField);
+
         ImGui::Separator();
 
         auto transformView = s_Context->m_Registry.view<TagComponent>();

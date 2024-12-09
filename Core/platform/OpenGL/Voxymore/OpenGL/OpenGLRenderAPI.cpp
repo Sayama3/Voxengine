@@ -6,6 +6,29 @@
 #include <glad/glad.h>
 
 namespace Voxymore::Core {
+
+	GLenum GetGLPrimitive(DrawMode drawMode) {
+		switch (drawMode)  {
+			case DrawMode::Points:
+			{
+				return GL_POINTS;
+			}
+			break;
+			case DrawMode::Lines:
+			{
+				return GL_LINES;
+			}
+			break;
+			case DrawMode::Triangles:
+			{
+				return GL_TRIANGLES;
+			}
+			break;
+		}
+		VXM_CORE_WARN("The DrawMode {} is unknown. Falling back to Triangles.",(int)drawMode);
+		return GL_TRIANGLES;
+	}
+
 	void OpenGLRenderAPI::Init() {
 		VXM_PROFILE_FUNCTION();
 		glEnable(GL_BLEND);
@@ -83,6 +106,12 @@ namespace Voxymore::Core {
 
 		glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(verticesPerPatch));
 	}
+
+	void OpenGLRenderAPI::GPUDraw(uint32_t count, uint32_t offset, DrawMode drawMode) {
+		VXM_PROFILE_FUNCTION();
+		glDrawArrays(GetGLPrimitive(drawMode), offset, count);
+	}
+
 	void OpenGLRenderAPI::SetPatchSize(int32_t verticesPerPatch)
 	{
 		VXM_PROFILE_FUNCTION();

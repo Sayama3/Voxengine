@@ -331,7 +331,12 @@ namespace Voxymore::Core {
 			s_Data.OpaqueMeshes.emplace_back(std::tuple(mesh, transform, entityId));
 		}
 	}
-/*
+
+	void Renderer::GPUDraw(uint32_t count, uint32_t offset, DrawMode drawMode) {
+		RenderCommand::GPUDraw(count, offset, drawMode);
+	}
+
+	/*
 	void Renderer::Submit(const Mesh& mesh, const glm::mat4& transform, int entityId)
 	{
 		VXM_PROFILE_FUNCTION();
