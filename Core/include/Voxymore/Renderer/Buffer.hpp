@@ -153,6 +153,7 @@ namespace Voxymore::Core {
 	public:
 		static Ref<SSBO> Create(uint64_t size, Usage usage = Usage::DynamicDraw);
 		static Ref<SSBO> Create(Buffer data, Usage usage = Usage::DynamicDraw);
+	private:
 	};
 
 	template<typename T>

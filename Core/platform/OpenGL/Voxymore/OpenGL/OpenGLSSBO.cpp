@@ -60,7 +60,7 @@ namespace Voxymore::Core
 
 	ScopeBuffer OpenGLSSBO::GetData(uint64_t size, int64_t offset) {
 		ScopeBuffer buffer(size);
-		glGetNamedBufferSubData(m_RendererID, offset, size, buffer.As<void>());
+		glGetNamedBufferSubData(m_RendererID, offset, size, buffer.GetPtr());
 		return std::move(buffer);
 	}
 } // namespace Voxymore::Core

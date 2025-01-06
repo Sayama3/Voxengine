@@ -13,25 +13,6 @@ inline virtual AssetType GetType() const override {return GetStaticType();}
 
 namespace Voxymore::Core
 {
-	enum class AssetType : uint16_t
-	{
-		None = 0,
-		Scene,
-		Texture2D,
-		CubeMap,
-		ShaderSource,
-		Shader,
-		ComputeShader,
-		Material,
-		Model,
-		Mesh,
-	};
-
-	std::string AssetTypeToString(AssetType type);
-	AssetType AssetTypeFromString(const std::string& assetType);
-	bool TryAssetTypeFromString(const std::string& assetType, AssetType& type);
-
-	std::string AssetTypeToPayloadID(AssetType assetType);
 
 	class Asset
 	{

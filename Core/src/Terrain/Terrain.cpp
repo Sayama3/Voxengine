@@ -4,6 +4,8 @@
 
 #include "Voxymore/Terrain/Terrain.hpp"
 
+#ifdef VXM_TERRAIN
+
 #include "Voxymore/Renderer/Renderer.hpp"
 
 namespace Voxymore::Core {
@@ -77,3 +79,4 @@ namespace Voxymore::Core {
         return m_GraphicsInputBuffer && m_GraphicsOutputBuffer;
     }
 } // Voxymore::Core
+#endif

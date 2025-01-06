@@ -192,6 +192,7 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Assets/AssetField.decl.hpp
         include/Voxymore/Assets/AssetField.forward.hpp
         include/Voxymore/Assets/AssetHandle.hpp
+        src/Assets/AssetHandle.cpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

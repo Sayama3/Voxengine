@@ -210,8 +210,10 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
+#ifdef VXM_TERRAIN
 	private:
 		std::unique_ptr<Terrain> m_Terrain;
+#endif
 	private:
 		JPH::PhysicsSystem m_PhysicsSystem;
 

@@ -6,6 +6,8 @@
 
 #include "AssetField.forward.hpp"
 #include "AssetHandle.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
+#include "Voxymore/Core/YamlHelper.hpp"
 
 namespace Voxymore::Core {
     template<typename T>

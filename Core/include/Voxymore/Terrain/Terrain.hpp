@@ -4,13 +4,15 @@
 
 #pragma once
 
+#ifdef VXM_TERRAIN
+
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Math/Math.hpp"
 #include "Voxymore/Renderer/Buffer.hpp"
 #include "Voxymore/Renderer/Shader.hpp"
 
-namespace Voxymore {
-    namespace Core {
+
+    namespace Voxymore::Core {
         class Terrain {
         public:
             using Voxel = uint8_t;
@@ -51,4 +53,6 @@ namespace Voxymore {
             };
         };
     } // Core
-} // Voxymore
+// Voxymore
+
+#endif

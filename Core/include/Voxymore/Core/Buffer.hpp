@@ -108,6 +108,11 @@ namespace Voxymore::Core
 			return buffer.As<T>();
 		}
 
+		void* GetPtr() {return buffer.Data;}
+		const void* GetPtr() const {return buffer.Data;}
+
+		uint64_t GetSize() const {return buffer.Size;}
+
 		~ScopeBuffer();
 	private:
 		Buffer buffer;
