@@ -13,10 +13,20 @@ namespace Voxymore::Core {
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
+
 		// Color
+		RGB8,
+		RGB16,
 		RGBA8,
 		RGBA16,
-		RED_INTEGER,
+		RGBA32F,
+		RGB32F,
+		RG32F,
+		RED32F,
+		RED16I,
+		RED32I,
+		RED16UI,
+		RED32UI,
 
 		// Depth/Stencil
 		DEPTH24STENCIL8,

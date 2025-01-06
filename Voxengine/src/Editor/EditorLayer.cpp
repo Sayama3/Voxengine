@@ -56,7 +56,7 @@ namespace Voxymore::Editor {
         }
 
 		FramebufferSpecification specification(1280, 720);
-		specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth};
+		specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
 		m_Viewports.push_back(CreateRef<Viewport>(specification));
 
 		auto handle = Project::GetConfig().startSceneId;
@@ -360,7 +360,7 @@ namespace Voxymore::Editor {
 					m_UnloadedViewport.pop_back();
 				} else {
 					FramebufferSpecification specification(1280, 720);
-					specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth};
+					specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
 					m_Viewports.push_back(CreateRef<Viewport>(specification));
 				}
 			}

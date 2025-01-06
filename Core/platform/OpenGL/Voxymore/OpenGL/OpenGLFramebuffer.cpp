@@ -94,10 +94,19 @@ namespace Voxymore::Core {
 			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
+				case FramebufferTextureFormat::RGB8: return GL_RGB8;
+				case FramebufferTextureFormat::RGB16: return GL_RGB16;
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
 				case FramebufferTextureFormat::RGBA16: return GL_RGBA16;
-				case FramebufferTextureFormat::RED_INTEGER: return GL_R16I;
+				case FramebufferTextureFormat::RED16I: return GL_R16I;
 				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+				case FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;break;
+				case FramebufferTextureFormat::RGB32F: return GL_RGB32F;break;
+				case FramebufferTextureFormat::RG32F: return GL_RG32F;break;
+				case FramebufferTextureFormat::RED32F: return GL_R32F;break;
+				case FramebufferTextureFormat::RED32I: return GL_R32I;break;
+				case FramebufferTextureFormat::RED16UI: return GL_R16UI;break;
+				case FramebufferTextureFormat::RED32UI: return GL_R32UI;break;
 			}
 			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
 			return 0;
@@ -108,10 +117,19 @@ namespace Voxymore::Core {
 			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
+				case FramebufferTextureFormat::RGB8: return GL_RGB;
+				case FramebufferTextureFormat::RGB16: return GL_RGB;
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA;
 				case FramebufferTextureFormat::RGBA16: return GL_RGBA;
-				case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+				case FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;
+				case FramebufferTextureFormat::RED16I: return GL_RED_INTEGER;
 				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
+				case FramebufferTextureFormat::RGB32F: return GL_RGB;
+				case FramebufferTextureFormat::RG32F: return GL_RG;
+				case FramebufferTextureFormat::RED32F: return GL_RED;
+				case FramebufferTextureFormat::RED32I: return GL_RED;
+				case FramebufferTextureFormat::RED16UI: return GL_RED;
+				case FramebufferTextureFormat::RED32UI: return GL_RED;
 			}
 			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
 			return 0;
@@ -252,7 +270,7 @@ namespace Voxymore::Core {
 		int pixelData;
 
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
-		VXM_CORE_ASSERT(m_ColorAttachmentSpecifications[index].TextureFormat == FramebufferTextureFormat::RED_INTEGER, "This function read from a RED_INTEGER texture format.");
+		VXM_CORE_ASSERT(m_ColorAttachmentSpecifications[index].TextureFormat == FramebufferTextureFormat::RED16I, "This function read from a RED_INTEGER texture format.");
 
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 		glReadPixels(x, y, 1 , 1, GL_RED_INTEGER, GL_INT, &pixelData);
