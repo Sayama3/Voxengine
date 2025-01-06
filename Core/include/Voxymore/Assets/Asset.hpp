@@ -17,6 +17,8 @@ namespace Voxymore::Core
 	class Asset
 	{
 	public:
+		virtual ~Asset() = default;
+
 		AssetHandle Handle; // Generate handle
 		virtual AssetType GetType() const = 0;
 	};
