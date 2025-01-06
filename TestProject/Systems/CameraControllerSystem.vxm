@@ -1,5 +1,0 @@
-CameraControllerSystem:
-  Enable: false
-  Scenes:
-    []
-  Speed: 252

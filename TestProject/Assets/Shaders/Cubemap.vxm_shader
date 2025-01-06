@@ -1,0 +1,6 @@
+Type: AssetType::Shader
+Shader:
+  Name: Cubemap
+  Sources:
+    - 7574741928759642059
+    - 934054283055222071

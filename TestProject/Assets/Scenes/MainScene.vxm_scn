@@ -1,0 +1,85 @@
+Scene:
+  Name: Main Scene
+  Entities:
+    - Entity: 14020947875908180688
+      IsActive: true
+      TagComponent:
+        Tag: Ground
+      TransformComponent:
+        Position: [0, -1.58349979, 0]
+        Rotation: [-0.707106769, 0, 0, 0.707106769]
+        EulerRotation: [-90, 0, 0]
+        Scale: [20, 20, 1]
+      PrimitiveComponent:
+        PrimitiveType: 0
+        Material: 4376053825709801053
+      Rigidbody:
+        RigidbodyType: Static
+        LinearVelocity: [0, -2.5, 0]
+        AngularVelocity: [0, 0, 0]
+        Friction: 0.5
+        GravityFactor: 1
+        IsAwake: false
+      Collider:
+        Type: Box
+        Size: [20, 20, 0.100000001]
+    - Entity: 9892095993708743224
+      IsActive: true
+      TagComponent:
+        Tag: Camera - 0
+      TransformComponent:
+        Position: [-4.50307703, 6.13000393, 8.30943203]
+        Rotation: [-0.12174125, -0.151723772, -0.0188342165, 0.980716228]
+        EulerRotation: [-14.1524305, -17.5886898, 2.46302284e-06]
+        Scale: [0.999999344, 1, 0.999999642]
+      CameraComponent:
+        Primary: true
+        FixedAspectRatio: false
+        Cubemap: 7578455073512463366
+        CubemapShader: 0
+        Camera:
+          IsOrthographic: false
+          AspectRatio: 1.46818185
+          OrthographicSize: 10
+          OrthographicNear: -1
+          OrthographicFar: 1
+          PerspectiveVerticalFOV: 1.04719758
+          PerspectiveNear: 0.00999999978
+          PerspectiveFar: 1000
+    - Entity: 10023566399794665382
+      IsActive: true
+      TagComponent:
+        Tag: Cube - 0
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      PrimitiveComponent:
+        PrimitiveType: 1
+        Material: 4376053825709801053
+      Rigidbody:
+        RigidbodyType: Dynamic
+        LinearVelocity: [-1, 13.5, 0]
+        AngularVelocity: [290, 40, 190]
+        Friction: 0.5
+        GravityFactor: 1
+        IsAwake: true
+      Collider:
+        Type: Box
+        Size: [1, 1, 1]
+    - Entity: 13207770668927826958
+      IsActive: true
+      TagComponent:
+        Tag: Directional Light
+      TransformComponent:
+        Position: [0, 0, 0]
+        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
+        EulerRotation: [-45, 45, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 1
+        Range: 10
+        Cutoff: 45
+        LightType: 0

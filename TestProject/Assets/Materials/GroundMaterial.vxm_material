@@ -1,0 +1,57 @@
+Material:
+  MaterialName: GroundMaterial
+  Shader: 4771141114323785080
+  Textures:
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+  Parameters:
+    AlphaMode: 0
+    AlphaCutoff: 0.5
+    DoubleSided: 0
+    GammaCorrection: 0
+    BaseColor: [0.760617733, 0.523296714, 0.226129591, 1]
+    BaseColorIndex: -1
+    BaseColorTexCoord: 0
+    MetallicFactor: 1
+    RoughnessFactor: 1
+    MetallicRoughnessIndex: -1
+    MetallicRoughnessTexCoord: 0
+    NormalMapIndex: -1
+    NormalMapTexCoord: 0
+    NormalMapScale: 1
+    OcclusionTextureIndex: -1
+    OcclusionTextureTexCoord: 0
+    OcclusionTextureStrength: 1
+    EmissiveFactor: [0, 0, 0, 1]
+    EmissiveTextureIndex: -1
+    EmissiveTextureTexCoord: 0

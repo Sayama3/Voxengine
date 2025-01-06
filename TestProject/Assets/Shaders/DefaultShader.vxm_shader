@@ -1,0 +1,6 @@
+Type: AssetType::Shader
+Shader:
+  Name: DefaultShader
+  Sources:
+    - 15374707834578414979
+    - 7876495498005145272
