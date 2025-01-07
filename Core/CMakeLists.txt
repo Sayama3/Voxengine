@@ -193,6 +193,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Assets/AssetField.forward.hpp
         include/Voxymore/Assets/AssetHandle.hpp
         src/Assets/AssetHandle.cpp
+        src/Components/ProcLightComponents.cpp
+        include/Voxymore/Components/ProcLightComponents.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})

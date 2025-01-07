@@ -89,6 +89,8 @@ namespace Voxymore::Core
 		inline UUID GetID() const {return id();}
 		inline UUID id() const {return Handle;}
 	private:
+		std::vector<Light> FindAllLights();
+	private:
 		void StartPhysics();
 		void UpdatePhysics(TimeStep ts);
 		void StopPhysics();

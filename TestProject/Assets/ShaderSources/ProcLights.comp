@@ -1,0 +1,48 @@
+#version 450
+
+struct Light {
+    vec4 Color;
+    vec4 Position;
+    uint Seed;
+};
+
+struct GPUData {
+    Light lightPositions[10];
+    float timeStep;
+    uint lightCount;
+};
+
+layout (std430, binding=0) buffer shader_data
+{
+    GPUData data;
+};
+
+uint hash( uint x ) {
+    x += ( x << 10u );
+    x ^= ( x >>  6u );
+    x += ( x <<  3u );
+    x ^= ( x >> 11u );
+    x += ( x << 15u );
+    return x;
+}
+
+float floatConstruct( uint m ) {
+    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
+    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
+
+    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
+    m |= ieeeOne;                          // Add fractional part to 1.0
+
+    float  f = uintBitsToFloat( m );       // Range [1:2]
+    return f - 1.0;                        // Range [0:1]
+}
+
+layout (local_size_x = 10, local_size_y = 1, local_size_z = 1) in;
+void main() {
+    Light light = data.lightPositions[int(gl_GlobalInvocationID)];
+    uint a = hash(light.Seed);
+    uint b = hash(a);
+    uint c = hash(b);
+    light.Position += vec4(floatConstruct(a), 0, floatConstruct(c),0) * 0.01;
+    data.lightPositions[int(gl_GlobalInvocationID)] = light;
+}

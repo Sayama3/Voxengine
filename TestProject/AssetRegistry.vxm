@@ -1,8 +1,20 @@
 Type: AssetRegistry
 AssetRegistry:
   Assets:
+    - Handle: 81341761288305332
+      FilePath: {Source: 2, Path: ShaderSources\ProcLight.geom}
+      Type: AssetType::ShaderSource
+    - Handle: 2271745027356954202
+      FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_compute_shader}
+      Type: AssetType::ComputeShader
+    - Handle: 3456651389826446753
+      FilePath: {Source: 2, Path: Materials\Deferred_Other.vxm_material}
+      Type: AssetType::Material
     - Handle: 3480179507698329937
       FilePath: {Source: 1, Path: Shaders\Gizmos.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 4153857186810102841
+      FilePath: {Source: 2, Path: ShaderSources\ProcLight.vert}
       Type: AssetType::ShaderSource
     - Handle: 4376053825709801053
       FilePath: {Source: 2, Path: Materials\DefaultMaterial.vxm_material}
@@ -13,6 +25,9 @@ AssetRegistry:
     - Handle: 6021556666728418513
       FilePath: {Source: 1, Path: Shaders\Gizmos.vert}
       Type: AssetType::ShaderSource
+    - Handle: 7416316386062138268
+      FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_shader}
+      Type: AssetType::Shader
     - Handle: 7578455073512463366
       FilePath: {Source: 2, Path: Textures\skybox\space_skybox.png}
       Type: AssetType::CubeMap
@@ -27,6 +42,9 @@ AssetRegistry:
       Type: AssetType::Material
     - Handle: 12630599774198441109
       FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 12678104600030430977
+      FilePath: {Source: 2, Path: ShaderSources\ProcLights.comp}
       Type: AssetType::ShaderSource
     - Handle: 12878332431586702203
       FilePath: {Source: 2, Path: Shaders\DefaultShader.vxm_shader}

@@ -6,9 +6,9 @@ Scene:
       TagComponent:
         Tag: Directional Light
       TransformComponent:
-        Position: [0, 0, 0]
+        Position: [0, -1.11150742, 0]
         Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
-        EulerRotation: [-45, 45, 0]
+        EulerRotation: [-45, 45.0000038, 0]
         Scale: [1, 1, 1]
       LightComponent:
         Color: [1, 1, 1, 1]
@@ -21,7 +21,7 @@ Scene:
       TagComponent:
         Tag: Cube - 0
       TransformComponent:
-        Position: [0, 0, 0]
+        Position: [0, 2.8696022, 0]
         Rotation: [0, 0, 0, 1]
         EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
@@ -54,7 +54,7 @@ Scene:
         CubemapShader: 0
         Camera:
           IsOrthographic: false
-          AspectRatio: 1.44090915
+          AspectRatio: 1.74318182
           OrthographicSize: 10
           OrthographicNear: -1
           OrthographicFar: 1
@@ -83,3 +83,15 @@ Scene:
       Collider:
         Type: Box
         Size: [20, 20, 0.100000001]
+    - Entity: 9228354074251653468
+      IsActive: true
+      TagComponent:
+        Tag: Entity_9228354074251653468
+      TransformComponent:
+        Position: [0, -0.929611206, 0]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      ProcLightComponent:
+        RenderingShader: 7416316386062138268
+        CalculateShader: 2271745027356954202

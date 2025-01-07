@@ -14,6 +14,7 @@
 #include "Voxymore/Scene/SceneSerializer.hpp"
 #include "Voxymore/Scene/Systems.hpp"
 #include "Voxymore/Components/LightComponent.hpp"
+#include "Voxymore/Components/ProcLightComponents.hpp"
 #include "Voxymore/Core/Application.hpp"
 
 
@@ -40,6 +41,7 @@
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
+
 
 
 namespace Voxymore::Core
@@ -285,6 +287,11 @@ namespace Voxymore::Core
 																						 });
 		}
 
+		{
+			VXM_PROFILE_SCOPE("Scene::OnUpdateRuntime -> Update NativeScriptComponent");
+			m_Registry.view<ProcLightComponent>(entt::exclude<DisableComponent>).each([=, this](auto entity, ProcLightComponent& lght) {lght.Update(ts);});
+		}
+
 		UpdatePhysicsState();
 		UpdatePhysics(ts);
 
@@ -296,15 +303,7 @@ namespace Voxymore::Core
 	void Scene::RenderEditor(TimeStep ts, EditorCamera& camera)
 	{
 		VXM_PROFILE_FUNCTION();
-		std::vector<Light> lights;
-		{
-			auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
-			for (entt::entity entity : lightsComps)
-			{
-				auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
-				lights.push_back(lc.AsLight(tc));
-			}
-		}
+		std::vector<Light> lights = FindAllLights();
 		Entity mainCam = GetPrimaryCameraEntity();
 		CameraComponent* cc = mainCam && mainCam.HasComponent<CameraComponent>() ? &mainCam.GetComponent<CameraComponent>() : nullptr;
 
@@ -343,15 +342,7 @@ namespace Voxymore::Core
 
 		if(mainCamera)
 		{
-			std::vector<Light> lights;
-			{
-				auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
-				for (entt::entity entity : lightsComps)
-				{
-					auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
-					lights.push_back(lc.AsLight(tc));
-				}
-			}
+			std::vector<Light> lights = FindAllLights();
 
 			Renderer::BeginRendering(*mainCamera, cameraTransform, lights);
 
@@ -382,6 +373,14 @@ namespace Voxymore::Core
 				Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
 			}
 		}
+
+		auto lightCp = m_Registry.view<ProcLightComponent>(entt::exclude<DisableComponent>);
+		for (entt::entity lcEntity : lightCp)
+		{
+			auto& plc = lightCp.get<ProcLightComponent>(lcEntity);
+			plc.Render();
+		}
+
 		Renderer::EndDeferredRendering();
 
 		Renderer::BeginForwardRendering();
@@ -559,6 +558,32 @@ namespace Voxymore::Core
 			}
 		}
 		return Entity();
+	}
+
+	std::vector<Light> Scene::FindAllLights() {
+		std::vector<Light> lights;
+		{
+			auto lightsComps = m_Registry.view<LightComponent, TransformComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : lightsComps)
+			{
+				auto&& [lc, tc] = lightsComps.get<LightComponent, TransformComponent>(entity);
+				lights.push_back(lc.AsLight(tc));
+			}
+		}
+
+		{
+			auto lightsComps = m_Registry.view<ProcLightComponent>(entt::exclude<DisableComponent>);
+			for (entt::entity entity : lightsComps)
+			{
+				auto&& plc = lightsComps.get<ProcLightComponent>(entity);
+				for (int i = 0; i < plc.m_GPUReference->lightCount; ++i) {
+					auto& l = plc.m_GPUReference->lightPositions[i];
+					lights.push_back(Light{l.Color, l.Position, glm::vec3{0,-1,0}, 5, 1, 4, LightType::Point});
+				}
+			}
+		}
+
+		return lights;
 	}
 
 	void Scene::StartPhysics()
