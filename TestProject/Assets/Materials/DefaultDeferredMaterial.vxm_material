@@ -39,7 +39,7 @@ Material:
     AlphaCutoff: 0.5
     DoubleSided: 0
     GammaCorrection: 0
-    BaseColor: [1, 1, 1, 1]
+    BaseColor: [0.15697439, 0.583546042, 0.903474927, 1]
     BaseColorIndex: -1
     BaseColorTexCoord: 0
     MetallicFactor: 1
@@ -52,6 +52,6 @@ Material:
     OcclusionTextureIndex: -1
     OcclusionTextureTexCoord: 0
     OcclusionTextureStrength: 1
-    EmissiveFactor: [0, 0, 0, 1]
+    EmissiveFactor: [0.772200763, 0.131184667, 0.131184667, 1]
     EmissiveTextureIndex: -1
     EmissiveTextureTexCoord: 0

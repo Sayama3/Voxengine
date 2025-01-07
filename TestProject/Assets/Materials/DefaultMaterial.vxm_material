@@ -2,7 +2,7 @@ Material:
   MaterialName: DefaultMaterial
   Shader: 12878332431586702203
   Textures:
-    - 5067112093997327398
+    - 0
     - 0
     - 0
     - 0
@@ -39,7 +39,7 @@ Material:
     AlphaCutoff: 0.5
     DoubleSided: 0
     GammaCorrection: 0
-    BaseColor: [0.521235526, 0.379133373, 0.231436625, 1]
+    BaseColor: [0.934362948, 0.897214651, 0.858603776, 1]
     BaseColorIndex: 0
     BaseColorTexCoord: 0
     MetallicFactor: 1

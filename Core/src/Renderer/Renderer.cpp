@@ -407,9 +407,9 @@ namespace Voxymore::Core
 		if(mat)
 		{
 			Ref<Material> matPtr = mat.GetAsset();
+			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
 			matPtr->Bind(false);
 			s_BindedMaterial = mat;
-			//}
 
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
@@ -435,11 +435,9 @@ namespace Voxymore::Core
 		if(mat)
 		{
 			Ref<Material> matPtr = mat.GetAsset();
-			//if(mat != s_BindedMaterial && mat) {
 			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
 			matPtr->Bind(false);
 			s_BindedMaterial = mat;
-			//}
 
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
