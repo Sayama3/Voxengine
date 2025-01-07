@@ -242,7 +242,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		VXM_CORE_ASSERT(s_ActiveProject->m_Config.startSceneId.has_value(), "No Start Scene associated with the project.");
-		return s_ActiveProject->m_Config.startSceneId.value();
+		return s_ActiveProject->m_Config.startSceneId.value_or(NullAssetHandle);
 	}
 
 
@@ -257,8 +257,9 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultMaterialId.has_value(), "No Default Material associated with the project.");
-		return s_ActiveProject->m_Config.defaultMaterialId.value();
+		return s_ActiveProject->m_Config.defaultMaterialId.value_or(NullAssetHandle);
 	}
+
 	void Project::SetDefaultShader(AssetHandle id)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -270,7 +271,21 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultShaderId.has_value(), "No Default Shader associated with the project.");
-		return s_ActiveProject->m_Config.defaultShaderId.value();
+		return s_ActiveProject->m_Config.defaultShaderId.value_or(NullAssetHandle);
+	}
+
+	void Project::SetDeferredShader(AssetHandle id)
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		s_ActiveProject->m_Config.deferredShaderId = id;
+	}
+	AssetHandle Project::GetDeferredShader()
+	{
+		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
+		VXM_CORE_ASSERT(s_ActiveProject->m_Config.defaultShaderId.has_value(), "No Deferred Shader associated with the project.");
+		return s_ActiveProject->m_Config.deferredShaderId.value_or(NullAssetHandle);
 	}
 
 	void Project::SetGizmoShader(AssetHandle id)
@@ -291,7 +306,7 @@ namespace Voxymore::Core
 		VXM_PROFILE_FUNCTION();
 		VXM_CORE_ASSERT(s_ActiveProject, "The Active Project is not loaded yet.");
 		VXM_CORE_ASSERT(s_ActiveProject->m_Config.gizmoShaderId.has_value(), "No Gizmo Shader associated with the project.");
-		return s_ActiveProject->m_Config.gizmoShaderId.value();
+		return s_ActiveProject->m_Config.gizmoShaderId.value_or(NullAssetHandle);
 	}
 
 } // namespace Voxymore::Core

@@ -17,7 +17,9 @@
 #include "Voxymore/Renderer/VertexArray.hpp"
 #include "Voxymore/Renderer/Model.hpp"
 #include "Voxymore/Renderer/Light.hpp"
+#include "Voxymore/Renderer/Framebuffer.hpp"
 #include <map>
+
 
 #define MAX_LIGHT_COUNT 20
 
@@ -69,21 +71,38 @@ namespace Voxymore::Core {
 	private:
 		static void DrawCubemap(const glm::mat4& view, const glm::mat4& projection, const Ref<Cubemap>& cubemap, const Ref<Shader>& cubemapShader);
 		static void Submit(const Ref<Model>& model, const Node& node, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-		static void DrawMesh(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId = -1);
-		static void DrawGizmo(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix);
+		static void DrawDeferredMesh(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId = -1);
+		static void DrawForwardMesh(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId = -1);
+		static void DrawForwardGizmo(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix);
+
+		static void SubmitOpaqueMesh(const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId);
+		static void SubmitAlphaMesh(Real distance, const Ref<Mesh>& mesh, const glm::mat4& modelMatrix, int entityId);
 	public:
 		static void Init();
 		static void Shutdown();
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle);
-		static void BeginScene(const EditorCamera& camera, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle);
-		static void EndScene();
+		static void SetupRenderer(ShaderField deferredRenderShader, Ref<Framebuffer> renderFramebuffer, Ref<Framebuffer> deferredFramebuffer = nullptr);
 
-		[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
-		static void Submit(Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
-		[[deprecated("The submission of raw vertex array is not supported anymore. use the class Mesh")]]
-		static void Submit(Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
+		static void BeginRendering(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
+		static void BeginRendering(const EditorCamera& camera, std::vector<Light> lights = {});
+
+		static void BeginDeferredRendering(); // Draw everything in the G Buffer and store the rest
+		static void EndDeferredRendering(); // End the draw and sample the G-Buffer in the "back-buffer"
+
+		static void BeginForwardRendering(); // Draw every opaque meshes and ignore the deferred materials
+		static void EndForwardRendering(); // Stop drawing
+
+		static void EndRendering(CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle); // finishing touch
+
+
+		[[deprecated]]
+		static void BeginForwardScene(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle);
+		[[deprecated]]
+		static void BeginForwardScene(const EditorCamera& camera, std::vector<Light> lights = {}, CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle);
+		[[deprecated]]
+		static void EndForwardScene();
+
 
 		static void Submit(const MeshGroup& mesh, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void Submit(const Ref<Model>& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);

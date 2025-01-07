@@ -106,6 +106,7 @@ layout (location = 0) out vec3 v_Position;
 layout (location = 1) out vec3 v_Normal;
 layout (location = 2) out vec2 v_TexCoord;
 layout (location = 3) out vec4 v_Color;
+
 layout (location = 4) out flat int v_EntityId;
 
 void main() {

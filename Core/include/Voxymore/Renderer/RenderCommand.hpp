@@ -78,6 +78,12 @@ namespace Voxymore::Core {
 
 		inline static void EnableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->EnableDoubleSided();}
 		inline static void DisableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->DisableDoubleSided();}
+
+        inline static void SetupDeferredRender(uint32_t PositionTexID, uint32_t NormalTexID, uint32_t TexCoordTexID, uint32_t ColorTexID, uint32_t EntityIdTexID, uint32_t DepthTexID) {
+        	VXM_PROFILE_FUNCTION();
+	        s_RendererAPI->SetupDeferredRender(PositionTexID, NormalTexID, TexCoordTexID, ColorTexID, EntityIdTexID, DepthTexID);
+        }
+
     private:
         static RendererAPI* s_RendererAPI;
     };

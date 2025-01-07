@@ -120,12 +120,14 @@ namespace Voxymore::Core
 		std::vector<ShaderSourceField> sources;
 		sources.reserve(6);
 
+		bool isForward = node["IsForward"].as<bool>(true);
 		auto name = node["Name"].as<std::string>("NoName");
 		for (const auto &sourceNode: node["Sources"]) {
 			auto src = sourceNode.as<ShaderSourceField>();
 			sources.push_back(src);
 		}
 		auto asset = Shader::Create(name, sources);
+		asset->SetForward(isForward);
 		return asset;
 	}
 
@@ -141,6 +143,7 @@ namespace Voxymore::Core
 			out << KEYVAL("Shader", YAML::BeginMap);
 			{
 				out << KEYVAL("Name", shader->GetName());
+				out << KEYVAL("IsForward", shader->IsForward());
 				out << KEYVAL("Sources", YAML::BeginSeq);
 				{
 					auto sources = shader->GetSources();

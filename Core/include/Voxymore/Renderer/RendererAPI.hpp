@@ -52,6 +52,8 @@ namespace Voxymore::Core {
 		virtual void EnableDoubleSided() = 0;
 		virtual void DisableDoubleSided() = 0;
 
+		virtual void SetupDeferredRender(uint32_t positionTexID, uint32_t normalTexID, uint32_t texCoordTexID, uint32_t colorTexID, uint32_t entityIdTexID, uint32_t depthTexID) = 0;
+
 		inline static API GetAPI() { return s_API; }
 	private:
 		static API s_API;

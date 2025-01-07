@@ -80,6 +80,12 @@ namespace Voxymore::Core
 			shader->SetName(name);
 		}
 
+		bool isForward = shader->IsForward();
+		if (ImGui::Checkbox("Is Forward", &isForward)) {
+			changed = true;
+			shader->SetForward(isForward);
+		}
+
 		if(ImGui::CollapsingHeader("Sources")) {
 			bool shaderSourcesChanged = false;
 			std::array<ShaderSourceField, 6> src;
@@ -136,6 +142,14 @@ namespace Voxymore::Core
 		name += asset.Handle.string();
 		if(ImGui::MenuItem(name.c_str())) {
 			Project::SetDefaultShader(asset.Handle);
+			Project::SaveActive();
+			return true;
+		}
+
+		name = "Set as deferred shader##";
+		name += asset.Handle.string();
+		if(ImGui::MenuItem(name.c_str())) {
+			Project::SetDeferredShader(asset.Handle);
 			Project::SaveActive();
 			return true;
 		}

@@ -13,11 +13,19 @@ using namespace Voxymore::Core;
 
 namespace Voxymore::Editor
 {
-	Viewport::Viewport(const Core::FramebufferSpecification& specs) : m_EditorCamera(60.0f, 1280.0f / 720.0f, 0.1f, 1000.0f)
+	Viewport::Viewport(const Core::FramebufferSpecification& renderFbSpecs) : m_EditorCamera(60.0f, 1280.0f / 720.0f, 0.1f, 1000.0f)
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Framebuffer = Framebuffer::Create(specs);
-		m_ViewportSize = {specs.Width, specs.Height};
+		m_RenderFramebuffer = Framebuffer::Create(renderFbSpecs);
+		m_ViewportSize = {renderFbSpecs.Width, renderFbSpecs.Height};
+		m_DeferredFramebuffer = nullptr;
+	}
+	Viewport::Viewport(const Core::FramebufferSpecification& renderFbSpecs, const Core::FramebufferSpecification& deferredFbSpecs) {
+		VXM_PROFILE_FUNCTION();
+		m_RenderFramebuffer = Framebuffer::Create(renderFbSpecs);
+		m_ViewportSize = {renderFbSpecs.Width, renderFbSpecs.Height};
+		m_DeferredFramebuffer = Framebuffer::Create(deferredFbSpecs);
+		m_DeferredFramebuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
 	}
 
 	Viewport::~Viewport()
@@ -48,7 +56,7 @@ namespace Voxymore::Editor
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewportSize = glm::uvec2(static_cast<uint32_t>(viewportPanelSize.x), static_cast<uint32_t>(viewportPanelSize.y));
 
-			uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+			uint64_t textureID = m_RenderFramebuffer->GetColorAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if(ImGui::BeginDragDropTarget())
@@ -69,11 +77,12 @@ namespace Voxymore::Editor
 	void Viewport::PrepareFramebuffer()
 	{
 		VXM_PROFILE_FUNCTION();
-		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (FramebufferSpecification spec = m_RenderFramebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
-			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_RenderFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			if (m_DeferredFramebuffer) m_DeferredFramebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		}
 	}
@@ -129,21 +138,38 @@ namespace Voxymore::Editor
 		}
 	}
 
-	void Viewport::BindFramebuffer()
+	void Viewport::BindRenderFramebuffer()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Framebuffer->Bind();
+		m_RenderFramebuffer->Bind();
 		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		RenderCommand::Clear();
-		m_Framebuffer->ClearColorAttachment(1, -1);
+		m_RenderFramebuffer->ClearColorAttachment(1, -1);
 	}
 
-	void Viewport::UnbindFramebuffer()
+	void Viewport::UnbindRenderFramebuffer()
 	{
 		VXM_PROFILE_FUNCTION();
-		m_Framebuffer->Unbind();
+		m_RenderFramebuffer->Unbind();
 	}
 
+	void Viewport::BindDeferredFramebuffer()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_DeferredFramebuffer->Bind();
+		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+		RenderCommand::Clear();
+		m_DeferredFramebuffer->ClearColorAttachment(1, -1);
+	}
+
+	void Viewport::UnbindDeferredFramebuffer()
+	{
+		VXM_PROFILE_FUNCTION();
+		m_DeferredFramebuffer->Unbind();
+	}
+
+	void BindDeferredFramebuffer();
+	void UnbindDeferredFramebuffer();
 	void Viewport::PostRender(Scene* scenePtr)
 	{
 		VXM_PROFILE_FUNCTION();
@@ -163,7 +189,7 @@ namespace Voxymore::Editor
 		if(mouseX > 0 && mouseX < viewportWidth
 			&& mouseY > 0 && mouseY < viewportHeight)
 		{
-			int value = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			int value = m_RenderFramebuffer->ReadPixel(1, mouseX, mouseY);
 			if(value < 0)
 			{
 				m_HoveredEntity = Entity();

@@ -311,11 +311,11 @@ namespace Voxymore::Core
 		CubemapField cubemap = cc ? cc->Cubemap : NullAssetHandle;
 		ShaderField cubemapShader = cc ? cc->CubemapShader : NullAssetHandle;
 
-		Renderer::BeginScene(camera, lights, cubemap, cubemapShader);
+		Renderer::BeginRendering(camera, lights);
 
 		RenderLoop();
 
-		Renderer::EndScene();
+		Renderer::EndRendering(cubemap, cubemapShader);
 	}
 
 	void Scene::RenderRuntime(TimeStep ts)
@@ -353,16 +353,17 @@ namespace Voxymore::Core
 				}
 			}
 
-			Renderer::BeginScene(*mainCamera, cameraTransform, lights, cubemap, cubemapShader);
+			Renderer::BeginRendering(*mainCamera, cameraTransform, lights);
 
 			RenderLoop();
 
-			Renderer::EndScene();
+			Renderer::EndRendering(cubemap, cubemapShader);
 		}
 	}
 
 	void Scene::RenderLoop()
 	{
+		Renderer::BeginDeferredRendering();
 		auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 		for (auto entity: modelsView) {
 			auto&& [transform, model] = modelsView.get<TransformComponent, ModelComponent>(entity);
@@ -381,6 +382,10 @@ namespace Voxymore::Core
 				Renderer::Submit(pc.GetMesh(), transform.GetTransform(), static_cast<int>(entity));
 			}
 		}
+		Renderer::EndDeferredRendering();
+
+		Renderer::BeginForwardRendering();
+
 #ifdef VXM_TERRAIN
 		if (m_Terrain && m_Terrain->IsValid()) {
 			m_Terrain->Bind();
@@ -388,6 +393,7 @@ namespace Voxymore::Core
 			m_Terrain->Unbind();
 		}
 #endif
+
 		// Draw Physics
 		if(JPH::DebugRenderer::sInstance == nullptr) {
 			JPH::DebugRenderer::sInstance = new PhysicsDebugRenderer();
@@ -424,6 +430,8 @@ namespace Voxymore::Core
 
 		m_PhysicsSystem.DrawBodies(s_DrawSettings, JPH::DebugRenderer::sInstance);
 		m_PhysicsSystem.DrawConstraints(JPH::DebugRenderer::sInstance);
+
+		Renderer::EndForwardRendering();
 	}
 
 	Entity Scene::CreateEntity()

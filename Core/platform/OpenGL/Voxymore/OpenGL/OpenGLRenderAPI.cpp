@@ -148,6 +148,15 @@ namespace Voxymore::Core {
 		glDisable(GL_CULL_FACE);
 	}
 
+	void OpenGLRenderAPI::SetupDeferredRender(uint32_t positionTexID, uint32_t normalTexID, uint32_t texCoordTexID, uint32_t colorTexID, uint32_t entityIdTexID, uint32_t depthTexID) {
+		glBindTextureUnit(0, positionTexID);
+		glBindTextureUnit(1, normalTexID);
+		glBindTextureUnit(2, texCoordTexID);
+		glBindTextureUnit(3, colorTexID);
+		glBindTextureUnit(4, entityIdTexID);
+		glBindTextureUnit(5, depthTexID);
+	}
+
 	void OpenGLRenderAPI::DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh)
 	{
 		VXM_PROFILE_FUNCTION();

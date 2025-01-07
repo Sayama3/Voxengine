@@ -79,8 +79,12 @@ namespace Voxymore::Core {
 		inline virtual void SetName(const std::string& name) override;
 		virtual std::vector<ShaderSourceField> GetSources() const override;
 		virtual void SetSources(const std::vector<ShaderSourceField>& sources) override;
+
+    	virtual bool IsForward() const override {return m_IsForward;};
+    	virtual void SetForward(bool isForward) override {m_IsForward = isForward;};
     private:
 		OpenGLShader m_OpenGLShader;
+    	bool m_IsForward = true;
     };
 
 	class OpenGLComputeShader : public ComputeShader

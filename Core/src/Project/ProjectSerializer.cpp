@@ -42,6 +42,10 @@ namespace Voxymore::Core
 		{
 			out << KEYVAL("DefaultShaderId", config.defaultShaderId.value());
 		}
+		if(config.deferredShaderId.has_value())
+		{
+			out << KEYVAL("DeferredShaderId", config.deferredShaderId.value());
+		}
 
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -101,6 +105,8 @@ namespace Voxymore::Core
 		else config.gizmoShaderId = std::nullopt;
 		if(projectNode["DefaultShaderId"]) config.defaultShaderId = projectNode["DefaultShaderId"].as<UUID>();
 		else config.defaultShaderId = std::nullopt;
+		if(projectNode["DeferredShaderId"]) config.deferredShaderId = projectNode["DeferredShaderId"].as<UUID>();
+		else config.deferredShaderId = std::nullopt;
 
 		m_ProjectHandle->m_ProjectPath = filepath;
 		if(m_ProjectHandle->m_ProjectPath.is_relative()) {
