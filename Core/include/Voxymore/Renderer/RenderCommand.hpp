@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Framebuffer.hpp"
 #include "RendererAPI.hpp"
 
 
@@ -78,6 +79,8 @@ namespace Voxymore::Core {
 
 		inline static void EnableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->EnableDoubleSided();}
 		inline static void DisableDoubleSided() {VXM_PROFILE_FUNCTION(); s_RendererAPI->DisableDoubleSided();}
+		inline static void CopyColorAttachment(Ref<Framebuffer> source, uint32_t sourceColorAttachmentIndex, Ref<Framebuffer> target, uint32_t targetColorAttachmentIndex) {VXM_PROFILE_FUNCTION(); s_RendererAPI->CopyColorBuffer(std::move(source), sourceColorAttachmentIndex, std::move(target), targetColorAttachmentIndex);}
+		inline static void CopyDepthAttachment(Ref<Framebuffer> source, Ref<Framebuffer> target) {VXM_PROFILE_FUNCTION(); s_RendererAPI->CopyDepthBuffer(std::move(source), std::move(target));}
 
         inline static void SetupDeferredRender(uint32_t PositionTexID, uint32_t NormalTexID, uint32_t TexCoordTexID, uint32_t ColorTexID, uint32_t EntityIdTexID, uint32_t DepthTexID) {
         	VXM_PROFILE_FUNCTION();

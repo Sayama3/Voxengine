@@ -113,6 +113,7 @@ namespace Voxymore::Core
 			s_DeferredFramebuffer->Bind();
 			RenderCommand::Clear();
 			s_DeferredFramebuffer->ClearColorAttachment(4, -1); // Clear the ID texture
+			// s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
 		}
 
 		if (s_RenderFramebuffer) {
@@ -129,7 +130,6 @@ namespace Voxymore::Core
 		s_BindedMaterial = NullAssetHandle;
 		s_Cubemap = NullAssetHandle;
 		s_CubemapShader = NullAssetHandle;
-		s_DeferredRenderShader = NullAssetHandle;
 		s_RenderingMode = RenderingMode::None;
 
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
@@ -148,9 +148,6 @@ namespace Voxymore::Core
 		s_ProjMatrix = camera.GetProjectionMatrix();
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);
 		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
-		if(s_Cubemap && s_CubemapShader) {
-			DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
-		}
 		s_Data.CameraBuffer.ViewProjectionMatrix = s_ProjMatrix * s_ViewMatrix;
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
@@ -161,7 +158,6 @@ namespace Voxymore::Core
 		s_BindedMaterial = NullAssetHandle;
 		s_Cubemap = NullAssetHandle;
 		s_CubemapShader = NullAssetHandle;
-		s_DeferredRenderShader = NullAssetHandle;
 		s_RenderingMode = RenderingMode::None;
 
 		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
@@ -193,6 +189,7 @@ namespace Voxymore::Core
 		if (s_RenderingMode != RenderingMode::Deferred) return;
 		s_RenderingMode = RenderingMode::None;
 		s_DeferredFramebuffer->Unbind();
+		// RenderCommand::Clear();
 		s_RenderFramebuffer->Bind();
 		VXM_CORE_ASSERT(s_DeferredRenderShader, "The Deferred Render Shader is invalid.");
 		if (!s_DeferredRenderShader) return;
@@ -205,19 +202,23 @@ namespace Voxymore::Core
 			s_DeferredFramebuffer->GetColorAttachmentRendererID(2),
 			s_DeferredFramebuffer->GetColorAttachmentRendererID(3),
 			s_DeferredFramebuffer->GetColorAttachmentRendererID(4),
-			s_DeferredFramebuffer->GetDepthAttachmentRendererID()
-		);
+			0
+			);
 
-		std::array<glm::vec2, 4> vertices {
-			glm::vec2{0,0} , glm::vec2{0,1} , glm::vec2{1,1} , glm::vec2{1,0}
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 		};
 		std::array<uint32_t, 6> indices {
-			0,3,2,
 			0,1,2,
+			1,3,2,
 		};
 
-		auto vbo = VertexBuffer::Create(sizeof(float) * vertices.size(), vertices.data());
-		vbo->SetLayout(BufferLayout{{ShaderDataType::Float2, "Position"}});
+		auto vbo = VertexBuffer::Create(sizeof(quadVertices), &quadVertices);
+		vbo->SetLayout(BufferLayout{{ShaderDataType::Float3, "Position"}, {ShaderDataType::Float2, "TexCoords"}});
 		auto ibo = IndexBuffer::Create(indices.size(), indices.data());
 		auto vao = VertexArray::Create();
 		vao->AddVertexBuffer(vbo);
@@ -225,6 +226,7 @@ namespace Voxymore::Core
 		vao->Bind();
 		RenderCommand::DrawIndexed(DrawMode::Triangles, vao);
 		vao->Unbind();
+		// RenderCommand::CopyDepthAttachment(s_DeferredFramebuffer, s_RenderFramebuffer);
 	}
 
 	void Renderer::BeginForwardRendering() {
@@ -278,11 +280,11 @@ namespace Voxymore::Core
 	}
 
 	void Renderer::EndRendering(CubemapField cubemap, ShaderField cubemapShader) {
-		s_Cubemap = cubemap;
-		s_CubemapShader = cubemapShader;
-		if(s_Cubemap && s_CubemapShader) {
-			DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
-		}
+		// s_Cubemap = cubemap;
+		// s_CubemapShader = cubemapShader;
+		// if(s_Cubemap && s_CubemapShader) {
+			// DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
+		// }
 	}
 
 	void Renderer::BeginForwardScene(const EditorCamera &camera, std::vector<Light> lights, CubemapField cubemap, ShaderField cubemapShader)
@@ -399,6 +401,23 @@ namespace Voxymore::Core
 		s_Data.ModelBuffer.NormalMatrix = glm::transpose(glm::inverse(modelMatrix));
 		s_Data.ModelBuffer.EntityId = entityId;
 		s_Data.ModelUniformBuffer->SetData(&s_Data.ModelBuffer, sizeof(RendererData::ModelData));
+
+		MaterialField mat = m->GetMaterial();
+		VXM_CORE_CHECK_ERROR(mat, "The material ID({}) is not valid.", mat.GetHandle().string());
+		if(mat)
+		{
+			Ref<Material> matPtr = mat.GetAsset();
+			matPtr->Bind(false);
+			s_BindedMaterial = mat;
+			//}
+
+			ShaderField shader = matPtr->GetShaderHandle();
+			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
+			if (shader != s_BindedShader && shader) {
+				shader.GetAsset()->Bind();
+				s_BindedShader = shader;
+			}
+		}
 
 		m->Bind();
 		RenderCommand::DrawIndexed(m->GetDrawMode(), m->GetVertexArray());

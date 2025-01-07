@@ -6,6 +6,7 @@
 
 #include "VertexArray.hpp"
 #include "Cubemap.hpp"
+#include "Framebuffer.hpp"
 #include "Voxymore/Math/Math.hpp"
 
 namespace Voxymore::Core {
@@ -51,6 +52,8 @@ namespace Voxymore::Core {
 
 		virtual void EnableDoubleSided() = 0;
 		virtual void DisableDoubleSided() = 0;
+		virtual void CopyColorBuffer(Ref<Framebuffer> source, uint32_t sourceColorAttachmentIndex, Ref<Framebuffer> target, uint32_t targetColorAttachmentIndex) = 0;
+		virtual void CopyDepthBuffer(Ref<Framebuffer> source, Ref<Framebuffer> target) = 0;
 
 		virtual void SetupDeferredRender(uint32_t positionTexID, uint32_t normalTexID, uint32_t texCoordTexID, uint32_t colorTexID, uint32_t entityIdTexID, uint32_t depthTexID) = 0;
 

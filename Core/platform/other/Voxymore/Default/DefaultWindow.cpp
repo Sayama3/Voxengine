@@ -55,7 +55,9 @@ namespace Voxymore::Core {
             VXM_PROFILE_SCOPE("DefaultWindow -> Init GLFW");
             int success = glfwInit();
 //            VXM_CORE_ASSERT(success, "GLFW couldn't be initialized.")
-
+#ifdef VXM_DEBUG
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+#endif
             glfwSetErrorCallback(GLFWErrorCallback);
             s_GLFWInitialized = true;
         }

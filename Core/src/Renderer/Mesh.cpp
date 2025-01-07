@@ -62,7 +62,7 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		// Might not be a triangle...
-		VXM_CORE_CHECK(vertices.size() % 3 == 0, "The mesh is not composed of triangles.")
+		VXM_CORE_CHECK(vertices.size() % 3 == 0, "The mesh is not composed of triangles.");
 
 		std::vector<uint32_t> indexes(vertices.size());
 		for (int i = 0; i < indexes.size(); ++i) {

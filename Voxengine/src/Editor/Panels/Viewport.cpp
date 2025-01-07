@@ -33,8 +33,9 @@ namespace Voxymore::Editor
 
 	}
 
-	void Viewport::OnImGuiRender()
-	{
+	void Viewport::OnImGuiRender() {
+		const char* const ColorNames[] {"Default", "Position", "Normal", "TexCoord", "Color"};
+		static int colorIndex = 0;
 		VXM_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
 		{
@@ -56,7 +57,9 @@ namespace Voxymore::Editor
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewportSize = glm::uvec2(static_cast<uint32_t>(viewportPanelSize.x), static_cast<uint32_t>(viewportPanelSize.y));
 
-			uint64_t textureID = m_RenderFramebuffer->GetColorAttachmentRendererID();
+			uint64_t textureID;
+			if (colorIndex == 0) textureID = m_RenderFramebuffer->GetColorAttachmentRendererID(0);
+			else textureID = m_DeferredFramebuffer->GetColorAttachmentRendererID(colorIndex - 1);
 			ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if(ImGui::BeginDragDropTarget())
@@ -70,6 +73,8 @@ namespace Voxymore::Editor
 				}
 				ImGui::EndDragDropTarget();
 			}
+
+			ImGui::Combo("Image To Draw", &colorIndex, ColorNames, 5);
 		}
 		ImGui::PopStyleVar();
 	}

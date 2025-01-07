@@ -877,7 +877,7 @@ namespace Voxymore::Editor {
 
 	FramebufferSpecification EditorLayer::CreateDeferredFramebufferSpecs() const {
     	FramebufferSpecification specification(1280, 720);
-    	specification.Attachements = {FramebufferTextureFormat::RGB32F,FramebufferTextureFormat::RGB32F,FramebufferTextureFormat::RG32F,FramebufferTextureFormat::RGBA8,FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
+    	specification.Attachements = {FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA8,FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
     	return std::move(specification);
     }
 

@@ -235,6 +235,7 @@ void main()
 {
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
 
+/*
     if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
     {
         o_Color *= SampleTexture(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index);
@@ -243,7 +244,7 @@ void main()
             o_Color = vec4(0.8, 0.2, 0.3, 1.0);
         }
     }
-
+*/
     if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
 
     vec3 result = vec3(0.0);

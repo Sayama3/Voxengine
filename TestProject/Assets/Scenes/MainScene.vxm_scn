@@ -6,10 +6,10 @@ Scene:
       TagComponent:
         Tag: Ground
       TransformComponent:
-        Position: [0, -1.58349979, 0]
-        Rotation: [-0.707106769, 0, 0, 0.707106769]
-        EulerRotation: [-90, 0, 0]
-        Scale: [20, 20, 1]
+        Position: [-0.230051905, -1.58346879, -0.0204977859]
+        Rotation: [-0.70710665, 0, 0, 0.707106888]
+        EulerRotation: [-89.9999847, 0, 0]
+        Scale: [20, 19.9996262, 0.999988317]
       PrimitiveComponent:
         PrimitiveType: 0
         Material: 4376053825709801053
@@ -39,7 +39,7 @@ Scene:
         CubemapShader: 0
         Camera:
           IsOrthographic: false
-          AspectRatio: 1.46818185
+          AspectRatio: 1.44090915
           OrthographicSize: 10
           OrthographicNear: -1
           OrthographicFar: 1
@@ -57,7 +57,7 @@ Scene:
         Scale: [1, 1, 1]
       PrimitiveComponent:
         PrimitiveType: 1
-        Material: 4376053825709801053
+        Material: 14085363085521224915
       Rigidbody:
         RigidbodyType: Dynamic
         LinearVelocity: [-1, 13.5, 0]

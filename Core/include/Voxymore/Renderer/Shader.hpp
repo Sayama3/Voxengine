@@ -286,6 +286,8 @@ namespace Voxymore::Core {
     	virtual bool IsForward() const = 0;
     	virtual void SetForward(bool isForward) = 0;
 
+    	[[deprecated]] virtual void SetInt(const std::string& name, int value) = 0;
+
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources);
 		static Ref<Shader> Create(const std::string& name, const std::vector<ShaderSourceField>& sources);
     };

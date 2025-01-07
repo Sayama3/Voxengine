@@ -384,7 +384,9 @@ namespace Voxymore::Core
 		}
 		Renderer::EndDeferredRendering();
 
-		Renderer::BeginForwardRendering();
+		// Renderer::BeginForwardRendering();
+		// Renderer::EndForwardRendering();
+		/*
 
 #ifdef VXM_TERRAIN
 		if (m_Terrain && m_Terrain->IsValid()) {
@@ -432,6 +434,7 @@ namespace Voxymore::Core
 		m_PhysicsSystem.DrawConstraints(JPH::DebugRenderer::sInstance);
 
 		Renderer::EndForwardRendering();
+		*/
 	}
 
 	Entity Scene::CreateEntity()

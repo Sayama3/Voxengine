@@ -19,18 +19,39 @@ AssetRegistry:
     - Handle: 7876495498005145272
       FilePath: {Source: 1, Path: Shaders\DefaultShader.frag}
       Type: AssetType::ShaderSource
+    - Handle: 7991943028674437013
+      FilePath: {Source: 1, Path: Shaders\DeferredRender.vert}
+      Type: AssetType::ShaderSource
     - Handle: 8234081648185153031
       FilePath: {Source: 2, Path: Materials\GizmoMaterial.vxm_material}
       Type: AssetType::Material
+    - Handle: 12630599774198441109
+      FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.frag}
+      Type: AssetType::ShaderSource
     - Handle: 12878332431586702203
       FilePath: {Source: 2, Path: Shaders\DefaultShader.vxm_shader}
       Type: AssetType::Shader
     - Handle: 13222581370292731698
       FilePath: {Source: 2, Path: Shaders\Cubemap.vxm_shader}
       Type: AssetType::Shader
+    - Handle: 14085363085521224915
+      FilePath: {Source: 2, Path: Materials\DefaultDeferredMaterial.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14500021375743852738
+      FilePath: {Source: 1, Path: Shaders\DeferredRender.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 15001316454039985529
+      FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.vert}
+      Type: AssetType::ShaderSource
     - Handle: 15374707834578414979
       FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
       Type: AssetType::ShaderSource
     - Handle: 15974069089991453759
       FilePath: {Source: 2, Path: Shaders\Gizmos.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 16042254658609528153
+      FilePath: {Source: 2, Path: Shaders\DeferredTransmission.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 16043295088340451347
+      FilePath: {Source: 2, Path: Shaders\DeferredRender.vxm_shader}
       Type: AssetType::Shader

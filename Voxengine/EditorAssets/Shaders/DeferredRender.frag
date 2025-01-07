@@ -7,6 +7,11 @@
 #define MAX_LIGHT_COUNT 20
 #define EPSILON 0.1
 
+vec3 v_Position;
+vec3 v_Normal;
+vec2 v_TexCoord;
+vec4 v_Color;
+int v_EntityId;
 
 struct Light
 {
@@ -24,6 +29,13 @@ struct LightData
     Light lights[MAX_LIGHT_COUNT];
     //    Light lights;
     int lightCount;
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+    mat4 u_ViewProjectionMatrix;
+    vec4 u_CameraPosition;
+    vec4 u_CameraDirection;
 };
 
 layout(std140, binding = 2) uniform Lights
@@ -162,12 +174,12 @@ vec4 GammaCorrection4(vec4 color)
 
 
 void main() {
-    vec3 v_Position = SampleTexture(0).rgb;
-    vec3 v_Normal = SampleTexture(1).rgb;
-    vec2 v_TexCoord = SampleTexture(2).rg;
-    vec4 v_Color = SampleTexture(3);
-    int v_EntityId = int(SampleTexture(4).r);
-
+    vec4 tmp = SampleTexture(0);
+    v_Position = tmp.xyz;
+    v_Normal = SampleTexture(1).rgb;
+    v_TexCoord = SampleTexture(2).rg;
+    v_Color = SampleTexture(3);
+    v_EntityId = int(SampleTexture(4).r);
     vec3 result = vec3(0.0);
 
     for(int i = 0; i < int(lights.lightCount); i++)
@@ -189,6 +201,6 @@ void main() {
     }
 
     float alpha = o_Color.a;
-    o_Color = vec4(result, alpha);
+    o_Color = vec4(1,1,1, 1);
     o_Entity = v_EntityId;
 }

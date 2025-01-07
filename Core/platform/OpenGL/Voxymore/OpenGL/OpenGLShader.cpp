@@ -650,6 +650,10 @@ namespace Voxymore::Core
 		Reload();
 	}
 
+	void OpenGLGraphicsShader::SetInt(const std::string &name, int value) {
+		glUniform1i(glGetUniformLocation(m_OpenGLShader.GetRendererID(), name.c_str()), value);
+	}
+
 	std::vector<ShaderSourceField> OpenGLGraphicsShader::GetSources() const
 	{
 		VXM_PROFILE_FUNCTION();

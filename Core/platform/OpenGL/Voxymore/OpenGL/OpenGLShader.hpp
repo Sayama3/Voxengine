@@ -79,6 +79,7 @@ namespace Voxymore::Core {
 		inline virtual void SetName(const std::string& name) override;
 		virtual std::vector<ShaderSourceField> GetSources() const override;
 		virtual void SetSources(const std::vector<ShaderSourceField>& sources) override;
+    	virtual void SetInt(const std::string& name, int value) override;
 
     	virtual bool IsForward() const override {return m_IsForward;};
     	virtual void SetForward(bool isForward) override {m_IsForward = isForward;};
