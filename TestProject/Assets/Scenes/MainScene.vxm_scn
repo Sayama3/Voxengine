@@ -1,43 +1,40 @@
 Scene:
   Name: Main Scene
   Entities:
-    - Entity: 13207770668927826958
+    - Entity: 9228354074251653468
       IsActive: true
       TagComponent:
-        Tag: Directional Light
+        Tag: Entity_9228354074251653468
       TransformComponent:
-        Position: [0, -1.11150742, 0]
-        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
-        EulerRotation: [-45, 45.0000038, 0]
-        Scale: [1, 1, 1]
-      LightComponent:
-        Color: [1, 1, 1, 1]
-        Intensity: 1
-        Range: 10
-        Cutoff: 45
-        LightType: 0
-    - Entity: 10023566399794665382
-      IsActive: true
-      TagComponent:
-        Tag: Cube - 0
-      TransformComponent:
-        Position: [0, 2.8696022, 0]
+        Position: [0, -0.929611206, 0]
         Rotation: [0, 0, 0, 1]
         EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
+      ProcLightComponent:
+        RenderingShader: 7416316386062138268
+        CalculateShader: 2271745027356954202
+    - Entity: 14020947875908180688
+      IsActive: true
+      TagComponent:
+        Tag: Ground
+      TransformComponent:
+        Position: [-0.230051905, -1.58346879, -0.0204977859]
+        Rotation: [-0.70710665, 0, 0, 0.707106888]
+        EulerRotation: [-89.9999847, 0, 0]
+        Scale: [20, 19.9996262, 0.999988317]
       PrimitiveComponent:
-        PrimitiveType: 1
+        PrimitiveType: 0
         Material: 14085363085521224915
       Rigidbody:
-        RigidbodyType: Dynamic
-        LinearVelocity: [-1, 13.5, 0]
-        AngularVelocity: [290, 40, 190]
+        RigidbodyType: Static
+        LinearVelocity: [0, -2.5, 0]
+        AngularVelocity: [0, 0, 0]
         Friction: 0.5
         GravityFactor: 1
-        IsAwake: true
+        IsAwake: false
       Collider:
         Type: Box
-        Size: [1, 1, 1]
+        Size: [20, 20, 0.100000001]
     - Entity: 9892095993708743224
       IsActive: true
       TagComponent:
@@ -61,37 +58,40 @@ Scene:
           PerspectiveVerticalFOV: 1.04719758
           PerspectiveNear: 0.00999999978
           PerspectiveFar: 1000
-    - Entity: 14020947875908180688
+    - Entity: 10023566399794665382
       IsActive: true
       TagComponent:
-        Tag: Ground
+        Tag: Cube - 0
       TransformComponent:
-        Position: [-0.230051905, -1.58346879, -0.0204977859]
-        Rotation: [-0.70710665, 0, 0, 0.707106888]
-        EulerRotation: [-89.9999847, 0, 0]
-        Scale: [20, 19.9996262, 0.999988317]
-      PrimitiveComponent:
-        PrimitiveType: 0
-        Material: 4376053825709801053
-      Rigidbody:
-        RigidbodyType: Static
-        LinearVelocity: [0, -2.5, 0]
-        AngularVelocity: [0, 0, 0]
-        Friction: 0.5
-        GravityFactor: 1
-        IsAwake: false
-      Collider:
-        Type: Box
-        Size: [20, 20, 0.100000001]
-    - Entity: 9228354074251653468
-      IsActive: true
-      TagComponent:
-        Tag: Entity_9228354074251653468
-      TransformComponent:
-        Position: [0, -0.929611206, 0]
+        Position: [0, 2.8696022, 0]
         Rotation: [0, 0, 0, 1]
         EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      ProcLightComponent:
-        RenderingShader: 7416316386062138268
-        CalculateShader: 2271745027356954202
+      PrimitiveComponent:
+        PrimitiveType: 1
+        Material: 14085363085521224915
+      Rigidbody:
+        RigidbodyType: Dynamic
+        LinearVelocity: [-1, 13.5, 0]
+        AngularVelocity: [290, 40, 190]
+        Friction: 0.5
+        GravityFactor: 1
+        IsAwake: true
+      Collider:
+        Type: Box
+        Size: [1, 1, 1]
+    - Entity: 13207770668927826958
+      IsActive: true
+      TagComponent:
+        Tag: Directional Light
+      TransformComponent:
+        Position: [0, -1.11150742, 0]
+        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
+        EulerRotation: [-45, 45.0000038, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 1
+        Range: 10
+        Cutoff: 45
+        LightType: 0
