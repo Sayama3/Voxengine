@@ -180,6 +180,8 @@ void main() {
     v_TexCoord = SampleTexture(2).rg;
     v_Color = SampleTexture(3);
     v_EntityId = int(SampleTexture(4).r);
+
+    o_Color = v_Color;
     vec3 result = vec3(0.0);
 
     for(int i = 0; i < int(lights.lightCount); i++)
@@ -200,7 +202,6 @@ void main() {
         }
     }
 
-    float alpha = o_Color.a;
-    o_Color = vec4(1,1,1, 1);
+    o_Color = vec4(result, 1);
     o_Entity = v_EntityId;
 }

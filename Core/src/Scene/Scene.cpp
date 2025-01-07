@@ -384,8 +384,8 @@ namespace Voxymore::Core
 		}
 		Renderer::EndDeferredRendering();
 
-		// Renderer::BeginForwardRendering();
-		// Renderer::EndForwardRendering();
+		Renderer::BeginForwardRendering();
+		Renderer::EndForwardRendering();
 		/*
 
 #ifdef VXM_TERRAIN

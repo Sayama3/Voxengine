@@ -189,7 +189,7 @@ namespace Voxymore::Core
 		if (s_RenderingMode != RenderingMode::Deferred) return;
 		s_RenderingMode = RenderingMode::None;
 		s_DeferredFramebuffer->Unbind();
-		// RenderCommand::Clear();
+		RenderCommand::Clear();
 		s_RenderFramebuffer->Bind();
 		VXM_CORE_ASSERT(s_DeferredRenderShader, "The Deferred Render Shader is invalid.");
 		if (!s_DeferredRenderShader) return;
@@ -226,7 +226,7 @@ namespace Voxymore::Core
 		vao->Bind();
 		RenderCommand::DrawIndexed(DrawMode::Triangles, vao);
 		vao->Unbind();
-		// RenderCommand::CopyDepthAttachment(s_DeferredFramebuffer, s_RenderFramebuffer);
+		RenderCommand::CopyDepthAttachment(s_DeferredFramebuffer, s_RenderFramebuffer);
 	}
 
 	void Renderer::BeginForwardRendering() {
@@ -280,11 +280,11 @@ namespace Voxymore::Core
 	}
 
 	void Renderer::EndRendering(CubemapField cubemap, ShaderField cubemapShader) {
-		// s_Cubemap = cubemap;
-		// s_CubemapShader = cubemapShader;
-		// if(s_Cubemap && s_CubemapShader) {
-			// DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
-		// }
+		s_Cubemap = cubemap;
+		s_CubemapShader = cubemapShader;
+		if(s_Cubemap && s_CubemapShader) {
+			DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
+		}
 	}
 
 	void Renderer::BeginForwardScene(const EditorCamera &camera, std::vector<Light> lights, CubemapField cubemap, ShaderField cubemapShader)
