@@ -182,6 +182,10 @@ void main() {
     v_EntityId = int(SampleTexture(4).r);
 
     o_Color = v_Color;
+
+    if(o_Color.a < 0.999) {
+        discard;
+    }
     vec3 result = vec3(0.0);
 
     for(int i = 0; i < int(lights.lightCount); i++)

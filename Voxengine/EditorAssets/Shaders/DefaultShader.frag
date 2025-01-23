@@ -245,7 +245,7 @@ void main()
         }
     }
 */
-    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
+//    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
 
     vec3 result = vec3(0.0);
 
@@ -276,9 +276,9 @@ void main()
 
 //    float alpha = materialParameters.AlphaMode == int(2) ? o_Color.a : 1.0f;
     float alpha = o_Color.a;
-    if(materialParameters.GammaCorrection == 1) {
-        result = GammaCorrection3(result);
-    }
+//    if(materialParameters.GammaCorrection == 1) {
+//        result = GammaCorrection3(result);
+//    }
     o_Color = vec4(result, alpha);
     o_Entity = v_EntityId;
 }

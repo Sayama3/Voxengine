@@ -84,8 +84,8 @@ namespace Voxymore::Core {
 
 		static void SetupRenderer(ShaderField deferredRenderShader, Ref<Framebuffer> renderFramebuffer, Ref<Framebuffer> deferredFramebuffer = nullptr);
 
-		static void BeginRendering(const Camera& camera, const glm::mat4& transform, std::vector<Light> lights = {});
-		static void BeginRendering(const EditorCamera& camera, std::vector<Light> lights = {});
+		static void BeginRendering(const Camera& camera, const glm::mat4& transform, const std::vector<Light> &lights = {});
+		static void BeginRendering(const EditorCamera& camera, const std::vector<Light> &lights = {});
 
 		static void BeginDeferredRendering(); // Draw everything in the G Buffer and store the rest
 		static void EndDeferredRendering(); // End the draw and sample the G-Buffer in the "back-buffer"
@@ -109,6 +109,8 @@ namespace Voxymore::Core {
 		static void Submit(Ref<Mesh> model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 //			static void Submit(const Mesh& model, const glm::mat4& transform = glm::mat4(1.0f), int entityId = -1);
 		static void GPUDraw(uint32_t count, uint32_t offset = 0, DrawMode drawMode = DrawMode::Triangles);
+	private:
+		static void InitializeRendering();
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

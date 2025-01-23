@@ -354,6 +354,7 @@ namespace Voxymore::Core
 
 	void Scene::RenderLoop()
 	{
+
 		Renderer::BeginDeferredRendering();
 		auto modelsView = m_Registry.view<ModelComponent, TransformComponent>(entt::exclude<DisableComponent>);
 		for (auto entity: modelsView) {

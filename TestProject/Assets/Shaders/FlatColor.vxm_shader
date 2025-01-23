@@ -1,0 +1,7 @@
+Type: AssetType::Shader
+Shader:
+  Name: FlatColor
+  IsForward: true
+  Sources:
+    - 9625455353821214131
+    - 13244326211075061448

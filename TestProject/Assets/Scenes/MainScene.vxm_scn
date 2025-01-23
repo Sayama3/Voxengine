@@ -51,7 +51,7 @@ Scene:
         CubemapShader: 0
         Camera:
           IsOrthographic: false
-          AspectRatio: 1.74318182
+          AspectRatio: 1.75917435
           OrthographicSize: 10
           OrthographicNear: -1
           OrthographicFar: 1
@@ -95,3 +95,15 @@ Scene:
         Range: 10
         Cutoff: 45
         LightType: 0
+    - Entity: 4671531725107735489
+      IsActive: true
+      TagComponent:
+        Tag: Cube - 0
+      TransformComponent:
+        Position: [1.02242839, 6.10351562e-05, -3.96862841]
+        Rotation: [0, 0, 0, 1]
+        EulerRotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      PrimitiveComponent:
+        PrimitiveType: 1
+        Material: 4376053825709801053

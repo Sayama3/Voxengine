@@ -105,43 +105,33 @@ namespace Voxymore::Core
 
 	void Renderer::SetupRenderer(ShaderField deferredRenderShader, Ref<Framebuffer> renderFramebuffer, Ref<Framebuffer> deferredFramebuffer) {
 		s_DeferredRenderShader = deferredRenderShader;
-		s_RenderFramebuffer = renderFramebuffer;
-		s_DeferredFramebuffer = deferredFramebuffer;
-		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
-
-		if (s_DeferredFramebuffer) {
-			s_DeferredFramebuffer->Bind();
-			RenderCommand::Clear();
-			s_DeferredFramebuffer->ClearColorAttachment(4, -1); // Clear the ID texture
-			// s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
-		}
-
-		if (s_RenderFramebuffer) {
-			s_RenderFramebuffer->Bind();
-			RenderCommand::Clear();
-			s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
-		}
+		s_RenderFramebuffer = std::move(renderFramebuffer);
+		s_DeferredFramebuffer = std::move(deferredFramebuffer);
+		// RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+		//
+		// if (s_DeferredFramebuffer) {
+		// 	s_DeferredFramebuffer->Bind();
+		// 	RenderCommand::Clear();
+		// 	s_DeferredFramebuffer->ClearColorAttachment(4, -1); // Clear the ID texture
+		// 	// s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
+		// }
+		//
+		// if (s_RenderFramebuffer) {
+		// 	s_RenderFramebuffer->Bind();
+		// 	RenderCommand::Clear();
+		// 	s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
+		// }
 	}
 
 
-	void Renderer::BeginRendering(const Camera &camera, const glm::mat4 &transform, std::vector<Light> lights) {
+	void Renderer::BeginRendering(const Camera &camera, const glm::mat4 &transform, const std::vector<Light> &lights) {
 		VXM_PROFILE_FUNCTION();
-		s_BindedShader = NullAssetHandle;
-		s_BindedMaterial = NullAssetHandle;
-		s_Cubemap = NullAssetHandle;
-		s_CubemapShader = NullAssetHandle;
-		s_RenderingMode = RenderingMode::None;
 
-		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
+		s_Data.LightBuffer.lightCount = std::min(static_cast<int>(lights.size()), MAX_LIGHT_COUNT);
 		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
 		{
 			s_Data.LightBuffer.lights[i] = lights[i];
 		}
-		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
-
-		s_Data.AlphaMeshes.clear();
-		s_Data.OpaqueMeshes.clear();
-
 
 		const glm::vec4 p = transform * glm::vec4{0,0,0,1};
 		s_ViewMatrix = glm::inverse(transform);
@@ -149,47 +139,72 @@ namespace Voxymore::Core
 		s_Data.CameraBuffer.CameraPosition = glm::vec4(glm::vec3(p) / p.w, 1);
 		s_Data.CameraBuffer.CameraDirection = transform * glm::vec4{0,0,1,0};
 		s_Data.CameraBuffer.ViewProjectionMatrix = s_ProjMatrix * s_ViewMatrix;
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+
+		InitializeRendering();
+
 	}
 
-	void Renderer::BeginRendering(const EditorCamera &camera, std::vector<Light> lights) {
+	void Renderer::BeginRendering(const EditorCamera &camera, const std::vector<Light> &lights) {
 		VXM_PROFILE_FUNCTION();
+
+		s_Data.LightBuffer.lightCount = std::min(static_cast<int>(lights.size()), MAX_LIGHT_COUNT);
+		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
+		{
+			s_Data.LightBuffer.lights[i] = lights[i];
+		}
+
+		s_ViewMatrix = camera.GetViewMatrix();
+		s_ProjMatrix = camera.GetProjectionMatrix();
+		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
+		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
+		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
+
+		InitializeRendering();
+	}
+
+	void Renderer::InitializeRendering() {
+		VXM_PROFILE_FUNCTION();
+
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
 		s_Cubemap = NullAssetHandle;
 		s_CubemapShader = NullAssetHandle;
 		s_RenderingMode = RenderingMode::None;
 
-		s_Data.LightBuffer.lightCount = std::min((int)lights.size(), MAX_LIGHT_COUNT);
-		for (size_t i = 0; i < s_Data.LightBuffer.lightCount; ++i)
-		{
-			s_Data.LightBuffer.lights[i] = lights[i];
-		}
 		s_Data.LightUniformBuffer->SetData(&s_Data.LightBuffer, sizeof(RendererData::LightData));
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 
 		s_Data.AlphaMeshes.clear();
 		s_Data.OpaqueMeshes.clear();
 
-		s_Data.CameraBuffer.CameraPosition = glm::vec4(camera.GetPosition(), 1);
-		s_Data.CameraBuffer.CameraDirection = glm::vec4(camera.GetForwardDirection(), 0);
-		s_ViewMatrix = camera.GetViewMatrix();
-		s_ProjMatrix = camera.GetProjectionMatrix();
-		s_Data.CameraBuffer.ViewProjectionMatrix = camera.GetViewProjection();
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		if (s_DeferredFramebuffer) {
+			s_DeferredFramebuffer->Bind();
+			RenderCommand::SetClearColor({1,0,0,.5});
+			RenderCommand::Clear();
+			s_DeferredFramebuffer->ClearColorAttachment(4, -1); // Clear the ID texture
+			s_DeferredFramebuffer->Unbind();
+		}
 
+		if (s_RenderFramebuffer) {
+			s_RenderFramebuffer->Bind();
+			RenderCommand::SetClearColor({0,1,0,0.5});
+			RenderCommand::Clear();
+			s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
+			s_RenderFramebuffer->Unbind();
+		}
 	}
 
 	void Renderer::BeginDeferredRendering() {
 		if (!s_DeferredFramebuffer || !s_DeferredRenderShader) return;
 		s_RenderingMode = RenderingMode::Deferred;
 		s_DeferredFramebuffer->Bind();
+		RenderCommand::EnableDepth();
 	}
 
 	void Renderer::EndDeferredRendering() {
 		if (s_RenderingMode != RenderingMode::Deferred) return;
 		s_RenderingMode = RenderingMode::None;
 		s_DeferredFramebuffer->Unbind();
-		RenderCommand::Clear();
 		s_RenderFramebuffer->Bind();
 		VXM_CORE_ASSERT(s_DeferredRenderShader, "The Deferred Render Shader is invalid.");
 		if (!s_DeferredRenderShader) return;
@@ -232,6 +247,7 @@ namespace Voxymore::Core
 	void Renderer::BeginForwardRendering() {
 		s_RenderingMode = RenderingMode::Forward;
 		s_RenderFramebuffer->Bind();
+		RenderCommand::EnableDepth();
 		for(const auto& mesh : s_Data.OpaqueMeshes)
 		{
 			DrawForwardMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
@@ -240,6 +256,7 @@ namespace Voxymore::Core
 	}
 
 	void Renderer::EndForwardRendering() {
+/*
 		RenderCommand::EnableWireframe();
 		bool enableWireframe = true;
 		for(auto it = Gizmos::get_cbegin_depth(); it != Gizmos::get_cend_depth(); ++it)
@@ -251,6 +268,7 @@ namespace Voxymore::Core
 			DrawForwardGizmo(it->second.Mesh, it->second.ModelMatrix);
 		}
 		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
+*/
 
 		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
@@ -258,6 +276,7 @@ namespace Voxymore::Core
 			DrawForwardMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
+/*
 		RenderCommand::EnableWireframe();
 		RenderCommand::DisableDepth();
 		enableWireframe = true;
@@ -271,7 +290,7 @@ namespace Voxymore::Core
 		}
 		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
 		RenderCommand::EnableDepth();
-
+*/
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
@@ -409,7 +428,6 @@ namespace Voxymore::Core
 			Ref<Material> matPtr = mat.GetAsset();
 			s_Data.MaterialUniformBuffer->SetData(&matPtr->GetMaterialsParameters(), sizeof(MaterialParameters));
 			matPtr->Bind(false);
-			s_BindedMaterial = mat;
 
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());

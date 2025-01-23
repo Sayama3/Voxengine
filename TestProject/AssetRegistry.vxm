@@ -4,6 +4,9 @@ AssetRegistry:
     - Handle: 81341761288305332
       FilePath: {Source: 2, Path: ShaderSources\ProcLight.geom}
       Type: AssetType::ShaderSource
+    - Handle: 987040907396779762
+      FilePath: {Source: 2, Path: Shaders\FlatColor.vxm_shader}
+      Type: AssetType::Shader
     - Handle: 2271745027356954202
       FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_compute_shader}
       Type: AssetType::ComputeShader
@@ -40,6 +43,9 @@ AssetRegistry:
     - Handle: 8234081648185153031
       FilePath: {Source: 2, Path: Materials\GizmoMaterial.vxm_material}
       Type: AssetType::Material
+    - Handle: 9625455353821214131
+      FilePath: {Source: 1, Path: Shaders\FlatColor.vert}
+      Type: AssetType::ShaderSource
     - Handle: 12630599774198441109
       FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.frag}
       Type: AssetType::ShaderSource
@@ -52,6 +58,9 @@ AssetRegistry:
     - Handle: 13222581370292731698
       FilePath: {Source: 2, Path: Shaders\Cubemap.vxm_shader}
       Type: AssetType::Shader
+    - Handle: 13244326211075061448
+      FilePath: {Source: 1, Path: Shaders\FlatColor.frag}
+      Type: AssetType::ShaderSource
     - Handle: 14085363085521224915
       FilePath: {Source: 2, Path: Materials\DefaultDeferredMaterial.vxm_material}
       Type: AssetType::Material

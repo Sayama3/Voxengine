@@ -60,6 +60,8 @@ namespace Voxymore::Editor
 			uint64_t textureID;
 			if (colorIndex == 0) textureID = m_RenderFramebuffer->GetColorAttachmentRendererID(0);
 			else textureID = m_DeferredFramebuffer->GetColorAttachmentRendererID(colorIndex - 1);
+			// if (colorIndex == 0) textureID = m_RenderFramebuffer->GetDepthAttachmentRendererID();
+			// else textureID = m_DeferredFramebuffer->GetDepthAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(textureID), viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if(ImGui::BeginDragDropTarget())
@@ -173,8 +175,6 @@ namespace Voxymore::Editor
 		m_DeferredFramebuffer->Unbind();
 	}
 
-	void BindDeferredFramebuffer();
-	void UnbindDeferredFramebuffer();
 	void Viewport::PostRender(Scene* scenePtr)
 	{
 		VXM_PROFILE_FUNCTION();
