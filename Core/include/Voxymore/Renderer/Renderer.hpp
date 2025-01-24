@@ -93,7 +93,8 @@ namespace Voxymore::Core {
 		static void BeginForwardRendering(); // Draw every opaque meshes and ignore the deferred materials
 		static void EndForwardRendering(); // Stop drawing
 
-		static void EndRendering(CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle); // finishing touch
+		static void DrawCubemap(CubemapField cubemap = NullAssetHandle, ShaderField cubemapShader = NullAssetHandle); // finishing touch
+		static void EndRendering(); // finishing touch
 
 
 		[[deprecated]]

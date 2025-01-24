@@ -97,8 +97,8 @@ layout(std140, binding = 3) uniform MaterialParameters
     MaterialParams materialParameters;
 };
 
-layout (location = 0) out vec4 o_Color;
-layout (location = 1) out int o_Entity; // -1 = no entity. (for now.)
+
+layout (binding = 0) uniform sampler2D u_Textures[32];
 
 layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
@@ -106,7 +106,8 @@ layout (location = 2) in vec2 v_TexCoord;
 layout (location = 3) in vec4 v_Color;
 layout (location = 4) in flat int v_EntityId;
 
-layout (binding = 0) uniform sampler2D u_Textures[32];
+layout (location = 0) out vec4 o_Color;
+layout (location = 1) out int o_Entity; // -1 = no entity. (for now.)
 
 bool approx(float a, float b)
 {
@@ -235,17 +236,16 @@ void main()
 {
     o_Color = materialParameters.PbrMetallicRoughness.BaseColorFactor;
 
-/*
-    if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
-    {
-        o_Color *= SampleTexture(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index);
-        if(materialParameters.PbrMetallicRoughness.BaseColorTexture.TexCoord > 0)
-        {
-            o_Color = vec4(0.8, 0.2, 0.3, 1.0);
-        }
-    }
-*/
-//    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
+//    if(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index > -1)
+//    {
+//        o_Color *= SampleTexture(materialParameters.PbrMetallicRoughness.BaseColorTexture.Index);
+//        if(materialParameters.PbrMetallicRoughness.BaseColorTexture.TexCoord > 0)
+//        {
+//            o_Color = vec4(0.8, 0.2, 0.3, 1.0);
+//        }
+//    }
+
+    if(float(materialParameters.AlphaMode) == float(ALPHA_MODE_MASK) && o_Color.a <= materialParameters.AlphaCutoff) discard;
 
     vec3 result = vec3(0.0);
 
@@ -274,11 +274,11 @@ void main()
         result += emissive.rgb;
     }
 
-//    float alpha = materialParameters.AlphaMode == int(2) ? o_Color.a : 1.0f;
-    float alpha = o_Color.a;
-//    if(materialParameters.GammaCorrection == 1) {
-//        result = GammaCorrection3(result);
-//    }
+    float alpha = materialParameters.AlphaMode == int(2) ? o_Color.a : 1.0f;
+//    float alpha = o_Color.a;
+    if(materialParameters.GammaCorrection == 1) {
+        result = GammaCorrection3(result);
+    }
     o_Color = vec4(result, alpha);
     o_Entity = v_EntityId;
 }

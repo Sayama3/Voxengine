@@ -1,6 +1,7 @@
 Type: AssetType::Shader
 Shader:
   Name: Cubemap
+  IsForward: true
   Sources:
-    - 7574741928759642059
-    - 934054283055222071
+    - 1334018103129078440
+    - 1640851745441987857

@@ -1,77 +1,5 @@
 #version 450 core
 
-#define ALPHA_MODE_OPAQUE 0
-#define ALPHA_MODE_MASK 1
-#define ALPHA_MODE_BLEND 2
-
-#define MAX_LIGHT_COUNT 20
-#define EPSILON 0.1
-
-struct TextureInfo
-{
-    int Index;
-    int TexCoord;
-    int Padding1;
-    int Padding2;
-};
-
-struct NormalTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Scale;
-    int Padding1;
-};
-
-struct OcclusionTextureInfo
-{
-    int Index;
-    int TexCoord;
-    float Strenght;
-    int Padding1;
-};
-
-struct MetallicRoughtness
-{
-    vec4 BaseColorFactor;
-    TextureInfo BaseColorTexture;
-    TextureInfo MetallicRoughnessTexture;
-    float MetallicFactor;
-    float RoughtnessFactor;
-    int Padding1;
-    int Padding2;
-};
-
-struct MaterialParams
-{
-    MetallicRoughtness PbrMetallicRoughness;
-    NormalTextureInfo NormalTexture;
-    OcclusionTextureInfo OcclusionTexture;
-    TextureInfo EmissiveTexture;
-    vec4 EmissiveFactor;
-    int AlphaMode; // Opaque = 0, Mask = 1, Blend = 2,
-    float AlphaCutoff;
-    int DoubleSided;
-    int GammaCorrection;
-};
-
-struct Light
-{
-    vec4 Color;
-    vec4 Position;
-    vec4 Direction;
-    float Range;
-    float Intensity;
-    int Type; //0 = Directional ; 2 = Spot ; 1 = Point
-};
-
-struct LightData
-{
-    Light lights[MAX_LIGHT_COUNT];
-//    Light lights;
-    int lightCount;
-};
-
 layout(std140, binding = 0) uniform Camera
 {
     mat4 u_ViewProjectionMatrix;
@@ -86,17 +14,6 @@ layout(std140, binding = 1) uniform Model
     int u_EntityId;
 };
 
-layout(std140, binding = 2) uniform Lights
-{
-    LightData lights;
-};
-
-layout(std140, binding = 3) uniform MaterialParameters
-{
-    MaterialParams materialParameters;
-};
-
-
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
@@ -110,8 +27,8 @@ layout (location = 3) out vec4 v_Color;
 layout (location = 4) out flat int v_EntityId;
 
 void main() {
-    v_Position = (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
-    gl_Position = vec4(v_Position, 1.0);
+    gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
+    v_Position =  (u_ModelMatrix * vec4(a_Position, 1.0)).xyz;
     v_Normal = normalize((u_NormalMatrix * vec4(a_Normal, 1.0)).xyz);
     v_TexCoord = a_TexCoord;
     v_Color = a_Color;

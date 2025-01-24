@@ -7,6 +7,12 @@ AssetRegistry:
     - Handle: 987040907396779762
       FilePath: {Source: 2, Path: Shaders\FlatColor.vxm_shader}
       Type: AssetType::Shader
+    - Handle: 1334018103129078440
+      FilePath: {Source: 1, Path: Shaders\Cubemap\cubemap.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 1640851745441987857
+      FilePath: {Source: 1, Path: Shaders\Cubemap\cubemap.frag}
+      Type: AssetType::ShaderSource
     - Handle: 2271745027356954202
       FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_compute_shader}
       Type: AssetType::ComputeShader

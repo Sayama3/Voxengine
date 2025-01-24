@@ -311,10 +311,11 @@ namespace Voxymore::Core
 		ShaderField cubemapShader = cc ? cc->CubemapShader : NullAssetHandle;
 
 		Renderer::BeginRendering(camera, lights);
+		Renderer::DrawCubemap(cubemap, cubemapShader);
 
 		RenderLoop();
 
-		Renderer::EndRendering(cubemap, cubemapShader);
+		Renderer::EndRendering();
 	}
 
 	void Scene::RenderRuntime(TimeStep ts)
@@ -345,10 +346,11 @@ namespace Voxymore::Core
 			std::vector<Light> lights = FindAllLights();
 
 			Renderer::BeginRendering(*mainCamera, cameraTransform, lights);
+			Renderer::DrawCubemap(cubemap, cubemapShader);
 
 			RenderLoop();
 
-			Renderer::EndRendering(cubemap, cubemapShader);
+			Renderer::EndRendering();
 		}
 	}
 
@@ -385,8 +387,6 @@ namespace Voxymore::Core
 		Renderer::EndDeferredRendering();
 
 		Renderer::BeginForwardRendering();
-		Renderer::EndForwardRendering();
-		/*
 
 #ifdef VXM_TERRAIN
 		if (m_Terrain && m_Terrain->IsValid()) {
@@ -434,7 +434,7 @@ namespace Voxymore::Core
 		m_PhysicsSystem.DrawConstraints(JPH::DebugRenderer::sInstance);
 
 		Renderer::EndForwardRendering();
-		*/
+
 	}
 
 	Entity Scene::CreateEntity()

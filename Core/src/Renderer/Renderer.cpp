@@ -40,6 +40,8 @@ namespace Voxymore::Core
 		s_Data.CameraBuffer.ViewProjectionMatrix = projection * glm::mat4(glm::mat3(view));
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 		RenderCommand::DrawCubemap(cubemap, cubemapShader, s_CubemapMesh->GetVertexArray());
+		s_Data.CameraBuffer.ViewProjectionMatrix = s_ProjMatrix * s_ViewMatrix;
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
 
 	void Renderer::Init() {
@@ -179,7 +181,6 @@ namespace Voxymore::Core
 
 		if (s_DeferredFramebuffer) {
 			s_DeferredFramebuffer->Bind();
-			RenderCommand::SetClearColor({1,0,0,.5});
 			RenderCommand::Clear();
 			s_DeferredFramebuffer->ClearColorAttachment(4, -1); // Clear the ID texture
 			s_DeferredFramebuffer->Unbind();
@@ -187,7 +188,6 @@ namespace Voxymore::Core
 
 		if (s_RenderFramebuffer) {
 			s_RenderFramebuffer->Bind();
-			RenderCommand::SetClearColor({0,1,0,0.5});
 			RenderCommand::Clear();
 			s_RenderFramebuffer->ClearColorAttachment(1, -1); // Clear the ID texture
 			s_RenderFramebuffer->Unbind();
@@ -256,7 +256,7 @@ namespace Voxymore::Core
 	}
 
 	void Renderer::EndForwardRendering() {
-/*
+
 		RenderCommand::EnableWireframe();
 		bool enableWireframe = true;
 		for(auto it = Gizmos::get_cbegin_depth(); it != Gizmos::get_cend_depth(); ++it)
@@ -268,7 +268,7 @@ namespace Voxymore::Core
 			DrawForwardGizmo(it->second.Mesh, it->second.ModelMatrix);
 		}
 		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
-*/
+
 
 		for(auto it = s_Data.AlphaMeshes.rbegin(); it != s_Data.AlphaMeshes.rend(); ++it)
 		{
@@ -276,7 +276,7 @@ namespace Voxymore::Core
 			DrawForwardMesh(std::get<0>(mesh), std::get<1>(mesh), std::get<2>(mesh));
 		}
 
-/*
+
 		RenderCommand::EnableWireframe();
 		RenderCommand::DisableDepth();
 		enableWireframe = true;
@@ -290,7 +290,7 @@ namespace Voxymore::Core
 		}
 		if(enableWireframe) {RenderCommand::DisableWireframe(); enableWireframe = false;}
 		RenderCommand::EnableDepth();
-*/
+
 		RenderCommand::ClearBinding();
 		s_BindedShader = NullAssetHandle;
 		s_BindedMaterial = NullAssetHandle;
@@ -298,12 +298,18 @@ namespace Voxymore::Core
 		s_RenderingMode = RenderingMode::None;
 	}
 
-	void Renderer::EndRendering(CubemapField cubemap, ShaderField cubemapShader) {
+	void Renderer::DrawCubemap(CubemapField cubemap, ShaderField cubemapShader) {
 		s_Cubemap = cubemap;
 		s_CubemapShader = cubemapShader;
-		if(s_Cubemap && s_CubemapShader) {
+		if(s_Cubemap && s_CubemapShader && s_RenderFramebuffer) {
+			s_RenderFramebuffer->Bind();
 			DrawCubemap(s_ViewMatrix, s_ProjMatrix, s_Cubemap.GetAsset(), s_CubemapShader.GetAsset());
+			s_RenderFramebuffer->Unbind();
 		}
+	}
+
+	void Renderer::EndRendering() {
+		// Nothing to do yet.
 	}
 
 	void Renderer::BeginForwardScene(const EditorCamera &camera, std::vector<Light> lights, CubemapField cubemap, ShaderField cubemapShader)

@@ -1,63 +1,33 @@
 Scene:
   Name: Main Scene
   Entities:
-    - Entity: 9228354074251653468
+    - Entity: 4671531725107735489
       IsActive: true
       TagComponent:
-        Tag: Entity_9228354074251653468
+        Tag: Cube - 0
       TransformComponent:
-        Position: [0, -0.929611206, 0]
+        Position: [-0.802492082, 6.10369025e-05, -5.24367619]
         Rotation: [0, 0, 0, 1]
         EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      ProcLightComponent:
-        RenderingShader: 7416316386062138268
-        CalculateShader: 2271745027356954202
-    - Entity: 14020947875908180688
-      IsActive: true
-      TagComponent:
-        Tag: Ground
-      TransformComponent:
-        Position: [-0.230051905, -1.58346879, -0.0204977859]
-        Rotation: [-0.70710665, 0, 0, 0.707106888]
-        EulerRotation: [-89.9999847, 0, 0]
-        Scale: [20, 19.9996262, 0.999988317]
       PrimitiveComponent:
-        PrimitiveType: 0
-        Material: 14085363085521224915
-      Rigidbody:
-        RigidbodyType: Static
-        LinearVelocity: [0, -2.5, 0]
-        AngularVelocity: [0, 0, 0]
-        Friction: 0.5
-        GravityFactor: 1
-        IsAwake: false
-      Collider:
-        Type: Box
-        Size: [20, 20, 0.100000001]
-    - Entity: 9892095993708743224
+        PrimitiveType: 1
+        Material: 4376053825709801053
+    - Entity: 13207770668927826958
       IsActive: true
       TagComponent:
-        Tag: Camera - 0
+        Tag: Directional Light
       TransformComponent:
-        Position: [-4.50307703, 6.13000393, 8.30943203]
-        Rotation: [-0.12174125, -0.151723772, -0.0188342165, 0.980716228]
-        EulerRotation: [-14.1524305, -17.5886898, 2.46302284e-06]
-        Scale: [0.999999344, 1, 0.999999642]
-      CameraComponent:
-        Primary: true
-        FixedAspectRatio: false
-        Cubemap: 7578455073512463366
-        CubemapShader: 0
-        Camera:
-          IsOrthographic: false
-          AspectRatio: 1.75917435
-          OrthographicSize: 10
-          OrthographicNear: -1
-          OrthographicFar: 1
-          PerspectiveVerticalFOV: 1.04719758
-          PerspectiveNear: 0.00999999978
-          PerspectiveFar: 1000
+        Position: [0, -1.11150742, 0]
+        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
+        EulerRotation: [-45, 45.0000038, 0]
+        Scale: [1, 1, 1]
+      LightComponent:
+        Color: [1, 1, 1, 1]
+        Intensity: 1
+        Range: 10
+        Cutoff: 45
+        LightType: 0
     - Entity: 10023566399794665382
       IsActive: true
       TagComponent:
@@ -80,30 +50,60 @@ Scene:
       Collider:
         Type: Box
         Size: [1, 1, 1]
-    - Entity: 13207770668927826958
+    - Entity: 9892095993708743224
       IsActive: true
       TagComponent:
-        Tag: Directional Light
+        Tag: Camera - 0
       TransformComponent:
-        Position: [0, -1.11150742, 0]
-        Rotation: [-0.353553414, 0.353553414, 0.14644663, 0.853553355]
-        EulerRotation: [-45, 45.0000038, 0]
-        Scale: [1, 1, 1]
-      LightComponent:
-        Color: [1, 1, 1, 1]
-        Intensity: 1
-        Range: 10
-        Cutoff: 45
-        LightType: 0
-    - Entity: 4671531725107735489
+        Position: [-4.50307703, 6.13000393, 8.30943203]
+        Rotation: [-0.12174125, -0.151723772, -0.0188342165, 0.980716228]
+        EulerRotation: [-14.1524305, -17.5886898, 2.46302284e-06]
+        Scale: [0.999999344, 1, 0.999999642]
+      CameraComponent:
+        Primary: true
+        FixedAspectRatio: false
+        Cubemap: 7578455073512463366
+        CubemapShader: 13222581370292731698
+        Camera:
+          IsOrthographic: false
+          AspectRatio: 1.52064216
+          OrthographicSize: 10
+          OrthographicNear: -1
+          OrthographicFar: 1
+          PerspectiveVerticalFOV: 1.04719758
+          PerspectiveNear: 0.00999999978
+          PerspectiveFar: 1000
+    - Entity: 14020947875908180688
       IsActive: true
       TagComponent:
-        Tag: Cube - 0
+        Tag: Ground
       TransformComponent:
-        Position: [1.02242839, 6.10351562e-05, -3.96862841]
+        Position: [-0.230051905, -1.58346879, -0.0204977859]
+        Rotation: [-0.70710665, 0, 0, 0.707106888]
+        EulerRotation: [-89.9999847, 0, 0]
+        Scale: [20, 19.9996262, 0.999988317]
+      PrimitiveComponent:
+        PrimitiveType: 0
+        Material: 14085363085521224915
+      Rigidbody:
+        RigidbodyType: Static
+        LinearVelocity: [0, -2.5, 0]
+        AngularVelocity: [0, 0, 0]
+        Friction: 0.5
+        GravityFactor: 1
+        IsAwake: false
+      Collider:
+        Type: Box
+        Size: [20, 20, 0.100000001]
+    - Entity: 9228354074251653468
+      IsActive: true
+      TagComponent:
+        Tag: Entity_9228354074251653468
+      TransformComponent:
+        Position: [0, -0.929611206, 0]
         Rotation: [0, 0, 0, 1]
         EulerRotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      PrimitiveComponent:
-        PrimitiveType: 1
-        Material: 4376053825709801053
+      ProcLightComponent:
+        RenderingShader: 7416316386062138268
+        CalculateShader: 2271745027356954202
