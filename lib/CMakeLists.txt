@@ -31,6 +31,7 @@ add_subdirectory(hash-library)
 
 set(CROSS_PLATFORM_DETERMINISTIC ON)
 set(ENABLE_ALL_WARNINGS OFF)
+set(INTERPROCEDURAL_OPTIMIZATION OFF)
 
 FetchContent_Declare(
         jolt
