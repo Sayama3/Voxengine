@@ -8,6 +8,7 @@
 #include "Cubemap.hpp"
 #include "Framebuffer.hpp"
 #include "Voxymore/Math/Math.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core {
 

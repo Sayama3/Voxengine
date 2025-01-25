@@ -14,6 +14,8 @@
 #include <string>
 #include <sha256.h>
 
+#include "Voxymore/Renderer/ShaderDataType.hpp"
+
 #ifndef NEWLINE
 #define NEWLINE "\n"
 #endif

@@ -12,6 +12,8 @@
 
 #include <tiny_gltf.h>
 
+#include "Voxymore/Renderer/ShaderDataType.hpp"
+
 namespace Voxymore::Core
 {
 	namespace GLTF

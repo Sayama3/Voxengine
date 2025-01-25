@@ -4,10 +4,11 @@
 
 #pragma once
 
+#include "ShaderDataType.hpp"
 #include "Voxymore/Core/Core.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/Logger.hpp"
 #include "Voxymore/Core/Buffer.hpp"
-#include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core {
 

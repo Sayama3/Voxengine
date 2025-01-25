@@ -186,8 +186,6 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/Pipeline/Action.hpp
         include/Voxymore/Serializer/Data.cpp
         include/Voxymore/Serializer/Data.hpp
-        src/Terrain/Terrain.cpp
-        include/Voxymore/Terrain/Terrain.hpp
         include/Voxymore/Assets/AssetField.impl.hpp
         include/Voxymore/Assets/AssetField.decl.hpp
         include/Voxymore/Assets/AssetField.forward.hpp
@@ -195,6 +193,11 @@ set(SRC_FILES src/Core/Application.cpp
         src/Assets/AssetHandle.cpp
         src/Components/ProcLightComponents.cpp
         include/Voxymore/Components/ProcLightComponents.hpp
+        src/Renderer/ShaderSource.cpp
+        include/Voxymore/Renderer/ShaderSource.hpp
+        include/Voxymore/Renderer/ShaderDefines.hpp
+        include/Voxymore/Renderer/ShaderDataType.hpp
+        include/Voxymore/Renderer/ShaderType.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
@@ -266,6 +269,8 @@ else()
     message(STATUS "Voxymore::Core is using Float as the main floating number system.")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_FLOAT)
 endif()
+
+target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_TERRAIN=1)
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
 

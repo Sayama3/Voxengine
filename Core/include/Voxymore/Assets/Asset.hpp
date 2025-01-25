@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "Voxymore/Core/Optional.hpp"
 #include "Voxymore/Assets/AssetHandle.hpp"
 
 #define VXM_IMPLEMENT_ASSET(assetType) inline static AssetType GetStaticType() {return assetType;} \

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Voxymore/Renderer/RendererAPI.hpp"
+#include "Voxymore/Renderer/Shader.hpp"
 
 namespace Voxymore::Core {
 

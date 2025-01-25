@@ -23,7 +23,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename Func>
-	inline void Scene::each(Func& func)
+	void Scene::each(Func& func)
 	{
 		each<Get...>(MultiThreading::ExecutionPolicy::None, func);
 	}
@@ -41,7 +41,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename... Exclude, typename Func>
-	inline void Scene::each(entt::exclude_t<Exclude...> ex, Func& func)
+	void Scene::each(entt::exclude_t<Exclude...> ex, Func& func)
 	{
 		each<Get...>(ex, MultiThreading::ExecutionPolicy::None, func);
 	}
@@ -61,7 +61,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename Func>
-	inline void Scene::each(MultiThreading::ExecutionPolicy exec, Func& func)
+	void Scene::each(MultiThreading::ExecutionPolicy exec, Func& func)
 	{
 		VXM_PROFILE_FUNCTION();
 		auto view = m_Registry.view<Get...>();
@@ -90,7 +90,7 @@ namespace Voxymore::Core
 		 * @param func The callable object to apply to each entity.
 		 */
 	template<typename... Get, typename... Exclude, typename Func>
-	inline void Scene::each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
+	void Scene::each(entt::exclude_t<Exclude...> ex, MultiThreading::ExecutionPolicy exec, Func& func)
 	{
 		VXM_PROFILE_FUNCTION();
 		auto view = m_Registry.view<Get...>(ex);
@@ -113,7 +113,7 @@ namespace Voxymore::Core
 		 * @return entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>>
 		 */
 	template<typename... Get>
-	[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>> Scene::view()
+	[[nodiscard]] entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>> Scene::view()
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_Registry.view<Get ...>();
@@ -129,7 +129,7 @@ namespace Voxymore::Core
 		 *@return entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<>>
 		 */
 	template<typename... Get, typename... Exclude>
-	[[nodiscard]] inline entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<entt::storage_for_t<Exclude>...>> Scene::view(entt::exclude_t<Exclude...> ex)
+	[[nodiscard]] entt::basic_view<entt::get_t<entt::storage_for_t<Get>...>, entt::exclude_t<entt::storage_for_t<Exclude>...>> Scene::view(entt::exclude_t<Exclude...> ex)
 	{
 		VXM_PROFILE_FUNCTION();
 		return m_Registry.view<Get ...>(ex);

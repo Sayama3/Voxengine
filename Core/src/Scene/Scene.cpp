@@ -388,14 +388,6 @@ namespace Voxymore::Core
 
 		Renderer::BeginForwardRendering();
 
-#ifdef VXM_TERRAIN
-		if (m_Terrain && m_Terrain->IsValid()) {
-			m_Terrain->Bind();
-			m_Terrain->Draw();
-			m_Terrain->Unbind();
-		}
-#endif
-
 		// Draw Physics
 		if(JPH::DebugRenderer::sInstance == nullptr) {
 			JPH::DebugRenderer::sInstance = new PhysicsDebugRenderer();

@@ -7,13 +7,10 @@
 #include "Scene.forward.hpp"
 #include "Entity.decl.hpp"
 
-#include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/UUID.hpp"
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/MultiThreading.hpp"
-
-#include "Voxymore/Terrain/Terrain.hpp"
 
 #include "Voxymore/Assets/Asset.hpp"
 
@@ -26,8 +23,6 @@
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Core/JobSystemThreadPool.h>
 
 #include <entt/entt.hpp>
 
@@ -212,10 +207,6 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
-#ifdef VXM_TERRAIN
-	private:
-		std::unique_ptr<Terrain> m_Terrain;
-#endif
 	private:
 		JPH::PhysicsSystem m_PhysicsSystem;
 
