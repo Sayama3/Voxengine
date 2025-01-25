@@ -235,7 +235,7 @@ namespace Voxymore::Core
 		}
 	};
 
-	[[nodiscard]] GLint GetOpenGLSide(Cubemap::Side side)
+	[[nodiscard]] GLint GetOpenGLSide(const Cubemap::Side side)
 	{
 		switch (side) {
 			case Cubemap::Side::Right: return 0;	// GL_TEXTURE_CUBE_MAP_POSITIVE_X
@@ -245,6 +245,7 @@ namespace Voxymore::Core
 			case Cubemap::Side::Front: return 4;	// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
 			case Cubemap::Side::Back: return 5;		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 		}
+		return -1;
 	}
 
 	OpenGLCubemap::OpenGLCubemap(const CubemapSpecification& spec) : m_Specification(spec)

@@ -29,6 +29,7 @@ namespace Voxymore::Core {
 		virtual int ReadPixel(uint32_t index, int x, int y) override;
         virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const override;
         virtual uint32_t GetDepthAttachmentRendererID() const override;
+        virtual uint32_t GetRendererID() const override {return m_RendererID;}
 
 		virtual void ClearColorAttachment(uint32_t index, uint8_t value) override;
 		virtual void ClearColorAttachment(uint32_t index, uint32_t value) override;

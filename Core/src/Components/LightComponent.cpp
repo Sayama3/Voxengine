@@ -8,11 +8,11 @@ namespace Voxymore::Core
 {
 	void LightComponent::DeserializeComponent(YAML::Node& node)
 	{
-		m_Color = node["Color"].as<glm::vec4>();
-		m_Intensity = node["Intensity"].as<Real>();
-		m_Range = node["Range"].as<Real>();
-		m_Cutoff = node["Cutoff"].as<Real>();
-		m_LightType = (LightType)node["LightType"].as<int>();
+		m_Color = node["Color"].as<glm::vec4>(glm::vec4{1,1,1,1});
+		m_Intensity = node["Intensity"].as<Real>(1);
+		m_Range = node["Range"].as<Real>(10);
+		m_Cutoff = node["Cutoff"].as<Real>(45);
+		m_LightType = (LightType)node["LightType"].as<int>(static_cast<int>(LightType::Directional));
 	}
 
 	void LightComponent::SerializeComponent(YAML::Emitter& out)

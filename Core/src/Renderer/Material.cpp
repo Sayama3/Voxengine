@@ -181,13 +181,7 @@ namespace Voxymore::Core {
 
 		changed |= ImGuiLib::DrawAssetField("Shader", &m_Shader);
 
-		std::vector<char> materialName(inputSize, 0);
-		std::memcpy(materialName.data(), m_MaterialName.c_str(), m_MaterialName.size());
-		if (ImGui::InputText("Material Name", materialName.data(), inputSize))
-		{
-			changed = true;
-			m_MaterialName = std::string(materialName.data());
-		}
+		changed |= ImGuiLib::InputText("Material Name", &m_MaterialName);
 
 		if(ImGui::CollapsingHeader("Textures"))
 		{

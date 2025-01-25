@@ -15,7 +15,8 @@ namespace Voxymore::Core
 	std::unordered_map<AssetType, AssetImportFunction> AssetImporter::AssetLoaders = {
 			{AssetType::Texture2D, TextureImporter::ImportTexture2D},
 			{AssetType::CubeMap, TextureImporter::ImportCubemap},
-			{AssetType::Shader, ShaderSerializer::ImportShader},
+			{AssetType::Shader, ShaderSerializer::ImportGraphicShader},
+			{AssetType::ComputeShader, ShaderSerializer::ImportComputeShader},
 			{AssetType::ShaderSource, ShaderSerializer::ImportShaderSource},
 //			{AssetType::Mesh, MeshSerializer::ImportMesh},
 			{AssetType::Scene, SceneImporter::ImportScene},
@@ -26,7 +27,8 @@ namespace Voxymore::Core
 	std::unordered_map<AssetType, AssetDetectorFunction> AssetImporter::AssetDetectors = {
 			{AssetType::Texture2D, TextureImporter::IsTexture},
 			{AssetType::CubeMap, TextureImporter::IsCubemap},
-			{AssetType::Shader, ShaderSerializer::IsShader},
+			{AssetType::Shader, ShaderSerializer::IsGraphicShader},
+			{AssetType::ComputeShader, ShaderSerializer::IsComputeShader},
 			{AssetType::ShaderSource, ShaderSerializer::IsShaderSource},
 //			{AssetType::Mesh, MeshSerializer::IsMesh},
 			{AssetType::Scene, SceneImporter::IsScene},

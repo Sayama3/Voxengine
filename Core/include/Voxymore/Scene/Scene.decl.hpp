@@ -12,7 +12,11 @@
 #include "Voxymore/Core/SmartPointers.hpp"
 #include "Voxymore/Core/TimeStep.hpp"
 #include "Voxymore/Core/MultiThreading.hpp"
+
+#include "Voxymore/Terrain/Terrain.hpp"
+
 #include "Voxymore/Assets/Asset.hpp"
+
 #include "Voxymore/Renderer/EditorCamera.hpp"
 
 #include "Voxymore/Physics/ObjectLayerPairFilter.hpp"
@@ -26,11 +30,6 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 
 #include <entt/entt.hpp>
-
-#include <algorithm>
-#include <execution>
-#include <unordered_set>
-#include <unordered_map>
 
 namespace Voxymore::Editor {
 	class SceneHierarchyPanel;
@@ -89,6 +88,8 @@ namespace Voxymore::Core
 		[[deprecated("Use id()")]]
 		inline UUID GetID() const {return id();}
 		inline UUID id() const {return Handle;}
+	private:
+		std::vector<Light> FindAllLights();
 	private:
 		void StartPhysics();
 		void UpdatePhysics(TimeStep ts);
@@ -211,6 +212,10 @@ namespace Voxymore::Core
 		std::unordered_set<std::string> m_StartedSystem;
 		std::unordered_map<UUID, Entity> m_Entities;
 		bool m_Started = false;
+#ifdef VXM_TERRAIN
+	private:
+		std::unique_ptr<Terrain> m_Terrain;
+#endif
 	private:
 		JPH::PhysicsSystem m_PhysicsSystem;
 

@@ -1,0 +1,6 @@
+Type: AssetType::Shader
+Shader:
+  Name: Gizmos
+  Sources:
+    - 6021556666728418513
+    - 3480179507698329937

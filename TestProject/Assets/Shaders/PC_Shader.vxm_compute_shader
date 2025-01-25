@@ -1,0 +1,4 @@
+Type: AssetType::ComputeShader
+ComputeShader:
+  Name: PC_Shader
+  Source: 12678104600030430977

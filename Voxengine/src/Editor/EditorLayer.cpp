@@ -55,9 +55,7 @@ namespace Voxymore::Editor {
             }
         }
 
-		FramebufferSpecification specification(1280, 720);
-		specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth};
-		m_Viewports.push_back(CreateRef<Viewport>(specification));
+		m_Viewports.push_back(CreateRef<Viewport>(CreateRenderFramebufferSpecs(), CreateDeferredFramebufferSpecs()));
 
 		auto handle = Project::GetConfig().startSceneId;
 		if(handle.has_value() && AssetManager::IsAssetHandleValid(handle.value()))
@@ -137,33 +135,7 @@ namespace Voxymore::Editor {
 			// Resize
 			m_ActiveScene->SetViewportSize(viewportPtr->GetSize().x, viewportPtr->GetSize().y);
 
-			viewportPtr->BindFramebuffer();
-
-			{
-				VXM_PROFILE_SCOPE("Rendering Scene");
-
-				switch (m_SceneState)
-				{
-					case SceneState::Pause:
-					case SceneState::Edit:
-					{
-						m_ActiveScene->RenderEditor(timeStep, viewportPtr->GetCamera());
-						break;
-					}
-					case SceneState::Play:
-					{
-						m_ActiveScene->RenderRuntime(timeStep);
-						break;
-					}
-					default:
-					{
-						VXM_ASSERT(false, "State {0} not handled yet.", static_cast<int>(m_SceneState));
-						break;
-					}
-				}
-				viewportPtr->PostRender(m_ActiveScene.get());
-				viewportPtr->UnbindFramebuffer();
-			}
+			RenderViewport(viewportPtr, timeStep);
 		}
     }
 
@@ -359,9 +331,7 @@ namespace Voxymore::Editor {
 					m_Viewports.push_back(viewport);
 					m_UnloadedViewport.pop_back();
 				} else {
-					FramebufferSpecification specification(1280, 720);
-					specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth};
-					m_Viewports.push_back(CreateRef<Viewport>(specification));
+					m_Viewports.push_back(CreateRef<Viewport>(CreateRenderFramebufferSpecs(), CreateDeferredFramebufferSpecs()));
 				}
 			}
 			for (auto&& [typeId, panelMetadata] : m_PanelCreator) {
@@ -904,5 +874,45 @@ namespace Voxymore::Editor {
         m_StopTexture = TextureImporter::LoadTexture2D(Path{FileSource::EditorAsset, "Images/Stop.png"});
         m_PauseTexture = TextureImporter::LoadTexture2D(Path{FileSource::EditorAsset, "Images/Pause.png"});
     }
+
+	FramebufferSpecification EditorLayer::CreateDeferredFramebufferSpecs() const {
+    	FramebufferSpecification specification(1280, 720);
+    	specification.Attachements = {FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA32F,FramebufferTextureFormat::RGBA8,FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
+    	return std::move(specification);
+    }
+
+	FramebufferSpecification EditorLayer::CreateRenderFramebufferSpecs() const {
+    	FramebufferSpecification specification(1280, 720);
+		specification.Attachements = {FramebufferTextureFormat::Color, FramebufferTextureFormat::RED16I, FramebufferTextureFormat::Depth};
+    	return std::move(specification);
+    }
+
+	void EditorLayer::RenderViewport(Ref<Viewport> viewportPtr, TimeStep timeStep)
+	{
+    	VXM_PROFILE_SCOPE("Deferred Rendering Scene");
+
+    	Renderer::SetupRenderer(Project::GetDeferredShader(), viewportPtr->GetRenderFramebuffer(), viewportPtr->GetDeferredFramebuffer());
+    	switch (m_SceneState)
+    	{
+    		case SceneState::Pause:
+			case SceneState::Edit:
+    		{
+    			m_ActiveScene->RenderEditor(timeStep, viewportPtr->GetCamera());
+    			break;
+    		}
+    		case SceneState::Play:
+    		{
+    			m_ActiveScene->RenderRuntime(timeStep);
+    			break;
+    		}
+    		default:
+    		{
+    			VXM_ASSERT(false, "State {0} not handled yet.", static_cast<int>(m_SceneState));
+    			break;
+    		}
+    	}
+    	viewportPtr->PostRender(m_ActiveScene.get());
+    	viewportPtr->UnbindRenderFramebuffer();
+	}
 } // Voxymore
 // Editor

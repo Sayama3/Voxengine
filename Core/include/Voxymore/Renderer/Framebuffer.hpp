@@ -13,10 +13,20 @@ namespace Voxymore::Core {
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
+
 		// Color
+		RGB8,
+		RGB16,
 		RGBA8,
 		RGBA16,
-		RED_INTEGER,
+		RGBA32F,
+		RGB32F,
+		RG32F,
+		RED32F,
+		RED16I,
+		RED32I,
+		RED16UI,
+		RED32UI,
 
 		// Depth/Stencil
 		DEPTH24STENCIL8,
@@ -71,6 +81,7 @@ namespace Voxymore::Core {
 
         virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
         virtual uint32_t GetDepthAttachmentRendererID() const = 0;
+        virtual uint32_t GetRendererID() const = 0;
 
 		virtual void ClearColorAttachment(uint32_t index, uint8_t value) = 0;
 		virtual void ClearColorAttachment(uint32_t index, uint32_t value) = 0;

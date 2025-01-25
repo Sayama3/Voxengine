@@ -501,6 +501,7 @@ namespace Voxymore::Core
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		{
+			out << KEYVAL("ID", metadata.Handle);
 			out << KEYVAL("Type", AssetTypeToString(AssetType::Model));
 			MaterialField mat = NullAssetHandle;
 			for (auto& matfield : model->m_Materials) {

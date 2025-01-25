@@ -77,6 +77,11 @@ namespace Voxymore::Editor {
 		void OnSceneResume();
 		void ReloadAssets();
 	private:
+		[[nodiscard]] FramebufferSpecification CreateDeferredFramebufferSpecs() const;
+		[[nodiscard]] FramebufferSpecification CreateRenderFramebufferSpecs() const;
+
+	void RenderViewport(Ref<Viewport> viewportPtr, TimeStep timeStep);
+	private:
 		std::map<uint64_t, PanelMetadata> m_PanelCreator;
 		std::vector<Core::Ref<BasePanel>> m_Panels;
 		std::vector<Core::Ref<Viewport>> m_Viewports;

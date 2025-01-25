@@ -6,6 +6,7 @@
 
 #include "VertexArray.hpp"
 #include "Cubemap.hpp"
+#include "Framebuffer.hpp"
 #include "Voxymore/Math/Math.hpp"
 
 namespace Voxymore::Core {
@@ -39,6 +40,7 @@ namespace Voxymore::Core {
 		virtual void DrawIndexed(DrawMode drawMode, const Ref<VertexArray>& vertexArray) = 0;
 
 		virtual void DrawPatches(uint32_t verticesPerPatch) = 0;
+		virtual void GPUDraw(uint32_t count, uint32_t offset, DrawMode drawMode) = 0;
 
 		virtual void DrawCubemap(Ref<Cubemap> cubemap, Ref<Shader> shader, Ref<VertexArray> mesh) = 0;
 
@@ -50,6 +52,10 @@ namespace Voxymore::Core {
 
 		virtual void EnableDoubleSided() = 0;
 		virtual void DisableDoubleSided() = 0;
+		virtual void CopyColorBuffer(Ref<Framebuffer> source, uint32_t sourceColorAttachmentIndex, Ref<Framebuffer> target, uint32_t targetColorAttachmentIndex) = 0;
+		virtual void CopyDepthBuffer(Ref<Framebuffer> source, Ref<Framebuffer> target) = 0;
+
+		virtual void SetupDeferredRender(uint32_t positionTexID, uint32_t normalTexID, uint32_t texCoordTexID, uint32_t colorTexID, uint32_t entityIdTexID, uint32_t depthTexID) = 0;
 
 		inline static API GetAPI() { return s_API; }
 	private:

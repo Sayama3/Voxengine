@@ -79,6 +79,7 @@ namespace Voxymore::Core {
 		std::string m_MaterialName = "";
 		MaterialParameters m_Parameters;
 		std::array<Texture2DField, 32> m_Textures;
+		bool m_IsForward = true;
 		ShaderField m_Shader;
 	public:
 		Material();

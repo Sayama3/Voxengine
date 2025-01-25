@@ -1,0 +1,7 @@
+Type: AssetType::Shader
+Shader:
+  Name: DeferredRender
+  IsForward: false
+  Sources:
+    - 15001316454039985529
+    - 12630599774198441109

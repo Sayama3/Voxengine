@@ -10,6 +10,25 @@ namespace Voxymore::Core {
 
     //TODO: retrieve the max depending on the GPU capabilities.
     static const uint32_t s_MaxFramebufferSize = 8192;
+
+
+	static const char* glGetErrorString(GLenum error)
+	{
+		switch (error)
+		{
+			case GL_NO_ERROR:          return "No Error";
+			case GL_INVALID_ENUM:      return "Invalid Enum";
+			case GL_INVALID_VALUE:     return "Invalid Value";
+			case GL_INVALID_OPERATION: return "Invalid Operation";
+			case GL_INVALID_FRAMEBUFFER_OPERATION: return "Invalid Framebuffer Operation";
+			case GL_OUT_OF_MEMORY:     return "Out of Memory";
+			case GL_STACK_UNDERFLOW:   return "Stack Underflow";
+			case GL_STACK_OVERFLOW:    return "Stack Overflow";
+			case GL_CONTEXT_LOST:      return "Context Lost";
+			default:                   return "Unknown Error";
+		}
+	}
+
 	namespace Utils
 	{
 		static GLenum TextureTarget(bool multisampled)
@@ -30,7 +49,7 @@ namespace Voxymore::Core {
 			glBindTexture(TextureTarget(multisampled), textureId);
 		}
 
-		static void AttachmentColorTexture(uint32_t id, uint32_t samples, GLenum textureFormat, GLenum internalFormat, uint32_t width, uint32_t height, int index)
+		static void AttachmentColorTexture(uint32_t id, uint32_t samples, GLenum textureFormat, GLenum internalFormat, uint32_t width, uint32_t height, GLenum internalType, int index)
 		{
 			VXM_PROFILE_FUNCTION();
 			bool multisample = samples > 1;
@@ -40,7 +59,7 @@ namespace Voxymore::Core {
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, internalFormat, internalType, nullptr);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -94,10 +113,19 @@ namespace Voxymore::Core {
 			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
+				case FramebufferTextureFormat::RGB8: return GL_RGB8;
+				case FramebufferTextureFormat::RGB16: return GL_RGB16;
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
 				case FramebufferTextureFormat::RGBA16: return GL_RGBA16;
-				case FramebufferTextureFormat::RED_INTEGER: return GL_R16I;
+				case FramebufferTextureFormat::RED16I: return GL_R16I;
 				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+				case FramebufferTextureFormat::RGBA32F: return GL_RGBA32F;break;
+				case FramebufferTextureFormat::RGB32F: return GL_RGB32F;break;
+				case FramebufferTextureFormat::RG32F: return GL_RG32F;break;
+				case FramebufferTextureFormat::RED32F: return GL_R32F;break;
+				case FramebufferTextureFormat::RED32I: return GL_R32I;break;
+				case FramebufferTextureFormat::RED16UI: return GL_R16UI;break;
+				case FramebufferTextureFormat::RED32UI: return GL_R32UI;break;
 			}
 			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
 			return 0;
@@ -108,10 +136,41 @@ namespace Voxymore::Core {
 			VXM_PROFILE_FUNCTION();
 			switch (format)
 			{
+				case FramebufferTextureFormat::RGB8: return GL_RGB;
+				case FramebufferTextureFormat::RGB16: return GL_RGB;
 				case FramebufferTextureFormat::RGBA8: return GL_RGBA;
 				case FramebufferTextureFormat::RGBA16: return GL_RGBA;
-				case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+				case FramebufferTextureFormat::RGBA32F: return GL_RGBA;
+				case FramebufferTextureFormat::RED16I: return GL_RED_INTEGER;
 				case FramebufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH_STENCIL_ATTACHMENT;
+				case FramebufferTextureFormat::RGB32F: return GL_RGB;
+				case FramebufferTextureFormat::RG32F: return GL_RG;
+				case FramebufferTextureFormat::RED32F: return GL_RED;
+				case FramebufferTextureFormat::RED32I: return GL_RED;
+				case FramebufferTextureFormat::RED16UI: return GL_RED;
+				case FramebufferTextureFormat::RED32UI: return GL_RED;
+			}
+			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
+			return 0;
+		}
+
+		static GLenum GetInternalType(FramebufferTextureFormat format)
+		{
+			VXM_PROFILE_FUNCTION();
+			switch (format)
+			{
+				case FramebufferTextureFormat::RGB8: return GL_UNSIGNED_BYTE;
+				case FramebufferTextureFormat::RGB16: return GL_UNSIGNED_SHORT;
+				case FramebufferTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
+				case FramebufferTextureFormat::RGBA16: return GL_UNSIGNED_SHORT;
+				case FramebufferTextureFormat::RGBA32F: return GL_FLOAT;
+				case FramebufferTextureFormat::RED16I: return GL_SHORT;
+				case FramebufferTextureFormat::RGB32F: return GL_FLOAT;
+				case FramebufferTextureFormat::RG32F: return GL_FLOAT;
+				case FramebufferTextureFormat::RED32F: return GL_FLOAT;
+				case FramebufferTextureFormat::RED32I: return GL_INT;
+				case FramebufferTextureFormat::RED16UI: return GL_UNSIGNED_SHORT;
+				case FramebufferTextureFormat::RED32UI: return GL_UNSIGNED_INT;
 			}
 			VXM_CORE_ASSERT(false, "The format {0} is not valid.", static_cast<int>(format));
 			return 0;
@@ -178,7 +237,7 @@ namespace Voxymore::Core {
 			{
 				auto spec = m_ColorAttachmentSpecifications[i];
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
-				Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, Utils::GetTextureFormat(spec.TextureFormat), Utils::GetInternalTextureFormat(spec.TextureFormat), m_Specification.Width, m_Specification.Height, i);
+				Utils::AttachmentColorTexture(m_ColorAttachments[i], m_Specification.Samples, Utils::GetTextureFormat(spec.TextureFormat), Utils::GetInternalTextureFormat(spec.TextureFormat), m_Specification.Width, m_Specification.Height, Utils::GetInternalType(spec.TextureFormat), i);
 			}
 		}
 
@@ -191,10 +250,10 @@ namespace Voxymore::Core {
 
 		if(m_ColorAttachments.size() > 1)
 		{
-#define MAX_COLOR_ATTACHEMENT 5
+#define MAX_COLOR_ATTACHEMENT 10
 			VXM_ASSERT(m_ColorAttachments.size() <= MAX_COLOR_ATTACHEMENT, "We only support {0} color attachment on a framebuffer at the moment.", MAX_COLOR_ATTACHEMENT);
 
-			GLenum buffers[MAX_COLOR_ATTACHEMENT] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4};
+			const GLenum buffers[MAX_COLOR_ATTACHEMENT] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9};
 
 			glDrawBuffers(m_ColorAttachments.size(), buffers);
 		}
@@ -203,9 +262,8 @@ namespace Voxymore::Core {
 			// Only Depth pass.
 			glDrawBuffer(GL_NONE);
 		}
-
-        VXM_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete.");
-
+		auto framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        VXM_CORE_ASSERT(framebufferStatus == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete.");
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -220,8 +278,9 @@ namespace Voxymore::Core {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(uint32_t index) const {
+    uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(const uint32_t index) const {
 		VXM_PROFILE_FUNCTION();
+		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {} is invalid as there is only {} color attachment in the buffer.", index, m_ColorAttachments.size());
         return m_ColorAttachments[index];
     }
 
@@ -252,7 +311,7 @@ namespace Voxymore::Core {
 		int pixelData;
 
 		VXM_CORE_ASSERT(index < m_ColorAttachments.size(), "The index {0} doesn't exist on this framebuffer.");
-		VXM_CORE_ASSERT(m_ColorAttachmentSpecifications[index].TextureFormat == FramebufferTextureFormat::RED_INTEGER, "This function read from a RED_INTEGER texture format.");
+		VXM_CORE_ASSERT(m_ColorAttachmentSpecifications[index].TextureFormat == FramebufferTextureFormat::RED16I, "This function read from a RED_INTEGER texture format.");
 
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 		glReadPixels(x, y, 1 , 1, GL_RED_INTEGER, GL_INT, &pixelData);

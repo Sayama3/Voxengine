@@ -1,94 +1,90 @@
-Type:
-  AssetRegistry
+Type: AssetRegistry
 AssetRegistry:
   Assets:
-    - Handle: 767692958919381968
-      FilePath: {Source: 2, Path: Shaders\BezierDeCasteljau.vxm_shader}
+    - Handle: 81341761288305332
+      FilePath: {Source: 2, Path: ShaderSources\ProcLight.geom}
+      Type: AssetType::ShaderSource
+    - Handle: 987040907396779762
+      FilePath: {Source: 2, Path: Shaders\FlatColor.vxm_shader}
       Type: AssetType::Shader
-    - Handle: 913188341192155034
-      FilePath: {Source: 4, Path: MemoryAssets/913188341192155034.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 1069266738333071017
-      FilePath: {Source: 2, Path: Materials\BezierDeCasteljau.vxm_material}
+    - Handle: 1334018103129078440
+      FilePath: {Source: 1, Path: Shaders\Cubemap\cubemap.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 1640851745441987857
+      FilePath: {Source: 1, Path: Shaders\Cubemap\cubemap.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 2271745027356954202
+      FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_compute_shader}
+      Type: AssetType::ComputeShader
+    - Handle: 3456651389826446753
+      FilePath: {Source: 2, Path: Materials\Deferred_Other.vxm_material}
       Type: AssetType::Material
-    - Handle: 1907233133168175017
-      FilePath: {Source: 4, Path: MemoryAssets/1907233133168175017.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 2175996211825722344
-      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.frag}
+    - Handle: 3480179507698329937
+      FilePath: {Source: 1, Path: Shaders\Gizmos.frag}
       Type: AssetType::ShaderSource
-    - Handle: 2176829156368268480
-      FilePath: {Source: 4, Path: MemoryAssets/2176829156368268480.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 5003646183903738526
-      FilePath: {Source: 4, Path: MemoryAssets/5003646183903738526.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 6166524610277000624
-      FilePath: {Source: 4, Path: MemoryAssets/6166524610277000624.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 6501812136981279580
-      FilePath: {Source: 2, Path: Materials\Bezier4.vxm_material}
+    - Handle: 4153857186810102841
+      FilePath: {Source: 2, Path: ShaderSources\ProcLight.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 4376053825709801053
+      FilePath: {Source: 2, Path: Materials\DefaultMaterial.vxm_material}
       Type: AssetType::Material
-    - Handle: 7136703435398607860
-      FilePath: {Source: 4, Path: MemoryAssets/7136703435398607860.vxm_memory}
+    - Handle: 4796043985392529465
+      FilePath: {Source: 2, Path: Scenes\MainScene.vxm_scn}
       Type: AssetType::Scene
-    - Handle: 7408055824618193802
-      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.vert}
+    - Handle: 6021556666728418513
+      FilePath: {Source: 1, Path: Shaders\Gizmos.vert}
       Type: AssetType::ShaderSource
-    - Handle: 7563315893819623377
-      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessco}
-      Type: AssetType::ShaderSource
-    - Handle: 8098330176453956795
-      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessco}
-      Type: AssetType::ShaderSource
-    - Handle: 8278828207168357721
-      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.geom}
-      Type: AssetType::ShaderSource
-    - Handle: 8552950103494062726
-      FilePath: {Source: 2, Path: ShaderSources\BezierDeCasteljau.tessev}
-      Type: AssetType::ShaderSource
-    - Handle: 8676590476146596977
-      FilePath: {Source: 2, Path: Scenes\BezierScene.vxm_scn}
-      Type: AssetType::Scene
-    - Handle: 9851964826079991738
-      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.geom}
-      Type: AssetType::ShaderSource
-    - Handle: 10408084392226933793
-      FilePath: {Source: 2, Path: Shaders\Bezier4.vxm_shader}
+    - Handle: 7416316386062138268
+      FilePath: {Source: 2, Path: Shaders\PC_Shader.vxm_shader}
       Type: AssetType::Shader
-    - Handle: 10455158954702787468
-      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.tessev}
-      Type: AssetType::ShaderSource
-    - Handle: 10574093062912526717
-      FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
-      Type: AssetType::ShaderSource
-    - Handle: 11335829010457474843
-      FilePath: {Source: 2, Path: Models\Cube_W.glb}
-      Type: AssetType::Model
-    - Handle: 11600000519888133035
-      FilePath: {Source: 2, Path: Models\cube_Color.gltf}
-      Type: AssetType::Model
-    - Handle: 12478498007980619411
-      FilePath: {Source: 2, Path: ShaderSources\BezierPascal.tessev}
-      Type: AssetType::ShaderSource
-    - Handle: 12486198698501010925
-      FilePath: {Source: 4, Path: MemoryAssets/12486198698501010925.vxm_memory}
-      Type: AssetType::Scene
-    - Handle: 12644949253861293824
-      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.tessev}
-      Type: AssetType::ShaderSource
-    - Handle: 13565445117755381563
-      FilePath: {Source: 1, Path: Shaders\Bezier\Bezier.frag}
-      Type: AssetType::ShaderSource
-    - Handle: 14132953702282159457
-      FilePath: {Source: 2, Path: Materials\BezierPascal.vxm_material}
-      Type: AssetType::Material
-    - Handle: 14501197852061985280
-      FilePath: {Source: 1, Path: Shaders\Bezier4\Bezier4.vert}
-      Type: AssetType::ShaderSource
-    - Handle: 16039519178751608459
-      FilePath: {Source: 2, Path: Shaders\BezierPascal.vxm_shader}
-      Type: AssetType::Shader
-    - Handle: 18076994461876039139
+    - Handle: 7578455073512463366
+      FilePath: {Source: 2, Path: Textures\skybox\space_skybox.png}
+      Type: AssetType::CubeMap
+    - Handle: 7876495498005145272
       FilePath: {Source: 1, Path: Shaders\DefaultShader.frag}
       Type: AssetType::ShaderSource
+    - Handle: 7991943028674437013
+      FilePath: {Source: 1, Path: Shaders\DeferredRender.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 8234081648185153031
+      FilePath: {Source: 2, Path: Materials\GizmoMaterial.vxm_material}
+      Type: AssetType::Material
+    - Handle: 9625455353821214131
+      FilePath: {Source: 1, Path: Shaders\FlatColor.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 12630599774198441109
+      FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 12678104600030430977
+      FilePath: {Source: 2, Path: ShaderSources\ProcLights.comp}
+      Type: AssetType::ShaderSource
+    - Handle: 12878332431586702203
+      FilePath: {Source: 2, Path: Shaders\DefaultShader.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 13222581370292731698
+      FilePath: {Source: 2, Path: Shaders\Cubemap.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 13244326211075061448
+      FilePath: {Source: 1, Path: Shaders\FlatColor.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 14085363085521224915
+      FilePath: {Source: 2, Path: Materials\DefaultDeferredMaterial.vxm_material}
+      Type: AssetType::Material
+    - Handle: 14500021375743852738
+      FilePath: {Source: 1, Path: Shaders\DeferredRender.frag}
+      Type: AssetType::ShaderSource
+    - Handle: 15001316454039985529
+      FilePath: {Source: 1, Path: Shaders\DeferredAccumulate.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 15374707834578414979
+      FilePath: {Source: 1, Path: Shaders\DefaultShader.vert}
+      Type: AssetType::ShaderSource
+    - Handle: 15974069089991453759
+      FilePath: {Source: 2, Path: Shaders\Gizmos.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 16042254658609528153
+      FilePath: {Source: 2, Path: Shaders\DeferredTransmission.vxm_shader}
+      Type: AssetType::Shader
+    - Handle: 16043295088340451347
+      FilePath: {Source: 2, Path: Shaders\DeferredRender.vxm_shader}
+      Type: AssetType::Shader

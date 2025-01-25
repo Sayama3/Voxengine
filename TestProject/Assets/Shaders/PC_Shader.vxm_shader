@@ -1,0 +1,8 @@
+Type: AssetType::Shader
+Shader:
+  Name: PC_Shader
+  IsForward: false
+  Sources:
+    - 4153857186810102841
+    - 81341761288305332
+    - 12630599774198441109

@@ -1,3 +1,0 @@
-Type: AssetType::ShaderSource
-ShaderSource:
-  ShaderType: __TYPE_TESS_EVALUATION_SHADER__

@@ -17,8 +17,7 @@
 
 namespace Voxymore::Core
 {
-	class Material;
-	class PhysicsDebugRenderer : public JPH::DebugRenderer
+	class PhysicsDebugRenderer final : public JPH::DebugRenderer
 	{
 	public:
 		static inline std::unordered_map<uint32_t, AssetHandle> s_Materials{};
@@ -40,7 +39,7 @@ namespace Voxymore::Core
 
 		virtual void DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow) override;
 
-		virtual void DrawText3D(JPH::RVec3Arg inPosition, const std::string_view &inString, JPH::ColorArg inColor, float inHeight) override;protected:
+		virtual void DrawText3D(JPH::RVec3Arg inPosition, const std::string_view &inString, JPH::ColorArg inColor, float inHeight) override;
 	protected:
 		/// Implementation of DebugRenderer interface
 		virtual Batch CreateTriangleBatch(const JPH::DebugRenderer::Triangle *inTriangles, int inTriangleCount) override;
@@ -48,7 +47,7 @@ namespace Voxymore::Core
 		virtual void DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox &inWorldSpaceBounds, float inLODScaleSq, JPH::ColorArg inModelColor, const JPH::DebugRenderer::GeometryRef &inGeometry, JPH::DebugRenderer::ECullMode inCullMode, JPH::DebugRenderer::ECastShadow inCastShadow, JPH::DebugRenderer::EDrawMode inDrawMode) override;
 
 		/// Implementation specific batch object
-		class BatchImpl : public JPH::RefTargetVirtual
+		class BatchImpl final : public JPH::RefTargetVirtual
 		{
 		public:
 			JPH_OVERRIDE_NEW_DELETE

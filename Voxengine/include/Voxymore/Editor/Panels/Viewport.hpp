@@ -21,7 +21,8 @@ namespace Voxymore::Editor
 			Edit,
 		};
 	public:
-		Viewport(const Core::FramebufferSpecification& specs);
+		Viewport(const Core::FramebufferSpecification& renderFbSpecs);
+		Viewport(const Core::FramebufferSpecification& renderFbSpecs, const Core::FramebufferSpecification& deferredFbSpecs);
 		~Viewport();
 		virtual void OnImGuiRender() override;
 	public:
@@ -29,9 +30,14 @@ namespace Voxymore::Editor
 		void UpdateCamera(Core::TimeStep ts);
 		void DrawGizmos(const std::vector<Core::Ref<BasePanel>>& panels, const GizmoOperation gizmoOperation, const GizmoMode gizmoMode, float gizmoTranslationSnapValue, float gizmoRotationSnapValue, float gizmoScaleSnapValue);
 		//void OnMousePressed(Core::MouseButtonPressedEvent& e);
+		Core::Ref<Core::Framebuffer> GetRenderFramebuffer() const { return m_RenderFramebuffer; }
+		void BindRenderFramebuffer();
+		void UnbindRenderFramebuffer();
 
-		void BindFramebuffer();
-		void UnbindFramebuffer();
+		Core::Ref<Core::Framebuffer> GetDeferredFramebuffer() const { return m_DeferredFramebuffer; }
+		void BindDeferredFramebuffer();
+		void UnbindDeferredFramebuffer();
+
 		void PostRender(Core::Scene* currentScene);
 		void OnEvent(Core::Event& e);
 
@@ -53,7 +59,9 @@ namespace Voxymore::Editor
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		bool m_Visible = true;
-		Core::Ref<Core::Framebuffer> m_Framebuffer;
+		bool m_DebugDeferred = false;
+		Core::Ref<Core::Framebuffer> m_RenderFramebuffer;
+		Core::Ref<Core::Framebuffer> m_DeferredFramebuffer;
 		Core::EditorCamera m_EditorCamera;
 		Core::Entity m_HoveredEntity;
 

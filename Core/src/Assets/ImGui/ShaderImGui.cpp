@@ -12,14 +12,14 @@ namespace Voxymore::Core
 	{
 		bool changed = false;
 
-		std::string shaderTypeName = Utils::ShaderTypeToString(*shaderType);
+		std::string shaderTypeName = Utils::ShaderTypeToStringBeautify(*shaderType);
 
 		if(ImGui::BeginCombo("Shader Type", shaderTypeName.c_str()))
 		{
 			for (int i = 0; i <= ShaderTypeCount; ++i) {
 				auto type = (ShaderType)i;
 				const bool is_selected = type == (*shaderType);
-				if(ImGui::Selectable(Utils::ShaderTypeToString(type).c_str(), is_selected))
+				if(ImGui::Selectable(Utils::ShaderTypeToStringBeautify(type).c_str(), is_selected))
 				{
 					changed |= (*shaderType) != type;
 					(*shaderType) = type;
@@ -69,7 +69,7 @@ namespace Voxymore::Core
 		return changed;
 	}
 
-	bool ShaderImGui::OnShaderImGui(Ref<Asset> asset)
+	bool ShaderImGui::OnGraphicShaderImGui(Ref<Asset> asset)
 	{
 		if(asset->GetType() != Shader::GetStaticType()) return false;
 		Ref<Shader> shader = CastPtr<Shader>(asset);
@@ -80,13 +80,19 @@ namespace Voxymore::Core
 			shader->SetName(name);
 		}
 
+		bool isForward = shader->IsForward();
+		if (ImGui::Checkbox("Is Forward", &isForward)) {
+			changed = true;
+			shader->SetForward(isForward);
+		}
+
 		if(ImGui::CollapsingHeader("Sources")) {
 			bool shaderSourcesChanged = false;
-			std::array<ShaderSourceField, 7> src;
+			std::array<ShaderSourceField, 6> src;
 
 			std::vector<ShaderSourceField> sources = shader->GetSources();
 
-			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i) {
+			for (uint8_t i = 1; i < ShaderTypeCount; ++i) {
 				auto it = std::find_if(sources.begin(), sources.end(), [i](const ShaderSourceField& src) {return src.IsValid() && src.GetAsset()->Type == (ShaderType)i;});
 				if(it != sources.end()) src[i] = *it;
 				else src[i] = NullAssetHandle;
@@ -94,7 +100,7 @@ namespace Voxymore::Core
 
 
 			uint32_t num = 0;
-			for (uint8_t i = 1; i < ShaderTypeCount + 1; ++i)
+			for (uint8_t i = 1; i < ShaderTypeCount; ++i)
 			{
 				auto s = src[i];
 				if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify((ShaderType)i).c_str(), &s))
@@ -108,7 +114,7 @@ namespace Voxymore::Core
 
 			if(shaderSourcesChanged) {
 				sources.clear();
-				sources.reserve(ShaderTypeCount);
+				sources.reserve(ShaderTypeCount - 1);
 				sources.insert(sources.end(), src.begin() + 1, src.end());
 
 				changed = true;
@@ -122,7 +128,7 @@ namespace Voxymore::Core
 
 		if(ImGui::Button("Save")) {
 			auto assetManager = Project::GetActive()->GetEditorAssetManager();
-			ShaderSerializer::ExportEditorShader(assetManager->GetMetadata(shader->Handle), shader);
+			ShaderSerializer::ExportEditorGraphicShader(assetManager->GetMetadata(shader->Handle), shader);
 		}
 
 		return changed;
@@ -140,6 +146,14 @@ namespace Voxymore::Core
 			return true;
 		}
 
+		name = "Set as deferred shader##";
+		name += asset.Handle.string();
+		if(ImGui::MenuItem(name.c_str())) {
+			Project::SetDeferredShader(asset.Handle);
+			Project::SaveActive();
+			return true;
+		}
+
 		name = "Set as gizmo shader##";
 		name += asset.Handle.string();
 		if(ImGui::MenuItem(name.c_str())) {
@@ -148,6 +162,41 @@ namespace Voxymore::Core
 			return true;
 		}
 		return false;
+	}
+
+
+	bool ShaderImGui::OnComputeShaderImGui(Ref<Asset> asset)
+	{
+		if(asset->GetType() != ComputeShader::GetStaticType()) return false;
+		Ref<ComputeShader> shader = CastPtr<ComputeShader>(asset);
+		bool changed = false;
+		std::string name = shader->GetName();
+
+		if(ImGuiLib::InputText("Name", &name)) {
+			changed = true;
+			shader->SetName(name);
+		}
+
+		AssetField<ShaderSource> shaderSource = shader->GetSource();
+		if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify(ShaderType::COMPUTE_SHADER).c_str(), &shaderSource))
+		{
+			if(!shaderSource || shaderSource.GetAsset()->Type == ShaderType::COMPUTE_SHADER)
+			{
+				changed = true;
+				shader->SetSource(shaderSource);
+			}
+		}
+
+		if(ImGui::Button("Reload")) {
+			shader->Reload();
+		}
+
+		if(ImGui::Button("Save")) {
+			auto assetManager = Project::GetActive()->GetEditorAssetManager();
+			ShaderSerializer::ExportEditorComputeShader(assetManager->GetMetadata(shader->Handle), shader);
+		}
+
+		return changed;
 	}
 } // namespace Voxymore::Core
 

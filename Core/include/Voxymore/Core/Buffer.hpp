@@ -13,14 +13,18 @@ namespace Voxymore::Core
 	struct Buffer {
 		inline Buffer() = default;
 		inline ~Buffer() = default;
+		inline Buffer(const Buffer&) = default;
+		inline Buffer& operator=(const Buffer&) = default;
 		Buffer(void*, uint64_t size);
-		Buffer(uint64_t size);
+		explicit Buffer(uint64_t size);
 
 		static Buffer Copy(const Buffer& other);
 
 		void Allocate(uint64_t size);
 		void Release();
 		void Clear();
+
+		void swap(Buffer& other);
 
 		template<typename T>
 		T* As()
@@ -75,12 +79,22 @@ namespace Voxymore::Core
 		// Will take and clear the buffer given in parameters.
 		ScopeBuffer(Buffer& buffer);
 
+		ScopeBuffer(const ScopeBuffer& other) = delete;
+		ScopeBuffer& operator=(const ScopeBuffer& other) = delete;
+
+		ScopeBuffer(ScopeBuffer&& other) noexcept;
+		ScopeBuffer& operator=(ScopeBuffer&& other) noexcept;
+
+		void swap(ScopeBuffer& other);
+
 		// Will take and clear the buffer given in parameters.
 		void Replace(Buffer&& buff);
 		// Will take and clear the buffer given in parameters.
 		void Replace(Buffer& buff);
 
 		void Replace(void* ptr, uint64_t size);
+
+		[[nodiscard]] ScopeBuffer Duplicate() const;
 
 		template<typename T>
 		T* As()
@@ -93,6 +107,11 @@ namespace Voxymore::Core
 		{
 			return buffer.As<T>();
 		}
+
+		void* GetPtr() {return buffer.Data;}
+		const void* GetPtr() const {return buffer.Data;}
+
+		uint64_t GetSize() const {return buffer.Size;}
 
 		~ScopeBuffer();
 	private:

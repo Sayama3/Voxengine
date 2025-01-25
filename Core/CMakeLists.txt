@@ -180,9 +180,73 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Physics/PhysicsTypeHelpers.hpp
         src/Debug/Gizmos.cpp
         include/Voxymore/Debug/Gizmos.hpp
+        src/Renderer/Pipeline/Pipeline.cpp
+        include/Voxymore/Renderer/Pipeline/Pipeline.hpp
+        src/Renderer/Pipeline/Action.cpp
+        include/Voxymore/Renderer/Pipeline/Action.hpp
+        include/Voxymore/Serializer/Data.cpp
+        include/Voxymore/Serializer/Data.hpp
+        src/Terrain/Terrain.cpp
+        include/Voxymore/Terrain/Terrain.hpp
+        include/Voxymore/Assets/AssetField.impl.hpp
+        include/Voxymore/Assets/AssetField.decl.hpp
+        include/Voxymore/Assets/AssetField.forward.hpp
+        include/Voxymore/Assets/AssetHandle.hpp
+        src/Assets/AssetHandle.cpp
+        src/Components/ProcLightComponents.cpp
+        include/Voxymore/Components/ProcLightComponents.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
+
+target_precompile_headers(${LIBRARY_TARGET_NAME} PUBLIC
+        # Multithreading headers
+        <thread>
+        <atomic>
+        <future>
+        <condition_variable>
+        <mutex>
+        <shared_mutex>
+        <latch>
+        <barrier>
+
+        # Utility stuff
+        <functional>
+        <utility>
+        <algorithm>
+        <memory>
+        <source_location>
+        <chrono>
+        <coroutine>
+        <bitset>
+        <execution>
+
+        # Exception related stuff
+        <exception>
+        <stdexcept>
+
+        # String & IO manipulation
+        <filesystem>
+        <string>
+        <string_view>
+
+        # Containers
+        <array>
+        <vector>
+        <unordered_set>
+        <set>
+        <unordered_map>
+        <map>
+        <any>
+        <variant>
+        <optional>
+        <tuple>
+
+        # C-Types Helpers
+        <cstdint>
+        <cstring>
+        <cmath>
+)
 
 if(CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_DEBUG)
@@ -210,10 +274,9 @@ add_subdirectory(platform)
 set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
         VERSION       ${${PROJECT_NAME}_VERSION}
         PUBLIC_HEADER "include/Voxymore/Voxymore.hpp"
-        PUBLIC cxx_std_20)
+)
 
 set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES ENABLE_EXPORTS True)
-
 
 target_include_directories(${LIBRARY_TARGET_NAME} PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"

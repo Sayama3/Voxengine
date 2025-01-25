@@ -156,14 +156,14 @@ namespace Voxymore::Core {
 
     enum class ShaderType : uint8_t {
         None = 0,
-        COMPUTE_SHADER,
         VERTEX_SHADER,
         TESS_CONTROL_SHADER,
         TESS_EVALUATION_SHADER,
         GEOMETRY_SHADER,
         FRAGMENT_SHADER,
+		COMPUTE_SHADER,
     };
-    static const int ShaderTypeCount = 6;
+    inline static constexpr int ShaderTypeCount = 6;
 
 
 	namespace Utils {
@@ -283,10 +283,37 @@ namespace Voxymore::Core {
 		virtual std::vector<ShaderSourceField> GetSources() const = 0;
 		virtual void SetSources(const std::vector<ShaderSourceField>& sources) = 0;
 
+    	virtual bool IsForward() const = 0;
+    	virtual void SetForward(bool isForward) = 0;
+
+    	[[deprecated]] virtual void SetInt(const std::string& name, int value) = 0;
+
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources);
 		static Ref<Shader> Create(const std::string& name, const std::vector<ShaderSourceField>& sources);
     };
 
+	class ComputeShader : public Asset
+	{
+	public:
+		VXM_IMPLEMENT_ASSET(AssetType::ComputeShader);
+		virtual ~ComputeShader() = default;
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+		virtual void Reload() = 0;
+	public:
+		virtual std::string GetName() const = 0;
+		virtual void SetName(const std::string& name) = 0;
+	public:
+		virtual void SetSource(ShaderSourceField source) = 0;
+		virtual ShaderSourceField GetSource() const = 0;
+	public:
+		virtual void Dispatch(uint32_t groupX, uint32_t groupY, uint32_t groupZ) = 0;
+	public:
+		static Ref<ComputeShader> Create(const std::string& name, ShaderSourceField source);
+	};
+
 	using ShaderField = AssetField<Shader>;
+	using ComputeShaderField = AssetField<ComputeShader>;
 
 } // Core

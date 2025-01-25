@@ -35,12 +35,12 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
     - name: Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/vcpkg
@@ -49,7 +49,7 @@ jobs:
           ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
           ${{ env.LOCALAPPDATA }}\vcpkg\archives
           ${{ env.APPDATA }}\vcpkg\archives
-        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
+        key: ${{ runner.os }}-${{ env.BUILD_TYPE }}-${{ matrix.compiler }}-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('./vcpkg.json')}}
         restore-keys: |
           ${{ runner.os }}-${{ env.BUILD_TYPE }}-
 
@@ -72,7 +72,7 @@ jobs:
 
     - name: Install OpenGL on Ubuntu
       if: ${{ contains(matrix.os, 'ubuntu') }}
-      run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx freeglut3-dev
+      run: sudo apt-get update && sudo apt-get install -y libgl1 libglx-mesa0 freeglut3-dev
 
 # Setup macos
     - uses: maxim-lobanov/setup-xcode@v1

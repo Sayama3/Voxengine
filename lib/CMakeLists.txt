@@ -31,11 +31,12 @@ add_subdirectory(hash-library)
 
 set(CROSS_PLATFORM_DETERMINISTIC ON)
 set(ENABLE_ALL_WARNINGS OFF)
+set(INTERPROCEDURAL_OPTIMIZATION OFF)
 
 FetchContent_Declare(
         jolt
         GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics.git"
-        GIT_TAG "v5.0.0"
+        GIT_TAG "v5.2.0"
         SOURCE_SUBDIR "Build"
 )
 
@@ -46,7 +47,7 @@ set(TRACY_ON_DEMAND ON)
 FetchContent_Declare(
         Tracy
         GIT_REPOSITORY "https://github.com/wolfpld/tracy.git"
-        GIT_TAG "v0.11.0"
+        GIT_TAG "v0.11.1"
         GIT_SHALLOW TRUE
         GIT_PROGRESS TRUE
 )
