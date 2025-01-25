@@ -177,6 +177,15 @@ namespace Voxymore::Core
 		return lt.source == rt.source && std::filesystem::equivalent(lt.GetFullPath(), rt.GetFullPath());
 	}
 
+	Path::Path(Path&& other) noexcept {
+		swap(other);
+	}
+
+	Path& Path::operator=(Path&& other) noexcept {
+		swap(other);
+		return *this;
+	}
+
 	std::filesystem::path Path::GetFullPath() const
 	{
 		VXM_PROFILE_FUNCTION();
@@ -212,6 +221,12 @@ namespace Voxymore::Core
 		std::filesystem::path p = GetFileSourceName(source) / path;
 		return p.string();
 	}
+
+	void Path::swap(Path &other) noexcept {
+		std::swap(path, other.path);
+		std::swap(source, other.source);
+	}
+
 	Path Path::GetCachePath() const
 	{
 		VXM_PROFILE_FUNCTION();

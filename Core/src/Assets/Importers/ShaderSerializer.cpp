@@ -43,14 +43,11 @@ namespace Voxymore::Core
 			if (node)
 			{
 				type = Utils::ShaderTypeFromString(node.as<std::string>());
-				source = CreateRef<ShaderSource>();
-				source->Type = type;
 			}
 		}
 
 		if(!source)
 		{
-			source = CreateRef<ShaderSource>();
 			if (extension == ".compute" || extension == ".comp" || extension == ".cs") {
 				type = ShaderType::COMPUTE_SHADER;
 			}
@@ -69,10 +66,8 @@ namespace Voxymore::Core
 			else if (extension == ".frag" || extension == ".fs" || extension == ".pixel" || extension == ".ps") {
 				type = ShaderType::FRAGMENT_SHADER;
 			}
-			source->Type = type;
 		}
-
-		source->Source = FileSystem::ReadFileAsString(metadata.FilePath);
+		source = CreateRef<FileShaderSource>(type, metadata.FilePath);
 		return source;
 	}
 
@@ -89,7 +84,7 @@ namespace Voxymore::Core
 			out << KEYVAL("Type", AssetTypeToString(AssetType::ShaderSource));
 			out << KEYVAL("ShaderSource", YAML::BeginMap);
 			{
-				out << KEYVAL("ShaderType", Utils::ShaderTypeToString(source->Type));
+				out << KEYVAL("ShaderType", Utils::ShaderTypeToString(source->GetShaderType()));
 			}
 			out << YAML::EndMap;
 		}
@@ -199,8 +194,8 @@ namespace Voxymore::Core
 		YAML::Node node = root["ComputeShader"];
 		if(!node) return nullptr;
 
-		auto name = node["Name"].as<std::string>("NoName");
-		auto source = node["Source"].as<ShaderSourceField>(ShaderSourceField{});
+		const auto name = node["Name"].as<std::string>("NoName");
+		const auto source = node["Source"].as<ShaderSourceField>(ShaderSourceField{});
 
 		auto asset = ComputeShader::Create(name, source);
 		return asset;

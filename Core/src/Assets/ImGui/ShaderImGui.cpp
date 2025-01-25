@@ -38,6 +38,65 @@ namespace Voxymore::Core
 	{
 		if(asset->GetType() != ShaderSource::GetStaticType()) return false;
 		Ref<ShaderSource> shaderSource = CastPtr<ShaderSource>(asset);
+
+		if (auto fileSource = DynamicCastPtr<FileShaderSource>(shaderSource)) {
+			return OnFileShaderSourceImGui(fileSource);
+		}
+
+		if (auto memorySource = DynamicCastPtr<MemoryShaderSource>(shaderSource)) {
+			return OnMemoryShaderSourceImGui(memorySource);
+		}
+
+		VXM_CORE_ASSERT(false, "The Shader Source '{}' has no handled types.", shaderSource->Handle.string());
+		return false;
+	}
+
+	bool ShaderImGui::OnFileShaderSourceImGui(const Ref<FileShaderSource>& shaderSource) {
+		bool changed = false;
+
+		if (shaderSource->HasChanged()) {
+			ImGui::TextColored({0.9, 0.1,0.2,1}, "The shader source file has changed.");
+		}
+
+		if(ShaderTypeCombo("Shader Type", &shaderSource->Type))
+		{
+			ShaderSerializer::ExportEditorShaderSource(Project::GetActive()->GetEditorAssetManager()->GetMetadata(shaderSource->Handle), shaderSource);
+		}
+
+		if(ImGui::CollapsingHeader("Sources"))
+		{
+			if (shaderSource->HasChanged()) {
+				shaderSource->TryReloadSource();
+			}
+
+			if (!shaderSource->SourceRef) {
+				shaderSource->SourceRef = CreateRef<std::string>();
+			}
+
+			changed |= ImGuiLib::InputTextMultiline("##ShaderSource", shaderSource->SourceRef.get(), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+		}
+
+		ImGui::BeginDisabled(!FileSystem::Exist(shaderSource->SourcePath));
+
+		if (ImGui::Button("Save")) {
+			FileSystem::Write(shaderSource->SourcePath, *shaderSource->SourceRef);
+			shaderSource->SourcePathTime = std::filesystem::last_write_time(shaderSource->SourcePath.GetFullPath());
+			//TODO?: Auto Reload ?
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Reload")) {
+			shaderSource->ForceReloadSource();
+			//TODO?: Auto Reload ?
+		}
+		ImGui::EndDisabled();
+
+		return changed;
+	}
+
+	bool ShaderImGui::OnMemoryShaderSourceImGui(const Ref<MemoryShaderSource>& shaderSource) {
+
 		bool changed = false;
 
 		if(ShaderTypeCombo("Shader Type", &shaderSource->Type))
@@ -47,23 +106,7 @@ namespace Voxymore::Core
 
 		if(ImGui::CollapsingHeader("Sources"))
 		{
-			changed |= ImGuiLib::InputTextMultiline("##ShaderSource", &(shaderSource->Source), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
-		}
-
-		if (ImGui::Button("Save")) {
-			auto assetManager = Project::GetActive()->GetEditorAssetManager();
-			auto path = assetManager->GetFilePath(shaderSource->Handle);
-			FileSystem::Write(path, shaderSource->Source.c_str(), shaderSource->Source.size());
-			//TODO: Auto Reload ?
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Reload")) {
-			auto assetManager = Project::GetActive()->GetEditorAssetManager();
-			auto path = assetManager->GetFilePath(shaderSource->Handle);
-			shaderSource->Source = FileSystem::ReadFileAsString(path);
-			//TODO: Auto Reload ?
+			changed |= ImGuiLib::InputTextMultiline("##ShaderSource", shaderSource->SourceRef.get(), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
 		}
 
 		return changed;
@@ -93,7 +136,7 @@ namespace Voxymore::Core
 			std::vector<ShaderSourceField> sources = shader->GetSources();
 
 			for (uint8_t i = 1; i < ShaderTypeCount; ++i) {
-				auto it = std::find_if(sources.begin(), sources.end(), [i](const ShaderSourceField& src) {return src.IsValid() && src.GetAsset()->Type == (ShaderType)i;});
+				auto it = std::find_if(sources.begin(), sources.end(), [i](const ShaderSourceField& src) {return src.IsValid() && src.GetAsset()->GetShaderType() == (ShaderType)i;});
 				if(it != sources.end()) src[i] = *it;
 				else src[i] = NullAssetHandle;
 			}
@@ -105,7 +148,7 @@ namespace Voxymore::Core
 				auto s = src[i];
 				if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify((ShaderType)i).c_str(), &s))
 				{
-					if(!s || s.GetAsset()->Type == (ShaderType)i) {
+					if(!s || s.GetAsset()->GetShaderType() == (ShaderType)i) {
 						src[i] = s;
 						shaderSourcesChanged = true;
 					}
@@ -180,7 +223,7 @@ namespace Voxymore::Core
 		AssetField<ShaderSource> shaderSource = shader->GetSource();
 		if(ImGuiLib::DrawAssetField(Utils::ShaderTypeToStringBeautify(ShaderType::COMPUTE_SHADER).c_str(), &shaderSource))
 		{
-			if(!shaderSource || shaderSource.GetAsset()->Type == ShaderType::COMPUTE_SHADER)
+			if(!shaderSource || shaderSource.GetAsset()->GetShaderType() == ShaderType::COMPUTE_SHADER)
 			{
 				changed = true;
 				shader->SetSource(shaderSource);

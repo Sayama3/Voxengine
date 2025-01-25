@@ -5,6 +5,7 @@
 #include "OpenGLShader.hpp"
 #include "Voxymore/Core/Core.hpp"
 #include "Voxymore/Core/Logger.hpp"
+#include "Voxymore/Core/SmartPointers.hpp"
 #include <filesystem>
 #include <glad/glad.h>
 #include <regex>
@@ -377,6 +378,7 @@ namespace Voxymore::Core
 	void OpenGLShader::swap(OpenGLShader& other)
 	{
 		std::swap(m_Sources, other.m_Sources);
+		std::swap(m_TimeSource, other.m_TimeSource);
 		std::swap(m_VulkanSPIRV, other.m_VulkanSPIRV);
 		std::swap(m_OpenGLSPIRV, other.m_OpenGLSPIRV);
 		std::swap(m_OpenGLSourceCode, other.m_OpenGLSourceCode);
@@ -439,14 +441,22 @@ namespace Voxymore::Core
 		}
 
 		auto &shaderData = m_VulkanSPIRV;
-		for (auto &&[stage, source]: shaders) {
-			if(!source) continue;
+		for (auto &&[stage, sourceAssetField]: shaders) {
+			if(!sourceAssetField) continue;
+
 			// Fetch the filename we can give.
-			std::filesystem::path sourcePath = Project::GetActive()->GetEditorAssetManager()->GetFilePath(source.GetHandle());
-			std::string filename = sourcePath.filename().string();
+			std::string filename;
+			Ref<ShaderSource> shaderSource = sourceAssetField.GetAsset();
+
+			if (const Ref<FileShaderSource> fileSource = DynamicCastPtr<FileShaderSource>(shaderSource)) {
+				filename = fileSource->SourcePath.path.filename().string();
+				m_TimeSource[stage] = std::filesystem::last_write_time(fileSource->SourcePath);
+			} else {
+				filename = GetName() + Utils::ShaderTypeToFileExtension(stage);
+			}
 
 			// Fetch the hash of the source.
-			std::string sourceStr = source.GetAsset()->Source;
+			const std::string& sourceStr = *shaderSource->GetString();
 			std::string sourceHash = Utils::HashSrc(sourceStr);
 
 			Path hashPath = GetCachePath(stage, Target::HashVulkan);
@@ -612,6 +622,10 @@ namespace Voxymore::Core
 		return m_Sources;
 	}
 
+	const std::unordered_map<ShaderType, std::filesystem::file_time_type> & OpenGLShader::GetSourcesTimes() const {
+		return m_TimeSource;
+	}
+
 	OpenGLGraphicsShader::OpenGLGraphicsShader(const std::string& name, const std::unordered_map<ShaderType, ShaderSourceField>& sources)
 	{
 		m_OpenGLShader.SetName(name);
@@ -645,7 +659,7 @@ namespace Voxymore::Core
 		for(auto& src : sources)
 		{
 			if(src.HasHandle()) {
-				m_OpenGLShader.AddSource(src.GetAsset()->Type, src);
+				m_OpenGLShader.AddSource(src.GetAsset()->GetShaderType(), src);
 			}
 		}
 
@@ -672,7 +686,7 @@ namespace Voxymore::Core
 	OpenGLComputeShader::OpenGLComputeShader(const std::string &name, ShaderSourceField source)
 	{
 		VXM_PROFILE_FUNCTION();
-		VXM_CORE_ASSERT(!source || source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
+		VXM_CORE_ASSERT(!source || source.GetAsset()->GetShaderType() == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
 		m_OpenGLShader.SetName(name);
 		m_OpenGLShader.AddSource(ShaderType::COMPUTE_SHADER, source);
 		m_OpenGLShader.Reload();
@@ -682,6 +696,30 @@ namespace Voxymore::Core
 	{
 		VXM_PROFILE_FUNCTION();
 		m_OpenGLShader.Reload();
+	}
+
+	void OpenGLGraphicsShader::ReloadIfAnyChanges() {
+		bool hasChanged = false;
+		for (auto&&[stage, time] : m_OpenGLShader.GetSourcesTimes()) {
+			if (!m_OpenGLShader.GetSources().contains(stage)) continue;
+			auto assetField = m_OpenGLShader.GetSources().at(stage);
+			if (!assetField) continue;
+			const Ref<FileShaderSource> source = DynamicCastPtr<FileShaderSource>(assetField.GetAsset());
+			if (source) {
+				if (source->HasChanged()) {
+					source->TryReloadSource();
+				}
+
+				if (source->SourcePathTime > time) {
+					hasChanged = true;
+					break;
+				}
+			}
+		}
+
+		if (hasChanged) {
+			Reload();
+		}
 	}
 
 	std::string OpenGLGraphicsShader::GetName() const
@@ -706,6 +744,31 @@ namespace Voxymore::Core
 	{
 		m_OpenGLShader.Reload();
 	}
+
+	void OpenGLComputeShader::ReloadIfAnyChanges() {
+		bool hasChanged = false;
+		for (auto&&[stage, time] : m_OpenGLShader.GetSourcesTimes()) {
+			if (!m_OpenGLShader.GetSources().contains(stage)) continue;
+			auto assetField = m_OpenGLShader.GetSources().at(stage);
+			if (!assetField) continue;
+			const Ref<FileShaderSource> source = DynamicCastPtr<FileShaderSource>(assetField.GetAsset());
+			if (source) {
+				if (source->HasChanged()) {
+					source->TryReloadSource();
+				}
+
+				if (source->SourcePathTime > time) {
+					hasChanged = true;
+					break;
+				}
+			}
+		}
+
+		if (hasChanged) {
+			Reload();
+		}
+	}
+
 	std::string OpenGLComputeShader::GetName() const
 	{
 		return m_OpenGLShader.GetName();
@@ -724,7 +787,7 @@ namespace Voxymore::Core
 	}
 	void OpenGLComputeShader::SetSource(ShaderSourceField source)
 	{
-		VXM_CORE_ASSERT(source && source.GetAsset()->Type == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
+		VXM_CORE_ASSERT(source && source.GetAsset()->GetShaderType() == ShaderType::COMPUTE_SHADER, "The Shader Source is not a valid Compute Shader asset.");
 		m_OpenGLShader.AddSource(ShaderType::COMPUTE_SHADER, source);
 	}
 

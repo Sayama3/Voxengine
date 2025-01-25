@@ -35,4 +35,10 @@ namespace Voxymore::Core {
 		return std::static_pointer_cast<TTarget>(ptr);
 #endif
 	}
+
+	template<typename TTarget, typename TBasePtr>
+	[[nodiscard]] inline Ref<TTarget> DynamicCastPtr(TBasePtr ptr)
+	{
+		return std::dynamic_pointer_cast<TTarget>(ptr);
+	}
 }

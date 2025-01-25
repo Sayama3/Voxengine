@@ -110,11 +110,9 @@ namespace Voxymore::Core
 
 		Ref<Asset> asset = nullptr;
 
-		auto it = std::find_if(m_AssetRegistry.begin(), m_AssetRegistry.end(), [&assetPath](std::pair<UUID, AssetMetadata> assets) {
+		const auto it = std::find_if(m_AssetRegistry.begin(), m_AssetRegistry.end(), [&assetPath](const std::pair<UUID, AssetMetadata>& assets) {
 		  return assets.second.FilePath.equivalent(assetPath);
 		});
-
-		AssetMetadata metadata;
 
 		if(it == m_AssetRegistry.end()) {
 			asset = ImportAsset(assetPath);
@@ -128,12 +126,12 @@ namespace Voxymore::Core
 		return asset;
 	}
 
-	Path EditorAssetManager::GetFilePath(AssetHandle handle) const
+	Path EditorAssetManager::GetFilePath(const AssetHandle handle) const
 	{
 		return GetMetadata(handle).FilePath;
 	}
 
-	const AssetMetadata& EditorAssetManager::GetMetadata(AssetHandle handle) const
+	const AssetMetadata& EditorAssetManager::GetMetadata(const AssetHandle handle) const
 	{
 		VXM_PROFILE_FUNCTION();
 		static AssetMetadata s_NullMetadata;

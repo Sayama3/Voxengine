@@ -64,8 +64,12 @@ namespace Voxymore::Core
 	{
 		Path() = default;
 		inline Path(FileSource source, const std::filesystem::path& path) : source(source), path(path) {}
+
 		Path(const Path&) = default;
-		Path& operator=(const Path& t) = default;
+		Path& operator=(const Path&) = default;
+
+		Path(Path&& other) noexcept;
+		Path& operator=(Path&& other) noexcept;
 
 		std::filesystem::path path;
 		FileSource source = FileSource::None;
@@ -74,10 +78,12 @@ namespace Voxymore::Core
 		[[deprecated("Replaced by 'id()' which has a better consistency.")]]
 		inline std::string GetPathId() const {return id();}
 
-		Path GetCachePath() const;
-		inline bool empty() const {return path.empty() || source == FileSource::None;}
-		std::string string() const;
-		std::string id() const;
+		[[nodiscard]] Path GetCachePath() const;
+		[[nodiscard]] inline bool empty() const {return path.empty() || source == FileSource::None;}
+		[[nodiscard]] std::string string() const;
+		[[nodiscard]] std::string id() const;
+
+		void swap(Path& other) noexcept;
 
 		operator std::filesystem::path() const;
 		bool operator==(const Path& rhs) const;

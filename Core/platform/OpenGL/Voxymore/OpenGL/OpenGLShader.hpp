@@ -41,6 +41,7 @@ namespace Voxymore::Core {
 		void AddSource(ShaderType type, ShaderSourceField shaderSource);
 		void RemoveSource(ShaderType type);
 		[[nodiscard]] const std::unordered_map<ShaderType, ShaderSourceField>& GetSources() const;
+		[[nodiscard]] const std::unordered_map<ShaderType, std::filesystem::file_time_type>& GetSourcesTimes() const;
 		void ClearSources();
 	private:
 		void CompileOrGetVulkanBinaries();
@@ -53,6 +54,7 @@ namespace Voxymore::Core {
 		[[nodiscard]] uint32_t GetRendererID() const {return m_RendererID;}
 	private:
 		std::unordered_map<ShaderType, ShaderSourceField> m_Sources;
+		std::unordered_map<ShaderType, std::filesystem::file_time_type> m_TimeSource;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_OpenGLSPIRV;
 		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
@@ -75,6 +77,7 @@ namespace Voxymore::Core {
         virtual void Bind() const override;
         virtual void Unbind() const override;
         virtual void Reload() override;
+        virtual void ReloadIfAnyChanges() override;
         inline virtual std::string GetName() const override;
 		inline virtual void SetName(const std::string& name) override;
 		virtual std::vector<ShaderSourceField> GetSources() const override;
@@ -99,6 +102,7 @@ namespace Voxymore::Core {
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 		virtual void Reload() override;
+        virtual void ReloadIfAnyChanges() override;
 	public:
 		inline virtual std::string GetName() const override;
 		inline virtual void SetName(const std::string& name) override;

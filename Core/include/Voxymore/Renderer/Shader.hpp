@@ -23,6 +23,7 @@ namespace Voxymore::Core {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 		virtual void Reload() = 0;
+		virtual void ReloadIfAnyChanges() = 0;
 
         virtual std::string GetName() const = 0;
         virtual void SetName(const std::string& name) = 0;
@@ -48,6 +49,7 @@ namespace Voxymore::Core {
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 		virtual void Reload() = 0;
+		virtual void ReloadIfAnyChanges() = 0;
 	public:
 		virtual std::string GetName() const = 0;
 		virtual void SetName(const std::string& name) = 0;

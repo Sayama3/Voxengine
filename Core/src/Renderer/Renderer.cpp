@@ -209,7 +209,9 @@ namespace Voxymore::Core
 		VXM_CORE_ASSERT(s_DeferredRenderShader, "The Deferred Render Shader is invalid.");
 		if (!s_DeferredRenderShader) return;
 
-		s_DeferredRenderShader.GetAsset()->Bind();
+		auto shaderAsset = s_DeferredRenderShader.GetAsset();
+		shaderAsset->ReloadIfAnyChanges();
+		shaderAsset->Bind();
 
 		RenderCommand::SetupDeferredRender(
 			s_DeferredFramebuffer->GetColorAttachmentRendererID(0),
@@ -438,7 +440,9 @@ namespace Voxymore::Core
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
 			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
+				auto shaderAsset = shader.GetAsset();
+				shaderAsset->ReloadIfAnyChanges();
+				shaderAsset->Bind();
 				s_BindedShader = shader;
 			}
 		}
@@ -466,7 +470,9 @@ namespace Voxymore::Core
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
 			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
+				auto shaderAsset = shader.GetAsset();
+				shaderAsset->ReloadIfAnyChanges();
+				shaderAsset->Bind();
 				s_BindedShader = shader;
 			}
 		}
@@ -490,7 +496,9 @@ namespace Voxymore::Core
 			ShaderField shader = matPtr->GetShaderHandle();
 			VXM_CORE_CHECK_ERROR(shader, "The shader ID({}) from the material '{}' is not valid.", matPtr->GetMaterialName(), shader.GetHandle().string());
 			if (shader != s_BindedShader && shader) {
-				shader.GetAsset()->Bind();
+				auto shaderAsset = shader.GetAsset();
+				shaderAsset->ReloadIfAnyChanges();
+				shaderAsset->Bind();
 				s_BindedShader = shader;
 			}
 		}
@@ -612,7 +620,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+	void Renderer::OnWindowResize(const uint32_t width, const uint32_t height)
 	{
 		VXM_PROFILE_FUNCTION();
 		RenderCommand::SetViewport(0,0,width,height);

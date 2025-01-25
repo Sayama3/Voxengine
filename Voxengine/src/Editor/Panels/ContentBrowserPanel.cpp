@@ -329,9 +329,10 @@ namespace Voxymore::Editor
 				}
 
 				if (!FileSystem::Exist(newShaderSourcePath)) {
-					Ref<ShaderSource> shaderSource = assetManager->CreateAsset<ShaderSource>(newShaderSourcePath, s_Type, c_DefaultShader);
+					Ref<ShaderSource> shaderSource = assetManager->CreateAsset<FileShaderSource>(newShaderSourcePath, s_Type, newShaderSourcePath, c_DefaultShader);
 					if(shaderSource) {
-						FileSystem::Write(newShaderSourcePath, shaderSource->Source.c_str(), shaderSource->Source.size());
+						auto strRef = shaderSource->GetString();
+						FileSystem::Write(newShaderSourcePath, strRef->c_str(), strRef->size());
 						ShaderSerializer::ExportEditorShaderSource(assetManager->GetMetadata(shaderSource->Handle), shaderSource);
 					}
 				}

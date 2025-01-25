@@ -24,6 +24,9 @@ namespace Voxymore::Core
 		static bool OnComputeShaderImGui(Ref<Asset> asset);
 
 		static bool OnMenuShaderImGui(AssetMetadata asset);
+	private:
+		static bool OnFileShaderSourceImGui(const Ref<FileShaderSource>& shaderSource);
+		static bool OnMemoryShaderSourceImGui(const Ref<MemoryShaderSource>& shaderSource);
 	};
 
 } // namespace Voxymore::Core
