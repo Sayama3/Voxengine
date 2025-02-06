@@ -270,6 +270,9 @@ else()
     target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_FLOAT)
 endif()
 
+if(VXM_USE_SIMPLE_FUNCTION)
+    target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_USE_SIMPLE_FUNCTION=1)
+endif()
 target_compile_definitions(${LIBRARY_TARGET_NAME} PUBLIC VXM_TERRAIN=1)
 
 add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})

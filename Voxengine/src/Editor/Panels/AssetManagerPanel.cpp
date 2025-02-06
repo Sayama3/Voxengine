@@ -60,10 +60,6 @@ namespace Voxymore::Editor
 	}
 	void AssetManagerPanel::BeginPanel()
 	{
-		static bool is_open = true;
-		if(is_open) {
-			ImGui::ShowDemoWindow(&is_open);
-		}
 		BasePanel::BeginPanel();
 	}
 }

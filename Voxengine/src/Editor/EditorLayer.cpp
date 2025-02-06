@@ -9,6 +9,8 @@
 #include "Voxymore/Utils/Platform.hpp"
 #include <ImGuizmo.h>
 
+#include "Voxymore/Editor/Panels/LogsPanel.hpp"
+
 
 namespace Voxymore::Editor {
     EditorLayer::EditorLayer() : Layer("EditorLayer")
@@ -67,6 +69,7 @@ namespace Voxymore::Editor {
             CreateNewScene();
         }
 
+		m_PanelCreator.insert({LogsPanel::StaticGetTypeID(), PanelMetadata(LogsPanel::StaticGetName(), LogsPanel::StaticGetTypeID(), &LogsPanel::CreatePanel)});
 		m_PanelCreator.insert({PropertyPanel::StaticGetTypeID(), PanelMetadata(PropertyPanel::StaticGetName(), PropertyPanel::StaticGetTypeID(), &PropertyPanel::CreatePanel)});
 //		m_PanelCreator.insert({ShaderPanel::StaticGetTypeID(), PanelMetadata(ShaderPanel::StaticGetName(), ShaderPanel::StaticGetTypeID(), &ShaderPanel::CreatePanel)});
 		m_PanelCreator.insert({SceneHierarchyPanel::StaticGetTypeID(), PanelMetadata(SceneHierarchyPanel::StaticGetName(), SceneHierarchyPanel::StaticGetTypeID(), &SceneHierarchyPanel::CreatePanel)});

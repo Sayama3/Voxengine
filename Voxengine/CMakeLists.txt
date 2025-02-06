@@ -27,6 +27,8 @@ add_executable(Voxengine
         src/Editor/Panels/AssetManagerPanel.cpp
         include/Voxymore/Editor/Panels/AssetManagerPanel.hpp
         src/Editor/Panels/DefaultShaders.hpp
+        src/Editor/Panels/LogsPanel.cpp
+        include/Voxymore/Editor/Panels/LogsPanel.hpp
 )
 
 target_compile_features(Voxengine PUBLIC cxx_std_20)
