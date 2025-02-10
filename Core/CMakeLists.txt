@@ -198,6 +198,8 @@ set(SRC_FILES src/Core/Application.cpp
         include/Voxymore/Renderer/ShaderDefines.hpp
         include/Voxymore/Renderer/ShaderDataType.hpp
         include/Voxymore/Renderer/ShaderType.hpp
+        src/Terrain/Terrain.cpp
+        include/Voxymore/Terrain/Terrain.hpp
 )
 
 add_library(${LIBRARY_TARGET_NAME} STATIC ${SRC_FILES})
