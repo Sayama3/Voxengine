@@ -26,7 +26,9 @@ namespace Voxymore::Core {
         Terrain& operator=(const Terrain&) = delete;
     public:
         static void Initialize();
-        static void Destroy();
+        static void Update();
+        static void RenderForward();
+        static void Shutdown();
     private:
         inline static Ref<SSBO> s_SSBO = nullptr;
         inline static Ref<Shader> s_RenderShader = nullptr;

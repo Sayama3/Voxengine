@@ -10,7 +10,13 @@ namespace Voxymore::Core {
         s_SSBO = SSBO::Create(VoxelCountInChunk * sizeof(Voxel), SSBO::DynamicDraw);
     }
 
-    void Terrain::Destroy() {
+    void Terrain::Update() {
+    }
+
+    void Terrain::RenderForward() {
+    }
+
+    void Terrain::Shutdown() {
         s_SSBO.reset();
         s_RenderShader.reset();
         s_ComputeShader.reset();

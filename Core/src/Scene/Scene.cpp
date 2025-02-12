@@ -42,6 +42,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 
+#include "Voxymore/Terrain/Terrain.hpp"
 
 
 namespace Voxymore::Core
@@ -218,6 +219,7 @@ namespace Voxymore::Core
 		}
 
 		UpdatePhysicsState();
+		Terrain::Update();
 
 		if(doRendering) {
 			VXM_ASSERT(camera, "Camera cannot be null if we do the Editor Rendering.");
@@ -294,6 +296,8 @@ namespace Voxymore::Core
 
 		UpdatePhysicsState();
 		UpdatePhysics(ts);
+
+		Terrain::Update();
 
 		if(doRendering) {
 			RenderRuntime(ts);
@@ -387,6 +391,8 @@ namespace Voxymore::Core
 		Renderer::EndDeferredRendering();
 
 		Renderer::BeginForwardRendering();
+
+		Terrain::RenderForward();
 
 		// Draw Physics
 		if(JPH::DebugRenderer::sInstance == nullptr) {
