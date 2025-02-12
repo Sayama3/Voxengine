@@ -10,7 +10,7 @@ namespace Voxymore::Core {
         s_SSBO = SSBO::Create(VoxelCountInChunk * sizeof(Voxel), SSBO::DynamicDraw);
     }
 
-    void Terrain::Update() {
+    void Terrain::Update(const TimeStep ts) {
     }
 
     void Terrain::RenderForward() {

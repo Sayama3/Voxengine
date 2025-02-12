@@ -26,7 +26,7 @@ namespace Voxymore::Core {
         Terrain& operator=(const Terrain&) = delete;
     public:
         static void Initialize();
-        static void Update();
+        static void Update(TimeStep ts);
         static void RenderForward();
         static void Shutdown();
     private:

@@ -205,7 +205,7 @@ namespace Voxymore::Core
 		m_Started = false;
 	}
 
-	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera* camera, bool doRendering)
+	void Scene::OnUpdateEditor(const TimeStep ts, EditorCamera* camera, bool doRendering)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -219,7 +219,7 @@ namespace Voxymore::Core
 		}
 
 		UpdatePhysicsState();
-		Terrain::Update();
+		Terrain::Update(ts);
 
 		if(doRendering) {
 			VXM_ASSERT(camera, "Camera cannot be null if we do the Editor Rendering.");
@@ -227,7 +227,7 @@ namespace Voxymore::Core
 		}
 	}
 
-	void Scene::OnUpdateRuntime(TimeStep ts, bool doRendering)
+	void Scene::OnUpdateRuntime(const TimeStep ts, bool doRendering)
 	{
 		VXM_PROFILE_FUNCTION();
 
@@ -297,7 +297,7 @@ namespace Voxymore::Core
 		UpdatePhysicsState();
 		UpdatePhysics(ts);
 
-		Terrain::Update();
+		Terrain::Update(ts);
 
 		if(doRendering) {
 			RenderRuntime(ts);
