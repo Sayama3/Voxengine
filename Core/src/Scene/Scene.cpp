@@ -219,7 +219,6 @@ namespace Voxymore::Core
 		}
 
 		UpdatePhysicsState();
-		Terrain::Update(ts);
 
 		if(doRendering) {
 			VXM_ASSERT(camera, "Camera cannot be null if we do the Editor Rendering.");
@@ -296,8 +295,6 @@ namespace Voxymore::Core
 
 		UpdatePhysicsState();
 		UpdatePhysics(ts);
-
-		Terrain::Update(ts);
 
 		if(doRendering) {
 			RenderRuntime(ts);

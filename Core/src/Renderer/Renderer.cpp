@@ -7,7 +7,6 @@
 #include "Voxymore/Core/Macros.hpp"
 #include "Voxymore/OpenGL/OpenGLShader.hpp"
 #include "Voxymore/Debug/Gizmos.hpp"
-#include "Voxymore/Terrain/Terrain.hpp"
 
 namespace Voxymore::Core
 {
@@ -97,13 +96,10 @@ namespace Voxymore::Core
 										 Vertex({-1.0f, -1.0f,  1.0f}),
 										 Vertex({1.0f, -1.0f,  1.0f})
 		});
-
-		Terrain::Initialize();
 	}
 
 	void Renderer::Shutdown() {
 		VXM_PROFILE_FUNCTION();
-		Terrain::Shutdown();
 
 		s_CubemapMesh = nullptr;
 		RenderCommand::Shutdown();

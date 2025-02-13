@@ -5,6 +5,7 @@
 #include "Voxymore/Physics/PhysicsLayer.hpp"
 #include "Voxymore/Debug/Gizmos.hpp"
 #include "Voxymore/Voxymore.hpp"
+#include "Voxymore/Terrain/TerrainLayer.hpp"
 
 namespace Voxymore::Editor {
 
@@ -16,6 +17,7 @@ class Voxengine : public Voxymore::Core::Application {
 #endif
 			PushOverlay(new PhysicsLayer());
 			PushOverlay(new ImGuiLayer());
+			PushLayer(new TerrainLayer());
 			PushLayer(new EditorLayer());
         }
 
