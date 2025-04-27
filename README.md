@@ -68,5 +68,4 @@ a little credit list to all the libraries I use. I should update this list prett
 
 # License
 
-Well, for now I don't know what I want to do with this project, so there is no defined License. If I abandon the project I will add it a MIT License,
-but for now I wait for the project to grow to decide on the commercialization model (Full Open Source, Closed Source, Proprietary, anything else...)
+This project is under [MIT License](LICENSE).
