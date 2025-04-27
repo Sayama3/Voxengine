@@ -1,5 +1,7 @@
 [![build](https://github.com/Sayama3/VoxymoreCore/actions/workflows/cmake.yml/badge.svg)](https://github.com/Sayama3/VoxymoreCore/actions/workflows/cmake.yml)
 
+_Moving on from OpenGL to Vulkan. I want to try again with another architecture from scratch and will therefore archive this repository as is_
+
 # Voxengine
 
 The Voxengine is currently a general purpose Game Engine with it's own tech. Inside there is :
